@@ -21,7 +21,7 @@ import {
 } from '../types/index.js';
 import { clientDb } from './clientDb.js';
 import { getCurrentSession } from './supabaseClient.js';
-import { generateTailoredCV } from './resumeIntelligence.js';
+import { generateTailoredCV, evaluateJobMatch } from './resumeIntelligence.js';
 
 const API_BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 
@@ -272,6 +272,121 @@ export const api = {
         tailoredResume,
         opportunity: opp as Opportunity,
       };
+    }
+  },
+  uploadResume: async (payload: { fileName: string; fileData: string; fileType?: string }) => {
+    try {
+      return await request<{
+        success: boolean;
+        document: any;
+        extractedInfo: any;
+        rawTextPreview: string;
+      }>('/api/resumes/upload', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+    } catch (e: any) {
+      throw new Error(e?.message || 'Resume upload failed');
+    }
+  },
+  confirmExtractedProfile: async (confirmedProfile: any, createMasterCV: boolean = true) => {
+    try {
+      return await request<{
+        success: boolean;
+        profile: CareerProfile;
+        masterResume?: ResumeVersion;
+        atsScore?: number;
+      }>('/api/resumes/extract-confirm', {
+        method: 'POST',
+        body: JSON.stringify({ confirmedProfile, createMasterCV }),
+      });
+    } catch {
+      // Local fallback
+      const current = clientDb.getProfile();
+      const updated = clientDb.updateProfile({
+        ...confirmedProfile,
+        targetRole: confirmedProfile.targetRole || confirmedProfile.headline || current.targetRole,
+      });
+      let masterResume: ResumeVersion | undefined;
+      if (createMasterCV) {
+        masterResume = {
+          id: `res-master-${Date.now()}`,
+          title: `${updated.fullName || 'Master'} Resume`,
+          isMaster: true,
+          summary: confirmedProfile.summary || updated.headline || '',
+          skills: confirmedProfile.skills || [],
+          experience: confirmedProfile.experience || [],
+          education: confirmedProfile.education || [],
+          certifications: confirmedProfile.certifications || [],
+          targetRole: updated.targetRole,
+          atsScore: 75,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+        clientDb.saveResume(masterResume);
+      }
+      return { success: true, profile: updated, masterResume, atsScore: masterResume?.atsScore };
+    }
+  },
+  getResumeLibrary: async () => {
+    try {
+      return await request<{
+        success: boolean;
+        masterResume: ResumeVersion | null;
+        tailoredResumes: ResumeVersion[];
+        uploadedDocuments: any[];
+        drafts: ResumeVersion[];
+        totalCount: number;
+      }>('/api/resumes/library');
+    } catch {
+      const all = clientDb.getResumes();
+      return {
+        success: true,
+        masterResume: all.find((r) => r.isMaster) || null,
+        tailoredResumes: all.filter((r) => !r.isMaster),
+        uploadedDocuments: [],
+        drafts: all.filter((r) => !r.atsScore),
+        totalCount: all.length,
+      };
+    }
+  },
+  deleteResume: async (id: string) => {
+    try {
+      return await request<{ success: boolean }>(`/api/resumes/${id}`, { method: 'DELETE' });
+    } catch {
+      clientDb.deleteResume(id);
+      return { success: true };
+    }
+  },
+  matchOpportunity: async (payload: {
+    resumeId?: string;
+    opportunityId?: string;
+    customJobDescription?: string;
+    customJobTitle?: string;
+    customCompany?: string;
+  }) => {
+    try {
+      return await request<{
+        success: boolean;
+        matchAnalysis: JobMatchAnalysis;
+        opportunity: Opportunity;
+      }>('/api/resumes/match', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+    } catch {
+      const resumes = clientDb.getResumes();
+      const resume = (payload.resumeId ? resumes.find((r) => r.id === payload.resumeId) : null) || resumes[0];
+      const opp = (payload.opportunityId ? clientDb.getOpportunities().find((o) => o.id === payload.opportunityId) : null) || {
+        id: 'opp-temp',
+        title: payload.customJobTitle || 'Target Position',
+        company: payload.customCompany || 'Target Employer',
+        description: payload.customJobDescription || '',
+        requirements: [],
+      };
+      if (!resume) throw new Error('No resume available for matching');
+      const matchAnalysis = evaluateJobMatch(resume, opp as Opportunity);
+      return { success: true, matchAnalysis, opportunity: opp as Opportunity };
     }
   },
   generateCoverLetter: async (opportunityId: string) => {
@@ -690,7 +805,7 @@ export const api = {
       return { success: true, ...clientDb.getEmailStatus() };
     }
   },
-  classifyEmail: async (data: { subject: string; sender: string; snippet: string }) => {
+  classifyEmail: async (data: { subject: string; sender: string; snippet: string; id?: string }) => {
     try {
       return await request<{ success: boolean; classification: any; event: EmailEvent }>(
         '/api/email/classify',
@@ -701,7 +816,7 @@ export const api = {
       );
     } catch {
       const event: EmailEvent = {
-        id: `em-${Date.now()}`,
+        id: data.id || `em-${Date.now()}`,
         subject: data.subject,
         sender: data.sender,
         snippet: data.snippet,
@@ -709,12 +824,23 @@ export const api = {
         category: 'interview_invitation',
         priority: 'HIGH',
         processed: true,
+        read: true,
       };
       return {
         success: true,
         classification: { category: 'interview_invitation', confidence: 0.94 },
         event,
       };
+    }
+  },
+  markEmailRead: async (id: string) => {
+    try {
+      return await request<{ success: boolean; event: EmailEvent }>(
+        `/api/email/events/${id}/read`,
+        { method: 'POST' }
+      );
+    } catch {
+      return { success: true };
     }
   },
 

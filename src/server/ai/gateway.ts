@@ -217,9 +217,11 @@ export class AIGateway {
     this.acquireUserSlot(userId);
     const startTime = Date.now();
     const candidateModels = [
-      options.model || 'gemini-3.8-flash',
+      options.model || 'gemini-3.5-flash-lite',
+      'gemini-flash-lite-latest',
       'gemini-3.5-flash',
-      'gemini-3.5-flash-lite',
+      'gemini-3.6-flash',
+      'gemini-3.8-flash',
     ];
 
     try {
@@ -240,7 +242,7 @@ export class AIGateway {
           });
 
           const response = await Promise.race([generatePromise, timeoutPromise]);
-          const text = response.text || '';
+          const text = response.text ?? '';
           const latencyMs = Date.now() - startTime;
           const tokensEstimate = Math.round((options.prompt.length + text.length) / 4);
 
@@ -322,9 +324,11 @@ export class AIGateway {
     this.acquireUserSlot(userId);
     const startTime = Date.now();
     const candidateModels = [
-      options.model || 'gemini-3.8-flash',
+      options.model || 'gemini-3.5-flash-lite',
+      'gemini-flash-lite-latest',
       'gemini-3.5-flash',
-      'gemini-3.5-flash-lite',
+      'gemini-3.6-flash',
+      'gemini-3.8-flash',
     ];
 
     try {
@@ -348,7 +352,7 @@ export class AIGateway {
           });
 
           const response = await Promise.race([generatePromise, timeoutPromise]);
-          const rawText = response.text || '{}';
+          const rawText = response.text ?? '{}';
           const cleanJson = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
           const parsed = JSON.parse(cleanJson);
 

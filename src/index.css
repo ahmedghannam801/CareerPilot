@@ -94,6 +94,10 @@
     --surface-border: var(--color-border);
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background-color: var(--color-bg);
@@ -103,6 +107,7 @@
     overflow-x: hidden;
     font-size: 14px;
     line-height: 1.5;
+    transition: background-color 0.25s ease, color 0.25s ease;
   }
 
   [dir="rtl"] {
@@ -400,6 +405,200 @@
   border-color: #374151 !important;
 }
 
+/* ============================================================
+   DARK MODE — EXTENDED HEX COLOR OVERRIDES
+   Covers every hardcoded hex used in components
+   ============================================================ */
+
+/* Light page backgrounds & card surfaces */
+.dark .bg-\[\#FAFBFC\]:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark .bg-\[\#fafbfc\]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: #161D2A !important;
+  color: #F1F5F9 !important;
+}
+
+/* Section panels & card interiors */
+.dark .bg-\[\#F7F9FC\]:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark .bg-\[\#f7f9fc\]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: #1E293B !important;
+  color: #F1F5F9 !important;
+}
+
+/* Hover states for muted surfaces */
+.dark .hover\:bg-\[\#F7F9FC\]:hover:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: #1E293B !important;
+}
+.dark .hover\:bg-white:hover:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: #1F2937 !important;
+}
+
+/* Active link / nav-pill */
+.dark .bg-\[\#EEF4FF\]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: rgba(37,99,235,0.18) !important;
+  color: #93C5FD !important;
+}
+.dark .hover\:bg-\[\#EEF4FF\]:hover:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: rgba(37,99,235,0.22) !important;
+}
+
+/* Muted/secondary backgrounds */
+.dark .bg-\[\#F1F5F9\]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: #1E293B !important;
+  color: #94A3B8 !important;
+}
+
+/* Navy dark text → bright white */
+.dark .text-\[\#17253B\]:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark .text-\[\#0B1F3A\]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  color: #F8FAFC !important;
+}
+
+/* Hover: navy → white */
+.dark .group-hover\:text-\[\#17253B\]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  color: #F8FAFC !important;
+}
+
+/* Secondary gray text → readable light slate */
+.dark .text-\[\#64748B\]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  color: #94A3B8 !important;
+}
+.dark .text-\[\#475569\]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  color: #CBD5E1 !important;
+}
+
+/* Muted text */
+.dark .text-\[\#94A3B8\]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  color: #64748B !important;
+}
+
+/* Blue brand text */
+.dark .text-\[\#2563EB\]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  color: #60A5FA !important;
+}
+.dark .text-\[\#1683F8\]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  color: #93C5FD !important;
+}
+.dark .group-hover\:text-\[\#2563EB\]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  color: #60A5FA !important;
+}
+.dark .hover\:text-\[\#2563EB\]:hover:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  color: #60A5FA !important;
+}
+.dark .hover\:text-\[\#1D4ED8\]:hover:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  color: #93C5FD !important;
+}
+
+/* Green success text */
+.dark .text-\[\#15803D\]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  color: #34D399 !important;
+}
+.dark .hover\:text-\[\#15803D\]:hover:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  color: #34D399 !important;
+}
+
+/* Border colors */
+.dark .border-\[\#E4EAF2\]:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark .border-\[\#EDF2F7\]:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark .border-\[\#E2E8F0\]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  border-color: #1F2937 !important;
+}
+.dark .border-\[\#2563EB\]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  border-color: #3B82F6 !important;
+}
+.dark .border-\[\#2563EB\]\/20:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  border-color: rgba(59,130,246,0.3) !important;
+}
+.dark .border-\[\#2563EB\]\/30:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  border-color: rgba(59,130,246,0.4) !important;
+}
+.dark .border-\[\#E4EAF2\]\/40:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  border-color: rgba(31,41,55,0.6) !important;
+}
+.dark .hover\:border-\[\#E2E8F0\]:hover:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  border-color: #374151 !important;
+}
+.dark .hover\:border-slate-200:hover:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  border-color: #374151 !important;
+}
+
+/* Divide colors */
+.dark .divide-\[\#EDF2F7\] > *:not([data-ats-document="true"]) {
+  border-color: #1F2937 !important;
+}
+
+/* ---- KBD element (search bar hint) ---- */
+.dark kbd:not([data-ats-document="true"] *) {
+  background-color: #1F2937 !important;
+  color: #94A3B8 !important;
+  border-color: #374151 !important;
+}
+
+/* ---- Gradients over dark backgrounds ---- */
+.dark .from-blue-600,
+.dark .to-indigo-700,
+.dark .from-\[\#2563EB\],
+.dark .to-\[\#1D4ED8\] {
+  /* Keep gradient buttons as-is — they are already colored */
+}
+
+/* ---- Hover bg on nav items ---- */
+.dark .hover\:bg-\[\#F7F9FC\]:hover:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: #1E293B !important;
+  color: #F1F5F9 !important;
+}
+
+/* Active nav item */
+.dark .bg-\[\#EEF4FF\].text-\[\#2563EB\]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: rgba(37,99,235,0.18) !important;
+  color: #93C5FD !important;
+}
+
+/* ---- Slate-100 progress bar track ---- */
+.dark .bg-slate-100:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: #1F2937 !important;
+}
+
+/* ---- bg-white on hover (sidebar row 2 user identity) ---- */
+.dark .hover\:bg-white:hover:not([data-ats-document="true"] *) {
+  background-color: #1F2937 !important;
+}
+
+/* ---- ring / ring on active nav ---- */
+.dark .ring-\[\#2563EB\]\/15:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark .ring-\[\#2563EB\]\/20:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  --tw-ring-color: rgba(59,130,246,0.25) !important;
+}
+
+/* ---- Score badge backgrounds ---- */
+.dark .bg-blue-50:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: rgba(59,130,246,0.15) !important;
+  color: #93C5FD !important;
+}
+.dark .text-blue-700:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  color: #93C5FD !important;
+}
+.dark .bg-emerald-50:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: rgba(52,211,153,0.13) !important;
+  color: #6EE7B7 !important;
+}
+.dark .text-emerald-700:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  color: #34D399 !important;
+}
+.dark .bg-amber-50:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: rgba(251,191,36,0.13) !important;
+  color: #FCD34D !important;
+}
+.dark .text-amber-700:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  color: #FCD34D !important;
+}
+
+/* ---- Gradient indicator bar on "Next Move" card ---- */
+/* Keep as-is (already blue gradient, visible on dark) */
+
+/* ---- Shadow corrections on dark ---- */
+.dark .shadow-xs:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  box-shadow: 0 1px 4px rgba(0,0,0,0.35) !important;
+}
 
 /* ============================================================
    Custom Animations

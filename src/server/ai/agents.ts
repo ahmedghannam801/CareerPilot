@@ -578,16 +578,22 @@ Candidate's Answer: ${userAnswer}`,
    */
   async runAssistantChat(
     message: string,
-    profile: CareerProfile,
-    conversationHistory: { role: 'user' | 'assistant'; text: string }[]
+    profile?: CareerProfile | null,
+    conversationHistory: { role: 'user' | 'assistant'; text: string }[] = []
   ) {
+    const fullName = profile?.fullName || 'مستخدم CareerPilot';
+    const careerStatus = profile?.careerStatus || 'باحث عن عمل / مهني';
+    const targetRole = profile?.targetRole || 'غير محدد';
+    const skillsList = profile?.skills?.map((s) => s.canonicalName).join(', ') || 'لم تحدد بعد';
+    const readinessScore = profile?.readiness?.overallScore ?? 0;
+
     const systemInstruction = `أنت مساعد CareerPilot AI الذكي والمباشر.
 سياق الملف المهني للمستخدم:
-- الاسم: ${profile.fullName}
-- الحالة: ${profile.careerStatus}
-- الدور المستهدف: ${profile.targetRole || 'غير محدد'}
-- المهارات: ${profile.skills.map((s) => s.canonicalName).join(', ')}
-- الجاهزية: ${profile.readiness?.overallScore ?? 0}/100
+- الاسم: ${fullName}
+- الحالة: ${careerStatus}
+- الدور المستهدف: ${targetRole}
+- المهارات: ${skillsList}
+- الجاهزية: ${readinessScore}/100
 
 تعليمات صارمة جداً للإجابة:
 1. أجب فقط وحصرياً على ما طلبه أو سأل عنه المستخدم بالضبط. لا تضف أي نصائح إضافية لم يطلبها، ولا مقدمات مطولة أو خاتمات إنشائية غير مفيدة.
@@ -596,7 +602,8 @@ Candidate's Answer: ${userAnswer}`,
 4. الرد بلغة المستخدم: إذا سأل بالعربية أجب بلغة عربية واضحة ومباشرة وسلسة، وإذا سأل بالإنجليزية أجب بالإنجليزية.
 5. الوضوح والإيجاز: ركز على الجواب المفيد المباشر بدقة واحترافية.`;
 
-    const formattedHistory = conversationHistory
+    const historyArray = Array.isArray(conversationHistory) ? conversationHistory : [];
+    const formattedHistory = historyArray
       .slice(-6)
       .map((m) => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.text}`)
       .join('\n');
@@ -632,6 +639,26 @@ Strict Rules:
 2. Group responsibilities and quantifiable achievements under each experience entry.
 3. Normalize skills into canonical professional names.`,
       prompt: `LinkedIn Profile Text Content:\n\n${rawLinkedInText}`,
+      schema: LinkedInProfileSchema,
+    });
+  },
+
+  /**
+   * 13b. Resume Document Extraction Agent
+   */
+  async runResumeExtractor(rawDocumentText: string) {
+    return aiGateway.generateStructured({
+      agentName: 'Resume Document Extraction Agent',
+      promptVersion: 'resume_extractor_v1',
+      systemInstruction: `You are the Resume Intelligence Extraction Agent in CareerPilot AI.
+Extract structured professional profile information from the parsed resume document text.
+Strict Rules:
+1. Extract true factual data only. Never invent companies, dates, degrees, metrics, or credentials.
+2. Extract the candidate's full name, contact information, professional headline, and summary.
+3. Group roles, companies, dates, responsibilities, and achievements cleanly.
+4. Extract education degrees, institutions, graduation dates, and certifications.
+5. Extract all verified technical skills and tools into clean canonical names.`,
+      prompt: `Resume Document Content:\n\n${rawDocumentText}`,
       schema: LinkedInProfileSchema,
     });
   },

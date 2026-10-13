@@ -12,58 +12,77 @@ import {
  * Deterministic Career Readiness calculation across 8 defined pillars
  */
 export function calculateCareerReadiness(profile: CareerProfile): CareerReadiness {
-  // 1. Skills score (max 100)
-  const skillsCount = profile.skills.length;
-  const verifiedEvidenceCount = profile.skills.reduce(
-    (acc, s) => acc + s.evidence.filter((e) => e.verified).length,
+  const skillsCount = profile.skills?.length || 0;
+  const verifiedEvidenceCount = (profile.skills || []).reduce(
+    (acc, s) => acc + (s.evidence || []).filter((e) => e.verified).length,
     0
   );
-  const skillsScore = Math.min(
+  const skillsScore = skillsCount === 0 ? 0 : Math.min(
     100,
     Math.round(Math.min(skillsCount * 10, 60) + Math.min(verifiedEvidenceCount * 10, 40))
   );
 
-  // 2. CV score
-  const cvScore = profile.headline ? 75 : 40;
+  // 2. CV score based on real profile completeness
+  const cvScore = profile.headline && profile.headline.trim().length > 0 ? 75 : 0;
 
   // 3. Experience score
-  const expCount = profile.experience.length;
+  const expCount = profile.experience?.length || 0;
   const experienceScore = Math.min(100, Math.round(expCount * 25));
 
   // 4. Projects score
-  const projectsScore = Math.min(
-    100,
-    verifiedEvidenceCount > 0 ? 80 : expCount > 0 ? 60 : 30
-  );
+  const projectsScore = verifiedEvidenceCount > 0 ? 80 : expCount > 0 ? 50 : 0;
 
   // 5. Education score
-  const educationScore = profile.education.length > 0 ? 85 : 40;
+  const educationScore = (profile.education?.length || 0) > 0 ? 85 : 0;
 
   // 6. Interview readiness score
-  const interviewReadinessScore = verifiedEvidenceCount >= 2 ? 75 : 55;
+  const interviewReadinessScore = verifiedEvidenceCount >= 2 ? 75 : verifiedEvidenceCount === 1 ? 50 : 0;
 
   // 7. Branding score
-  const brandingScore = profile.headline && profile.targetIndustries.length > 0 ? 80 : 50;
+  const brandingScore =
+    profile.headline && (profile.targetIndustries?.length || 0) > 0
+      ? 80
+      : profile.headline
+      ? 50
+      : 0;
 
   // 8. Application readiness score
   const applicationReadinessScore = Math.round(
-    (skillsScore * 0.35 + experienceScore * 0.35 + educationScore * 0.3)
+    skillsScore * 0.35 + experienceScore * 0.35 + educationScore * 0.3
   );
 
-  // Weighted overall calculation
-  const overallScore = Math.round(
-    skillsScore * 0.2 +
-      cvScore * 0.15 +
-      experienceScore * 0.2 +
-      projectsScore * 0.15 +
-      educationScore * 0.1 +
-      interviewReadinessScore * 0.05 +
-      brandingScore * 0.05 +
-      applicationReadinessScore * 0.1
-  );
+  // If user has zero evidence, zero experience, zero skills and zero education, readiness is strictly 0
+  const isCompletelyEmpty =
+    skillsCount === 0 &&
+    expCount === 0 &&
+    (profile.education?.length || 0) === 0 &&
+    (!profile.headline || profile.headline.trim().length === 0);
+
+  const overallScore = isCompletelyEmpty
+    ? 0
+    : Math.round(
+        skillsScore * 0.2 +
+          cvScore * 0.15 +
+          experienceScore * 0.2 +
+          projectsScore * 0.15 +
+          educationScore * 0.1 +
+          interviewReadinessScore * 0.05 +
+          brandingScore * 0.05 +
+          applicationReadinessScore * 0.1
+      );
 
   const improvementActions = [];
-  if (skillsScore < 70) {
+  if (isCompletelyEmpty || skillsScore === 0) {
+    improvementActions.push({
+      id: 'act-upload-cv',
+      title: 'Upload and analyze your CV or build a master resume to establish your career foundation',
+      impact: 'High' as const,
+      estimatedHours: 1,
+      category: 'Resume & Setup',
+      completed: false,
+    });
+  }
+  if (skillsScore < 70 && skillsScore > 0) {
     improvementActions.push({
       id: 'act-skills',
       title: 'Complete a practical micro-project to add verified technical skill evidence',
@@ -73,7 +92,7 @@ export function calculateCareerReadiness(profile: CareerProfile): CareerReadines
       completed: false,
     });
   }
-  if (experienceScore < 60) {
+  if (experienceScore < 60 && expCount > 0) {
     improvementActions.push({
       id: 'act-exp',
       title: 'Add quantitative achievements and measurable impact metrics to work history',
@@ -83,7 +102,7 @@ export function calculateCareerReadiness(profile: CareerProfile): CareerReadines
       completed: false,
     });
   }
-  if (brandingScore < 75) {
+  if (brandingScore < 75 && !isCompletelyEmpty) {
     improvementActions.push({
       id: 'act-brand',
       title: 'Refine target career role and headline for ATS searchability',
@@ -96,7 +115,7 @@ export function calculateCareerReadiness(profile: CareerProfile): CareerReadines
   if (improvementActions.length === 0) {
     improvementActions.push({
       id: 'act-tailor',
-      title: 'Generate role-tailored CVs for your top 3 saved opportunities',
+      title: 'Generate role-tailored CVs for your top saved opportunities',
       impact: 'Medium' as const,
       estimatedHours: 2,
       category: 'Applications',
@@ -117,7 +136,9 @@ export function calculateCareerReadiness(profile: CareerProfile): CareerReadines
       applicationReadinessScore,
     },
     summary:
-      overallScore >= 80
+      overallScore === 0
+        ? 'Setup required: Upload or build your CV to calculate your Career Readiness score.'
+        : overallScore >= 80
         ? 'High readiness: profile and evidence align strongly with competitive market standards.'
         : overallScore >= 60
         ? 'Solid foundation: key skills present, but requires portfolio evidence and tailored positioning.'
@@ -127,60 +148,88 @@ export function calculateCareerReadiness(profile: CareerProfile): CareerReadines
 }
 
 /**
- * Deterministic ATS CV analysis
+ * Deterministic ATS CV analysis (Strict zero-base without fabricated points)
  */
 export function calculateCVScore(cv: ResumeVersion): ATSAnalysis {
-  let score = 50;
+  let score = 0;
   const strengths: string[] = [];
   const weaknesses: string[] = [];
   const recommendations: string[] = [];
   const missingKeywords: string[] = [];
 
-  // Summary validation
+  const hasSummary = Boolean(cv.summary && cv.summary.trim().length >= 30);
+  const allAchievements = (cv.experience || []).flatMap((e) => e.achievements || []);
+  const skillsCount = cv.skills?.length || 0;
+  const eduCount = cv.education?.length || 0;
+
+  // Summary validation (up to 20 pts)
   if (cv.summary && cv.summary.length > 50) {
-    score += 15;
+    score += 20;
     strengths.push('Professional summary contains clear role focus and positioning.');
-  } else {
-    weaknesses.push('Summary is missing or lacks concise value proposition.');
-    recommendations.push('Write a 3-sentence summary highlighting your primary target role and top technical competencies.');
-  }
-
-  // Experience and achievements
-  const totalAchievements = cv.experience.reduce((acc, e) => acc + (e.achievements?.length || 0), 0);
-  if (totalAchievements >= 3) {
-    score += 15;
-    strengths.push('Work experience includes quantifiable achievements.');
-  } else {
-    weaknesses.push('Low number of bulleted achievements with metrics.');
-    recommendations.push('Rewrite experience bullets using the Action Verb + Context + Measurable Outcome formula.');
-  }
-
-  // Skills count
-  if (cv.skills.length >= 6) {
+  } else if (hasSummary) {
     score += 10;
-    strengths.push('Strong density of categorized hard skills.');
+    weaknesses.push('Summary is too brief to convey your full value proposition.');
+    recommendations.push('Expand your summary to 3 concise sentences highlighting core technical competencies.');
   } else {
+    weaknesses.push('Summary is missing or empty.');
+    recommendations.push('Write a 3-sentence summary highlighting your primary target role and top competencies.');
+  }
+
+  // Experience and achievements (up to 35 pts)
+  if (allAchievements.length >= 3) {
+    score += 35;
+    strengths.push('Work experience includes multiple bulleted achievements.');
+  } else if (allAchievements.length >= 1) {
+    score += 15;
+    weaknesses.push('Limited bulleted achievements in work history.');
+    recommendations.push('Add at least 3 bullet points per role demonstrating impact.');
+  } else if ((cv.experience || []).length > 0) {
+    score += 10;
+    weaknesses.push('Work experience contains roles without bulleted accomplishments.');
+    recommendations.push('Rewrite experience bullets using the Action Verb + Context + Measurable Outcome formula.');
+  } else {
+    weaknesses.push('No professional experience listed.');
+    recommendations.push('Add your work history, internships, or relevant technical roles.');
+  }
+
+  // Skills count (up to 25 pts)
+  if (skillsCount >= 6) {
+    score += 25;
+    strengths.push('Strong density of categorized technical skills.');
+  } else if (skillsCount >= 3) {
+    score += 15;
     weaknesses.push('Fewer than 6 technical skills explicitly listed.');
     recommendations.push('List core tools, frameworks, and domain competencies in a clean skills section.');
+  } else if (skillsCount > 0) {
+    score += 5;
+    weaknesses.push('Skills section has very few entries.');
+    recommendations.push('Add relevant technical skills and tools.');
+  } else {
+    weaknesses.push('Skills section is empty.');
+    recommendations.push('Add your core technical competencies.');
   }
 
-  // Education
-  if (cv.education.length > 0) {
-    score += 10;
-    strengths.push('Verified academic credentials and certifications clearly presented.');
+  // Education (up to 20 pts)
+  if (eduCount > 0) {
+    score += 20;
+    strengths.push('Verified academic credentials clearly presented.');
+  } else {
+    weaknesses.push('No education or academic credentials listed.');
+    recommendations.push('Add your degree, university, or equivalent certifications.');
   }
 
-  const finalScore = Math.min(100, Math.max(30, score));
+  const finalScore = Math.min(100, score);
+  const isCompletelyEmpty = !hasSummary && allAchievements.length === 0 && skillsCount === 0 && eduCount === 0;
 
   return {
-    overallScore: finalScore,
-    strengths,
-    weaknesses,
-    recommendations,
+    overallScore: isCompletelyEmpty ? 0 : finalScore,
+    strengths: strengths.length > 0 ? strengths : ['Upload a complete CV to discover strengths.'],
+    weaknesses: weaknesses.length > 0 ? weaknesses : ['No critical defects found.'],
+    recommendations: recommendations.length > 0 ? recommendations : ['Maintain current resume structure.'],
     missingKeywords,
-    formattingScore: 92,
-    relevanceScore: Math.round(finalScore * 0.95),
-    impactScore: Math.round(finalScore * 0.9),
+    formattingScore: isCompletelyEmpty ? 0 : 92,
+    relevanceScore: isCompletelyEmpty ? 0 : Math.round(finalScore * 0.95),
+    impactScore: isCompletelyEmpty ? 0 : Math.round(finalScore * 0.9),
   };
 }
 

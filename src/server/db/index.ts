@@ -23,11 +23,24 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const DATA_DIR = path.resolve(__dirname, '../../../data');
 const DB_FILE = path.join(DATA_DIR, 'careerpilot_db.json');
+const USERS_DIR = path.join(DATA_DIR, 'users');
+
+export interface UploadedDocument {
+  id: string;
+  userId: string;
+  fileName: string;
+  fileSizeBytes: number;
+  fileType: 'pdf' | 'docx' | 'txt';
+  extractedText: string;
+  extractedProfile?: Partial<CareerProfile>;
+  uploadedAt: string;
+}
 
 export interface DatabaseState {
   profile: CareerProfile;
   resumes: ResumeVersion[];
   atsAnalysis: Record<string, ATSAnalysis>;
+  uploadedDocuments?: UploadedDocument[];
   opportunities: Opportunity[];
   applications: Application[];
   microProjects: MicroProject[];
@@ -1009,100 +1022,242 @@ export class DatabaseService {
     }
   }
 
-  // --- Profile Methods ---
-  getProfile(): CareerProfile {
-    return this.state.profile;
+  private userStates: Map<string, DatabaseState> = new Map();
+
+  private getUserState(userId?: string): DatabaseState {
+    if (!userId || userId === 'usr-default' || userId === 'demo-user') {
+      return this.state;
+    }
+    if (this.userStates.has(userId)) {
+      return this.userStates.get(userId)!;
+    }
+
+    const userFile = path.join(USERS_DIR, `${userId}.json`);
+    try {
+      if (fs.existsSync(userFile)) {
+        const raw = fs.readFileSync(userFile, 'utf-8');
+        const parsed = JSON.parse(raw);
+        this.userStates.set(userId, parsed);
+        return parsed;
+      }
+    } catch (e) {
+      console.warn(`Failed to read user file for ${userId}:`, e);
+    }
+
+    const freshState: DatabaseState = {
+      profile: {
+        id: userId,
+        fullName: '',
+        email: '',
+        headline: '',
+        location: '',
+        careerStatus: 'fresh_graduate',
+        targetRole: '',
+        targetIndustries: [],
+        targetSalary: '',
+        onboardingCompleted: false,
+        education: [],
+        experience: [],
+        skills: [],
+      },
+      resumes: [],
+      atsAnalysis: {},
+      uploadedDocuments: [],
+      opportunities: this.state.opportunities.map((o) => ({ ...o, matchScore: undefined })),
+      applications: [],
+      microProjects: [],
+      courses: [],
+      emailEvents: [],
+      interviews: [],
+      careerMemory: [],
+      timeline: [],
+      emailAccountConnected: false,
+      notifications: [],
+    };
+
+    this.userStates.set(userId, freshState);
+    this.saveUser(userId, freshState);
+    return freshState;
   }
 
-  updateProfile(partial: Partial<CareerProfile>): CareerProfile {
-    this.state.profile = {
-      ...this.state.profile,
+  private saveUser(userId: string, state: DatabaseState) {
+    if (!userId || userId === 'usr-default' || userId === 'demo-user') {
+      this.save(state);
+      return;
+    }
+    try {
+      if (!fs.existsSync(USERS_DIR)) {
+        fs.mkdirSync(USERS_DIR, { recursive: true });
+      }
+      const userFile = path.join(USERS_DIR, `${userId}.json`);
+      fs.writeFileSync(userFile, JSON.stringify(state, null, 2), 'utf-8');
+    } catch (e) {
+      console.error(`Failed to save user ${userId}:`, e);
+    }
+  }
+
+  // --- Profile Methods ---
+  getProfile(userId?: string): CareerProfile {
+    return this.getUserState(userId).profile;
+  }
+
+  updateProfile(partial: Partial<CareerProfile>, userId?: string): CareerProfile {
+    const state = this.getUserState(userId);
+    state.profile = {
+      ...state.profile,
       ...partial,
     };
     // Recalculate readiness
-    this.state.profile.readiness = calculateCareerReadiness(this.state.profile);
-    this.save();
-    return this.state.profile;
-  }
-
-  // --- Resume Methods ---
-  getResumes(): ResumeVersion[] {
-    return this.state.resumes;
-  }
-
-  getMasterResume(): ResumeVersion | undefined {
-    return this.state.resumes.find((r) => r.isMaster) || this.state.resumes[0];
-  }
-
-  saveResume(resume: ResumeVersion): ResumeVersion {
-    const existingIndex = this.state.resumes.findIndex((r) => r.id === resume.id);
-    if (existingIndex >= 0) {
-      this.state.resumes[existingIndex] = resume;
+    state.profile.readiness = calculateCareerReadiness(state.profile);
+    if (userId && userId !== 'usr-default' && userId !== 'demo-user') {
+      this.saveUser(userId, state);
     } else {
-      this.state.resumes.push(resume);
+      this.save();
+    }
+    return state.profile;
+  }
+
+  // --- Resume & Document Methods ---
+  getResumes(userId?: string): ResumeVersion[] {
+    return this.getUserState(userId).resumes;
+  }
+
+  getMasterResume(userId?: string): ResumeVersion | undefined {
+    const resumes = this.getUserState(userId).resumes;
+    return resumes.find((r) => r.isMaster) || resumes[0];
+  }
+
+  saveResume(resume: ResumeVersion, userId?: string): ResumeVersion {
+    const state = this.getUserState(userId);
+    const existingIndex = state.resumes.findIndex((r) => r.id === resume.id);
+    if (existingIndex >= 0) {
+      state.resumes[existingIndex] = resume;
+    } else {
+      state.resumes.push(resume);
     }
     // Update ATS cache
-    this.state.atsAnalysis[resume.id] = calculateCVScore(resume);
-    this.save();
+    state.atsAnalysis[resume.id] = calculateCVScore(resume);
+    if (userId && userId !== 'usr-default' && userId !== 'demo-user') {
+      this.saveUser(userId, state);
+    } else {
+      this.save();
+    }
     return resume;
   }
 
-  getATSAnalysis(resumeId: string): ATSAnalysis {
-    if (!this.state.atsAnalysis[resumeId]) {
-      const resume = this.state.resumes.find((r) => r.id === resumeId);
+  deleteResume(id: string, userId?: string): boolean {
+    const state = this.getUserState(userId);
+    state.resumes = state.resumes.filter((r) => r.id !== id);
+    delete state.atsAnalysis[id];
+    if (userId && userId !== 'usr-default' && userId !== 'demo-user') {
+      this.saveUser(userId, state);
+    } else {
+      this.save();
+    }
+    return true;
+  }
+
+  getATSAnalysis(resumeId: string, userId?: string): ATSAnalysis {
+    const state = this.getUserState(userId);
+    if (!state.atsAnalysis[resumeId]) {
+      const resume = state.resumes.find((r) => r.id === resumeId);
       if (resume) {
-        this.state.atsAnalysis[resumeId] = calculateCVScore(resume);
+        state.atsAnalysis[resumeId] = calculateCVScore(resume);
       } else {
-        const master = this.getMasterResume();
+        const master = this.getMasterResume(userId);
         if (master) {
-          this.state.atsAnalysis[resumeId] = calculateCVScore(master);
+          state.atsAnalysis[resumeId] = calculateCVScore(master);
         }
       }
     }
     return (
-      this.state.atsAnalysis[resumeId] || {
-        overallScore: 70,
-        strengths: ['Structured CV formatting detected'],
-        weaknesses: ['Add more metrics'],
-        recommendations: ['Quantify achievements'],
+      state.atsAnalysis[resumeId] || {
+        overallScore: 0,
+        strengths: ['Upload or create your CV to begin evaluation'],
+        weaknesses: ['Document not yet analyzed'],
+        recommendations: ['Upload a complete CV in Resume Studio'],
         missingKeywords: [],
-        formattingScore: 85,
-        relevanceScore: 75,
-        impactScore: 70,
+        formattingScore: 0,
+        relevanceScore: 0,
+        impactScore: 0,
       }
     );
   }
 
-  // --- Opportunities ---
-  getOpportunities(): Opportunity[] {
-    return this.state.opportunities;
+  saveATSAnalysis(resumeId: string, analysis: ATSAnalysis, userId?: string): void {
+    const state = this.getUserState(userId);
+    state.atsAnalysis[resumeId] = analysis;
+    if (userId && userId !== 'usr-default' && userId !== 'demo-user') {
+      this.saveUser(userId, state);
+    } else {
+      this.save();
+    }
   }
 
-  addOpportunity(opp: Opportunity): Opportunity {
-    this.state.opportunities.unshift(opp);
-    this.save();
+  getUploadedDocuments(userId?: string): UploadedDocument[] {
+    const state = this.getUserState(userId);
+    return state.uploadedDocuments || [];
+  }
+
+  saveUploadedDocument(doc: UploadedDocument, userId?: string): UploadedDocument {
+    const state = this.getUserState(userId);
+    if (!state.uploadedDocuments) {
+      state.uploadedDocuments = [];
+    }
+    state.uploadedDocuments.unshift(doc);
+    if (userId && userId !== 'usr-default' && userId !== 'demo-user') {
+      this.saveUser(userId, state);
+    } else {
+      this.save();
+    }
+    return doc;
+  }
+
+  // --- Opportunities ---
+  getOpportunities(userId?: string): Opportunity[] {
+    return this.getUserState(userId).opportunities;
+  }
+
+  addOpportunity(opp: Opportunity, userId?: string): Opportunity {
+    const state = this.getUserState(userId);
+    state.opportunities.unshift(opp);
+    if (userId && userId !== 'usr-default' && userId !== 'demo-user') {
+      this.saveUser(userId, state);
+    } else {
+      this.save();
+    }
     return opp;
   }
 
-  deleteOpportunity(id: string): boolean {
-    this.state.opportunities = this.state.opportunities.filter((o) => o.id !== id);
-    this.save();
+  deleteOpportunity(id: string, userId?: string): boolean {
+    const state = this.getUserState(userId);
+    state.opportunities = state.opportunities.filter((o) => o.id !== id);
+    if (userId && userId !== 'usr-default' && userId !== 'demo-user') {
+      this.saveUser(userId, state);
+    } else {
+      this.save();
+    }
     return true;
   }
 
   // --- Applications ---
-  getApplications(): Application[] {
-    return this.state.applications;
+  getApplications(userId?: string): Application[] {
+    return this.getUserState(userId).applications;
   }
 
-  saveApplication(app: Application): Application {
-    const idx = this.state.applications.findIndex((a) => a.id === app.id);
+  saveApplication(app: Application, userId?: string): Application {
+    const state = this.getUserState(userId);
+    const idx = state.applications.findIndex((a) => a.id === app.id);
     if (idx >= 0) {
-      this.state.applications[idx] = app;
+      state.applications[idx] = app;
     } else {
-      this.state.applications.unshift(app);
+      state.applications.unshift(app);
     }
-    this.save();
+    if (userId && userId !== 'usr-default' && userId !== 'demo-user') {
+      this.saveUser(userId, state);
+    } else {
+      this.save();
+    }
     return app;
   }
 
@@ -1306,6 +1461,17 @@ export class DatabaseService {
     }
     this.save();
     return event;
+  }
+
+  markEmailEventRead(id: string): EmailEvent | null {
+    const event = this.state.emailEvents.find((e) => e.id === id);
+    if (event) {
+      event.read = true;
+      event.processed = true;
+      this.save();
+      return event;
+    }
+    return null;
   }
 
   // --- Interviews ---

@@ -22,6 +22,7 @@ interface TailoredCVModalProps {
   onTailorCV: (opportunityId: string) => Promise<any>;
   onSaveResume?: (resume: ResumeVersion) => Promise<void>;
   onNavigateToCV?: () => void;
+  onPrepareApplication?: (opportunityId: string) => void;
   lang: 'en' | 'ar';
 }
 
@@ -32,6 +33,7 @@ export const TailoredCVModal: React.FC<TailoredCVModalProps> = ({
   onTailorCV,
   onSaveResume,
   onNavigateToCV,
+  onPrepareApplication,
   lang,
 }) => {
   const isAr = lang === 'ar';
@@ -322,23 +324,40 @@ export const TailoredCVModal: React.FC<TailoredCVModalProps> = ({
         {/* Footer Actions */}
         <div className="p-4 sm:p-5 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-3 flex-wrap shrink-0">
           <div className="flex items-center gap-2">
+            {/* Primary in-app application prep entry point */}
+            <button
+              type="button"
+              onClick={() => {
+                if (onPrepareApplication) {
+                  onPrepareApplication(opportunity.id);
+                }
+                onClose();
+              }}
+              className="px-4 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all shadow-sm hover:shadow inline-flex items-center gap-2 cursor-pointer"
+            >
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              <span>
+                {isInternship
+                  ? isAr
+                    ? 'التقديم المباشر على التدريب'
+                    : 'Apply for Internship'
+                  : isAr
+                  ? 'التقديم المباشر على الوظيفة'
+                  : 'Apply for Job'}
+              </span>
+            </button>
+
+            {/* Secondary external posting link if sourceUrl exists */}
             {opportunity.sourceUrl && (
               <a
                 href={opportunity.sourceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-4 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all shadow-sm hover:shadow inline-flex items-center gap-2"
+                className="px-3.5 py-2.5 text-xs font-medium text-slate-700 bg-white border border-slate-200 hover:bg-slate-100 rounded-xl transition-colors inline-flex items-center gap-1.5"
+                title={isAr ? 'رابط الإعلان الخارجي' : 'External Job Posting'}
               >
-                <ExternalLink className="w-3.5 h-3.5" />
-                <span>
-                  {isInternship
-                    ? isAr
-                      ? 'التقديم المباشر على التدريب'
-                      : 'Apply for Internship'
-                    : isAr
-                    ? 'التقديم المباشر على الوظيفة'
-                    : 'Apply for Job'}
-                </span>
+                <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
+                <span>{isAr ? 'الرابط الخارجي' : 'External Link'}</span>
               </a>
             )}
 

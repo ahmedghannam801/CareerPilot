@@ -253,6 +253,7 @@ export interface ResumeVersion {
   templateVersion?: string;
   originalFileName?: string;
   isTailored?: boolean;
+  sourceResumeId?: string; // ID of the Master CV this was tailored from
   analysisDetails?: ATSAnalysis;
   createdAt: string;
   updatedAt: string;
@@ -375,6 +376,7 @@ export interface EmailEvent {
   relatedJobTitle?: string;
   priority: 'HIGH' | 'MEDIUM' | 'LOW';
   processed: boolean;
+  read?: boolean;
 }
 
 export interface InterviewSession {

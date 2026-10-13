@@ -75,32 +75,11 @@ export const Navbar: React.FC<NavbarProps> = ({
       className="sticky top-0 z-40 flex items-center justify-between gap-3 px-3 sm:px-6 h-14 bg-white border-b border-slate-200/70"
       style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}
     >
-      {/* Upper-Left: Authenticated Profile Identity & CareerPilot Brand */}
+      {/* Upper-Left: CareerPilot Brand Logo only */}
       <div className="flex items-center gap-3 shrink-0">
-        {/* User Identity Pill (Prominent authenticated user identity) */}
-        <button
-          type="button"
-          onClick={() => onNavigate('career')}
-          className="flex items-center gap-2.5 p-1 pe-3 hover:bg-slate-50 border border-transparent hover:border-slate-200 rounded-2xl transition-all cursor-pointer group text-start"
-          title={isAr ? 'عرض الملف الشخصي والإعدادات' : 'View Profile & Settings'}
-        >
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white flex items-center justify-center font-bold text-xs shadow-xs group-hover:scale-105 transition-transform">
-            {userInitials}
-          </div>
-          <div className="hidden sm:flex flex-col leading-tight max-w-[130px] md:max-w-[160px]">
-            <span className="text-xs font-bold text-slate-900 truncate group-hover:text-blue-600 transition-colors">
-              {displayName}
-            </span>
-            <span className="text-[10px] text-slate-500 truncate capitalize font-medium">
-              {displayRole}
-            </span>
-          </div>
-        </button>
-
-        <div className="hidden md:block h-5 w-px bg-slate-200" />
-
         {/* Brand Logo & Name */}
         <button
+          type="button"
           onClick={() => onNavigate('dashboard')}
           className="flex items-center gap-2 shrink-0 cursor-pointer"
           title="CareerPilot AI Dashboard"
@@ -110,7 +89,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             alt="CareerPilot AI"
             className="w-7 h-7 rounded-lg object-contain border border-slate-100 shadow-2xs"
           />
-          <div className="hidden lg:flex flex-col leading-none">
+          <div className="hidden sm:flex flex-col leading-none">
             <span className="text-xs font-black text-slate-900 tracking-tight">CareerPilot</span>
             <span className="text-[9px] font-bold text-blue-600 tracking-wider uppercase">AI</span>
           </div>
@@ -246,6 +225,26 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           )}
         </div>
+
+        {/* User Identity Pill (Authenticated user identity — top-right) */}
+        <button
+          type="button"
+          onClick={() => onNavigate('career')}
+          className="flex items-center gap-2 p-1 pe-2.5 hover:bg-slate-50 border border-transparent hover:border-slate-200 rounded-2xl transition-all cursor-pointer group text-start"
+          title={isAr ? 'عرض الملف الشخصي والإعدادات' : 'View Profile & Settings'}
+        >
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white flex items-center justify-center font-bold text-xs shadow-xs group-hover:scale-105 transition-transform shrink-0">
+            {userInitials}
+          </div>
+          <div className="hidden sm:flex flex-col leading-tight max-w-[130px] md:max-w-[160px]">
+            <span className="text-xs font-bold text-slate-900 truncate group-hover:text-blue-600 transition-colors">
+              {displayName}
+            </span>
+            <span className="text-[10px] text-slate-500 truncate capitalize font-medium">
+              {displayRole}
+            </span>
+          </div>
+        </button>
 
         {/* Logout Button */}
         {onLogout && (

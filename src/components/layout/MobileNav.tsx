@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import {
   LayoutDashboard,
   FileText,
@@ -133,42 +134,58 @@ export const MobileNav: React.FC<MobileNavProps> = ({
   return (
     <>
       {/* Bottom Sticky Mobile Navigation Bar */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-neutral-200 px-3 py-1.5 flex items-center justify-around shadow-lg">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#0D1117]/95 backdrop-blur-md border-t border-neutral-200 dark:border-slate-800 px-3 py-1.5 flex items-center justify-around shadow-lg">
         {bottomItems.map((item) => {
           const Icon = item.icon;
           const isActive = currentTab === item.id;
           return (
-            <button
+            <motion.button
               key={item.id}
+              type="button"
               onClick={() => onNavigate(item.id)}
-              className={`flex flex-col items-center gap-1 p-1.5 rounded-lg transition-colors ${
-                isActive ? 'text-neutral-900 font-bold' : 'text-neutral-500 hover:text-neutral-900'
+              whileTap={{ scale: 0.9 }}
+              transition={{ type: 'spring', stiffness: 500, damping: 25 }}
+              className={`flex flex-col items-center gap-1 p-1.5 rounded-xl transition-colors relative cursor-pointer ${
+                isActive
+                  ? 'text-[#2563EB] dark:text-blue-400 font-bold'
+                  : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-slate-200'
               }`}
             >
+              {isActive && (
+                <motion.span
+                  layoutId="mobileNavActivePill"
+                  className="absolute inset-0 bg-[#EEF4FF] dark:bg-blue-950/40 rounded-xl -z-10 border border-[#2563EB]/15 dark:border-blue-500/20"
+                  transition={{ type: 'spring', stiffness: 450, damping: 30 }}
+                />
+              )}
               <div
-                className={`p-1 rounded-md ${
-                  isActive ? 'bg-neutral-900 text-white' : 'text-neutral-500'
+                className={`p-1 rounded-md transition-colors ${
+                  isActive
+                    ? 'bg-[#2563EB] text-white shadow-2xs'
+                    : 'text-neutral-500'
                 }`}
               >
                 <Icon className="w-4 h-4" />
               </div>
               <span className="text-[10px] leading-none">{item.label}</span>
-            </button>
+            </motion.button>
           );
         })}
 
         {/* More / Menu Drawer Toggle */}
-        <button
+        <motion.button
+          type="button"
           onClick={() => setDrawerOpen(true)}
-          className={`flex flex-col items-center gap-1 p-1.5 rounded-lg text-neutral-500 hover:text-neutral-900 transition-colors ${
-            drawerOpen ? 'text-neutral-900 font-bold' : ''
+          whileTap={{ scale: 0.9 }}
+          className={`flex flex-col items-center gap-1 p-1.5 rounded-xl text-neutral-500 hover:text-neutral-900 dark:hover:text-slate-200 transition-colors cursor-pointer ${
+            drawerOpen ? 'text-neutral-900 dark:text-white font-bold' : ''
           }`}
         >
           <div className="p-1 rounded-md text-neutral-500">
             <Menu className="w-4 h-4" />
           </div>
           <span className="text-[10px] leading-none">{isAr ? 'المزيد' : 'More'}</span>
-        </button>
+        </motion.button>
       </nav>
 
       {/* Slide-over Mobile Drawer */}

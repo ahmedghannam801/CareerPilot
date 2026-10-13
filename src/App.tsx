@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Navbar } from './components/layout/Navbar.js';
 import { Sidebar } from './components/layout/Sidebar.js';
 import { NavigationRail } from './components/layout/NavigationRail.js';
@@ -582,14 +583,30 @@ export default function App() {
     subject: string;
     sender: string;
     snippet: string;
+    id?: string;
   }) => {
     const res = await api.classifyEmail(data);
-    setEmailEvents((prev) => [res.event, ...prev]);
+    setEmailEvents((prev) => {
+      const idx = prev.findIndex((e) => (data.id && e.id === data.id) || e.subject === data.subject);
+      if (idx >= 0) {
+        const copy = [...prev];
+        copy[idx] = { ...copy[idx], ...res.event, processed: true, read: true };
+        return copy;
+      }
+      return [{ ...res.event, processed: true, read: true }, ...prev];
+    });
     const appsRes = await api.getApplications();
     setApplications(appsRes.applications);
     const tlRes = await api.getTimeline();
     setTimeline(tlRes.timeline);
     return res;
+  };
+
+  const handleMarkEmailRead = async (id: string) => {
+    await api.markEmailRead(id);
+    setEmailEvents((prev) =>
+      prev.map((e) => (e.id === id ? { ...e, read: !e.read, processed: true } : e))
+    );
   };
 
   const handleStartInterview = async (data: {
@@ -764,19 +781,29 @@ export default function App() {
           lang={lang}
           onToggleLang={handleToggleLang}
           onLogout={handleLogout}
+          profile={profile}
           metrics={{
             applicationsCount: applications.length,
             projectsCount: projects.length,
             coursesCount: courses.length,
-            emailEventsCount: emailEvents.length,
+            emailEventsCount: emailEvents.filter((e) => !e.read && !e.processed).length,
             readinessScore: profile.readiness?.overallScore,
           }}
         />
 
         {/* Central Workspace Viewport */}
         <main className="flex-1 p-4 sm:p-6 lg:p-7 overflow-y-auto max-w-5xl mx-auto w-full">
-          {currentTab === 'dashboard' && (
-            <DashboardView
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={currentTab}
+              initial={{ opacity: 0, y: 8, filter: 'blur(3px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, y: -6, filter: 'blur(3px)' }}
+              transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+              className="w-full"
+            >
+              {currentTab === 'dashboard' && (
+                <DashboardView
               profile={profile}
               opportunities={opportunities}
               applications={applications}
@@ -887,6 +914,7 @@ export default function App() {
               emailEvents={emailEvents}
               emailStatus={emailStatus}
               onClassifyEmail={handleClassifyEmail}
+              onMarkEmailRead={handleMarkEmailRead}
               lang={lang}
             />
           )}
@@ -964,6 +992,8 @@ export default function App() {
               </div>
             </div>
           )}
+            </motion.div>
+          </AnimatePresence>
         </main>
 
         {/* Adaptive Contextual Right Panel (Desktop) */}
@@ -1059,7 +1089,7 @@ export default function App() {
           applicationsCount: applications.length,
           projectsCount: projects.length,
           coursesCount: courses.length,
-          emailEventsCount: emailEvents.length,
+          emailEventsCount: emailEvents.filter((e) => !e.read && !e.processed).length,
           readinessScore: profile.readiness?.overallScore,
         }}
       />

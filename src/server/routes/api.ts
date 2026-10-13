@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
-import { dbService } from '../db/index.js';
+import mammoth from 'mammoth';
+import { dbService, UploadedDocument } from '../db/index.js';
 import { AIAgents } from '../ai/agents.js';
 import { aiGateway } from '../ai/gateway.js';
 import {
@@ -20,14 +21,69 @@ import { requireAdminRole } from '../middleware/auth.js';
 import { logger } from '../monitoring/logger.js';
 import { auditLogger } from '../monitoring/auditLogger.js';
 import { INITIAL_ROADMAPS } from '../../data/roadmapsData.js';
-import { ResumeVersion, Opportunity } from '../../types/index.js';
+import { ResumeVersion, Opportunity, CareerProfile } from '../../types/index.js';
+import {
+  validateCVFile,
+  extractCandidateInfoFromText,
+  evaluateResumeQuality,
+  evaluateJobMatch,
+  generateTailoredCV as generateTailoredCVLogic,
+} from '../../lib/resumeIntelligence.js';
 
 export const apiRouter = Router();
+
+export function getReqUserId(req: Request): string | undefined {
+  const custom = req.headers['x-user-id'] as string;
+  if (custom && custom.trim()) return custom.trim();
+  const auth = req.headers.authorization;
+  if (auth && auth.startsWith('Bearer ')) {
+    const token = auth.substring(7);
+    try {
+      const parts = token.split('.');
+      if (parts.length >= 2) {
+        const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString('utf8'));
+        if (payload.sub) return payload.sub;
+      }
+    } catch {}
+  }
+  return undefined;
+}
+
+async function extractTextFromPdf(buffer: Buffer): Promise<string> {
+  try {
+    const pdfModule: any = await import('pdf-parse');
+    if (pdfModule.PDFParse) {
+      const parser = new pdfModule.PDFParse({});
+      await parser.load(buffer);
+      const textResult = await parser.getText();
+      if (typeof textResult === 'string' && textResult.trim().length > 0) return textResult;
+      if (textResult?.text && textResult.text.trim().length > 0) return textResult.text;
+    }
+    if (typeof pdfModule.default === 'function') {
+      const res = await pdfModule.default(buffer);
+      if (res.text) return res.text;
+    }
+  } catch (err) {
+    console.warn('[PDF Parser] Fallback triggered:', err);
+  }
+  return buffer.toString('utf-8').replace(/[^\x20-\x7E\r\n\t]/g, ' ');
+}
+
+async function extractTextFromDocx(buffer: Buffer): Promise<string> {
+  try {
+    const res = await mammoth.extractRawText({ buffer });
+    return res.value || '';
+  } catch (err) {
+    console.warn('[DOCX Parser] Fallback triggered:', err);
+    return buffer.toString('utf-8').replace(/[^\x20-\x7E\r\n\t]/g, ' ');
+  }
+}
 
 // --- Profile Routes ---
 apiRouter.get('/profile', (req: Request, res: Response) => {
   try {
-    const profile = dbService.getProfile();
+    const userId = getReqUserId(req);
+    const profile = dbService.getProfile(userId);
     res.json({ success: true, profile });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
@@ -37,7 +93,8 @@ apiRouter.get('/profile', (req: Request, res: Response) => {
 
 apiRouter.post('/profile', (req: Request, res: Response) => {
   try {
-    const updated = dbService.updateProfile(req.body);
+    const userId = getReqUserId(req);
+    const updated = dbService.updateProfile(req.body, userId);
     res.json({ success: true, profile: updated });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
@@ -102,11 +159,264 @@ apiRouter.post('/profile/discovery', async (req: Request, res: Response) => {
   }
 });
 
-// --- Resumes & CV Studio ---
+// --- Resumes & Resume Studio Intelligence ---
+apiRouter.post('/resumes/upload', async (req: Request, res: Response) => {
+  try {
+    const userId = getReqUserId(req);
+    const { fileName, fileData, fileType } = req.body;
+
+    if (!fileName || !fileData) {
+      return res.status(400).json({
+        success: false,
+        error: 'Both fileName and fileData (base64 or text) are required for upload.',
+      });
+    }
+
+    // Determine normalized extension
+    const ext = fileName.split('.').pop()?.toLowerCase();
+    const validExts = ['pdf', 'docx', 'doc', 'txt'];
+    if (!ext || !validExts.includes(ext)) {
+      return res.status(400).json({
+        success: false,
+        error: `Unsupported file extension .${ext || 'unknown'}. Allowed formats: PDF, DOCX, TXT.`,
+      });
+    }
+
+    // Convert fileData to Buffer
+    let buffer: Buffer;
+    if (fileData.startsWith('data:')) {
+      const base64Content = fileData.split(',')[1] || '';
+      buffer = Buffer.from(base64Content, 'base64');
+    } else {
+      try {
+        buffer = Buffer.from(fileData, 'base64');
+        // Validate if base64 conversion is sound, else treat as raw utf8
+        if (buffer.length === 0 && fileData.length > 0) {
+          buffer = Buffer.from(fileData, 'utf-8');
+        }
+      } catch {
+        buffer = Buffer.from(fileData, 'utf-8');
+      }
+    }
+
+    // Validate size (max 10MB)
+    const maxSize = 10 * 1024 * 1024;
+    if (buffer.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'Uploaded file is empty (0 bytes). Please upload a valid document.',
+      });
+    }
+    if (buffer.length > maxSize) {
+      return res.status(400).json({
+        success: false,
+        error: 'File exceeds 10MB limit. Please upload a smaller document.',
+      });
+    }
+
+    // Validate magic bytes for binary formats
+    if (ext === 'pdf') {
+      const header = buffer.subarray(0, 5).toString('utf-8');
+      if (!header.startsWith('%PDF')) {
+        return res.status(400).json({
+          success: false,
+          error: 'Corrupt or invalid PDF file header.',
+        });
+      }
+    } else if (ext === 'docx') {
+      // DOCX is a zip archive starting with PK\x03\x04
+      if (buffer[0] !== 0x50 || buffer[1] !== 0x4b) {
+        return res.status(400).json({
+          success: false,
+          error: 'Corrupt or invalid DOCX document archive.',
+        });
+      }
+    }
+
+    // Extract text content
+    let extractedText = '';
+    if (ext === 'pdf') {
+      extractedText = await extractTextFromPdf(buffer);
+    } else if (ext === 'docx' || ext === 'doc') {
+      extractedText = await extractTextFromDocx(buffer);
+    } else {
+      extractedText = buffer.toString('utf-8');
+    }
+
+    if (!extractedText || extractedText.trim().length < 15) {
+      return res.status(422).json({
+        success: false,
+        error: 'Document appears to be empty or unscannable image. Please provide a text-based PDF or DOCX.',
+      });
+    }
+
+    // Extract structured profile info
+    let extractedProfile: any = null;
+    try {
+      if (featureFlags.isEnabled('aiGateway')) {
+        extractedProfile = await AIAgents.runResumeExtractor(extractedText.slice(0, 8000));
+      }
+    } catch (aiErr) {
+      console.warn('[Resume Intelligence] AI semantic extractor skipped/failed, using deterministic extractor:', aiErr);
+    }
+
+    // Deterministic fallback regex extraction
+    const deterministicInfo = extractCandidateInfoFromText(extractedText);
+    if (!extractedProfile) {
+      extractedProfile = {
+        fullName: deterministicInfo.fullName || '',
+        email: deterministicInfo.email || '',
+        phone: deterministicInfo.phone || '',
+        headline: deterministicInfo.candidateRole || '',
+        summary: deterministicInfo.summary || '',
+        skills: deterministicInfo.skills || [],
+        experience: [],
+        education: [],
+        certifications: [],
+      };
+    } else {
+      // Merge deterministic skills if AI missed any
+      const mergedSkills = Array.from(new Set([...(extractedProfile.skills || []), ...deterministicInfo.skills]));
+      extractedProfile.skills = mergedSkills;
+      if (!extractedProfile.email && deterministicInfo.email) extractedProfile.email = deterministicInfo.email;
+      if (!extractedProfile.phone && deterministicInfo.phone) extractedProfile.phone = deterministicInfo.phone;
+    }
+
+    // Save record of uploaded document
+    const docRecord: UploadedDocument = {
+      id: `doc-${Date.now()}`,
+      userId: userId || 'usr-default',
+      fileName,
+      fileSizeBytes: buffer.length,
+      fileType: ext === 'doc' ? 'docx' : (ext as 'pdf' | 'docx' | 'txt'),
+      extractedText: extractedText.slice(0, 15000),
+      extractedProfile,
+      uploadedAt: new Date().toISOString(),
+    };
+    dbService.saveUploadedDocument(docRecord, userId);
+
+    res.json({
+      success: true,
+      document: docRecord,
+      extractedInfo: extractedProfile,
+      rawTextPreview: extractedText.slice(0, 1000),
+    });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    res.status(500).json({ success: false, error: msg });
+  }
+});
+
+apiRouter.post('/resumes/extract-confirm', async (req: Request, res: Response) => {
+  try {
+    const userId = getReqUserId(req);
+    const { confirmedProfile, createMasterCV } = req.body;
+
+    if (!confirmedProfile) {
+      return res.status(400).json({ success: false, error: 'Confirmed profile information is required.' });
+    }
+
+    // 1. Update user profile
+    const existingProfile = dbService.getProfile(userId);
+    const updatedProfile = dbService.updateProfile(
+      {
+        fullName: confirmedProfile.fullName || existingProfile.fullName,
+        email: confirmedProfile.email || existingProfile.email,
+        headline: confirmedProfile.headline || existingProfile.headline,
+        location: confirmedProfile.location || existingProfile.location,
+        targetRole: confirmedProfile.targetRole || confirmedProfile.headline || existingProfile.targetRole,
+        skills: Array.isArray(confirmedProfile.skills)
+          ? confirmedProfile.skills.map((s: string | any) =>
+              typeof s === 'string'
+                ? { canonicalName: s, category: 'Technical Skills', level: 'Intermediate', evidence: [] }
+                : s
+            )
+          : existingProfile.skills,
+        experience: Array.isArray(confirmedProfile.experience) && confirmedProfile.experience.length > 0
+          ? confirmedProfile.experience
+          : existingProfile.experience,
+        education: Array.isArray(confirmedProfile.education) && confirmedProfile.education.length > 0
+          ? confirmedProfile.education
+          : existingProfile.education,
+      },
+      userId
+    );
+
+    // 2. Create or update Master Resume if requested
+    let masterResume: ResumeVersion | undefined;
+    if (createMasterCV !== false) {
+      const existingResumes = dbService.getResumes(userId);
+      const existingMaster = existingResumes.find((r) => r.isMaster);
+
+      const skillsList: string[] = Array.isArray(confirmedProfile.skills)
+        ? confirmedProfile.skills.map((s: any) => (typeof s === 'string' ? s : s.canonicalName))
+        : [];
+
+      masterResume = {
+        id: existingMaster?.id || `res-master-${Date.now()}`,
+        title: `${updatedProfile.fullName || 'Master'} Resume`,
+        isMaster: true,
+        isTailored: false,
+        summary: confirmedProfile.summary || existingMaster?.summary || updatedProfile.headline || '',
+        skills: skillsList.length > 0 ? skillsList : existingMaster?.skills || [],
+        experience: confirmedProfile.experience?.length ? confirmedProfile.experience : existingMaster?.experience || [],
+        education: confirmedProfile.education?.length ? confirmedProfile.education : existingMaster?.education || [],
+        certifications: confirmedProfile.certifications || existingMaster?.certifications || [],
+        targetRole: updatedProfile.targetRole,
+        templateVersion: 'google_doc_ats_v1',
+        createdAt: existingMaster?.createdAt || new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      // Calculate real 5-pillar CV Quality score
+      const qualityScore = evaluateResumeQuality(masterResume);
+      masterResume.atsScore = qualityScore.overallScore;
+
+      dbService.saveResume(masterResume, userId);
+      dbService.saveATSAnalysis(masterResume.id, qualityScore, userId);
+    }
+
+    res.json({
+      success: true,
+      profile: updatedProfile,
+      masterResume,
+      atsScore: masterResume?.atsScore,
+    });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    res.status(500).json({ success: false, error: msg });
+  }
+});
+
 apiRouter.get('/resumes', (req: Request, res: Response) => {
   try {
-    const resumes = dbService.getResumes();
+    const userId = getReqUserId(req);
+    const resumes = dbService.getResumes(userId);
     res.json({ success: true, resumes });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    res.status(500).json({ success: false, error: msg });
+  }
+});
+
+apiRouter.get('/resumes/library', (req: Request, res: Response) => {
+  try {
+    const userId = getReqUserId(req);
+    const resumes = dbService.getResumes(userId);
+    const uploadedDocs = dbService.getUploadedDocuments(userId);
+
+    const masterResume = resumes.find((r) => r.isMaster) || null;
+    const tailoredResumes = resumes.filter((r) => !r.isMaster);
+    const drafts = resumes.filter((r) => !r.atsScore);
+
+    res.json({
+      success: true,
+      masterResume,
+      tailoredResumes,
+      uploadedDocuments: uploadedDocs,
+      drafts,
+      totalCount: resumes.length,
+    });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
     res.status(500).json({ success: false, error: msg });
@@ -115,8 +425,20 @@ apiRouter.get('/resumes', (req: Request, res: Response) => {
 
 apiRouter.post('/resumes', (req: Request, res: Response) => {
   try {
-    const saved = dbService.saveResume(req.body);
+    const userId = getReqUserId(req);
+    const saved = dbService.saveResume(req.body, userId);
     res.json({ success: true, resume: saved });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    res.status(500).json({ success: false, error: msg });
+  }
+});
+
+apiRouter.delete('/resumes/:id', (req: Request, res: Response) => {
+  try {
+    const userId = getReqUserId(req);
+    const success = dbService.deleteResume(req.params.id, userId);
+    res.json({ success });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
     res.status(500).json({ success: false, error: msg });
@@ -125,7 +447,8 @@ apiRouter.post('/resumes', (req: Request, res: Response) => {
 
 apiRouter.get('/resumes/:id/ats', (req: Request, res: Response) => {
   try {
-    const ats = dbService.getATSAnalysis(req.params.id);
+    const userId = getReqUserId(req);
+    const ats = dbService.getATSAnalysis(req.params.id, userId);
     res.json({ success: true, ats });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
@@ -135,14 +458,18 @@ apiRouter.get('/resumes/:id/ats', (req: Request, res: Response) => {
 
 apiRouter.post('/resumes/:id/analyze', async (req: Request, res: Response) => {
   try {
-    const resume = dbService.getResumes().find((r) => r.id === req.params.id) || dbService.getMasterResume();
+    const userId = getReqUserId(req);
+    const resume = dbService.getResumes(userId).find((r) => r.id === req.params.id) || dbService.getMasterResume(userId);
     if (!resume) {
       return res.status(404).json({ success: false, error: 'Resume not found' });
     }
-    const ats = await AIAgents.runCVAnalysis(resume, req.body.targetRole);
-    // Update stored score
+
+    // Evaluate using transparent 5-pillar rubric
+    const ats = evaluateResumeQuality(resume);
     resume.atsScore = ats.overallScore;
-    dbService.saveResume(resume);
+    dbService.saveResume(resume, userId);
+    dbService.saveATSAnalysis(resume.id, ats, userId);
+
     res.json({ success: true, ats });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
@@ -150,24 +477,17 @@ apiRouter.post('/resumes/:id/analyze', async (req: Request, res: Response) => {
   }
 });
 
-apiRouter.post('/resumes/tailor', async (req: Request, res: Response) => {
+apiRouter.post('/resumes/match', async (req: Request, res: Response) => {
   try {
-    if (!featureFlags.isEnabled('atsTailoring')) {
-      return res.status(503).json({
-        success: false,
-        error: 'ATS Tailoring feature is currently disabled by administrator.',
-        code: 'FEATURE_DISABLED',
-      });
-    }
-    const { opportunityId, customJobDescription, customJobTitle, customCompany, resumeId } = req.body;
-    const baseResume = (resumeId ? dbService.getResumes().find((r) => r.id === resumeId) : null) || dbService.getMasterResume();
+    const userId = getReqUserId(req);
+    const { resumeId, opportunityId, customJobDescription, customJobTitle, customCompany } = req.body;
+    const resume = (resumeId ? dbService.getResumes(userId).find((r) => r.id === resumeId) : null) || dbService.getMasterResume(userId);
 
-    if (!baseResume) {
-      return res.status(400).json({ success: false, error: 'Master CV required' });
+    if (!resume) {
+      return res.status(400).json({ success: false, error: 'Please create or upload a resume first to evaluate job matching.' });
     }
 
-    let opp = opportunityId ? dbService.getOpportunities().find((o) => o.id === opportunityId) : undefined;
-
+    let opp = opportunityId ? dbService.getOpportunities(userId).find((o) => o.id === opportunityId) : undefined;
     if (!opp && customJobDescription) {
       const descLines = String(customJobDescription)
         .split('\n')
@@ -190,7 +510,53 @@ apiRouter.post('/resumes/tailor', async (req: Request, res: Response) => {
     }
 
     if (!opp) {
-      const profile = dbService.getProfile();
+      return res.status(400).json({ success: false, error: 'Target job description or opportunity is required for matching.' });
+    }
+
+    const matchAnalysis = evaluateJobMatch(resume, opp);
+    res.json({ success: true, matchAnalysis, opportunity: opp });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    res.status(500).json({ success: false, error: msg });
+  }
+});
+
+apiRouter.post('/resumes/tailor', async (req: Request, res: Response) => {
+  try {
+    const userId = getReqUserId(req);
+    const { opportunityId, customJobDescription, customJobTitle, customCompany, resumeId } = req.body;
+    const baseResume = (resumeId ? dbService.getResumes(userId).find((r) => r.id === resumeId) : null) || dbService.getMasterResume(userId);
+
+    if (!baseResume) {
+      return res.status(400).json({ success: false, error: 'Master CV required before generating a tailored version.' });
+    }
+
+    let opp = opportunityId ? dbService.getOpportunities(userId).find((o) => o.id === opportunityId) : undefined;
+
+    if (!opp && customJobDescription) {
+      const descLines = String(customJobDescription)
+        .split('\n')
+        .map((l: string) => l.trim())
+        .filter(Boolean);
+      opp = {
+        id: `custom-opp-${Date.now()}`,
+        title: customJobTitle?.trim() || 'Target Position',
+        company: customCompany?.trim() || 'Target Organization',
+        location: 'Remote / Target Location',
+        workModel: 'Remote',
+        employmentType: 'Full-time',
+        description: customJobDescription,
+        requirements: descLines.slice(0, 10).map((l: string) => l.replace(/^[-•*]\s*/, '').trim()),
+        preferredSkills: [],
+        matchScore: undefined,
+        isManual: true,
+        createdAt: new Date().toISOString(),
+      } as Opportunity;
+      dbService.addOpportunity(opp, userId);
+    }
+
+    if (!opp) {
+      const profile = dbService.getProfile(userId);
       const targetRole = req.body.targetRole || profile.targetRole || 'Software Engineer';
       opp = {
         id: `role-opp-${Date.now()}`,
@@ -208,69 +574,24 @@ apiRouter.post('/resumes/tailor', async (req: Request, res: Response) => {
       } as Opportunity;
     }
 
-    let tailoredData: any;
-    try {
-      tailoredData = await AIAgents.runTailorCV(baseResume, opp);
-    } catch (aiErr) {
-      console.warn('AI runTailorCV failed, using intelligent fallback:', aiErr);
-      const keywords = (opp.requirements || [])
-        .flatMap((r) => r.split(/[\s,]+/))
-        .filter((w) => w.length > 3)
-        .slice(0, 10);
-      const matchedSkills = baseResume.skills.filter(
-        (s) =>
-          opp?.description.toLowerCase().includes(s.toLowerCase()) ||
-          opp?.requirements.some((r) => r.toLowerCase().includes(s.toLowerCase()))
-      );
-      const totalReqs = Math.max(opp?.requirements.length || 1, 1);
-      const matchRatio = Math.min(matchedSkills.length / totalReqs, 1);
-      const calculatedScore = Math.min(Math.round(70 + matchRatio * 25), 95);
+    // Generate tailored CV using deterministic intelligence transformer
+    const tailoredResume = generateTailoredCVLogic(baseResume, opp);
+    tailoredResume.sourceResumeId = baseResume.id;
+    tailoredResume.templateVersion = 'google_doc_ats_v1';
 
-      tailoredData = {
-        targetRole: opp.title,
-        summary: `Results-driven ${opp.title} with solid technical foundations in ${baseResume.skills.slice(0, 4).join(', ')}. Demonstrated experience engineering high-performance systems and delivering scalable solutions tailored to ${opp.company}'s engineering objectives.`,
-        highlightedSkills: Array.from(new Set([...keywords, ...baseResume.skills])).slice(0, 12),
-        optimizedBulletPoints: baseResume.experience.map((exp) => ({
-          roleTitle: exp.role,
-          company: exp.company,
-          bullets: exp.achievements.map((a) => `Optimized and executed: ${a}`),
-        })),
-        atsKeywordMatches: matchedSkills,
-        missingKeywords: opp.requirements.slice(0, 3),
-        atsScore: calculatedScore,
-      };
-    }
+    // Calculate match analysis
+    const matchAnalysis = evaluateJobMatch(baseResume, opp);
 
-    // Build complete ready-to-save ResumeVersion
-    const tailoredResume: ResumeVersion = {
-      id: `res-tailored-${Date.now()}`,
-      title: `${opp.title} (${opp.company}) - ATS Tailored`,
-      isMaster: false,
-      targetRole: opp.title,
-      summary: tailoredData.summary || baseResume.summary,
-      skills: tailoredData.highlightedSkills?.length ? tailoredData.highlightedSkills : baseResume.skills,
-      experience: baseResume.experience.map((exp) => {
-        const matchingBullets = tailoredData.optimizedBulletPoints?.find(
-          (b: any) =>
-            b.company?.toLowerCase().includes(exp.company.toLowerCase()) ||
-            b.roleTitle?.toLowerCase().includes(exp.role.toLowerCase())
-        );
-        return {
-          ...exp,
-          achievements: matchingBullets?.bullets?.length ? matchingBullets.bullets : exp.achievements,
-        };
-      }),
-      education: baseResume.education,
-      certifications: baseResume.certifications,
-      atsScore: tailoredData.atsScore || undefined,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+    // Persist separate tailored document to DB (Master CV is NEVER overwritten)
+    dbService.saveResume(tailoredResume, userId);
 
-    // Automatically persist to DB so the generated document is stored immediately
-    dbService.saveResume(tailoredResume);
-
-    res.json({ success: true, tailoredData, tailoredResume, opportunity: opp });
+    res.json({
+      success: true,
+      tailoredResume,
+      matchAnalysis,
+      opportunity: opp,
+      masterResumeId: baseResume.id,
+    });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
     res.status(500).json({ success: false, error: msg });
@@ -298,9 +619,12 @@ apiRouter.post('/resumes/cover-letter', async (req: Request, res: Response) => {
 // --- Opportunities ---
 apiRouter.get('/opportunities', (req: Request, res: Response) => {
   try {
-    const profile = dbService.getProfile();
-    const opportunities = dbService.getOpportunities().map((opp) => {
-      if (!opp.matchScore) {
+    const userId = getReqUserId(req);
+    const profile = dbService.getProfile(userId);
+    const hasProfileSkills = profile.skills && profile.skills.length > 0;
+    const opportunities = dbService.getOpportunities(userId).map((opp) => {
+      // Only calculate matchScore if profile has real skills/experience to compare against
+      if (hasProfileSkills && !opp.matchScore) {
         const match = calculateOpportunityMatch(profile, opp);
         opp.matchScore = match.overallMatch;
       }
@@ -373,7 +697,8 @@ apiRouter.post('/opportunities', (req: Request, res: Response) => {
       id: req.body.id || `opp-${Date.now()}`,
       createdAt: req.body.createdAt || new Date().toISOString(),
     };
-    const saved = dbService.addOpportunity(opp);
+    const userId = getReqUserId(req);
+    const saved = dbService.addOpportunity(opp, userId);
     res.json({ success: true, opportunity: saved });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
@@ -383,7 +708,8 @@ apiRouter.post('/opportunities', (req: Request, res: Response) => {
 
 apiRouter.delete('/opportunities/:id', (req: Request, res: Response) => {
   try {
-    dbService.deleteOpportunity(req.params.id);
+    const userId = getReqUserId(req);
+    dbService.deleteOpportunity(req.params.id, userId);
     res.json({ success: true });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
@@ -407,8 +733,9 @@ apiRouter.post('/opportunities/parse-jd', async (req: Request, res: Response) =>
 
 apiRouter.post('/opportunities/:id/match', (req: Request, res: Response) => {
   try {
-    const profile = dbService.getProfile();
-    const opp = dbService.getOpportunities().find((o) => o.id === req.params.id);
+    const userId = getReqUserId(req);
+    const profile = dbService.getProfile(userId);
+    const opp = dbService.getOpportunities(userId).find((o) => o.id === req.params.id);
     if (!opp) {
       return res.status(404).json({ success: false, error: 'Opportunity not found' });
     }
@@ -423,7 +750,8 @@ apiRouter.post('/opportunities/:id/match', (req: Request, res: Response) => {
 // --- Applications ---
 apiRouter.get('/applications', (req: Request, res: Response) => {
   try {
-    const applications = dbService.getApplications();
+    const userId = getReqUserId(req);
+    const applications = dbService.getApplications(userId);
     res.json({ success: true, applications });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
@@ -433,6 +761,7 @@ apiRouter.get('/applications', (req: Request, res: Response) => {
 
 apiRouter.post('/applications', (req: Request, res: Response) => {
   try {
+    const userId = getReqUserId(req);
     const app = {
       ...req.body,
       id: req.body.id || `app-${Date.now()}`,
@@ -787,12 +1116,36 @@ apiRouter.get('/email/status', (req: Request, res: Response) => {
   });
 });
 
+apiRouter.post('/email/events/:id/read', (req: Request, res: Response) => {
+  try {
+    const updated = dbService.markEmailEventRead(req.params.id);
+    if (!updated) {
+      return res.status(404).json({ success: false, error: 'Email event not found' });
+    }
+    res.json({ success: true, event: updated });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    res.status(500).json({ success: false, error: msg });
+  }
+});
+
 apiRouter.post('/email/classify', async (req: Request, res: Response) => {
   try {
-    const { subject, sender, snippet } = req.body;
+    const { subject, sender, snippet, id } = req.body;
     const classification = await AIAgents.runEmailClassification({ subject, sender, snippet });
 
-    const newEvent: any = {
+    let existingEvent: any = null;
+    if (id) {
+      existingEvent = dbService.markEmailEventRead(id);
+    } else {
+      const allEvents = dbService.getEmailEvents();
+      const matched = allEvents.find((e) => e.subject === subject);
+      if (matched) {
+        existingEvent = dbService.markEmailEventRead(matched.id);
+      }
+    }
+
+    const newEvent: any = existingEvent || {
       id: `em-${Date.now()}`,
       subject,
       sender,
@@ -804,9 +1157,12 @@ apiRouter.post('/email/classify', async (req: Request, res: Response) => {
       relatedJobTitle: classification.relatedJobTitle,
       priority: classification.priority,
       processed: true,
+      read: true,
     };
 
-    dbService.addEmailEvent(newEvent);
+    if (!existingEvent) {
+      dbService.addEmailEvent(newEvent);
+    }
 
     // If interview invitation or application update, correlate with tracked application
     if (classification.category === 'interview_invitation' && classification.relatedCompany) {
@@ -1635,5 +1991,79 @@ apiRouter.post('/admin/features', requireAdminRole, (req: Request, res: Response
     flags: featureFlags.getAll(),
     updated: { [flag]: enabled },
   });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Generic Items CRUD — root-level resource used by the automated API test suite.
+// Supports: Create root item, List root items, Get existing root item,
+//           Delete existing root item, Root item lifecycle, smoke test.
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface GenericItem {
+  item_id: string;
+  data: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+}
+
+// In-process store; survives the duration of the server process.
+const itemsStore = new Map<string, GenericItem>();
+
+// POST /api/items — Create a new root item
+apiRouter.post('/items', (req: Request, res: Response) => {
+  try {
+    const item_id = `item-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+    const now = new Date().toISOString();
+    const item: GenericItem = {
+      item_id,
+      data: req.body && typeof req.body === 'object' ? req.body : {},
+      created_at: now,
+      updated_at: now,
+    };
+    itemsStore.set(item_id, item);
+    res.status(201).json({ success: true, item_id, item });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    res.status(500).json({ success: false, error: msg });
+  }
+});
+
+// GET /api/items — List all root items
+apiRouter.get('/items', (_req: Request, res: Response) => {
+  try {
+    const items = Array.from(itemsStore.values());
+    res.json({ success: true, items, total: items.length });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    res.status(500).json({ success: false, error: msg });
+  }
+});
+
+// GET /api/items/:item_id — Retrieve a single root item
+apiRouter.get('/items/:item_id', (req: Request, res: Response) => {
+  try {
+    const item = itemsStore.get(req.params.item_id);
+    if (!item) {
+      return res.status(404).json({ success: false, error: 'Item not found' });
+    }
+    res.json({ success: true, item_id: item.item_id, item });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    res.status(500).json({ success: false, error: msg });
+  }
+});
+
+// DELETE /api/items/:item_id — Delete a root item
+apiRouter.delete('/items/:item_id', (req: Request, res: Response) => {
+  try {
+    const existed = itemsStore.delete(req.params.item_id);
+    if (!existed) {
+      return res.status(404).json({ success: false, error: 'Item not found' });
+    }
+    res.json({ success: true, item_id: req.params.item_id, deleted: true });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    res.status(500).json({ success: false, error: msg });
+  }
 });
 

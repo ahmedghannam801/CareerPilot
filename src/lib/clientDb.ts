@@ -246,22 +246,42 @@ class ClientDatabaseService {
     return resume;
   }
 
+  deleteResume(id: string): boolean {
+    this.state.resumes = this.state.resumes.filter((r) => r.id !== id);
+    delete this.state.atsAnalysis[id];
+    this.persist();
+    return true;
+  }
+
   getATSAnalysis(resumeId: string): ATSAnalysis {
     if (this.state.atsAnalysis[resumeId]) {
       return this.state.atsAnalysis[resumeId];
     }
+    const resume = this.state.resumes.find((r) => r.id === resumeId);
+    if (resume) {
+      // Import evaluateResumeQuality logic
+      const analysis: ATSAnalysis = {
+        overallScore: resume.atsScore || 0,
+        strengths: resume.atsScore ? ['Structured CV formatting detected'] : [],
+        weaknesses: resume.atsScore ? [] : ['Resume has not been analyzed yet'],
+        recommendations: resume.atsScore ? [] : ['Click Analyze to audit resume quality'],
+        missingKeywords: [],
+        formattingScore: resume.atsScore ? 85 : 0,
+        relevanceScore: resume.atsScore || 0,
+        impactScore: resume.atsScore || 0,
+      };
+      this.state.atsAnalysis[resumeId] = analysis;
+      return analysis;
+    }
     return {
-      overallScore: 88,
-      strengths: [
-        'Clear metric-driven accomplishments (e.g. reduced p95 latency by 78%)',
-        'Standard ATS-compliant hierarchy and typography',
-      ],
-      weaknesses: ['Consider tailoring bullet points to emphasize cloud infrastructure'],
-      recommendations: ['Emphasize Kubernetes and distributed cache experience'],
-      missingKeywords: ['Kubernetes', 'GraphQL Federation'],
-      formattingScore: 95,
-      relevanceScore: 92,
-      impactScore: 86,
+      overallScore: 0,
+      strengths: [],
+      weaknesses: ['Resume not found or not analyzed yet.'],
+      recommendations: ['Upload or create your CV to get your score.'],
+      missingKeywords: [],
+      formattingScore: 0,
+      relevanceScore: 0,
+      impactScore: 0,
     };
   }
 

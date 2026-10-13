@@ -15,6 +15,11 @@ import {
   Layers,
   Send,
   Zap,
+  Upload,
+  Plus,
+  FileText,
+  Target,
+  BarChart3,
 } from 'lucide-react';
 import {
   CareerProfile,
@@ -61,12 +66,26 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const targetRole = profile.targetRole || 'Software Engineer';
   const firstName = profile.fullName ? profile.fullName.split(' ')[0] : (isAr ? 'صديقي' : 'Friend');
 
-  // Compute "The Next Move" dynamically from real state
+  // Real user state calculations (Strictly Zero Hallucination)
   const hasMasterCV = resumes.length > 0;
   const analyzedResumes = resumes.filter((r) => r.atsScore !== undefined && r.atsScore !== null);
   const bestATS = analyzedResumes.length > 0 ? Math.max(...analyzedResumes.map((r) => r.atsScore!)) : null;
   const pendingProjects = projects.filter((p) => p.status === 'in_progress' || p.status === 'available');
   const topOpportunity = opportunities[0];
+
+  // Deterministic profile completion (0-100%)
+  const profileCompletion = Math.min(
+    100,
+    (profile.fullName?.trim() ? 15 : 0) +
+    (profile.email?.trim() ? 15 : 0) +
+    (profile.targetRole?.trim() ? 15 : 0) +
+    (profile.headline?.trim() ? 15 : 0) +
+    ((profile.skills && profile.skills.length >= 3) ? 15 : (profile.skills && profile.skills.length > 0) ? 5 : 0) +
+    (((profile.experience && profile.experience.length > 0) || (profile.education && profile.education.length > 0)) ? 25 : 0)
+  );
+
+  const readinessScore = profile.readiness?.overallScore ?? 0;
+  const matchOpportunity = opportunities.find((o) => o.matchScore !== undefined && o.matchScore !== null);
 
   let nextMove = {
     titleAr: `تخصيص السيرة الذاتية لوظيفة ${topOpportunity?.title || targetRole}`,
@@ -175,6 +194,232 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         <div className="flex items-center gap-2 text-xs font-semibold text-[#64748B] shrink-0">
           <Clock className="w-3.5 h-3.5 text-[#2563EB]" />
           <span>{isAr ? 'اليوم: خطوة ذات أولوية' : 'Today: One High-Impact Move'}</span>
+        </div>
+      </div>
+
+      {/* Three Authentic Scores & Profile Completion Indicator (Strictly Zero Hallucination) */}
+      <div className="bg-white border border-[#E4EAF2] rounded-2xl p-5 sm:p-6 shadow-xs space-y-5">
+        {/* Profile Completion Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#EDF2F7]">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-[#0B1F3A]">
+                {isAr ? 'اكتمال الملف المهني' : 'Profile Completion'}
+              </span>
+              <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
+                profileCompletion === 100
+                  ? 'bg-emerald-50 text-emerald-700'
+                  : 'bg-blue-50 text-blue-700'
+              }`}>
+                {profileCompletion}%
+              </span>
+            </div>
+            <p className="text-[11.5px] text-[#64748B] mt-0.5">
+              {profileCompletion === 100
+                ? (isAr ? 'ملفك مكتمل ومستعد لمطابقة الوظائف بدقة.' : 'Your profile is complete for high-accuracy job matching.')
+                : (isAr ? 'أكمل معلوماتك المهنية لحساب نقاط الجاهزية بدقة متناهية.' : 'Complete your verified details to compute precision career readiness.')}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="w-32 sm:w-44 bg-slate-100 rounded-full h-2 overflow-hidden">
+              <div
+                className="bg-[#2563EB] h-2 rounded-full transition-all duration-500"
+                style={{ width: `${profileCompletion}%` }}
+              />
+            </div>
+            {profileCompletion < 100 && (
+              <button
+                type="button"
+                onClick={() => onNavigate('career')}
+                className="text-xs font-bold text-[#2563EB] hover:underline cursor-pointer shrink-0"
+              >
+                {isAr ? 'إكمال الملف' : 'Update Profile'}
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* 3 Distinct Assessment Types */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Pillar 1: CV Quality Score */}
+          <div className="p-4 rounded-xl border border-[#E4EAF2] bg-[#FAFBFC] flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between text-xs font-bold text-[#64748B] mb-2">
+                <span className="flex items-center gap-1.5">
+                  <FileText className="w-3.5 h-3.5 text-[#2563EB]" />
+                  {isAr ? 'جودة السيرة الذاتية (CV)' : 'CV Quality Score'}
+                </span>
+                <span className="text-[10px] text-[#94A3B8]">ATS Audit</span>
+              </div>
+
+              {bestATS !== null ? (
+                <div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl font-black text-[#0B1F3A]">{bestATS}%</span>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                      bestATS >= 80 ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'
+                    }`}>
+                      {bestATS >= 80 ? (isAr ? 'ممتاز' : 'Optimized') : (isAr ? 'بحاجة لتحسين' : 'Needs Review')}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-[#64748B] mt-1">
+                    {isAr
+                      ? 'مبني على تدقيق 5 محاور: البنية، التأثير، الكلمات المفتاحية، المهارات، والصياغة.'
+                      : 'Audited across 5 pillars: Structure, Impact, Keywords, Skills, and Readability.'}
+                  </p>
+                </div>
+              ) : (
+                <div>
+                  <div className="text-sm font-bold text-[#64748B]">
+                    {resumes.length > 0 ? (isAr ? 'في انتظار التحليل' : 'Pending Analysis') : (isAr ? 'لم تُرفع سيرة بعد' : 'No CV Uploaded')}
+                  </div>
+                  <p className="text-[11px] text-[#94A3B8] mt-1">
+                    {isAr
+                      ? 'ارفع أو أنشئ سيرتك الذاتية لتحليلها وحساب تقييم الـ ATS الحقيقي.'
+                      : 'Upload and analyze your CV to get your score.'}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-[#EDF2F7]">
+              {bestATS !== null ? (
+                <button
+                  type="button"
+                  onClick={() => onNavigate('cv')}
+                  className="w-full py-1.5 text-xs font-bold text-[#2563EB] hover:bg-[#EEF4FF] rounded-lg transition-colors cursor-pointer text-center"
+                >
+                  {isAr ? 'مراجعة الملاحظات والتحسينات' : 'Review Suggestions & Studio'}
+                </button>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => onNavigate('cv')}
+                    className="flex-1 py-1.5 bg-[#2563EB] text-white text-xs font-bold rounded-lg hover:bg-[#1D4ED8] transition-colors cursor-pointer flex items-center justify-center gap-1 shadow-xs"
+                  >
+                    <Upload className="w-3 h-3" />
+                    <span>{isAr ? 'رفع سيرة' : 'Upload CV'}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onNavigate('cv')}
+                    className="flex-1 py-1.5 bg-white border border-[#E4EAF2] text-[#0B1F3A] text-xs font-bold rounded-lg hover:bg-slate-50 transition-colors cursor-pointer flex items-center justify-center gap-1"
+                  >
+                    <Plus className="w-3 h-3" />
+                    <span>{isAr ? 'إنشاء سيرة' : 'Create CV'}</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Pillar 2: Career Readiness Score */}
+          <div className="p-4 rounded-xl border border-[#E4EAF2] bg-[#FAFBFC] flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between text-xs font-bold text-[#64748B] mb-2">
+                <span className="flex items-center gap-1.5">
+                  <TrendingUp className="w-3.5 h-3.5 text-[#1683F8]" />
+                  {isAr ? 'جاهزية المسار المهني' : 'Career Readiness'}
+                </span>
+                <span className="text-[10px] text-[#94A3B8]">Overall</span>
+              </div>
+
+              {readinessScore > 0 ? (
+                <div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl font-black text-[#0B1F3A]">{readinessScore}%</span>
+                    <span className="text-[10px] font-bold bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">
+                      {targetRole}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-[#64748B] mt-1">
+                    {isAr
+                      ? 'تقييم شامل يجمع المهارات الموثقة، المشاريع المنجزة، والخبرات المؤكدة.'
+                      : 'Comprehensive rating combining verified skills, projects, and interview readiness.'}
+                  </p>
+                </div>
+              ) : (
+                <div>
+                  <div className="text-sm font-bold text-[#64748B]">0%</div>
+                  <p className="text-[11px] text-[#94A3B8] mt-1">
+                    {isAr
+                      ? 'أكمل إعداد ملفك وأنجز مشروعاً عملياً لتفعيل مؤشر الجاهزية المهنية.'
+                      : 'Complete your profile and evidence to calculate readiness.'}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-[#EDF2F7]">
+              <button
+                type="button"
+                onClick={() => onNavigate('career')}
+                className="w-full py-1.5 text-xs font-bold text-[#2563EB] hover:bg-[#EEF4FF] rounded-lg transition-colors cursor-pointer text-center"
+              >
+                {isAr ? 'عرض تفاصيل الجاهزية' : 'View Readiness Breakdown'}
+              </button>
+            </div>
+          </div>
+
+          {/* Pillar 3: Target Job Match Score */}
+          <div className="p-4 rounded-xl border border-[#E4EAF2] bg-[#FAFBFC] flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between text-xs font-bold text-[#64748B] mb-2">
+                <span className="flex items-center gap-1.5">
+                  <Target className="w-3.5 h-3.5 text-[#15803D]" />
+                  {isAr ? 'تطابق الوظيفة المستهدفة' : 'Job Match Score'}
+                </span>
+                <span className="text-[10px] text-[#94A3B8]">Role-Specific</span>
+              </div>
+
+              {matchOpportunity && matchOpportunity.matchScore != null ? (
+                <div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl font-black text-[#15803D]">{matchOpportunity.matchScore}%</span>
+                    <span className="text-[10px] font-bold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full truncate max-w-[120px]">
+                      {matchOpportunity.company}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-[#64748B] mt-1 truncate">
+                    {matchOpportunity.title}
+                  </p>
+                </div>
+              ) : (
+                <div>
+                  <div className="text-sm font-bold text-[#64748B]">
+                    {isAr ? 'لم يُقارن بعد' : 'Not Compared Yet'}
+                  </div>
+                  <p className="text-[11px] text-[#94A3B8] mt-1">
+                    {isAr
+                      ? 'اختر فرصة وظيفية لمطابقتها مع سيرتك واستخراج الكلمات الناقصة.'
+                      : 'Select a target job to calculate precise semantic match.'}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-[#EDF2F7]">
+              {matchOpportunity ? (
+                <button
+                  type="button"
+                  onClick={() => onSelectOpportunity(matchOpportunity)}
+                  className="w-full py-1.5 text-xs font-bold text-[#15803D] hover:bg-emerald-50 rounded-lg transition-colors cursor-pointer text-center"
+                >
+                  {isAr ? 'تخصيص السيرة لهذه الوظيفة' : 'Tailor CV for this Job'}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => onNavigate('opportunities')}
+                  className="w-full py-1.5 text-xs font-bold text-[#2563EB] hover:bg-[#EEF4FF] rounded-lg transition-colors cursor-pointer text-center"
+                >
+                  {isAr ? 'استكشف الوظائف المتاحة' : 'Discover Opportunities'}
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
