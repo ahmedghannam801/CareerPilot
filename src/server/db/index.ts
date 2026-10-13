@@ -52,7 +52,7 @@ function getInitialSeed(): DatabaseState {
   const profile: CareerProfile = {
     id: 'usr-default',
     fullName: 'Mohamed Ghnnam',
-    email: 'mohamedghnnam801@gmail.com',
+    email: 'candidate@careerpilot.ai',
     headline: 'Full-Stack Software Engineer & AI Systems Architect',
     location: 'London, UK / Remote',
     careerStatus: 'experienced_professional',

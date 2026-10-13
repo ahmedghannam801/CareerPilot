@@ -14,7 +14,7 @@ const rapidApiKey = process.env.RAPIDAPI_KEY || process.env.JSEARCH_RAPIDAPI_KEY
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_ANON_KEY;
 
-console.log(`[1] GEMINI_API_KEY:         ${geminiKey ? ' Configured (' + geminiKey.slice(0, 8) + '...)' : ' Missing'}`);
+console.log(`[1] GEMINI_API_KEY:         ${geminiKey ? ' Configured (Valid)' : ' Missing'}`);
 console.log(`[2] LINKEDIN_CLIENT_ID:     ${linkedinClientId ? ' Configured (' + linkedinClientId + ')' : ' Missing'}`);
 console.log(`[3] LINKEDIN_CLIENT_SECRET: ${linkedinClientSecret ? ' Configured (Length: ' + linkedinClientSecret.length + ')' : ' Missing'}`);
 console.log(`[4] LINKEDIN_REDIRECT_URI:  ${linkedinRedirectUri ? ' ' + linkedinRedirectUri : ' Not set (defaults to http://localhost:3000/api/auth/linkedin/callback)'}`);
