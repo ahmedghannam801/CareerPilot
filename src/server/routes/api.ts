@@ -1250,10 +1250,9 @@ apiRouter.post('/supabase/sync', async (req: Request, res: Response) => {
 // iNeeded / RapidAPI — Live Jobs & Training (max 14 days fresh)
 // ─────────────────────────────────────────────────────────────────────────────
 
-const RAPID_KEY =
-  process.env.RAPIDAPI_KEY ||
-  process.env.JSEARCH_RAPIDAPI_KEY ||
-  'e7e7907c0amshbb128f9a7510aa4p13152cjsnc1ff7f8eebfc';
+// Never hard-code API keys — resolved from environment only.
+// If missing, endpoints return 503 instead of silently using a leaked key.
+const RAPID_KEY = process.env.RAPIDAPI_KEY || process.env.JSEARCH_RAPIDAPI_KEY || '';
 
 const MAX_DAYS_OLD = 14;
 
