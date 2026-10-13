@@ -15,8 +15,11 @@ import {
   Course,
 } from '../types/index.js';
 
+const API_BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+
 async function request<T>(url: string, options?: RequestInit): Promise<T> {
-  const res = await fetch(url, {
+  const finalUrl = url.startsWith('http') ? url : `${API_BASE_URL}${url}`;
+  const res = await fetch(finalUrl, {
     headers: {
       'Content-Type': 'application/json',
       ...options?.headers,
