@@ -24,11 +24,18 @@ async function startServer() {
 
   // Health check endpoint
   app.get('/health', (req, res) => {
-    res.json({
-      status: 'ok',
-      service: 'CareerPilot AI Operating System',
-      timestamp: new Date().toISOString(),
-    });
+    try {
+      res.json({
+        status: 'ok',
+        service: 'CareerPilot AI Operating System',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
+        environment: process.env.NODE_ENV || 'development',
+      });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      res.status(503).json({ status: 'error', error: msg });
+    }
   });
 
   const isProduction = process.env.NODE_ENV === 'production';
