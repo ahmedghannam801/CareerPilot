@@ -19,6 +19,7 @@ import { LinkedInSyncModal } from './components/linkedin/LinkedInSyncModal.js';
 import { CommandPaletteModal } from './components/common/CommandPaletteModal.js';
 import { FloatingAICopilot } from './components/common/FloatingAICopilot.js';
 import { MobileNav } from './components/layout/MobileNav.js';
+import { LoginPage } from './components/auth/LoginPage.js';
 import { api } from './lib/api.js';
 import { clientDb } from './lib/clientDb.js';
 import {
@@ -105,6 +106,39 @@ export default function App() {
     type: 'success' | 'error';
     message: string;
   } | null>(null);
+
+  // Auth session state
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const auth = window.localStorage.getItem('careerpilot_auth_status');
+      if (auth === 'unauthenticated') return false;
+    }
+    return true;
+  });
+
+  const handleLogin = (user?: { email: string; name: string }) => {
+    if (user && user.email) {
+      if (profile) {
+        setProfile({
+          ...profile,
+          email: user.email,
+          fullName: user.name || profile.fullName,
+        });
+      }
+    }
+    if (typeof window !== 'undefined' && window.localStorage) {
+      window.localStorage.setItem('careerpilot_auth_status', 'authenticated');
+    }
+    setIsAuthenticated(true);
+    setCurrentTab('dashboard');
+  };
+
+  const handleLogout = () => {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      window.localStorage.setItem('careerpilot_auth_status', 'unauthenticated');
+    }
+    setIsAuthenticated(false);
+  };
 
   // Navigation that syncs URL history and respects browser back/forward
   const handleNavigate = (tab: string) => {
@@ -543,6 +577,16 @@ export default function App() {
     return res;
   };
 
+  if (!isAuthenticated) {
+    return (
+      <LoginPage
+        onLogin={handleLogin}
+        lang={lang}
+        onToggleLang={handleToggleLang}
+      />
+    );
+  }
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-6 text-xs text-neutral-600">
@@ -590,6 +634,7 @@ export default function App() {
         onStartOnboarding={() => setShowOnboarding(true)}
         onOpenLinkedInSync={() => setShowLinkedInSync(true)}
         onOpenSearch={() => setShowCommandPalette(true)}
+        onLogout={handleLogout}
       />
       {/* LinkedIn OAuth Status Banner */}
       {linkedinNotification && (
@@ -623,6 +668,7 @@ export default function App() {
           onNavigate={handleNavigate}
           lang={lang}
           onToggleLang={handleToggleLang}
+          onLogout={handleLogout}
           metrics={{
             applicationsCount: applications.length,
             projectsCount: projects.length,

@@ -7,6 +7,7 @@ import {
   CheckCircle2,
   AlertCircle,
   X,
+  LogOut,
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -26,6 +27,7 @@ interface NavbarProps {
   onStartOnboarding: () => void;
   onOpenLinkedInSync?: () => void;
   onOpenSearch?: () => void;
+  onLogout?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -38,6 +40,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onStartOnboarding,
   onOpenLinkedInSync,
   onOpenSearch,
+  onLogout,
 }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const unreadCount = notifications.filter((n) => !n.read).length;
@@ -179,6 +182,18 @@ export const Navbar: React.FC<NavbarProps> = ({
           )}
         </div>
 
+        {/* Logout Button */}
+        {onLogout && (
+          <button
+            type="button"
+            onClick={onLogout}
+            title={isAr ? 'تسجيل الخروج' : 'Sign Out'}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200/80 rounded-lg transition-all cursor-pointer ms-1"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span className="hidden md:inline">{isAr ? 'تسجيل الخروج' : 'Logout'}</span>
+          </button>
+        )}
       </div>
     </header>
   );

@@ -16,6 +16,7 @@ import {
   ChevronUp,
   Globe,
   SlidersHorizontal,
+  LogOut,
 } from 'lucide-react';
 
 interface NavigationRailProps {
@@ -23,6 +24,7 @@ interface NavigationRailProps {
   onNavigate: (tab: string) => void;
   lang: 'en' | 'ar';
   onToggleLang?: () => void;
+  onLogout?: () => void;
   metrics?: {
     applicationsCount?: number;
     projectsCount?: number;
@@ -37,6 +39,7 @@ export const NavigationRail: React.FC<NavigationRailProps> = ({
   onNavigate,
   lang,
   onToggleLang,
+  onLogout,
   metrics,
 }) => {
   const isAr = lang === 'ar';
@@ -227,19 +230,32 @@ export const NavigationRail: React.FC<NavigationRailProps> = ({
           />
         </div>
 
-        {/* Settings & Language row */}
+        {/* Settings, Logout & Language row */}
         <div className="flex items-center justify-between pt-1">
-          <button
-            onClick={() => onNavigate('settings')}
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
-              currentTab === 'settings'
-                ? 'text-[#2563EB] font-bold bg-[#EEF4FF]'
-                : 'text-[#64748B] hover:text-[#17253B]'
-            }`}
-          >
-            <Settings className="w-3.5 h-3.5" />
-            <span>{isAr ? 'الإعدادات' : 'Settings'}</span>
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => onNavigate('settings')}
+              className={`flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                currentTab === 'settings'
+                  ? 'text-[#2563EB] font-bold bg-[#EEF4FF]'
+                  : 'text-[#64748B] hover:text-[#17253B]'
+              }`}
+            >
+              <Settings className="w-3.5 h-3.5" />
+              <span>{isAr ? 'الإعدادات' : 'Settings'}</span>
+            </button>
+
+            {onLogout && (
+              <button
+                type="button"
+                onClick={onLogout}
+                title={isAr ? 'تسجيل الخروج' : 'Log Out'}
+                className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
 
           {onToggleLang && (
             <button
