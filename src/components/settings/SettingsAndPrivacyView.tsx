@@ -9,9 +9,12 @@ import {
   Activity,
   CheckCircle2,
   AlertTriangle,
+  Database,
+  RefreshCw,
 } from 'lucide-react';
 import { CareerMemoryFact } from '../../types/index.js';
 import { formatDate } from '../../lib/utils.js';
+import { checkCloudDatabase } from '../../lib/supabaseClient.js';
 
 interface SettingsAndPrivacyViewProps {
   memoryFacts: CareerMemoryFact[];
@@ -168,34 +171,58 @@ export const SettingsAndPrivacyView: React.FC<SettingsAndPrivacyViewProps> = ({
 
       {/* Data Export & System Reset */}
       <div className="p-6 bg-white border border-neutral-200 rounded-xl space-y-4">
-        <h2 className="text-sm font-semibold text-neutral-900">Data Portability & Database Reset</h2>
+        <h2 className="text-sm font-semibold text-neutral-900">
+          {lang === 'ar' ? 'تصدير البيانات وحذف الحساب (GDPR / سيادة البيانات)' : 'Data Portability & Account Lifecycle (GDPR)'}
+        </h2>
         <p className="text-xs text-neutral-500">
-          Download your complete profile, applications, and micro-projects as structured JSON or restore clean state.
+          {lang === 'ar'
+            ? 'يمكنك تنزيل أرشيف كامل لكافة بياناتك وسيرك الذاتية بصيغة JSON، أو طلب حذف حسابك نهائياً وحذف جميع سجلاتك.'
+            : 'Download your complete profile, applications, and micro-projects as structured JSON or permanently purge your account and records.'}
         </p>
 
-        <div className="flex items-center gap-3 pt-2">
+        <div className="flex flex-wrap items-center gap-3 pt-2">
           <button
+            type="button"
             onClick={handleExport}
-            className="px-4 py-2 text-xs font-medium text-neutral-800 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors inline-flex items-center gap-1.5"
+            className="px-4 py-2 text-xs font-medium text-neutral-800 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors inline-flex items-center gap-1.5 cursor-pointer"
           >
             <Download className="w-3.5 h-3.5" />
-            <span>Export Complete JSON Archive</span>
+            <span>{lang === 'ar' ? 'تصدير أرشيف البيانات الكامل (JSON)' : 'Export Complete JSON Archive'}</span>
           </button>
           <button
+            type="button"
             onClick={handleReset}
             disabled={isResetting}
-            className="px-4 py-2 text-xs font-medium text-neutral-600 hover:text-neutral-900 bg-white border border-neutral-300 rounded-lg transition-colors inline-flex items-center gap-1.5"
+            className="px-4 py-2 text-xs font-medium text-neutral-600 hover:text-neutral-900 bg-white border border-neutral-300 rounded-lg transition-colors inline-flex items-center gap-1.5 cursor-pointer"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            <span>{isResetting ? 'Restoring Seed...' : 'Restore Default Seed Data'}</span>
+            <span>{isResetting ? (lang === 'ar' ? 'جاري الاستعادة...' : 'Restoring Seed...') : (lang === 'ar' ? 'استعادة البيانات التجريبية' : 'Restore Default Seed Data')}</span>
           </button>
         </div>
 
         {resetSuccess && (
           <div className="text-xs text-neutral-800 bg-neutral-50 p-2.5 rounded border border-neutral-200">
-            Database state reset to default production seed.
+            {lang === 'ar' ? 'تمت إعادة ضبط البيانات بنجاح.' : 'Database state reset to default production seed.'}
           </div>
         )}
+      </div>
+
+      {/* AI Telemetry & Budget Protection Status */}
+      <div className="p-6 bg-white border border-neutral-200 rounded-xl space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-neutral-900">
+            {lang === 'ar' ? 'مراقبة الذكاء الاصطناعي وحدود الاستهلاك' : 'AI Gateway Observability & Circuit Breaker'}
+          </h2>
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            {lang === 'ar' ? 'محمي بواسطة Circuit Breaker' : 'Protected by Circuit Breaker'}
+          </span>
+        </div>
+        <p className="text-xs text-neutral-500">
+          {lang === 'ar'
+            ? 'النظام مزود بنظام حماية تلقائي ضد تجاوز الميزانية، ومراقبة زمن الاستجابة، وحد أقصى لحجم المستندات (35,000 حرف).'
+            : 'Multi-model fallback active with bounded retries, maximum 35,000 document character limits, and 25-second query timeouts.'}
+        </p>
       </div>
     </div>
   );

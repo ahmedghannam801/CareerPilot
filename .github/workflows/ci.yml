@@ -1,0 +1,65 @@
+name: CareerPilot AI - CI & Production Quality Gate
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  quality-gate:
+    name: Production Quality & Security Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: 1. Secret Scanning Gate
+        run: |
+          echo "Scanning for hardcoded secrets in repository..."
+          # Fail if private API keys, service role keys, or database passwords are hardcoded in tracked files
+          ! grep -rnE "AQ\.[A-Za-z0-9_-]{40,}|sb_secret_[A-Za-z0-9_-]+|SUPABASE_SERVICE_ROLE_KEY=[^\"\']+" src/ || {
+            echo "::error::Hardcoded secret pattern detected in tracked source files!"
+            exit 1
+          }
+          echo "Secret scan clean ✓"
+
+      - name: 2. Type Checking & Linter
+        run: npm run lint
+
+      - name: 3. Production Vite Bundle Build
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: 4. Build Artifacts Verification
+        run: |
+          echo "Verifying compiled bundle safety..."
+          # Ensure no source map files (.map) were generated in production dist
+          test $(find dist -name "*.map" | wc -l) -eq 0 || {
+            echo "::error::Production source maps detected in dist/ output!"
+            exit 1
+          }
+          # Ensure dist/index.html was produced
+          test -f dist/index.html || {
+            echo "::error::dist/index.html is missing!"
+            exit 1
+          }
+          echo "Build artifacts verified safe ✓"
+
+      - name: 5. Dependency Vulnerability Audit
+        run: npm audit --audit-level=critical || true
+
+      - name: 6. Automated Production Quality Gate Suite
+        run: npm test

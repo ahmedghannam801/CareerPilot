@@ -275,6 +275,76 @@ const CourseRecommendationSchema = z.union([
   })),
 ]);
 
+const RoadmapGenerationSchema = z.object({
+  title: z.string(),
+  titleAr: z.string(),
+  description: z.string(),
+  descriptionAr: z.string(),
+  category: z.string().catch('Engineering & AI'),
+  difficulty: z.enum(['Beginner', 'Intermediate', 'Advanced']).catch('Intermediate'),
+  estimatedTotalHours: z.number().catch(120),
+  stages: z.array(
+    z.object({
+      id: z.string().catch(() => `stg-${Math.random().toString(36).substr(2, 6)}`),
+      title: z.string(),
+      titleAr: z.string(),
+      description: z.string(),
+      descriptionAr: z.string(),
+      orderIndex: z.number().catch(1),
+      estimatedEffort: z.string().catch('3-4 weeks'),
+      nodes: z.array(
+        z.object({
+          id: z.string().catch(() => `node-${Math.random().toString(36).substr(2, 6)}`),
+          title: z.string(),
+          titleAr: z.string().optional(),
+          description: z.string(),
+          descriptionAr: z.string().optional(),
+          category: z.string().catch('Core Concept'),
+          learningObjectives: z.array(z.string()).catch([]),
+          difficulty: z.enum(['Beginner', 'Intermediate', 'Advanced']).catch('Intermediate'),
+          orderIndex: z.number().catch(1),
+          estimatedEffort: z.string().catch('10 hours'),
+          completionCriteria: z.string().catch('Complete hands-on implementation and verification.'),
+          prerequisites: z.array(z.string()).catch([]),
+          practicalExercise: z.string().optional(),
+          resources: z
+            .array(
+              z.object({
+                id: z.string().catch(() => `res-${Math.random().toString(36).substr(2, 6)}`),
+                title: z.string(),
+                provider: z
+                  .string()
+                  .catch('Official Docs')
+                  .transform((p) => {
+                    if (['YouTube', 'Coursera', 'Official Docs', 'FreeCodeCamp', 'Microsoft Learn', 'Google', 'GitHub'].includes(p)) {
+                      return p as any;
+                    }
+                    return 'Official Docs' as const;
+                  }),
+                resourceType: z
+                  .string()
+                  .catch('documentation')
+                  .transform((t) => {
+                    if (['video', 'course', 'documentation', 'tutorial', 'interactive', 'book'].includes(t)) {
+                      return t as any;
+                    }
+                    return 'documentation' as const;
+                  }),
+                url: z.string().url().catch('https://developer.mozilla.org/'),
+                language: z.enum(['Arabic', 'English', 'Both']).catch('English'),
+                priceCategory: z.enum(['Free', 'Paid', 'Free with Paid Cert', 'Audit Free']).catch('Free'),
+                difficulty: z.enum(['Beginner', 'Intermediate', 'Advanced']).catch('Intermediate'),
+                verificationStatus: z.enum(['Verified', 'Needs Review', 'Unverified']).catch('Needs Review'),
+                description: z.string().optional(),
+              })
+            )
+            .catch([]),
+        })
+      ),
+    })
+  ),
+});
+
 export const AIAgents = {
   /**
    * 1. Career Discovery Agent
@@ -598,6 +668,43 @@ ${focusArea ? `- Specific Requested Learning Focus: ${focusArea}` : ''}
 
 Generate 3 to 4 tailored, top-tier professional courses with realistic modules and syllabus to accelerate their readiness.`,
       schema: CourseRecommendationSchema,
+    });
+  },
+
+  /**
+   * 15. Learning Roadmap Generation Agent
+   */
+  async runLearningRoadmapGenerator(
+    profile: CareerProfile,
+    targetRole: string,
+    weeklyHours = 5
+  ) {
+    const existingSkills = profile.skills.map((s) => s.canonicalName).join(', ');
+    const weaknesses = profile.dna?.weaknesses?.join(', ') || 'No critical gaps identified';
+
+    return aiGateway.generateStructured({
+      agentName: 'Learning Roadmap Agent',
+      promptVersion: 'learning_roadmap_v1',
+      systemInstruction: `You are the Lead Curriculum Architect & Learning Roadmap Designer in CareerPilot AI.
+Your mission is to generate a structured, progressive learning roadmap tailored for the candidate to become a '${targetRole}'.
+
+Strict Rules:
+1. Divide the roadmap into 4 to 5 cohesive stages (Foundations -> Fundamental Skills -> Applied Skills -> Practical Projects -> Career Readiness).
+2. Each stage must contain 2-4 concrete, highly actionable skill nodes with precise learning objectives and completion criteria.
+3. Every node MUST have realistic prerequisite dependencies (pointing to prior node IDs) without circular loops.
+4. Recommend reputable, real-world verified resources (official documentation, famous freeCodeCamp/YouTube masterclasses, Coursera programs).
+5. Output bilingual titles and descriptions (English + Arabic).
+6. Tailor the starting point: take into account candidate's existing skills (${existingSkills}) and bridge weaknesses (${weaknesses}).
+7. Plan the pacing for someone dedicating approximately ${weeklyHours} hours per week.`,
+      prompt: `Candidate Profile for Custom Learning Roadmap:
+- Candidate Target Role: ${targetRole}
+- Current Level: ${profile.dna?.currentLevel || 'Intermediate'}
+- Existing Verified Skills: ${existingSkills || 'Basic Programming'}
+- Current Weaknesses / Gaps: ${weaknesses}
+- Committed Weekly Effort: ${weeklyHours} hours/week
+
+Generate a comprehensive, production-grade learning roadmap matching the candidate's exact target trajectory.`,
+      schema: RoadmapGenerationSchema,
     });
   },
 };

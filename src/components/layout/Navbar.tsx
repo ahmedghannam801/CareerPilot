@@ -8,7 +8,10 @@ import {
   AlertCircle,
   X,
   LogOut,
+  User,
+  Settings,
 } from 'lucide-react';
+import { CareerProfile } from '../../types/index.js';
 
 interface NavbarProps {
   currentTab: string;
@@ -28,6 +31,7 @@ interface NavbarProps {
   onOpenLinkedInSync?: () => void;
   onOpenSearch?: () => void;
   onLogout?: () => void;
+  profile?: CareerProfile | null;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -41,32 +45,71 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenLinkedInSync,
   onOpenSearch,
   onLogout,
+  profile,
 }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const unreadCount = notifications.filter((n) => !n.read).length;
   const isAr = lang === 'ar';
 
+  const userInitials = profile?.fullName
+    ? profile.fullName
+        .split(' ')
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((n) => n[0].toUpperCase())
+        .join('')
+    : (profile?.email ? profile.email[0].toUpperCase() : 'U');
+
+  const displayName = profile?.fullName?.trim() || (profile?.email ? profile.email.split('@')[0] : (isAr ? 'حسابي' : 'My Account'));
+  const displayRole = profile?.targetRole || (profile?.careerStatus ? profile.careerStatus.replace('_', ' ') : (isAr ? 'الملف الشخصي' : 'Profile'));
+
   return (
     <header
       dir={isAr ? 'rtl' : 'ltr'}
-      className="sticky top-0 z-40 flex items-center justify-between gap-3 px-4 sm:px-6 h-14 bg-white border-b border-slate-200/70"
+      className="sticky top-0 z-40 flex items-center justify-between gap-3 px-3 sm:px-6 h-14 bg-white border-b border-slate-200/70"
       style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}
     >
-      {/* Brand */}
-      <button
-        onClick={() => onNavigate('dashboard')}
-        className="flex items-center gap-2.5 shrink-0 cursor-pointer"
-      >
-        <img
-          src="/logo.png"
-          alt="CareerPilot AI"
-          className="w-9 h-9 rounded-lg object-contain border border-slate-100 shadow-2xs"
-        />
-        <div className="hidden sm:flex flex-col leading-none">
-          <span className="text-sm font-bold text-slate-900 tracking-tight">CareerPilot</span>
-          <span className="text-[10px] font-semibold text-blue-600 tracking-widest uppercase">AI</span>
-        </div>
-      </button>
+      {/* Upper-Left: Authenticated Profile Identity & CareerPilot Brand */}
+      <div className="flex items-center gap-3 shrink-0">
+        {/* User Identity Pill (Prominent authenticated user identity) */}
+        <button
+          type="button"
+          onClick={() => onNavigate('career')}
+          className="flex items-center gap-2.5 p-1 pe-3 hover:bg-slate-50 border border-transparent hover:border-slate-200 rounded-2xl transition-all cursor-pointer group text-start"
+          title={isAr ? 'عرض الملف الشخصي والإعدادات' : 'View Profile & Settings'}
+        >
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white flex items-center justify-center font-bold text-xs shadow-xs group-hover:scale-105 transition-transform">
+            {userInitials}
+          </div>
+          <div className="hidden sm:flex flex-col leading-tight max-w-[130px] md:max-w-[160px]">
+            <span className="text-xs font-bold text-slate-900 truncate group-hover:text-blue-600 transition-colors">
+              {displayName}
+            </span>
+            <span className="text-[10px] text-slate-500 truncate capitalize font-medium">
+              {displayRole}
+            </span>
+          </div>
+        </button>
+
+        <div className="hidden md:block h-5 w-px bg-slate-200" />
+
+        {/* Brand Logo & Name */}
+        <button
+          onClick={() => onNavigate('dashboard')}
+          className="flex items-center gap-2 shrink-0 cursor-pointer"
+          title="CareerPilot AI Dashboard"
+        >
+          <img
+            src="/logo.png"
+            alt="CareerPilot AI"
+            className="w-7 h-7 rounded-lg object-contain border border-slate-100 shadow-2xs"
+          />
+          <div className="hidden lg:flex flex-col leading-none">
+            <span className="text-xs font-black text-slate-900 tracking-tight">CareerPilot</span>
+            <span className="text-[9px] font-bold text-blue-600 tracking-wider uppercase">AI</span>
+          </div>
+        </button>
+      </div>
 
       {/* Search Bar */}
       <button

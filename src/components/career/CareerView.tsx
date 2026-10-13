@@ -137,7 +137,7 @@ export const CareerView: React.FC<CareerViewProps> = ({
               activeTab === 'readiness' ? 'bg-white text-neutral-900 shadow-xs' : 'text-neutral-600 hover:text-neutral-900'
             }`}
           >
-            Readiness ({readiness?.overallScore ?? 84}%)
+            Readiness ({readiness?.overallScore != null ? `${readiness.overallScore}%` : '—'})
           </button>
           <button
             onClick={() => setActiveTab('skills')}

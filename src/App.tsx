@@ -11,7 +11,6 @@ import { ApplicationsTrackerView } from './components/applications/ApplicationsT
 import { MicroProjectsView } from './components/projects/MicroProjectsView.js';
 import { EmailIntelligenceView } from './components/email/EmailIntelligenceView.js';
 import { InterviewSimulatorView } from './components/interviews/InterviewSimulatorView.js';
-import { CoursesView } from './components/courses/CoursesView.js';
 import { AIAssistantView } from './components/assistant/AIAssistantView.js';
 import { SettingsAndPrivacyView } from './components/settings/SettingsAndPrivacyView.js';
 import { OnboardingModal } from './components/onboarding/OnboardingModal.js';
@@ -20,8 +19,10 @@ import { CommandPaletteModal } from './components/common/CommandPaletteModal.js'
 import { FloatingAICopilot } from './components/common/FloatingAICopilot.js';
 import { MobileNav } from './components/layout/MobileNav.js';
 import { LoginPage } from './components/auth/LoginPage.js';
+import { LearningRoadmapsView } from './components/roadmaps/LearningRoadmapsView.js';
 import { api } from './lib/api.js';
 import { clientDb } from './lib/clientDb.js';
+import { onAuthStateChange, signOut, loadProfileFromCloud, loadResumesFromCloud } from './lib/supabaseClient.js';
 import {
   CareerProfile,
   ResumeVersion,
@@ -52,6 +53,8 @@ const VALID_TABS: Record<string, string> = {
   'projects': 'projects',
   'courses': 'courses',
   'learning': 'courses',
+  'roadmap': 'courses',
+  'roadmaps': 'courses',
   'email': 'email',
   'interviews': 'interviews',
   'assistant': 'assistant',
@@ -107,37 +110,92 @@ export default function App() {
     message: string;
   } | null>(null);
 
-  // Auth session state
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      const auth = window.localStorage.getItem('careerpilot_auth_status');
-      if (auth === 'unauthenticated') return false;
-    }
-    return true;
-  });
+  // Auth session state: 'checking' | 'authenticated' | 'unauthenticated'
+  const [authState, setAuthState] = useState<'checking' | 'authenticated' | 'unauthenticated'>('checking');
+  const isAuthenticated = authState === 'authenticated';
 
-  const handleLogin = (user?: { email: string; name: string }) => {
-    if (user && user.email) {
-      if (profile) {
-        setProfile({
-          ...profile,
+  // Auth state for onboarding
+  const [authUser, setAuthUser] = useState<{ id: string; email?: string; fullName?: string } | null>(null);
+
+  // Subscribe to real Supabase auth changes (fires on page load + after OAuth redirect)
+  useEffect(() => {
+    const { data: { subscription } } = onAuthStateChange(async (_event, user, _session) => {
+      if (user) {
+        setAuthUser({ id: user.id, email: user.email, fullName: user.user_metadata?.full_name });
+        clientDb.setUserId(user.id, {
           email: user.email,
-          fullName: user.name || profile.fullName,
+          fullName: user.user_metadata?.full_name,
         });
+        setAuthState('authenticated');
+        // Attempt cloud profile load
+        const cloudProfile = await loadProfileFromCloud();
+        if (cloudProfile) {
+          clientDb.setProfile(cloudProfile);
+          setProfile(cloudProfile);
+          // Trigger onboarding if user hasn't completed it
+          if (!cloudProfile.onboardingCompleted) {
+            setShowOnboarding(true);
+          }
+        } else {
+          // New user with no cloud profile yet
+          const localProfile = clientDb.getProfile();
+          setProfile(localProfile);
+          if (!localProfile.onboardingCompleted) {
+            setShowOnboarding(true);
+          }
+        }
+        // Load cloud resumes if available
+        const cloudResumes = await loadResumesFromCloud();
+        if (cloudResumes && cloudResumes.length > 0) {
+          setResumes(cloudResumes);
+        }
+        await loadAllData();
+      } else {
+        setAuthUser(null);
+        clientDb.clearUser();
+        setAuthState('unauthenticated');
+        // Clear state to prevent cross-user contamination
+        setProfile(null);
+        setResumes([]);
+        setOpportunities([]);
+        setApplications([]);
+        setProjects([]);
+        setCourses([]);
+        setEmailEvents([]);
+        setInterviews([]);
+        setMemoryFacts([]);
+        setTimeline([]);
+        setNotifications([]);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // Called by LoginPage for demo/fallback login (Supabase handles real auth)
+  const handleLogin = (user?: { email: string; name: string }) => {
+    if (user?.email) {
+      setAuthState('authenticated');
+      loadAllData();
+      const currentProf = clientDb.getProfile();
+      if (!currentProf.onboardingCompleted) {
+        setShowOnboarding(true);
       }
     }
-    if (typeof window !== 'undefined' && window.localStorage) {
-      window.localStorage.setItem('careerpilot_auth_status', 'authenticated');
-    }
-    setIsAuthenticated(true);
     setCurrentTab('dashboard');
   };
 
-  const handleLogout = () => {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      window.localStorage.setItem('careerpilot_auth_status', 'unauthenticated');
-    }
-    setIsAuthenticated(false);
+  const handleLogout = async () => {
+    await signOut();
+    clientDb.clearUser();
+    setAuthUser(null);
+    setAuthState('unauthenticated');
+    setProfile(null);
+    setResumes([]);
+    setOpportunities([]);
+    setApplications([]);
+    setProjects([]);
+    setCourses([]);
+    setCurrentTab('dashboard');
   };
 
   // Navigation that syncs URL history and respects browser back/forward
@@ -268,8 +326,10 @@ export default function App() {
   };
 
   useEffect(() => {
-    loadAllData();
-  }, []);
+    if (authState === 'authenticated') {
+      loadAllData();
+    }
+  }, [authState]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -577,6 +637,18 @@ export default function App() {
     return res;
   };
 
+  // While Supabase resolves the initial session (e.g. after OAuth redirect) show a neutral spinner
+  if (authState === 'checking') {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <div className="text-center space-y-3">
+          <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-xs text-slate-400 font-medium">CareerPilot AI</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!isAuthenticated) {
     return (
       <LoginPage
@@ -635,6 +707,7 @@ export default function App() {
         onOpenLinkedInSync={() => setShowLinkedInSync(true)}
         onOpenSearch={() => setShowCommandPalette(true)}
         onLogout={handleLogout}
+        profile={profile}
       />
       {/* LinkedIn OAuth Status Banner */}
       {linkedinNotification && (
@@ -674,7 +747,7 @@ export default function App() {
             projectsCount: projects.length,
             coursesCount: courses.length,
             emailEventsCount: emailEvents.length,
-            readinessScore: profile.readiness?.overallScore ?? 84,
+            readinessScore: profile.readiness?.overallScore,
           }}
         />
 
@@ -779,15 +852,9 @@ export default function App() {
           )}
 
           {currentTab === 'courses' && (
-            <CoursesView
-              courses={courses}
+            <LearningRoadmapsView
               profile={profile}
-              onEnrollCourse={handleEnrollCourse}
-              onUpdateProgress={handleUpdateCourseProgress}
-              onCompleteCourse={handleCompleteCourse}
-              onAddCourse={handleAddCourse}
-              onDeleteCourse={handleDeleteCourse}
-              onRecommendCourses={handleRecommendCourses}
+              projects={projects}
               onNavigateTab={handleNavigate}
               lang={lang}
             />
@@ -893,12 +960,35 @@ export default function App() {
       <OnboardingModal
         isOpen={showOnboarding}
         onClose={() => setShowOnboarding(false)}
-        onComplete={async (data) => {
-          await handleUpdateProfile(data);
-          await handleRegenerateDNA();
-          await handleRefreshNBA();
+        onComplete={async (data, selectedRoadmapId, weeklyHours) => {
+          // 1. Save profile (syncs to Supabase automatically via clientDb)
+          await handleUpdateProfile({ ...data, onboardingCompleted: true });
+
+          // 2. Enroll into matching roadmap
+          if (selectedRoadmapId) {
+            try {
+              clientDb.enrollInRoadmap(selectedRoadmapId, weeklyHours || 5);
+            } catch (e) {
+              console.warn('[Onboarding] Roadmap enrollment warning:', e);
+            }
+          }
+
+          // 3. Generate Career DNA from real AI using new profile
+          try { await handleRegenerateDNA(); } catch { /* non-fatal */ }
+
+          // 4. Generate NBA from real AI
+          try { await handleRefreshNBA(); } catch { /* non-fatal */ }
+
+          // 5. Reload all data to refresh dashboards & journeys
+          await loadAllData();
+
+          setShowOnboarding(false);
+          handleNavigate('dashboard');
         }}
         lang={lang}
+        userId={authUser?.id}
+        userEmail={authUser?.email}
+        userFullName={authUser?.fullName}
       />
 
       {/* LinkedIn Profile & CV Sync Modal */}
@@ -944,7 +1034,7 @@ export default function App() {
           projectsCount: projects.length,
           coursesCount: courses.length,
           emailEventsCount: emailEvents.length,
-          readinessScore: profile.readiness?.overallScore ?? 84,
+          readinessScore: profile.readiness?.overallScore,
         }}
       />
     </div>

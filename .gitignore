@@ -15,3 +15,4 @@ credentials.json
 service-account*.json
 .system_generated/
 scratch/
+test-*.ts

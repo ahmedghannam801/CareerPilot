@@ -10,6 +10,8 @@ import {
 } from 'lucide-react';
 import { ResumeVersion, CareerProfile, Opportunity } from '../../types/index.js';
 
+import { exportResumeToWordDoc } from '../../lib/resumeIntelligence.js';
+
 interface ATSResumeDocumentProps {
   resume: ResumeVersion;
   profile?: CareerProfile | null;
@@ -113,14 +115,14 @@ export const ATSResumeDocument: React.FC<ATSResumeDocumentProps> = ({
   const [copied, setCopied] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
 
-  const fullName     = profile?.fullName || 'Ahmed Ibrahim';
-  const email        = profile?.email    || 'ahmedghannam801@gmail.com';
-  const location     = profile?.location || 'Tanta, Egypt (Open to Cairo & Remote)';
-  const phone        = '+20 102 705 3876';
-  const linkedin     = 'linkedin.com/in/ahmed-ebrahim2';
-  const github       = 'github.com/ahmedghannam801';
-  const portfolio    = 'ahmed-ebrahim.vercel.app';
-  const displayTitle = customJobTitle || targetOpportunity?.title || resume.targetRole || resume.title || 'Full-Stack Software Engineer';
+  const fullName     = profile?.fullName || resume.title || (isAr ? 'المرشح' : 'Candidate');
+  const email        = profile?.email    || '';
+  const location     = profile?.location || '';
+  const phone        = (profile as any)?.phone || '';
+  const linkedin     = (profile as any)?.linkedin || '';
+  const github       = (profile as any)?.github || '';
+  const portfolio    = (profile as any)?.portfolio || '';
+  const displayTitle = customJobTitle || targetOpportunity?.title || resume.targetRole || resume.title || (isAr ? 'مهندس برمجيات' : 'Software Professional');
 
   const skillCategories = (() => {
     const all = resume.skills;
@@ -319,9 +321,15 @@ export const ATSResumeDocument: React.FC<ATSResumeDocumentProps> = ({
           </a>
 
           <button type="button" onClick={handleExportPDF}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl transition-all inline-flex items-center gap-1.5 shadow-sm cursor-pointer">
+            className="px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl transition-all inline-flex items-center gap-1.5 shadow-sm cursor-pointer">
             <Download className="w-3.5 h-3.5" />
             <span>{isAr ? 'تحميل PDF' : 'Download PDF'}</span>
+          </button>
+
+          <button type="button" onClick={() => exportResumeToWordDoc(resume, profile)}
+            className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-blue-300 hover:text-white text-xs font-bold rounded-xl transition-all inline-flex items-center gap-1.5 cursor-pointer">
+            <Download className="w-3.5 h-3.5" />
+            <span>{isAr ? 'تحميل Word (DOCX)' : 'Download Word'}</span>
           </button>
 
           <button type="button" onClick={() => window.print()}

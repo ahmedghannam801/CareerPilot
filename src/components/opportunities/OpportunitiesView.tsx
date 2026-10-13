@@ -413,7 +413,7 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
           ) : (
             filteredOpps.map((opp) => {
               const isSelected = selectedOpp?.id === opp.id;
-              const matchScore = opp.matchScore ?? 85;
+              const matchScore = opp.matchScore ?? null;
               const platform = opp.sourcePlatform || 'Direct';
               const isIntern =
                 opp.employmentType === 'Internship' ||
@@ -458,9 +458,15 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
                     </div>
 
                     <div className="text-right shrink-0">
-                      <span className="text-xs font-bold font-mono tabular-nums text-neutral-900 bg-neutral-100 px-2 py-0.5 rounded">
-                        {matchScore}% Match
-                      </span>
+                      {matchScore !== null ? (
+                        <span className="text-xs font-bold font-mono tabular-nums text-neutral-900 bg-neutral-100 px-2 py-0.5 rounded">
+                          {matchScore}% Match
+                        </span>
+                      ) : (
+                        <span className="text-xs text-neutral-400 bg-neutral-50 px-2 py-0.5 rounded">
+                          {lang === 'ar' ? 'غير محلل' : 'Not analyzed'}
+                        </span>
+                      )}
                     </div>
                   </div>
 

@@ -13,7 +13,13 @@ import {
   isSupabaseConfigured,
   checkSupabaseConnection,
   syncStateToSupabase,
+  getSupabaseClient,
 } from '../db/supabase.js';
+import { featureFlags } from '../config/featureFlags.js';
+import { requireAdminRole } from '../middleware/auth.js';
+import { logger } from '../monitoring/logger.js';
+import { auditLogger } from '../monitoring/auditLogger.js';
+import { INITIAL_ROADMAPS } from '../../data/roadmapsData.js';
 import { ResumeVersion, Opportunity } from '../../types/index.js';
 
 export const apiRouter = Router();
@@ -41,6 +47,13 @@ apiRouter.post('/profile', (req: Request, res: Response) => {
 
 apiRouter.post('/profile/dna/regenerate', async (req: Request, res: Response) => {
   try {
+    if (!featureFlags.isEnabled('aiGateway')) {
+      return res.status(503).json({
+        success: false,
+        error: 'AI Gateway is currently disabled by administrator.',
+        code: 'FEATURE_DISABLED',
+      });
+    }
     const profile = dbService.getProfile();
     const dna = await AIAgents.runCareerDNA(profile);
     const updated = dbService.updateProfile({ dna });
@@ -60,6 +73,13 @@ apiRouter.post('/profile/dna/regenerate', async (req: Request, res: Response) =>
 
 apiRouter.post('/profile/nba/refresh', async (req: Request, res: Response) => {
   try {
+    if (!featureFlags.isEnabled('aiGateway')) {
+      return res.status(503).json({
+        success: false,
+        error: 'AI Gateway is currently disabled by administrator.',
+        code: 'FEATURE_DISABLED',
+      });
+    }
     const profile = dbService.getProfile();
     const nba = await AIAgents.runNextBestAction(profile);
     const updated = dbService.updateProfile({ nextBestAction: nba });
@@ -132,6 +152,13 @@ apiRouter.post('/resumes/:id/analyze', async (req: Request, res: Response) => {
 
 apiRouter.post('/resumes/tailor', async (req: Request, res: Response) => {
   try {
+    if (!featureFlags.isEnabled('atsTailoring')) {
+      return res.status(503).json({
+        success: false,
+        error: 'ATS Tailoring feature is currently disabled by administrator.',
+        code: 'FEATURE_DISABLED',
+      });
+    }
     const { opportunityId, customJobDescription, customJobTitle, customCompany, resumeId } = req.body;
     const baseResume = (resumeId ? dbService.getResumes().find((r) => r.id === resumeId) : null) || dbService.getMasterResume();
 
@@ -156,7 +183,7 @@ apiRouter.post('/resumes/tailor', async (req: Request, res: Response) => {
         description: customJobDescription,
         requirements: descLines.slice(0, 10).map((l: string) => l.replace(/^[-•*]\s*/, '').trim()),
         preferredSkills: [],
-        matchScore: 88,
+        matchScore: undefined,
         isManual: true,
         createdAt: new Date().toISOString(),
       } as Opportunity;
@@ -175,7 +202,7 @@ apiRouter.post('/resumes/tailor', async (req: Request, res: Response) => {
         description: `High-impact ${targetRole} architecting scalable systems and delivering high-value engineering outcomes.`,
         requirements: (profile.skills || []).map((s) => s.canonicalName).slice(0, 10),
         preferredSkills: [],
-        matchScore: 94,
+        matchScore: undefined,
         isManual: true,
         createdAt: new Date().toISOString(),
       } as Opportunity;
@@ -190,6 +217,15 @@ apiRouter.post('/resumes/tailor', async (req: Request, res: Response) => {
         .flatMap((r) => r.split(/[\s,]+/))
         .filter((w) => w.length > 3)
         .slice(0, 10);
+      const matchedSkills = baseResume.skills.filter(
+        (s) =>
+          opp?.description.toLowerCase().includes(s.toLowerCase()) ||
+          opp?.requirements.some((r) => r.toLowerCase().includes(s.toLowerCase()))
+      );
+      const totalReqs = Math.max(opp?.requirements.length || 1, 1);
+      const matchRatio = Math.min(matchedSkills.length / totalReqs, 1);
+      const calculatedScore = Math.min(Math.round(70 + matchRatio * 25), 95);
+
       tailoredData = {
         targetRole: opp.title,
         summary: `Results-driven ${opp.title} with solid technical foundations in ${baseResume.skills.slice(0, 4).join(', ')}. Demonstrated experience engineering high-performance systems and delivering scalable solutions tailored to ${opp.company}'s engineering objectives.`,
@@ -199,13 +235,9 @@ apiRouter.post('/resumes/tailor', async (req: Request, res: Response) => {
           company: exp.company,
           bullets: exp.achievements.map((a) => `Optimized and executed: ${a}`),
         })),
-        atsKeywordMatches: baseResume.skills.filter(
-          (s) =>
-            opp?.description.toLowerCase().includes(s.toLowerCase()) ||
-            opp?.requirements.some((r) => r.toLowerCase().includes(s.toLowerCase()))
-        ),
+        atsKeywordMatches: matchedSkills,
         missingKeywords: opp.requirements.slice(0, 3),
-        atsScore: 94,
+        atsScore: calculatedScore,
       };
     }
 
@@ -230,7 +262,7 @@ apiRouter.post('/resumes/tailor', async (req: Request, res: Response) => {
       }),
       education: baseResume.education,
       certifications: baseResume.certifications,
-      atsScore: tailoredData.atsScore || 94,
+      atsScore: tailoredData.atsScore || undefined,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -968,7 +1000,8 @@ apiRouter.post('/system/reset', (req: Request, res: Response) => {
 // --- LinkedIn Integration & CV Sync ---
 apiRouter.get('/auth/linkedin', (req: Request, res: Response) => {
   const clientId = process.env.LINKEDIN_CLIENT_ID;
-  const redirectUri = process.env.LINKEDIN_REDIRECT_URI || 'http://localhost:3000/api/auth/linkedin/callback';
+  const baseUrl = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
+  const redirectUri = process.env.LINKEDIN_REDIRECT_URI || `${baseUrl}/api/auth/linkedin/callback`;
   if (!clientId) {
     return res.status(400).send('LinkedIn Client ID is not configured.');
   }
@@ -988,7 +1021,8 @@ apiRouter.get('/auth/linkedin/callback', async (req: Request, res: Response) => 
   try {
     const clientId = process.env.LINKEDIN_CLIENT_ID;
     const clientSecret = process.env.LINKEDIN_CLIENT_SECRET;
-    const redirectUri = process.env.LINKEDIN_REDIRECT_URI || 'http://localhost:3000/api/auth/linkedin/callback';
+    const baseUrl = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
+    const redirectUri = process.env.LINKEDIN_REDIRECT_URI || `${baseUrl}/api/auth/linkedin/callback`;
 
     const tokenParams = new URLSearchParams({
       grant_type: 'authorization_code',
@@ -1006,7 +1040,7 @@ apiRouter.get('/auth/linkedin/callback', async (req: Request, res: Response) => 
 
     const tokenData = await tokenRes.json();
     if (!tokenRes.ok || !tokenData.access_token) {
-      console.error('[LinkedIn OAuth] Token exchange error:', tokenData);
+      console.error('[LinkedIn OAuth] Token exchange error:', tokenData.error || 'Authorization failed');
       return res.redirect(`/?error=${encodeURIComponent(tokenData.error_description || 'Token exchange failed')}`);
     }
 
@@ -1052,7 +1086,7 @@ apiRouter.get('/linkedin/status', (req: Request, res: Response) => {
           requiredAccount: 'LinkedIn Developer Portal account with Sign In with LinkedIn enabled',
           requiredConfiguration: 'Authorized redirect URL configured in LinkedIn Developer Portal',
           environmentVariables: ['LINKEDIN_CLIENT_ID', 'LINKEDIN_CLIENT_SECRET'],
-          redirectUri: 'http://localhost:3000/api/auth/linkedin/callback',
+          redirectUri: process.env.LINKEDIN_REDIRECT_URI || `${process.env.APP_URL || 'https://careerpilot-dic.pages.dev'}/api/auth/linkedin/callback`,
           oauthScopes: ['openid', 'profile', 'email'],
           developerAction: 'Configure LINKEDIN_CLIENT_ID and LINKEDIN_CLIENT_SECRET for direct OAuth. In the interim, use the built-in LinkedIn PDF/Text Sync Engine below.',
         },
@@ -1165,7 +1199,7 @@ apiRouter.post('/linkedin/sync-profile', async (req: Request, res: Response) => 
       education: updatedProfile.education,
       skills: updatedProfile.skills.map((s) => s.canonicalName),
       certifications: extracted.certifications || [],
-      atsScore: 86,
+      atsScore: undefined,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -1386,3 +1420,220 @@ apiRouter.get('/ineeded/status', async (req: Request, res: Response) => {
     res.json({ success: false, error: msg, keyConfigured: Boolean(RAPID_KEY) });
   }
 });
+
+// --- Privacy & Account Lifecycle (GDPR Compliance) ---
+
+// --- Learning Roadmaps Routes ---
+
+// GET /api/roadmaps
+apiRouter.get('/roadmaps', (req: Request, res: Response) => {
+  try {
+    res.json({ success: true, roadmaps: INITIAL_ROADMAPS });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    res.status(500).json({ success: false, error: msg });
+  }
+});
+
+// GET /api/roadmaps/:id
+apiRouter.get('/roadmaps/:id', (req: Request, res: Response) => {
+  try {
+    const roadmap = INITIAL_ROADMAPS.find((r) => r.id === req.params.id || r.slug === req.params.id);
+    if (!roadmap) {
+      return res.status(404).json({ success: false, error: 'Roadmap not found' });
+    }
+    res.json({ success: true, roadmap });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    res.status(500).json({ success: false, error: msg });
+  }
+});
+
+// POST /api/roadmaps/generate
+apiRouter.post('/roadmaps/generate', async (req: Request, res: Response) => {
+  try {
+    if (!featureFlags.isEnabled('aiGateway')) {
+      return res.status(503).json({
+        success: false,
+        error: 'AI Roadmap generation is currently disabled by administrator.',
+        code: 'FEATURE_DISABLED',
+      });
+    }
+    const profile = dbService.getProfile();
+    const { targetRole, weeklyHours } = req.body;
+    const roadmapData = await AIAgents.runLearningRoadmapGenerator(
+      profile,
+      targetRole || profile.targetRole || 'Full-Stack Developer',
+      weeklyHours || 5
+    );
+
+    const fullRoadmap = {
+      id: `rdm-${Date.now()}`,
+      slug: (targetRole || 'custom').toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      ...roadmapData,
+      targetRole: targetRole || profile.targetRole || 'Full-Stack Developer',
+      language: 'Both' as const,
+      publicationStatus: 'draft' as const,
+      version: '1.0',
+      tags: [targetRole || 'Engineering', 'AI Generated'],
+      source: 'AI_Draft' as const,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    res.json({ success: true, roadmap: fullRoadmap });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    res.status(500).json({ success: false, error: msg });
+  }
+});
+
+// GET /api/user/export - Authenticated full user data archive
+apiRouter.get('/user/export', async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers.authorization;
+    let userId: string | null = null;
+
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.substring(7);
+      const supabase = getSupabaseClient();
+      if (supabase) {
+        const { data: { user } } = await supabase.auth.getUser(token);
+        userId = user?.id || null;
+      }
+    }
+
+    const profile = dbService.getProfile();
+    const resumes = dbService.getResumes();
+    const opportunities = dbService.getOpportunities();
+    const applications = dbService.getApplications();
+    const interviews = dbService.getInterviews();
+    const memory = dbService.getCareerMemory();
+    const timeline = dbService.getTimeline();
+
+    res.json({
+      success: true,
+      exportTimestamp: new Date().toISOString(),
+      requestedByUserId: userId || profile.id,
+      data: {
+        profile,
+        resumes,
+        opportunities,
+        applications,
+        interviews,
+        memory,
+        timeline,
+      },
+    });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    res.status(500).json({ success: false, error: msg });
+  }
+});
+
+// POST /api/user/delete - Right to be Forgotten (Account deletion)
+apiRouter.post('/user/delete', async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers.authorization;
+    let userId: string | null = null;
+
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.substring(7);
+      const supabase = getSupabaseClient();
+      if (supabase) {
+        const { data: { user } } = await supabase.auth.getUser(token);
+        userId = user?.id || null;
+        if (userId) {
+          // Delete from cloud Supabase profiles (cascades to all user tables)
+          await supabase.from('profiles').delete().eq('id', userId);
+        }
+      }
+    }
+
+    // Reset local database state
+    dbService.resetToSeed();
+
+    res.json({
+      success: true,
+      message: 'Account and associated records successfully purged.',
+      purgedUserId: userId,
+      purgedAt: new Date().toISOString(),
+    });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    res.status(500).json({ success: false, error: msg });
+  }
+});
+
+// --- Monitoring & Operational Telemetry ---
+
+// GET /api/monitoring/metrics
+apiRouter.get('/monitoring/metrics', (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    timestamp: new Date().toISOString(),
+    metrics: logger.getSnapshot(),
+  });
+});
+
+// --- Feature Flags (Public View) ---
+
+// GET /api/features
+apiRouter.get('/features', (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    flags: featureFlags.getAll(),
+  });
+});
+
+// --- Privileged Administrative Endpoints (Protected by requireAdminRole) ---
+
+// GET /api/admin/audit-logs
+apiRouter.get('/admin/audit-logs', requireAdminRole, (req: Request, res: Response) => {
+  const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 100;
+  res.json({
+    success: true,
+    timestamp: new Date().toISOString(),
+    logs: auditLogger.getRecentLogs(limit),
+  });
+});
+
+// GET /api/admin/ai-metrics
+apiRouter.get('/admin/ai-metrics', requireAdminRole, (req: Request, res: Response) => {
+  try {
+    const metrics = aiGateway.getAggregatedMetrics();
+    res.json({
+      success: true,
+      timestamp: new Date().toISOString(),
+      metrics,
+    });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    res.status(500).json({ success: false, error: msg });
+  }
+});
+
+// POST /api/admin/features
+apiRouter.post('/admin/features', requireAdminRole, (req: Request, res: Response) => {
+  const { flag, enabled } = req.body;
+  if (!flag || typeof enabled !== 'boolean') {
+    return res.status(400).json({ success: false, error: 'Must provide valid "flag" name and boolean "enabled"' });
+  }
+  featureFlags.setFlag(flag, enabled);
+  const adminActor = (req as unknown as { adminUser?: { id: string } }).adminUser?.id || 'admin';
+  auditLogger.logEvent({
+    actorId: adminActor,
+    actorRole: 'admin',
+    action: `TOGGLE_FEATURE_${String(flag).toUpperCase()}`,
+    resourceType: 'FEATURE_FLAG',
+    resourceId: String(flag),
+    status: 'SUCCESS',
+    details: { flag, enabled },
+  });
+  res.json({
+    success: true,
+    flags: featureFlags.getAll(),
+    updated: { [flag]: enabled },
+  });
+});
+

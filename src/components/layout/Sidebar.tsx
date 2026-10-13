@@ -7,6 +7,7 @@ import {
   MessageSquare,
   GraduationCap,
   FolderGit2,
+  Compass,
   Layers,
   Settings,
   TrendingUp,
@@ -40,7 +41,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: 'opportunities', labelAr: 'الوظائف', labelEn: 'Jobs', icon: Briefcase },
   { id: 'interviews', labelAr: 'المقابلات', labelEn: 'Interviews', icon: Mic },
   { id: 'assistant', labelAr: 'المساعد الذكي', labelEn: 'AI Assistant', icon: MessageSquare, badge: 'AI' },
-  { id: 'courses', labelAr: 'الكورسات', labelEn: 'Courses', icon: GraduationCap },
+  { id: 'courses', labelAr: 'مسارات التعلم', labelEn: 'Learning Roadmaps', icon: Compass },
   { id: 'projects', labelAr: 'المشاريع', labelEn: 'Projects', icon: FolderGit2 },
   { id: 'applications', labelAr: 'تتبع التقديمات', labelEn: 'Applications', icon: Layers },
   { id: 'settings', labelAr: 'الإعدادات', labelEn: 'Settings', icon: Settings },
@@ -134,14 +135,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </span>
           </div>
           <span className="text-xs font-bold text-blue-700">
-            {metrics?.readinessScore ?? 84}%
+            {metrics?.readinessScore !== undefined && metrics?.readinessScore !== null
+              ? `${metrics.readinessScore}%`
+              : (isAr ? '—' : '—')}
           </span>
         </div>
         <div className="w-full h-1.5 bg-white/80 rounded-full overflow-hidden">
           <div
             className="h-full rounded-full transition-all duration-700"
             style={{
-              width: `${metrics?.readinessScore ?? 84}%`,
+              width: `${metrics?.readinessScore ?? 0}%`,
               background: 'linear-gradient(90deg, #4f6ef7, #22c55e)',
             }}
           />

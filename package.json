@@ -10,6 +10,7 @@
     "preview": "vite preview",
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit",
+    "test": "tsx scripts/run-quality-gate.ts && tsx scripts/test-onboarding-engine.ts",
     "deploy": "npm run build && wrangler pages deploy dist --project-name careerpilot"
   },
   "dependencies": {

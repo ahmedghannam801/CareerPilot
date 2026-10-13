@@ -294,7 +294,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
                           {job.title}
                         </span>
                         <span className="text-[11px] text-neutral-500">
-                          {job.company} · {job.workModel} · {job.matchScore ?? 85}% {isAr ? 'توافق' : 'fit'}
+                          {job.company} · {job.workModel} · {job.matchScore != null ? `${job.matchScore}% ${isAr ? 'توافق' : 'fit'}` : (isAr ? 'غير محلل' : 'Not analyzed')}
                         </span>
                       </div>
                     </div>

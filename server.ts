@@ -8,6 +8,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { apiRouter } from './src/server/routes/api.js';
 
+import { logger } from './src/server/monitoring/logger.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -15,11 +17,47 @@ async function startServer() {
   const app = express();
   const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
+  // Correlation ID & Structured Telemetry Middleware
+  app.use((req, res, next) => {
+    const correlationId =
+      (req.headers['x-correlation-id'] as string) ||
+      (req.headers['x-request-id'] as string) ||
+      `req_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+
+    res.setHeader('X-Request-ID', correlationId);
+    res.setHeader('X-Correlation-ID', correlationId);
+    const start = Date.now();
+
+    res.on('finish', () => {
+      const durationMs = Date.now() - start;
+      logger.recordRequest(durationMs, res.statusCode);
+
+      if (req.path !== '/health') {
+        const isError = res.statusCode >= 400;
+        logger.log({
+          level: isError ? (res.statusCode >= 500 ? 'error' : 'warn') : 'info',
+          event: `HTTP_${req.method}_${res.statusCode}`,
+          correlationId,
+          durationMs,
+          statusCode: res.statusCode,
+          metadata: {
+            method: req.method,
+            path: req.path,
+          },
+        });
+      }
+    });
+    next();
+  });
+
   // CORS middleware for production cross-origin deployments (e.g. Cloudflare Pages)
   app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', process.env.CORS_ORIGIN || '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader(
+      'Access-Control-Allow-Headers',
+      'Content-Type, Authorization, X-Request-ID, X-Correlation-ID, X-Admin-Key'
+    );
     if (req.method === 'OPTIONS') {
       res.sendStatus(204);
       return;
@@ -34,15 +72,21 @@ async function startServer() {
   // API router mounted under /api
   app.use('/api', apiRouter);
 
-  // Health check endpoint
-  app.get('/health', (req, res) => {
+  // Health check & Operational Telemetry endpoint
+  app.get('/health', async (req, res) => {
     try {
+      const mem = process.memoryUsage();
       res.json({
         status: 'ok',
         service: 'CareerPilot AI Operating System',
         timestamp: new Date().toISOString(),
-        uptime: process.uptime(),
+        uptimeSeconds: Math.round(process.uptime()),
         environment: process.env.NODE_ENV || 'development',
+        memory: {
+          rssMb: Math.round(mem.rss / (1024 * 1024)),
+          heapUsedMb: Math.round(mem.heapUsed / (1024 * 1024)),
+          heapTotalMb: Math.round(mem.heapTotal / (1024 * 1024)),
+        },
       });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);

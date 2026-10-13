@@ -90,8 +90,8 @@ export const FloatingAICopilot: React.FC<FloatingAICopilotProps> = ({
         {
           role: 'assistant' as const,
           text: isAr
-            ? `واجهت صعوبة في الاتصال بالمساعد: ${errText}. يرجى التأكد من تهيئة مفتاح GEMINI_API_KEY.`
-            : `Could not connect to AI Gateway: ${errText}.`,
+            ? 'واجهت صعوبة في الاتصال بالمساعد الذكي حالياً. يرجى المحاولة لاحقاً.'
+            : 'Could not connect to AI Assistant. Please try again later.',
         },
       ]);
     } finally {

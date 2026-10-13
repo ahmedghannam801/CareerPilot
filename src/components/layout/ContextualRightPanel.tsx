@@ -47,8 +47,9 @@ export const ContextualRightPanel: React.FC<ContextualRightPanelProps> = ({
 }) => {
   const isAr = lang === 'ar';
   const targetRole = profile.targetRole || 'Software Engineer';
-  const readiness = profile.readiness?.overallScore ?? 84;
-  const bestATS = Math.max(...(resumes.map((r) => r.atsScore ?? 80)), 82);
+  const readiness = profile.readiness?.overallScore ?? null;
+  const analyzedResumes = resumes.filter((r) => r.atsScore !== undefined && r.atsScore !== null);
+  const bestATS = analyzedResumes.length > 0 ? Math.max(...analyzedResumes.map((r) => r.atsScore!)) : null;
 
   return (
     <aside
@@ -61,7 +62,11 @@ export const ContextualRightPanel: React.FC<ContextualRightPanelProps> = ({
             <Target className="w-3.5 h-3.5 text-[#2563EB]" />
             {isAr ? 'الهدف المهني النشط' : 'Active Career Goal'}
           </span>
-          <span className="text-[11px] font-black text-[#17253B]">{readiness}%</span>
+          {readiness !== null ? (
+            <span className="text-[11px] font-black text-[#17253B]">{readiness}%</span>
+          ) : (
+            <span className="text-[11px] text-[#94A3B8]">{isAr ? 'لم يُحسب' : 'Not set'}</span>
+          )}
         </div>
         <div className="text-sm font-black text-[#17253B] line-clamp-1">
           {targetRole}
@@ -76,7 +81,7 @@ export const ContextualRightPanel: React.FC<ContextualRightPanelProps> = ({
         <div className="w-full h-1.5 bg-[#E4EAF2] rounded-full overflow-hidden mt-3">
           <div
             className="h-full rounded-full bg-[#2563EB] transition-all duration-500"
-            style={{ width: `${readiness}%` }}
+            style={{ width: `${readiness ?? 0}%` }}
           />
         </div>
       </div>
@@ -111,17 +116,31 @@ export const ContextualRightPanel: React.FC<ContextualRightPanelProps> = ({
               <span className="text-[11px] text-[#2563EB] font-semibold">{isAr ? 'مهم' : 'In-demand'}</span>
             </div>
             <div className="space-y-1.5">
-              {['TypeScript & React', 'System Architecture', 'LLM & AI Integration'].map((skill, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-center justify-between p-2 rounded-xl bg-[#F7F9FC] border border-[#E4EAF2] text-xs"
-                >
-                  <span className="font-medium text-[#17253B]">{skill}</span>
-                  <span className="text-[10px] font-bold text-[#15803D] bg-emerald-50 px-1.5 py-0.5 rounded-full">
-                    {idx === 0 ? '92%' : idx === 1 ? '85%' : '78%'}
-                  </span>
+              {profile.skills && profile.skills.length > 0 ? (
+                profile.skills.slice(0, 3).map((skill, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-center justify-between p-2 rounded-xl bg-[#F7F9FC] border border-[#E4EAF2] text-xs"
+                  >
+                    <span className="font-medium text-[#17253B]">
+                      {typeof skill === 'string'
+                        ? skill
+                        : ((skill as any).canonicalName || (skill as any).name || 'Skill')}
+                    </span>
+                    <span className="text-[10px] font-bold text-[#2563EB] bg-[#EEF4FF] px-1.5 py-0.5 rounded-full">
+                      {typeof skill === 'object' && skill && 'level' in skill
+                        ? (skill as any).level
+                        : isAr
+                        ? 'موثق'
+                        : 'Listed'}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <div className="text-xs text-[#94A3B8] text-center py-2">
+                  {isAr ? 'أضف مهاراتك في ملفك الشخصي' : 'Add your skills in Career Profile'}
                 </div>
-              ))}
+              )}
             </div>
           </div>
         </>
@@ -158,7 +177,10 @@ export const ContextualRightPanel: React.FC<ContextualRightPanelProps> = ({
               <span className="text-[#15803D]">✓</span> {isAr ? 'كلمات مفتاحية مطابقة لمتطلبات السوق' : 'Keyword alignment with role'}
             </li>
             <li className="flex items-center gap-1.5">
-              <span className="text-[#2563EB]">ℹ</span> {isAr ? `أفضل نتيجة ATS مسجلة: ${bestATS}%` : `Best ATS Score: ${bestATS}%`}
+              <span className="text-[#2563EB]">ℹ</span>
+              {bestATS !== null
+                ? (isAr ? `أفضل نتيجة ATS مسجلة: ${bestATS}%` : `Best ATS Score: ${bestATS}%`)
+                : (isAr ? 'لم يتم تحليل السيرة بعد' : 'Run ATS Audit to get score')}
             </li>
           </ul>
         </div>

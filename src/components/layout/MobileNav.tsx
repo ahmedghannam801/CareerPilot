@@ -28,7 +28,7 @@ interface MobileNavProps {
     applicationsCount: number;
     projectsCount: number;
     emailEventsCount: number;
-    readinessScore: number;
+    readinessScore?: number | null;
     coursesCount?: number;
   };
 }
@@ -74,7 +74,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
           id: 'career',
           label: isAr ? 'الـ DNA والجاهزية' : 'Career DNA & Readiness',
           icon: Compass,
-          badge: `${metrics?.readinessScore ?? 84}%`,
+          badge: metrics?.readinessScore != null ? `${metrics.readinessScore}%` : undefined,
         },
         { id: 'cv', label: isAr ? 'استوديو السيرة الذاتية (ATS)' : 'CV Studio & ATS', icon: FileText },
       ],
@@ -108,7 +108,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
         },
         {
           id: 'courses',
-          label: isAr ? 'الكورسات والتطوير' : 'Courses & Learning',
+          label: isAr ? 'مسارات التعلم المهني' : 'Learning Roadmaps',
           icon: GraduationCap,
           count: metrics?.coursesCount,
         },

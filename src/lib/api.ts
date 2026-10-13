@@ -13,19 +13,33 @@ import {
   CareerDNA,
   NextBestAction,
   Course,
+  LearningRoadmap,
+  UserRoadmapEnrollment,
+  RoadmapResource,
+  WeeklyLearningPlan,
+  NodeProgressStatus,
 } from '../types/index.js';
 import { clientDb } from './clientDb.js';
+import { getCurrentSession } from './supabaseClient.js';
+import { generateTailoredCV } from './resumeIntelligence.js';
 
 const API_BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 
 async function request<T>(url: string, options?: RequestInit): Promise<T> {
   const finalUrl = url.startsWith('http') ? url : `${API_BASE_URL}${url}`;
+  const session = await getCurrentSession();
+
+  const headers = new Headers(options?.headers);
+  if (!headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/json');
+  }
+  if (session?.access_token && !headers.has('Authorization')) {
+    headers.set('Authorization', `Bearer ${session.access_token}`);
+  }
+
   const res = await fetch(finalUrl, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...options?.headers,
-    },
     ...options,
+    headers,
   });
 
   if (!res.ok) {
@@ -58,25 +72,33 @@ export const api = {
   },
   regenerateDNA: async () => {
     try {
-      return await request<{ success: boolean; dna: CareerDNA; profile: CareerProfile }>(
+      const result = await request<{ success: boolean; dna: CareerDNA; profile: CareerProfile }>(
         '/api/profile/dna/regenerate',
         { method: 'POST' }
       );
+      // Persist AI result to local cache
+      if (result.dna) clientDb.setDNA(result.dna);
+      return result;
     } catch {
-      const res = clientDb.regenerateDNA();
-      return { success: true, ...res };
+      // Server unavailable — return current local profile without fabricating DNA
+      const profile = clientDb.getProfile();
+      return { success: false, dna: profile.dna!, profile };
     }
   },
   refreshNextBestAction: async () => {
     try {
-      return await request<{
+      const result = await request<{
         success: boolean;
         nextBestAction: NextBestAction;
         profile: CareerProfile;
       }>('/api/profile/nba/refresh', { method: 'POST' });
+      // Persist AI result to local cache
+      if (result.nextBestAction) clientDb.setNBA(result.nextBestAction);
+      return result;
     } catch {
-      const res = clientDb.refreshNBA();
-      return { success: true, ...res };
+      // Server unavailable — return current local profile without fabricating NBA
+      const profile = clientDb.getProfile();
+      return { success: false, nextBestAction: profile.nextBestAction!, profile };
     }
   },
   runDiscovery: async (answers: Record<string, string>) => {
@@ -170,6 +192,7 @@ export const api = {
     customJobTitle?: string;
     customCompany?: string;
     resumeId?: string;
+    targetRole?: string;
   }) => {
     try {
       return await request<{
@@ -194,39 +217,60 @@ export const api = {
         body: JSON.stringify(payload),
       });
     } catch {
-      const existing = clientDb.getResumes()[0];
-      const targetRole = payload.customJobTitle || 'Senior Full-Stack AI Engineer';
-      const tailoredResume: ResumeVersion = {
-        ...existing,
-        id: `res-tailored-${Date.now()}`,
-        title: `Tailored: ${targetRole} (${payload.customCompany || 'Direct'})`,
-        targetRole,
-        isMaster: false,
-        atsScore: 94,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
+      const allResumes = clientDb.getResumes();
+      const existing = (payload.resumeId ? allResumes.find((r) => r.id === payload.resumeId) : null) ||
+        allResumes.find((r) => r.isMaster) ||
+        allResumes[0];
+
+      const targetRole = payload.customJobTitle || payload.targetRole || 'Software Engineer';
+      const targetCompany = payload.customCompany || 'Target Employer';
+      const opp = payload.opportunityId
+        ? clientDb.getOpportunities().find((o) => o.id === payload.opportunityId) || {
+            id: payload.opportunityId,
+            title: targetRole,
+            company: targetCompany,
+            location: 'Remote',
+            workModel: 'Remote',
+            employmentType: 'Full-time',
+            description: payload.customJobDescription || `${targetRole} role at ${targetCompany}`,
+            requirements: [],
+            preferredSkills: [],
+            isManual: true,
+            createdAt: new Date().toISOString(),
+          }
+        : {
+            id: `opp-custom-${Date.now()}`,
+            title: targetRole,
+            company: targetCompany,
+            location: 'Remote',
+            workModel: 'Remote',
+            employmentType: 'Full-time',
+            description: payload.customJobDescription || `${targetRole} role at ${targetCompany}`,
+            requirements: [],
+            preferredSkills: [],
+            isManual: true,
+            createdAt: new Date().toISOString(),
+          };
+
+      const tailoredResume = generateTailoredCV(existing, opp as Opportunity);
       clientDb.saveResume(tailoredResume);
+
       return {
         success: true,
         tailoredData: {
-          targetRole,
-          summary: `High-impact Full-Stack & AI Systems Engineer tailored for ${payload.customCompany || 'Target Role'}. Specializing in robust Node.js/TypeScript backend architectures, high-performance React frontends, and reliable AI integrations.`,
-          highlightedSkills: ['TypeScript', 'Node.js', 'React', 'Distributed Systems', 'LLM Architectures'],
-          optimizedBulletPoints: [
-            {
-              roleTitle: 'Senior Full-Stack Engineer',
-              company: 'Synthetix Platforms',
-              bullets: [
-                'Engineered event-driven microservices handling 4M+ daily requests with 99.99% reliability',
-                'Reduced p95 API response times by 45% through aggressive query optimization and caching',
-              ],
-            },
-          ],
-          atsKeywordMatches: ['TypeScript', 'Full-Stack', 'Node.js', 'React', 'Microservices'],
-          atsScore: 94,
+          targetRole: tailoredResume.targetRole,
+          summary: tailoredResume.summary,
+          highlightedSkills: tailoredResume.skills.slice(0, 8),
+          optimizedBulletPoints: tailoredResume.experience.map((exp) => ({
+            roleTitle: exp.role,
+            company: exp.company,
+            bullets: exp.achievements,
+          })),
+          atsKeywordMatches: tailoredResume.skills.slice(0, 5),
+          atsScore: tailoredResume.atsScore,
         },
         tailoredResume,
+        opportunity: opp as Opportunity,
       };
     }
   },
@@ -249,17 +293,19 @@ export const api = {
       const opp = clientDb.getOpportunities().find((o) => o.id === opportunityId);
       const company = opp?.company || 'Hiring Team';
       const role = opp?.title || 'Senior Software Engineer';
+      const userProfile = clientDb.getProfile();
+      const candidateName = userProfile.fullName || 'Candidate';
       return {
         success: true,
         letter: {
           recipient: 'Hiring Manager',
           company,
-          subject: `Application for ${role} — Mohamed Ghnnam`,
-          body: `Dear Hiring Team at ${company},\n\nI am writing to express my enthusiastic interest in the ${role} position. With my deep experience engineering high-concurrency microservices and real-time AI user experiences, I am confident in delivering immediate value to your engineering team.\n\nThank you for your consideration, and I look forward to discussing how my background aligns with your roadmap.\n\nSincerely,\nMohamed Ghnnam`,
+          subject: `Application for ${role} — ${candidateName}`,
+          body: `Dear Hiring Team at ${company},\n\nI am writing to express my enthusiastic interest in the ${role} position. With my relevant professional background, strong technical foundation, and dedication to high-impact execution, I am confident in delivering immediate value to your engineering team.\n\nThank you for your consideration, and I look forward to discussing how my background aligns with your roadmap.\n\nSincerely,\n${candidateName}`,
           keyHighlights: [
-            '4M+ daily requests handled with zero downtime',
-            'Full-stack TypeScript and AI integration track record',
-            'Proven latency and performance optimizations',
+            userProfile.targetRole ? `Targeting ${userProfile.targetRole} role` : 'Strong engineering track record',
+            userProfile.skills?.length > 0 ? `Core skills: ${userProfile.skills.slice(0, 3).map((s: { canonicalName: string }) => s.canonicalName).join(', ')}` : 'Full-stack TypeScript and AI integration experience',
+            'Proven problem-solving and rapid delivery mindset',
           ],
         },
       };
@@ -829,9 +875,12 @@ export const api = {
         body: JSON.stringify({ message, history }),
       });
     } catch {
+      const prof = clientDb.getProfile();
+      const scoreText = prof.readiness?.overallScore != null ? `${prof.readiness.overallScore}%` : 'comprehensive';
+      const skillsText = prof.skills?.length ? prof.skills.slice(0, 3).map((s) => s.canonicalName).join(', ') : 'modern engineering';
       return {
         success: true,
-        reply: `I have analyzed your career profile and current goals. Your experience with TypeScript, microservices, and AI system design provides a strong competitive edge. You have 3 verified skills and 84% career readiness. Would you like me to tailor your CV for a specific opportunity or generate an interview simulation?`,
+        reply: `I have analyzed your career profile and current goals. Your experience with ${skillsText} provides a solid foundation with ${scoreText} career readiness. Would you like me to tailor your CV for a specific opportunity or generate an interview simulation?`,
       };
     }
   },
@@ -956,6 +1005,163 @@ export const api = {
       });
       const resume = clientDb.getResumes()[0];
       return { success: true, profile, resume };
+    }
+  },
+  // Privacy & GDPR
+  exportUserData: async () => {
+    try {
+      return await request<{ success: boolean; exportTimestamp: string; data: any }>('/api/user/export');
+    } catch {
+      return {
+        success: true,
+        exportTimestamp: new Date().toISOString(),
+        data: clientDb.exportData(),
+      };
+    }
+  },
+  deleteUserAccount: async () => {
+    try {
+      return await request<{ success: boolean; message: string }>('/api/user/delete', {
+        method: 'POST',
+      });
+    } catch {
+      clientDb.clearUser();
+      return { success: true, message: 'Account purged locally.' };
+    }
+  },
+  getAIMetrics: async () => {
+    try {
+      return await request<{ success: boolean; metrics: any }>('/api/admin/ai-metrics');
+    } catch {
+      return { success: false, metrics: null };
+    }
+  },
+  getFeatureFlags: async () => {
+    try {
+      return await request<{ success: boolean; flags: any }>('/api/features');
+    } catch {
+      return {
+        success: true,
+        flags: {
+          aiGateway: true,
+          jobFeeds: true,
+          voiceInterviews: true,
+          atsTailoring: true,
+          linkedinSync: true,
+        },
+      };
+    }
+  },
+
+  // Learning Roadmaps
+  getRoadmaps: async () => {
+    try {
+      const res = await request<{ success: boolean; roadmaps: LearningRoadmap[] }>('/api/roadmaps');
+      if (res.success && res.roadmaps) return res.roadmaps;
+      return clientDb.getRoadmaps();
+    } catch {
+      return clientDb.getRoadmaps();
+    }
+  },
+
+  getRoadmapById: async (id: string) => {
+    try {
+      const res = await request<{ success: boolean; roadmap: LearningRoadmap }>(`/api/roadmaps/${id}`);
+      if (res.success && res.roadmap) return res.roadmap;
+      return clientDb.getRoadmapById(id);
+    } catch {
+      return clientDb.getRoadmapById(id);
+    }
+  },
+
+  getUserEnrollments: async () => {
+    try {
+      const res = await request<{ success: boolean; enrollments: UserRoadmapEnrollment[] }>('/api/roadmaps/enrollments');
+      if (res.success && res.enrollments) return res.enrollments;
+      return clientDb.getUserEnrollments();
+    } catch {
+      return clientDb.getUserEnrollments();
+    }
+  },
+
+  enrollInRoadmap: async (roadmapId: string, weeklyHours = 5) => {
+    try {
+      const res = await request<{ success: boolean; enrollment: UserRoadmapEnrollment }>('/api/roadmaps/enroll', {
+        method: 'POST',
+        body: JSON.stringify({ roadmapId, weeklyHours }),
+      });
+      if (res.success && res.enrollment) {
+        clientDb.enrollInRoadmap(roadmapId, weeklyHours);
+        return res.enrollment;
+      }
+      return clientDb.enrollInRoadmap(roadmapId, weeklyHours);
+    } catch {
+      return clientDb.enrollInRoadmap(roadmapId, weeklyHours);
+    }
+  },
+
+  updateRoadmapNodeProgress: async (
+    enrollmentId: string,
+    nodeId: string,
+    status: NodeProgressStatus,
+    notes?: string
+  ) => {
+    try {
+      const res = await request<{ success: boolean; enrollment: UserRoadmapEnrollment }>('/api/roadmaps/progress', {
+        method: 'POST',
+        body: JSON.stringify({ enrollmentId, nodeId, status, notes }),
+      });
+      if (res.success && res.enrollment) {
+        clientDb.updateNodeProgress(enrollmentId, nodeId, status, notes);
+        return res.enrollment;
+      }
+      return clientDb.updateNodeProgress(enrollmentId, nodeId, status, notes);
+    } catch {
+      return clientDb.updateNodeProgress(enrollmentId, nodeId, status, notes);
+    }
+  },
+
+  saveRoadmapResource: (resource: RoadmapResource) => {
+    clientDb.saveResource(resource);
+  },
+
+  unsaveRoadmapResource: (resourceId: string) => {
+    clientDb.unsaveResource(resourceId);
+  },
+
+  getSavedRoadmapResources: () => {
+    return clientDb.getSavedResources();
+  },
+
+  getWeeklyLearningPlan: (enrollmentId: string) => {
+    return clientDb.getWeeklyPlan(enrollmentId);
+  },
+
+  generateWeeklyLearningPlan: (enrollmentId: string, hours = 5) => {
+    return clientDb.generateWeeklyPlan(enrollmentId, hours);
+  },
+
+  generateCustomRoadmapAI: async (targetRole: string, weeklyHours = 5) => {
+    try {
+      const res = await request<{ success: boolean; roadmap: LearningRoadmap }>('/api/roadmaps/generate', {
+        method: 'POST',
+        body: JSON.stringify({ targetRole, weeklyHours }),
+      });
+      if (res.success && res.roadmap) {
+        clientDb.addCustomRoadmap(res.roadmap);
+        return res.roadmap;
+      }
+      throw new Error('Could not generate roadmap from server');
+    } catch {
+      // Offline fallback: find closest roadmap or adapt
+      const roadmaps = clientDb.getRoadmaps();
+      const match = roadmaps.find(
+        (r) =>
+          r.targetRole.toLowerCase().includes(targetRole.toLowerCase()) ||
+          r.title.toLowerCase().includes(targetRole.toLowerCase())
+      );
+      if (match) return match;
+      return roadmaps[0];
     }
   },
 };

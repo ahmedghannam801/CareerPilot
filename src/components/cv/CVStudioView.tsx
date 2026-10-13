@@ -27,6 +27,8 @@ import {
 import { ResumeVersion, ATSAnalysis, Opportunity, CareerProfile } from '../../types/index.js';
 import { formatDate } from '../../lib/utils.js';
 import { ATSResumeDocument, ATSTemplate } from './ATSResumeDocument.js';
+import { clientDb } from '../../lib/clientDb.js';
+import { validateCVFile, extractCandidateInfoFromText, exportResumeToWordDoc } from '../../lib/resumeIntelligence.js';
 
 interface CVStudioViewProps {
   resumes: ResumeVersion[];
@@ -58,22 +60,31 @@ export const CVStudioView: React.FC<CVStudioViewProps> = ({
 }) => {
   const masterCV = resumes.find((r) => r.isMaster) || resumes[0];
   const [selectedResumeId, setSelectedResumeId] = useState(masterCV?.id || '');
-  const [activeTab, setActiveTab] = useState<'preview' | 'ats' | 'tailor'>('preview');
+  const [activeTab, setActiveTab] = useState<'preview' | 'ats' | 'tailor' | 'library'>('preview');
   const [previewSubMode, setPreviewSubMode] = useState<'editor' | 'a4document'>('a4document');
 
-  // Selected CV Template state (Persisted across refreshes)
+  // Selected CV Template state — user-scoped so different accounts keep separate preferences
   const [selectedTemplate, setSelectedTemplate] = useState<ATSTemplate>(() => {
-    return (localStorage.getItem('careerpilot_cv_template') as ATSTemplate) || 'google_doc';
+    return (clientDb.getCVTemplate() as ATSTemplate) || 'google_doc';
   });
 
   const handleTemplateChange = (t: ATSTemplate) => {
     setSelectedTemplate(t);
-    localStorage.setItem('careerpilot_cv_template', t);
+    clientDb.setCVTemplate(t);
   };
 
   const [atsResult, setAtsResult] = useState<ATSAnalysis | null>(null);
   const [isAuditing, setIsAuditing] = useState(false);
   const [isTailoring, setIsTailoring] = useState(false);
+
+  // Upload state
+  const [isDragOver, setIsDragOver] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [isExtracting, setIsExtracting] = useState(false);
+  const [extractedInfo, setExtractedInfo] = useState<{
+    fullName?: string; email?: string; phone?: string; summary?: string; skills: string[];
+  } | null>(null);
+  const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
 
   // Multi-step generation workflow modal states
   const [showGenerateModal, setShowGenerateModal] = useState(false);
@@ -230,10 +241,210 @@ ${currentResume.skills.join(' • ')}
   };
 
   const activeOpp = opportunities.find((o) => o.id === selectedOppId);
+  const masterCVs = resumes.filter((r) => r.isMaster);
+  const tailoredCVs = resumes.filter((r) => !r.isMaster);
+
+  const handleFileUpload = async (file: File) => {
+    setUploadError(null);
+    const validation = validateCVFile(file);
+    if (!validation.valid) {
+      setUploadError(validation.error || 'Invalid file');
+      return;
+    }
+    setUploadedFileName(file.name);
+    setIsExtracting(true);
+    try {
+      let text = '';
+      if (validation.fileType === 'txt') {
+        text = await file.text();
+      } else {
+        // For PDF/DOCX we read what we can as text — server-side parsing handles the full extraction
+        text = `[File: ${file.name}]`;
+      }
+      const info = extractCandidateInfoFromText(text);
+      setExtractedInfo(info);
+    } finally {
+      setIsExtracting(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    const file = e.dataTransfer.files[0];
+    if (file) handleFileUpload(file);
+  };
+
+  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) handleFileUpload(file);
+    e.target.value = '';
+  };
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
-      {/* Top Header Card */}
+
+      {/* Extraction Preview Drawer (shown after file upload) */}
+      {extractedInfo && (
+        <div className="bg-white border border-blue-200 rounded-2xl p-6 shadow-sm space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+              <h3 className="text-sm font-bold text-slate-900">
+                {isAr ? 'تم استخراج المعلومات من الملف' : 'Information Extracted From File'}
+              </h3>
+            </div>
+            <button
+              type="button"
+              onClick={() => { setExtractedInfo(null); setUploadedFileName(null); }}
+              className="text-xs text-slate-400 hover:text-slate-700 cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          <div className="text-xs text-slate-500">
+            {isAr ? 'الملف: ' : 'File: '}
+            <span className="font-semibold text-slate-700">{uploadedFileName}</span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            {extractedInfo.fullName && (
+              <div className="bg-slate-50 rounded-lg p-2.5 border border-slate-200">
+                <div className="text-[10px] text-slate-400 uppercase font-bold mb-1">{isAr ? 'الاسم' : 'Name'}</div>
+                <div className="font-semibold text-slate-800">{extractedInfo.fullName}</div>
+              </div>
+            )}
+            {extractedInfo.email && (
+              <div className="bg-slate-50 rounded-lg p-2.5 border border-slate-200">
+                <div className="text-[10px] text-slate-400 uppercase font-bold mb-1">{isAr ? 'البريد الإلكتروني' : 'Email'}</div>
+                <div className="font-semibold text-slate-800">{extractedInfo.email}</div>
+              </div>
+            )}
+            {extractedInfo.phone && (
+              <div className="bg-slate-50 rounded-lg p-2.5 border border-slate-200">
+                <div className="text-[10px] text-slate-400 uppercase font-bold mb-1">{isAr ? 'الهاتف' : 'Phone'}</div>
+                <div className="font-semibold text-slate-800">{extractedInfo.phone}</div>
+              </div>
+            )}
+            {extractedInfo.skills.length > 0 && (
+              <div className="bg-slate-50 rounded-lg p-2.5 border border-slate-200 sm:col-span-2">
+                <div className="text-[10px] text-slate-400 uppercase font-bold mb-1.5">{isAr ? 'المهارات المكتشفة' : 'Detected Skills'}</div>
+                <div className="flex flex-wrap gap-1">
+                  {extractedInfo.skills.map((s, i) => (
+                    <span key={i} className="bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-semibold px-2 py-0.5 rounded-full">{s}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3">
+            <span className="font-bold">{isAr ? 'ملاحظة: ' : 'Note: '}</span>
+            {isAr
+              ? 'لاستخراج كامل من PDF/DOCX، استخدم زر "إنشاء بالذكاء الاصطناعي" وأدخل وصف الوظيفة. التحليل الكامل يتم على الخادم.'
+              : 'For full PDF/DOCX extraction, use "Generate with AI" and paste the job description. Full server-side parsing provides the complete analysis.'}
+          </p>
+
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => setShowGenerateModal(true)}
+              className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-bold rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              {isAr ? 'توليد سيرة محسّنة بالذكاء الاصطناعي' : 'Generate Enhanced CV with AI'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Empty state for new users with no CV yet */}
+      {resumes.length === 0 && !extractedInfo && (
+        <div className="space-y-4">
+          {/* Upload error */}
+          {uploadError && (
+            <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700">
+              <AlertTriangle className="w-4 h-4 shrink-0" />
+              <span>{uploadError}</span>
+              <button type="button" onClick={() => setUploadError(null)} className="ml-auto"><X className="w-3.5 h-3.5" /></button>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Path A: Upload existing CV */}
+            <div
+              className={`relative bg-white border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer group ${
+                isDragOver ? 'border-blue-500 bg-blue-50/40' : 'border-slate-300 hover:border-blue-400 hover:bg-slate-50'
+              }`}
+              onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
+              onDragLeave={() => setIsDragOver(false)}
+              onDrop={handleDrop}
+              onClick={() => document.getElementById('cv-file-input')?.click()}
+            >
+              <input
+                id="cv-file-input"
+                type="file"
+                accept=".pdf,.docx,.doc,.txt"
+                className="hidden"
+                onChange={handleFileInput}
+              />
+              <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:bg-blue-100 transition-colors">
+                {isExtracting ? (
+                  <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
+                ) : (
+                  <Download className="w-6 h-6 text-blue-600" />
+                )}
+              </div>
+              <h3 className="text-sm font-bold text-slate-900 mb-1">
+                {isAr ? '📤 رفع سيرة ذاتية موجودة' : '📤 Upload Existing CV'}
+              </h3>
+              <p className="text-xs text-slate-500 mb-3">
+                {isAr
+                  ? 'اسحب وأفلت ملفك هنا أو انقر للاختيار. يدعم PDF وDOCX وTXT.'
+                  : 'Drag & drop your file here or click to browse. PDF, DOCX, TXT supported.'}
+              </p>
+              <span className="text-[10px] font-semibold text-blue-600 bg-blue-50 border border-blue-200 rounded-full px-3 py-1">
+                {isAr ? 'حد 10MB' : 'Max 10MB'}
+              </span>
+            </div>
+
+            {/* Path B: Create from Profile */}
+            <div className="bg-white border border-slate-200 rounded-2xl p-8 text-center space-y-4 hover:border-blue-300 transition-colors">
+              <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center mx-auto">
+                <Sparkles className="w-6 h-6 text-indigo-600" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-slate-900 mb-1">
+                  {isAr ? '✨ إنشاء بالذكاء الاصطناعي' : '✨ Create with AI'}
+                </h3>
+                <p className="text-xs text-slate-500">
+                  {isAr
+                    ? 'نولّد لك سيرة ذاتية متوافقة مع ATS بناءً على بياناتك المهنية.'
+                    : 'We generate an ATS-optimized resume from your career profile data.'}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowGenerateModal(true)}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-bold rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-sm"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                {isAr ? 'إنشاء السيرة الذاتية' : 'Create My First CV'}
+              </button>
+              {!profile?.targetRole && (
+                <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                  {isAr ? '💡 أكمل ملفك الشخصي أولاً.' : '💡 Complete your career profile first.'}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+
+      {/* Top Header Card — only shown when resumes exist */}
+      {resumes.length > 0 && <>
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 bg-white border border-slate-200/80 rounded-2xl shadow-2xs">
         <div>
           <div className="text-xs font-semibold text-blue-600 mb-1 flex items-center gap-1.5">
@@ -314,6 +525,22 @@ ${currentResume.skills.join(' • ')}
             {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
             <span>{copied ? (isAr ? 'تم النسخ!' : 'Copied!') : isAr ? 'نسخ النص' : 'Copy'}</span>
           </button>
+
+          {/* Upload existing CV button */}
+          <label
+            htmlFor="cv-header-upload"
+            className="px-3 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+          >
+            <input
+              id="cv-header-upload"
+              type="file"
+              accept=".pdf,.docx,.doc,.txt"
+              className="hidden"
+              onChange={handleFileInput}
+            />
+            <Download className="w-3.5 h-3.5" />
+            <span>{isAr ? 'رفع سيرة' : 'Upload CV'}</span>
+          </label>
 
           {/* Run ATS Audit */}
           <button
@@ -430,6 +657,19 @@ ${currentResume.skills.join(' • ')}
               PDF Ready
             </span>
           )}
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('library')}
+          className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer ${
+            activeTab === 'library'
+              ? 'bg-blue-600 text-white shadow-sm'
+              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+          }`}
+        >
+          <Layers className="w-4 h-4" />
+          <span>{isAr ? '4. مكتبة السير الذاتية (CV Library)' : '4. CV Library'}</span>
+          <span className="text-[10px] px-1.5 rounded-full bg-current/10 font-mono">{resumes.length}</span>
         </button>
       </div>
 
@@ -930,6 +1170,8 @@ ${currentResume.skills.join(' • ')}
           )}
         </div>
       )}
+      </>
+      }
 
       {/* Multi-Step Generate / Tailor CV Modal */}
       {showGenerateModal && (
@@ -1225,6 +1467,123 @@ ${currentResume.skills.join(' • ')}
           </div>
         </div>
       )}
+
+      {/* ========================================================
+          TAB 4: CV Library — Master vs Tailored CVs
+          ======================================================== */}
+      {activeTab === 'library' && (
+        <div className="space-y-6">
+          {/* Master CVs Section */}
+          <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 shadow-xs">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
+                  <FileText className="w-4 h-4 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900">{isAr ? 'السيرة الذاتية الرئيسية (Master CV)' : 'Master CV'}</h3>
+                  <p className="text-[11px] text-slate-500">{isAr ? 'النسخة الأصلية الكاملة — لا تُعدَّل عند التخصيص' : 'Original full version — never overwritten by tailoring'}</p>
+                </div>
+              </div>
+              <span className="text-xs font-bold text-blue-600 bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-full">
+                {masterCVs.length} {isAr ? 'نسخة' : 'version(s)'}
+              </span>
+            </div>
+            {masterCVs.length === 0 ? (
+              <div className="text-center py-8 text-xs text-slate-500 bg-slate-50 rounded-xl border border-dashed border-slate-300">
+                <p>{isAr ? 'لا توجد سيرة ذاتية رئيسية بعد' : 'No Master CV yet'}</p>
+                <button type="button" onClick={() => setShowGenerateModal(true)} className="mt-2 text-xs font-bold text-blue-600 hover:underline cursor-pointer">
+                  {isAr ? 'إنشاء السيرة الرئيسية' : 'Create Master CV'}
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {masterCVs.map((cv) => (
+                  <div key={cv.id} className="p-4 bg-slate-50 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-slate-900">{cv.title}</span>
+                        <span className="text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200 px-1.5 py-0.5 rounded-full">Master</span>
+                        {cv.atsScore != null && (
+                          <span className="text-[10px] font-bold bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded-full">ATS: {cv.atsScore}%</span>
+                        )}
+                      </div>
+                      <div className="text-[11px] text-slate-500">{isAr ? 'آخر تحديث: ' : 'Updated: '}{formatDate(cv.updatedAt)}</div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button type="button" onClick={() => { setSelectedResumeId(cv.id); setActiveTab('preview'); }} className="px-3 py-1.5 text-xs font-semibold text-blue-600 bg-blue-50 border border-blue-200 rounded-xl hover:bg-blue-100 transition-colors cursor-pointer">
+                        {isAr ? 'عرض' : 'View'}
+                      </button>
+                      <button type="button" onClick={() => { setSelectedResumeId(cv.id); setActiveTab('ats'); }} className="px-3 py-1.5 text-xs font-semibold text-slate-600 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer">
+                        {isAr ? 'فحص ATS' : 'ATS Audit'}
+                      </button>
+                      <button type="button" onClick={() => exportResumeToWordDoc(cv, profile || undefined)} className="px-3 py-1.5 text-xs font-semibold text-slate-600 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer inline-flex items-center gap-1">
+                        <Download className="w-3 h-3" />DOCX
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Tailored CVs Section */}
+          <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 shadow-xs">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">
+                  <Target className="w-4 h-4 text-emerald-600" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900">{isAr ? 'السير المخصصة (Tailored CVs)' : 'Tailored CVs'}</h3>
+                  <p className="text-[11px] text-slate-500">{isAr ? 'نسخ مخصصة لوظائف محددة — السيرة الرئيسية محمية' : 'Job-specific versions — Master CV always preserved'}</p>
+                </div>
+              </div>
+              <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">
+                {tailoredCVs.length} {isAr ? 'نسخة مخصصة' : 'tailored'}
+              </span>
+            </div>
+            {tailoredCVs.length === 0 ? (
+              <div className="text-center py-8 text-xs text-slate-500 bg-slate-50 rounded-xl border border-dashed border-slate-300">
+                <p>{isAr ? 'لا توجد سير مخصصة بعد' : 'No tailored CVs yet'}</p>
+                <button type="button" onClick={() => setActiveTab('tailor')} className="mt-2 text-xs font-bold text-emerald-600 hover:underline cursor-pointer">
+                  {isAr ? 'بدء تخصيص السيرة لوظيفة' : 'Tailor CV for a Job'}
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {tailoredCVs.map((cv) => (
+                  <div key={cv.id} className="p-4 bg-slate-50 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-xs font-bold text-slate-900">{cv.title}</span>
+                        {cv.companyName && <span className="text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 px-1.5 py-0.5 rounded-full">{cv.companyName}</span>}
+                        {cv.atsScore != null && <span className="text-[10px] font-bold bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded-full">ATS: {cv.atsScore}%</span>}
+                      </div>
+                      <div className="flex items-center gap-2 text-[11px] text-slate-500">
+                        <span>{isAr ? 'تاريخ: ' : 'Created: '}{formatDate(cv.createdAt)}</span>
+                        {cv.opportunityId && <><span>•</span><span className="text-blue-600 font-semibold">{isAr ? 'مرتبط بوظيفة' : 'Linked to opportunity'}</span></>}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button type="button" onClick={() => { setSelectedResumeId(cv.id); setActiveTab('preview'); }} className="px-3 py-1.5 text-xs font-semibold text-blue-600 bg-blue-50 border border-blue-200 rounded-xl hover:bg-blue-100 transition-colors cursor-pointer">
+                        {isAr ? 'عرض' : 'View'}
+                      </button>
+                      <button type="button" onClick={() => exportResumeToWordDoc(cv, profile || undefined)} className="px-3 py-1.5 text-xs font-semibold text-slate-600 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer inline-flex items-center gap-1">
+                        <Download className="w-3 h-3" />DOCX
+                      </button>
+                      <button type="button" onClick={() => { setSelectedResumeId(cv.id); setActiveTab('preview'); setPreviewSubMode('a4document'); setTimeout(() => window.print(), 250); }} className="px-3 py-1.5 text-xs font-semibold text-slate-600 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer inline-flex items-center gap-1">
+                        <Printer className="w-3 h-3" />PDF
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

@@ -73,8 +73,10 @@ export const CareerJourneyMap: React.FC<CareerJourneyMapProps> = ({
   const discoverDone = hasTargetRole && hasSkills;
 
   const hasMasterCV = Boolean(resumes.some((r) => r.isMaster) || resumes.length > 0);
-  const bestATS = Math.max(...(resumes.map((r) => r.atsScore ?? 80)), 80);
-  const prepareDone = discoverDone && hasMasterCV && bestATS >= 75;
+  const analyzedResumes = resumes.filter((r) => r.atsScore !== undefined && r.atsScore !== null);
+  const bestATS = analyzedResumes.length > 0 ? Math.max(...analyzedResumes.map((r) => r.atsScore!)) : null;
+  // Stage 2 complete when: profile ready + master CV created + (ATS analyzed and passing, OR not yet analyzed)
+  const prepareDone = discoverDone && hasMasterCV;
 
   const completedProjectsCount = projects.filter((p) => p.status === 'submitted' || p.status === 'evaluated').length;
   const completedCoursesCount = courses.filter((c) => c.enrollmentStatus === 'completed' || (c.progressPercentage ?? 0) >= 100).length;
@@ -128,9 +130,9 @@ export const CareerJourneyMap: React.FC<CareerJourneyMapProps> = ({
           ? 'current'
           : 'current'
         : 'upcoming',
-      progressPct: prepareDone ? 100 : hasMasterCV ? Math.min(bestATS, 90) : 30,
-      evidenceTextAr: hasMasterCV ? `السيرة جاهزة بنسبة توافق ATS ${bestATS}%` : 'بانتظار إنشاء أو رفع السيرة',
-      evidenceTextEn: hasMasterCV ? `Master resume active • ATS ${bestATS}%` : 'Resume creation pending',
+      progressPct: prepareDone ? 100 : hasMasterCV ? (bestATS != null ? Math.min(bestATS, 90) : 60) : 30,
+      evidenceTextAr: hasMasterCV ? (bestATS != null ? `السيرة جاهزة بنسبة توافق ATS ${bestATS}%` : 'السيرة جاهزة بانتظار التحليل') : 'بانتظار إنشاء أو رفع السيرة',
+      evidenceTextEn: hasMasterCV ? (bestATS != null ? `Master resume active • ATS ${bestATS}%` : 'Master resume active • Pending audit') : 'Resume creation pending',
       nextActionLabelAr: prepareDone ? 'تخصيص سيرة لوظيفة' : 'تحسين السيرة الذاتية',
       nextActionLabelEn: prepareDone ? 'Tailor for Job' : 'Optimize Resume',
     },

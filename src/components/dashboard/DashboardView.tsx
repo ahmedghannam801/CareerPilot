@@ -63,7 +63,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
   // Compute "The Next Move" dynamically from real state
   const hasMasterCV = resumes.length > 0;
-  const bestATS = Math.max(...(resumes.map((r) => r.atsScore ?? 80)), 80);
+  const analyzedResumes = resumes.filter((r) => r.atsScore !== undefined && r.atsScore !== null);
+  const bestATS = analyzedResumes.length > 0 ? Math.max(...analyzedResumes.map((r) => r.atsScore!)) : null;
   const pendingProjects = projects.filter((p) => p.status === 'in_progress' || p.status === 'available');
   const topOpportunity = opportunities[0];
 
@@ -99,7 +100,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       actionLabelAr: 'إعداد السيرة الذاتية',
       actionLabelEn: 'Set Up Master CV',
     };
-  } else if (pendingProjects.length > 0 && bestATS >= 85) {
+  } else if (pendingProjects.length > 0 && bestATS !== null && bestATS >= 85) {
     const proj = pendingProjects[0];
     nextMove = {
       titleAr: `إنجاز مشروع عملي: ${proj.title}`,
@@ -126,6 +127,36 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto pb-16">
+      {/* New User — Onboarding Incomplete Banner */}
+      {!profile.onboardingCompleted && (
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-6 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4" />
+              <span className="text-xs font-black uppercase tracking-wider opacity-80">
+                {isAr ? 'الإعداد الشخصي مطلوب' : 'Personal Setup Required'}
+              </span>
+            </div>
+            <h2 className="text-base font-bold">
+              {isAr
+                ? `مرحباً${firstName !== 'صديقي' ? ` ${firstName}` : ''}! أكمل إعدادك لتحصل على تجربة مخصصة.`
+                : `Welcome${firstName !== 'Friend' ? ` ${firstName}` : ''}! Complete your setup for a personalized workspace.`}
+            </h2>
+            <p className="text-xs opacity-70">
+              {isAr
+                ? 'يستغرق ذلك دقيقتين فقط. ستحصل على مسار مهني ومقترحات وظائف مخصصة لك.'
+                : 'Takes just 2 minutes. You\'ll get a personalized career path and job recommendations.'}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => onNavigate('career')}
+            className="shrink-0 px-5 py-2.5 bg-white text-blue-700 font-bold text-xs rounded-xl hover:bg-blue-50 transition-colors"
+          >
+            {isAr ? 'ابدأ الإعداد' : 'Complete Setup'}
+          </button>
+        </div>
+      )}
       {/* A. Personal Greeting */}
       <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 pt-1">
         <div>
@@ -284,8 +315,16 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <div className="flex items-center gap-3 shrink-0">
                 {/* Match Score */}
                 <div className="text-end">
-                  <div className="text-sm font-black text-[#15803D]">{opp.matchScore}%</div>
-                  <div className="text-[10px] text-[#94A3B8]">{isAr ? 'تطابق' : 'Match'}</div>
+                  {opp.matchScore != null ? (
+                    <>
+                      <div className="text-sm font-black text-[#15803D]">{opp.matchScore}%</div>
+                      <div className="text-[10px] text-[#94A3B8]">{isAr ? 'تطابق' : 'Match'}</div>
+                    </>
+                  ) : (
+                    <div className="text-[11px] text-[#94A3B8] text-end leading-tight">
+                      {isAr ? 'لم يُحلل' : 'Not analyzed'}
+                    </div>
+                  )}
                 </div>
 
                 <button

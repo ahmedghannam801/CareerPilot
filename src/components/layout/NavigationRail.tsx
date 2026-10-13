@@ -72,8 +72,8 @@ export const NavigationRail: React.FC<NavigationRailProps> = ({
     },
     {
       id: 'courses',
-      labelAr: 'المسارات والكورسات',
-      labelEn: 'Learning',
+      labelAr: 'مسارات التعلم',
+      labelEn: 'Learning Roadmaps',
       icon: GraduationCap,
       count: metrics?.coursesCount,
     },
@@ -220,13 +220,15 @@ export const NavigationRail: React.FC<NavigationRailProps> = ({
             {isAr ? 'جاهزيتك المهنية' : 'Career Readiness'}
           </span>
           <span className="text-xs font-black text-[#2563EB]">
-            {metrics?.readinessScore ?? 84}%
+            {metrics?.readinessScore !== undefined && metrics?.readinessScore !== null
+              ? `${metrics.readinessScore}%`
+              : (isAr ? '—' : '—')}
           </span>
         </div>
         <div className="w-full h-1 bg-[#E4EAF2] rounded-full overflow-hidden">
           <div
             className="h-full bg-gradient-to-r from-[#2563EB] to-[#20C997] rounded-full transition-all duration-700"
-            style={{ width: `${metrics?.readinessScore ?? 84}%` }}
+            style={{ width: `${metrics?.readinessScore ?? 0}%` }}
           />
         </div>
 

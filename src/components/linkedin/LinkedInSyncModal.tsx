@@ -13,6 +13,7 @@ import {
   Layers,
   ShieldCheck,
 } from 'lucide-react';
+import { signInWithLinkedIn } from '../../lib/supabaseClient.js';
 
 interface LinkedInSyncModalProps {
   isOpen: boolean;
@@ -173,8 +174,8 @@ Advanced Relational Database Design & Performance Tuning`;
           </div>
           <button
             type="button"
-            onClick={() => {
-              window.location.href = '/api/auth/linkedin';
+            onClick={async () => {
+              await signInWithLinkedIn();
             }}
             className="shrink-0 px-4 py-2 bg-[#0077b5] hover:bg-[#005f93] text-white text-xs font-semibold rounded-lg shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer"
           >
