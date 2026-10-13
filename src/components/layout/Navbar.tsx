@@ -10,6 +10,8 @@ import {
   LogOut,
   User,
   Settings,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { CareerProfile } from '../../types/index.js';
 
@@ -18,6 +20,8 @@ interface NavbarProps {
   onNavigate: (tab: string) => void;
   lang: 'en' | 'ar';
   onToggleLang: () => void;
+  theme?: 'light' | 'dark';
+  onToggleTheme?: () => void;
   notifications: {
     id: string;
     title: string;
@@ -39,6 +43,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onNavigate,
   lang,
   onToggleLang,
+  theme = 'light',
+  onToggleTheme,
   notifications,
   onMarkNotificationRead,
   onStartOnboarding,
@@ -149,6 +155,22 @@ export const Navbar: React.FC<NavbarProps> = ({
           <Globe className="w-3.5 h-3.5 text-slate-400" />
           <span>{lang === 'en' ? 'ع' : 'EN'}</span>
         </button>
+
+        {/* Theme Toggle (Dark / Light) */}
+        {onToggleTheme && (
+          <button
+            type="button"
+            onClick={onToggleTheme}
+            title={theme === 'dark' ? (isAr ? 'الوضع النهاري' : 'Light Mode') : (isAr ? 'الوضع الليلي' : 'Dark Mode')}
+            className="w-8 h-8 flex items-center justify-center text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg border border-slate-200/80 transition-colors cursor-pointer"
+          >
+            {theme === 'dark' ? (
+              <Sun className="w-4 h-4 text-amber-400" />
+            ) : (
+              <Moon className="w-4 h-4 text-slate-600" />
+            )}
+          </button>
+        )}
 
         {/* Notifications */}
         <div className="relative">

@@ -2777,13 +2777,36 @@
   ],
   "interviews": [
     {
-      "id": "int-1791840392687",
+      "id": "int-1791911928630",
       "jobRole": "Senior Full-Stack AI Engineer",
       "type": "Technical",
       "questions": [
         {
           "id": "q-1",
           "question": "How do you design a resilient architecture when integrating non-deterministic LLM outputs with a strict database schema?"
+        },
+        {
+          "id": "q-2",
+          "question": "Walk me through how you identify and eliminate a performance bottleneck in a high-traffic Node.js or React application."
+        },
+        {
+          "id": "q-3",
+          "question": "Explain your approach to database migrations, indexing, and connection pooling in production."
+        }
+      ],
+      "currentQuestionIndex": 0,
+      "completed": false,
+      "createdAt": "2026-10-13T17:18:48.630Z"
+    },
+    {
+      "id": "int-1791840392687",
+      "jobRole": "Senior Full-Stack AI Engineer",
+      "type": "Technical",
+      "questions": [
+        {
+          "id": "q-1",
+          "question": "How do you design a resilient architecture when integrating non-deterministic LLM outputs with a strict database schema?",
+          "userAnswer": "my name is Ahmed rain  I am fine for you"
         },
         {
           "id": "q-2",

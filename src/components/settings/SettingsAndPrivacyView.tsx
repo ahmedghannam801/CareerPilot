@@ -11,6 +11,8 @@ import {
   AlertTriangle,
   Database,
   RefreshCw,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { CareerMemoryFact } from '../../types/index.js';
 import { formatDate } from '../../lib/utils.js';
@@ -23,6 +25,8 @@ interface SettingsAndPrivacyViewProps {
   onExportData: () => Promise<any>;
   onResetData: () => Promise<void>;
   lang: 'en' | 'ar';
+  theme?: 'light' | 'dark';
+  onSetTheme?: (theme: 'light' | 'dark') => void;
 }
 
 export const SettingsAndPrivacyView: React.FC<SettingsAndPrivacyViewProps> = ({
@@ -32,6 +36,8 @@ export const SettingsAndPrivacyView: React.FC<SettingsAndPrivacyViewProps> = ({
   onExportData,
   onResetData,
   lang,
+  theme = 'light',
+  onSetTheme,
 }) => {
   const [newFactCategory, setNewFactCategory] = useState<
     'Career' | 'Skills' | 'Goals' | 'Applications' | 'Interviews' | 'Preferences'
@@ -94,6 +100,48 @@ export const SettingsAndPrivacyView: React.FC<SettingsAndPrivacyViewProps> = ({
         <p className="text-xs text-neutral-600 mt-1">
           Complete transparency and user sovereignty over AI memory facts and data exports
         </p>
+      </div>
+
+      {/* Theme & Visual Appearance */}
+      <div className="p-6 bg-white border border-neutral-200 rounded-xl space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 className="text-sm font-semibold text-neutral-900">
+              {lang === 'ar' ? 'المظهر والسمة (Appearance)' : 'Appearance & Visual Theme'}
+            </h2>
+            <p className="text-xs text-neutral-500 mt-0.5">
+              {lang === 'ar'
+                ? 'اختر وضع العرض المفضل للواجهة (الوضع الداكن الليلي أو الوضع الفاتح النهاري)'
+                : 'Choose your preferred visual theme across all workspaces and dashboards'}
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => onSetTheme?.('light')}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
+                theme === 'light'
+                  ? 'bg-blue-50 border-blue-400 text-blue-700 shadow-xs'
+                  : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-600'
+              }`}
+            >
+              <Sun className="w-4 h-4 text-amber-500" />
+              <span>{lang === 'ar' ? 'نهاري (Light)' : 'Light Mode'}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => onSetTheme?.('dark')}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
+                theme === 'dark'
+                  ? 'bg-blue-600 border-blue-500 text-white shadow-xs'
+                  : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-600'
+              }`}
+            >
+              <Moon className="w-4 h-4 text-blue-200" />
+              <span>{lang === 'ar' ? 'ليلي (Dark)' : 'Dark Mode'}</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Career Memory Manager */}

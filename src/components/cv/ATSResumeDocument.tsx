@@ -355,8 +355,9 @@ export const ATSResumeDocument: React.FC<ATSResumeDocumentProps> = ({
       </div>
 
       {/* A4 Document */}
-      <div className="flex justify-center bg-slate-100 p-4 sm:p-8 rounded-2xl border border-slate-200 overflow-x-auto">
+      <div className="flex justify-center bg-slate-100 dark:bg-slate-900/60 p-4 sm:p-8 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-x-auto">
         <div id="ats-resume-print-document"
+          data-ats-document="true"
           className="w-full max-w-[800px] bg-white text-slate-900 shadow-xl border border-slate-200/80 rounded-xl transition-all overflow-hidden"
           style={{ minHeight: '1050px', padding: '40px 48px', fontFamily: template === 'classic' ? "Georgia,'Times New Roman',serif" : "'Carlito','Calibri',Arial,sans-serif" }}>
 

@@ -15,6 +15,8 @@ import {
   ShieldCheck,
   Globe,
   Sparkles,
+  Sun,
+  Moon,
 } from 'lucide-react';
 
 interface MobileNavProps {
@@ -22,6 +24,8 @@ interface MobileNavProps {
   onNavigate: (tab: string) => void;
   lang: 'en' | 'ar';
   onToggleLang: () => void;
+  theme?: 'light' | 'dark';
+  onToggleTheme?: () => void;
   onStartOnboarding: () => void;
   onOpenLinkedInSync?: () => void;
   metrics?: {
@@ -51,6 +55,8 @@ export const MobileNav: React.FC<MobileNavProps> = ({
   onNavigate,
   lang,
   onToggleLang,
+  theme = 'light',
+  onToggleTheme,
   onStartOnboarding,
   onOpenLinkedInSync,
   metrics,
@@ -193,6 +199,20 @@ export const MobileNav: React.FC<MobileNavProps> = ({
                   <Globe className="w-3.5 h-3.5" />
                   <span>{isAr ? 'English' : 'العربية'}</span>
                 </button>
+                {onToggleTheme && (
+                  <button
+                    type="button"
+                    onClick={onToggleTheme}
+                    title={theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+                    className="flex items-center justify-center p-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 rounded-lg text-xs font-medium cursor-pointer"
+                  >
+                    {theme === 'dark' ? (
+                      <Sun className="w-4 h-4 text-amber-500" />
+                    ) : (
+                      <Moon className="w-4 h-4 text-neutral-600" />
+                    )}
+                  </button>
+                )}
                 <button
                   onClick={() => {
                     setDrawerOpen(false);

@@ -75,6 +75,26 @@ export default function App() {
   const [lang, setLang] = useState<'en' | 'ar'>(() => {
     return (localStorage.getItem('careerpilot_lang') as 'en' | 'ar') || 'ar';
   });
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    const saved = localStorage.getItem('careerpilot_theme');
+    if (saved === 'dark' || saved === 'light') return saved;
+    return typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    localStorage.setItem('careerpilot_theme', theme);
+  }, [theme]);
+
+  const handleToggleTheme = () => {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  };
+
   const [currentTab, setCurrentTab] = useState<string>(() => {
     return getTabFromPathname(window.location.pathname).tab;
   });
@@ -693,7 +713,7 @@ export default function App() {
   return (
     <div
       dir={lang === 'ar' ? 'rtl' : 'ltr'}
-      className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col selection:bg-indigo-500 selection:text-white"
+      className="min-h-screen bg-[#f8fafc] dark:bg-[#0B0F17] text-slate-900 dark:text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white"
     >
       {/* Top Bar Contract (Brand - Nav Links - Primary Action) */}
       <Navbar
@@ -701,6 +721,8 @@ export default function App() {
         onNavigate={handleNavigate}
         lang={lang}
         onToggleLang={handleToggleLang}
+        theme={theme}
+        onToggleTheme={handleToggleTheme}
         notifications={notifications}
         onMarkNotificationRead={handleMarkNotificationRead}
         onStartOnboarding={() => setShowOnboarding(true)}
@@ -898,6 +920,8 @@ export default function App() {
               onExportData={() => api.exportSystemData()}
               onResetData={handleResetData}
               lang={lang}
+              theme={theme}
+              onSetTheme={setTheme}
             />
           )}
 
@@ -1027,6 +1051,8 @@ export default function App() {
         onNavigate={handleNavigate}
         lang={lang}
         onToggleLang={handleToggleLang}
+        theme={theme}
+        onToggleTheme={handleToggleTheme}
         onStartOnboarding={() => setShowOnboarding(true)}
         onOpenLinkedInSync={() => setShowLinkedInSync(true)}
         metrics={{

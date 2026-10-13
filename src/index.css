@@ -1,6 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ============================================================
    CareerPilot AI — Design System Variables & Palette
    ============================================================ */
@@ -48,6 +50,50 @@
     --surface-border: var(--color-border);
   }
 
+  .dark {
+    color-scheme: dark;
+
+    /* Brand Palette */
+    --color-navy: #1E293B;
+    --color-blue-primary: #3B82F6;
+    --color-blue-bright: #60A5FA;
+    --color-cyan: #38BDF8;
+    --color-teal: #34D399;
+    
+    /* Surfaces & Backgrounds */
+    --color-bg: #0B0F17;
+    --color-surface-white: #111827;
+    --color-surface-soft: #1E293B;
+    --color-surface-muted: #1F2937;
+    --color-border: #1F2937;
+    --color-border-subtle: #374151;
+    
+    /* Typography */
+    --color-text-main: #F1F5F9;
+    --color-text-secondary: #94A3B8;
+    --color-text-muted: #64748B;
+    
+    /* Semantic Feedback */
+    --color-success: #34D399;
+    --color-success-bg: rgba(52, 211, 153, 0.12);
+    --color-warning: #FBBF24;
+    --color-warning-bg: rgba(251, 191, 36, 0.12);
+    --color-error: #F87171;
+    --color-error-bg: rgba(248, 113, 113, 0.12);
+
+    /* Legacy Brand Variables mapped to new tokens */
+    --brand-50: #1E293B;
+    --brand-100: #1E3A8A;
+    --brand-200: #2563EB;
+    --brand-500: #3B82F6;
+    --brand-600: #60A5FA;
+    --brand-700: #93C5FD;
+
+    --surface-bg: var(--color-bg);
+    --surface-card: var(--color-surface-white);
+    --surface-border: var(--color-border);
+  }
+
   body {
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background-color: var(--color-bg);
@@ -86,15 +132,131 @@
     background: #94A3B8;
   }
 
-  .no-scrollbar::-webkit-scrollbar { display: none; }
-  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  /* Dark Scrollbars */
+  .dark ::-webkit-scrollbar-thumb {
+    background: #334155;
+  }
+
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+  }
 
   /* Text Selection */
   ::selection {
     background-color: #DBEAFE;
     color: #1E3A8A;
   }
+
+  .dark ::selection {
+    background-color: #1E3A8A;
+    color: #93C5FD;
+  }
 }
+
+/* ============================================================
+   Dark Mode Global Surface Mappings
+   (Exempting Official ATS Document Sheet [data-ats-document="true"])
+   ============================================================ */
+
+.dark {
+  background-color: #0B0F17;
+  color: #F1F5F9;
+}
+
+.dark body {
+  background-color: #0B0F17;
+  color: #F1F5F9;
+}
+
+/* Surfaces */
+.dark .bg-white:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: #111827 !important;
+}
+
+.dark .bg-\[\#f8fafc\],
+.dark .bg-\[\#F7F9FC\],
+.dark .bg-slate-50:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark .bg-neutral-50:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: #0B0F17 !important;
+}
+
+.dark .bg-slate-100:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark .bg-neutral-100:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: #1E293B !important;
+}
+
+.dark .bg-\[\#EEF4FF\]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: #1E293B !important;
+}
+
+/* Borders */
+.dark .border-slate-200:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark .border-slate-200\/70:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark .border-slate-200\/80:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark .border-neutral-200:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark .border-\[\#E4EAF2\]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  border-color: #1E293B !important;
+}
+
+.dark .border-slate-100:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark .border-neutral-100:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  border-color: #1E293B !important;
+}
+
+/* Typography */
+.dark .text-slate-900:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark .text-neutral-900:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark .text-\[\#17253B\]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  color: #F8FAFC !important;
+}
+
+.dark .text-slate-800:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark .text-neutral-800:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  color: #E2E8F0 !important;
+}
+
+.dark .text-slate-700:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark .text-neutral-700:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  color: #CBD5E1 !important;
+}
+
+.dark .text-slate-600:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark .text-slate-500:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark .text-\[\#64748B\]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  color: #94A3B8 !important;
+}
+
+.dark .text-slate-400:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark .text-\[\#94A3B8\]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  color: #64748B !important;
+}
+
+/* Hover States */
+.dark .hover\:bg-slate-50:hover:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark .hover\:bg-neutral-50:hover:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark .hover\:bg-\[\#F7F9FC\]:hover:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: #1E293B !important;
+}
+
+.dark .hover\:bg-slate-100:hover:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark .hover\:bg-neutral-100:hover:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: #334155 !important;
+}
+
+/* Form inputs & controls */
+.dark input:not([type="checkbox"]):not([type="radio"]),
+.dark textarea,
+.dark select {
+  background-color: #1E293B !important;
+  color: #F8FAFC !important;
+  border-color: #334155 !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #64748B !important;
+}
+
 
 /* ============================================================
    Custom Animations
