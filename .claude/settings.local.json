@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s \"https://stitch.withgoogle.com/api/projects/4950160009288479219\" -H \"Accept: application/json\")"
+    ]
+  }
+}

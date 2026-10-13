@@ -1,0 +1,17 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+*.pem
+*.key
+*.cert
+*.sqlite
+*.db
+credentials.json
+service-account*.json
+.system_generated/
+scratch/

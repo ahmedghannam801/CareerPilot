@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1920,initial-scale=1" />
+  <title>CareerPilot AI – Platform Presentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;0,14..32,900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{width:1920px;height:1080px;overflow:hidden;background:#060b18;font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+
+    /* ─── BACKGROUND ─── */
+    .bg{position:fixed;inset:0;z-index:0}
+    .bg-base{position:absolute;inset:0;background:linear-gradient(160deg,#060d20 0%,#060b18 50%,#030810 100%)}
+    .bg-glow-top{position:absolute;top:-300px;left:50%;transform:translateX(-50%);width:1200px;height:700px;background:radial-gradient(ellipse,rgba(30,64,175,.18) 0%,transparent 65%)}
+    .bg-glow-br{position:absolute;bottom:-200px;right:-100px;width:800px;height:600px;background:radial-gradient(ellipse,rgba(6,182,212,.07) 0%,transparent 65%)}
+    .bg-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(99,139,246,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(99,139,246,.035) 1px,transparent 1px);background-size:64px 64px}
+    .bg-vignette{position:absolute;inset:0;background:radial-gradient(ellipse 100% 90% at 50% 50%,transparent 40%,rgba(3,6,16,.7) 100%)}
+
+    /* ─── SLIDE WRAPPER ─── */
+    .slide{position:relative;z-index:1;width:1920px;height:1080px;display:flex;flex-direction:column;align-items:center;padding:32px 80px 28px}
+
+    /* ─── HEADER ─── */
+    .hdr{display:flex;flex-direction:column;align-items:center;gap:5px;flex-shrink:0;margin-bottom:16px}
+    .hdr-label{font-size:10px;font-weight:700;letter-spacing:5px;text-transform:uppercase;color:#38bdf8;opacity:.75}
+    .hdr-title{font-size:52px;font-weight:900;letter-spacing:-2px;line-height:1;color:#f8fafc}
+    .hdr-title span{background:linear-gradient(120deg,#60a5fa,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .hdr-sub{font-size:13px;font-weight:400;color:#475569;letter-spacing:.3px}
+
+    /* ─── CONTENT ROW ─── */
+    .content-row{display:flex;align-items:stretch;gap:16px;flex:1;width:100%;min-height:0}
+
+    /* ─── SIDE BADGES ─── */
+    .side-badges{display:flex;flex-direction:column;justify-content:space-evenly;gap:12px;width:210px;flex-shrink:0}
+    .sbadge{background:rgba(10,16,32,.85);border:1px solid rgba(34,197,94,.2);border-radius:10px;padding:12px 14px;backdrop-filter:blur(12px);display:flex;flex-direction:column;gap:5px}
+    .sbadge-row{display:flex;align-items:center;gap:8px}
+    .sbadge-icon{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+    .sbi-green{background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.25)}
+    .sbi-blue{background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.25)}
+    .sbadge-name{font-size:10px;font-weight:700;color:#e2e8f0;line-height:1.3}
+    .sbadge-status{font-size:8.5px;font-weight:600;color:#22c55e;display:flex;align-items:center;gap:4px;margin-left:34px}
+    .sbadge-status::before{content:'';width:5px;height:5px;background:#22c55e;border-radius:50%;flex-shrink:0;animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+    /* ─── BROWSER ─── */
+    .browser{flex:1;display:flex;flex-direction:column;border-radius:12px;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.07),0 40px 100px rgba(0,0,0,.9),0 0 60px rgba(59,130,246,.08),inset 0 1px 0 rgba(255,255,255,.05);min-width:0}
+    .browser-bar{background:#161e2e;padding:9px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.05)}
+    .traffic{display:flex;gap:5px;flex-shrink:0}
+    .dot{width:11px;height:11px;border-radius:50%}
+    .dr{background:#ff5f57}.dy{background:#febc2e}.dg{background:#28c840}
+    .urlbar{display:flex;align-items:center;gap:6px;background:#0d1420;border-radius:6px;padding:5px 12px;flex:1;max-width:480px;margin:0 auto}
+    .lock{font-size:10px;color:#22c55e}
+    .url-txt{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#94a3b8}
+    .secure-pill{font-size:8px;font-weight:700;color:#22c55e;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);padding:1.5px 6px;border-radius:4px;margin-left:auto;letter-spacing:.3px}
+    .bar-end{display:flex;gap:6px;margin-left:auto}
+    .bar-btn{width:28px;height:20px;background:rgba(255,255,255,.04);border-radius:4px}
+
+    /* ─── DASHBOARD ─── */
+    .db{display:flex;flex:1;min-height:0;background:#0b0f1a}
+
+    /* SIDEBAR */
+    .sb{width:188px;background:#080c18;border-right:1px solid rgba(255,255,255,.05);display:flex;flex-direction:column;gap:2px;flex-shrink:0;overflow:hidden}
+    .sb-logo{padding:14px 16px 12px;border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:center;gap:9px}
+    .logo-mark{width:28px;height:28px;background:linear-gradient(135deg,#3b82f6,#0ea5e9);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0}
+    .logo-txt .lt1{font-size:12px;font-weight:800;color:#f1f5f9}
+    .logo-txt .lt2{font-size:8.5px;color:#3b82f6;font-weight:600;margin-top:1px}
+    .nav-items{display:flex;flex-direction:column;padding:8px 8px;gap:1px;flex:1}
+    .ni{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:7px;font-size:10.5px;font-weight:500;color:#4b5675;cursor:default;border-left:2px solid transparent;transition:all .15s}
+    .ni.act{color:#e2e8f0;background:linear-gradient(90deg,rgba(59,130,246,.18),rgba(59,130,246,.06));border-left-color:#3b82f6}
+    .ni-ic{width:18px;height:18px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0}
+    .ni-blue{background:rgba(59,130,246,.18);color:#60a5fa}
+    .ni-teal{background:rgba(20,184,166,.18);color:#2dd4bf}
+    .ni-green{background:rgba(34,197,94,.18);color:#4ade80}
+    .ni-amber{background:rgba(245,158,11,.18);color:#fbbf24}
+    .ni-purple{background:rgba(139,92,246,.18);color:#a78bfa}
+    .ni-chart{background:rgba(59,130,246,.18);color:#60a5fa}
+    .ni-gear{background:rgba(100,116,139,.18);color:#94a3b8}
+    .sb-foot{padding:12px 12px 14px;border-top:1px solid rgba(255,255,255,.05);display:flex;align-items:center;gap:8px}
+    .av{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);font-size:9.5px;font-weight:800;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .av-info .av1{font-size:10px;font-weight:700;color:#e2e8f0}
+    .av-info .av2{font-size:8px;color:#22c55e;display:flex;align-items:center;gap:3px;margin-top:1px}
+    .online-dot{width:5px;height:5px;background:#22c55e;border-radius:50%}
+
+    /* MAIN */
+    .main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+
+    /* TOPBAR */
+    .topbar{padding:10px 18px;background:#0b0f1a;border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+    .topbar-left .tl1{font-size:13px;font-weight:700;color:#f1f5f9}
+    .topbar-left .tl2{font-size:9px;color:#475569;margin-top:1px}
+    .topbar-right{display:flex;align-items:center;gap:8px}
+    .tbadge{font-size:8.5px;font-weight:700;padding:3px 8px;border-radius:5px;display:flex;align-items:center;gap:4px}
+    .tb-g{background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.18)}
+    .tb-b{background:rgba(59,130,246,.1);color:#60a5fa;border:1px solid rgba(59,130,246,.18)}
+    .notif{width:26px;height:26px;background:rgba(255,255,255,.04);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#64748b;position:relative}
+    .notif-dot{position:absolute;top:4px;right:4px;width:6px;height:6px;background:#3b82f6;border-radius:50%;border:1.5px solid #0b0f1a}
+    .av-sm{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#8b5cf6);font-size:9px;font-weight:800;color:#fff;display:flex;align-items:center;justify-content:center}
+
+    /* DASHBOARD CONTENT */
+    .dc{flex:1;padding:14px 16px;display:flex;flex-direction:column;gap:12px;overflow:hidden;min-height:0}
+
+    /* METRIC CARDS */
+    .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;flex-shrink:0}
+    .mc{background:#0f1623;border:1px solid rgba(255,255,255,.06);border-radius:9px;padding:12px 14px;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:6px}
+    .mc::after{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+    .mc-b::after{background:linear-gradient(90deg,#3b82f6,#0ea5e9)}
+    .mc-g::after{background:linear-gradient(90deg,#22c55e,#10b981)}
+    .mc-a::after{background:linear-gradient(90deg,#f59e0b,#fb923c)}
+    .mc-p::after{background:linear-gradient(90deg,#8b5cf6,#a78bfa)}
+    .mc-lbl{font-size:8.5px;font-weight:600;text-transform:uppercase;letter-spacing:.9px;color:#475569}
+    .mc-val{font-size:30px;font-weight:900;color:#f1f5f9;line-height:1;letter-spacing:-1px}
+    .mc-val span{font-size:16px;color:#64748b;font-weight:500}
+    .mc-tag{font-size:8px;font-weight:700;padding:2px 6px;border-radius:4px;width:fit-content}
+    .t-b{background:rgba(59,130,246,.12);color:#60a5fa}
+    .t-g{background:rgba(34,197,94,.12);color:#22c55e}
+    .t-a{background:rgba(245,158,11,.12);color:#fbbf24}
+    .t-p{background:rgba(139,92,246,.12);color:#a78bfa}
+    .mc-bar{height:3px;background:rgba(255,255,255,.05);border-radius:2px;margin-top:2px}
+    .mc-fill{height:3px;border-radius:2px}
+    .mf-b{background:linear-gradient(90deg,#3b82f6,#0ea5e9)}
+    .mf-g{background:linear-gradient(90deg,#22c55e,#10b981)}
+    .mc-sub{font-size:8px;color:#334155}
+
+    /* MID ROW */
+    .mid{display:grid;grid-template-columns:1.35fr 1fr;gap:10px;flex:1;min-height:0}
+    .card{background:#0f1623;border:1px solid rgba(255,255,255,.06);border-radius:9px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+    .card-hdr{display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+    .card-ttl{font-size:10.5px;font-weight:700;color:#e2e8f0}
+    .card-pill{font-size:7.5px;font-weight:700;padding:2px 7px;border-radius:4px}
+    .cp-b{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.18)}
+    .cp-g{background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.18)}
+
+    /* OPP TABLE */
+    .opp-wrap{flex:1;display:flex;flex-direction:column;gap:5px;overflow:hidden}
+    .opp-hdr{display:grid;grid-template-columns:2fr 1fr .7fr .75fr;font-size:8px;font-weight:700;color:#334155;text-transform:uppercase;letter-spacing:.7px;padding:0 8px 4px;border-bottom:1px solid rgba(255,255,255,.04);flex-shrink:0}
+    .opp-row{display:grid;grid-template-columns:2fr 1fr .7fr .75fr;padding:7px 8px;background:rgba(255,255,255,.02);border-radius:7px;border:1px solid rgba(255,255,255,.03);align-items:center;gap:6px}
+    .opp-co{font-size:9.5px;font-weight:700;color:#e2e8f0}
+    .opp-role{font-size:8.5px;color:#475569;margin-top:1px}
+    .opp-type{font-size:8.5px;color:#4b5675;font-weight:500}
+    .opp-type.intern{color:#a78bfa}
+    .match-pct{font-size:9.5px;font-weight:800}
+    .match-pct.high{color:#22c55e}
+    .match-pct.mid{color:#60a5fa}
+    .match-pct.low{color:#a78bfa}
+    .bar-mini{height:2.5px;background:rgba(255,255,255,.06);border-radius:2px;margin-top:3px}
+    .bar-mini-fill{height:2.5px;border-radius:2px}
+    .bmf-g{background:linear-gradient(90deg,#22c55e,#10b981)}
+    .bmf-b{background:linear-gradient(90deg,#3b82f6,#0ea5e9)}
+    .bmf-p{background:linear-gradient(90deg,#8b5cf6,#a78bfa)}
+    .apply-btn{font-size:8px;font-weight:700;color:#60a5fa;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);padding:3px 9px;border-radius:5px;text-align:center;cursor:default}
+
+    /* CHART */
+    .chart-wrap{flex:1;display:flex;flex-direction:column;gap:6px;min-height:0}
+    .chart-svg-wrap{flex:1;min-height:0;position:relative}
+    svg.chart{width:100%;height:100%}
+
+    /* BOTTOM CARDS */
+    .bot{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;flex-shrink:0}
+    .bcard{background:#0f1623;border:1px solid rgba(255,255,255,.06);border-radius:9px;padding:11px 13px;display:flex;flex-direction:column;gap:7px}
+    .bcard-ttl{display:flex;align-items:center;gap:7px;font-size:10px;font-weight:700;color:#e2e8f0}
+    .bic{width:18px;height:18px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0}
+    .bic-b{background:rgba(59,130,246,.2);color:#60a5fa}
+    .bic-p{background:rgba(139,92,246,.2);color:#a78bfa}
+    .bic-g{background:rgba(34,197,94,.2);color:#22c55e}
+    .ats-big{font-size:10px;font-weight:700;padding:5px 10px;border-radius:6px;background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.2);display:inline-flex;align-items:center;gap:5px;width:fit-content}
+    .resume-lines{display:flex;flex-direction:column;gap:3px;margin-top:2px}
+    .rl{height:4px;border-radius:2px;background:rgba(255,255,255,.06)}
+    .rl2{background:rgba(255,255,255,.04)}
+    .wave{display:flex;align-items:center;gap:3px;height:28px}
+    .wb{width:5px;border-radius:3px;background:linear-gradient(180deg,#7c3aed,#3b82f6)}
+    .skill-rows{display:flex;flex-direction:column;gap:5px}
+    .skill-row-item{display:flex;flex-direction:column;gap:2px}
+    .skill-label-row{display:flex;justify-content:space-between;font-size:8.5px;color:#4b5675}
+    .skill-pct{font-size:8.5px;color:#94a3b8;font-weight:700}
+    .skill-track{height:3px;background:rgba(255,255,255,.05);border-radius:2px}
+    .sf{height:3px;border-radius:2px}
+    .sf-b{background:linear-gradient(90deg,#3b82f6,#0ea5e9)}
+    .sf-g{background:linear-gradient(90deg,#22c55e,#10b981)}
+    .sf-p{background:linear-gradient(90deg,#8b5cf6,#a78bfa)}
+
+    /* ─── FOOTER ─── */
+    .ftr{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:12px}
+    .ftr-pills{display:flex;align-items:center;gap:8px}
+    .fpill{font-size:9px;font-weight:600;color:#475569;display:flex;align-items:center;gap:5px}
+    .fdot{width:2.5px;height:2.5px;border-radius:50%;background:#334155}
+    .ftr-ver{font-size:8.5px;font-family:'JetBrains Mono',monospace;color:#1e293b;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);padding:2px 10px;border-radius:4px}
+  </style>
+</head>
+<body>
+<!-- Background Layers -->
+<div class="bg">
+  <div class="bg-base"></div>
+  <div class="bg-glow-top"></div>
+  <div class="bg-glow-br"></div>
+  <div class="bg-grid"></div>
+  <div class="bg-vignette"></div>
+</div>
+
+<div class="slide">
+  <!-- HEADER -->
+  <div class="hdr">
+    <div class="hdr-label">AI Career Intelligence Platform</div>
+    <div class="hdr-title">CareerPilot <span>AI</span></div>
+    <div class="hdr-sub">Full-Stack Career Management &nbsp;·&nbsp; ATS Optimization &nbsp;·&nbsp; Interview Intelligence &nbsp;·&nbsp; Live Job Matching</div>
+  </div>
+
+  <!-- MAIN CONTENT ROW -->
+  <div class="content-row">
+
+    <!-- LEFT BADGES -->
+    <div class="side-badges">
+      <div class="sbadge">
+        <div class="sbadge-row">
+          <div class="sbadge-icon sbi-green">🔒</div>
+          <div class="sbadge-name">HTTPS · TLS 1.3<br>Origin Validated</div>
+        </div>
+        <div class="sbadge-status">Secure Connection Enforced</div>
+      </div>
+      <div class="sbadge">
+        <div class="sbadge-row">
+          <div class="sbadge-icon sbi-green">🛡️</div>
+          <div class="sbadge-name">Rate Limited<br>Protected API</div>
+        </div>
+        <div class="sbadge-status">Validated Requests Only</div>
+      </div>
+      <div class="sbadge">
+        <div class="sbadge-row">
+          <div class="sbadge-icon sbi-green">✅</div>
+          <div class="sbadge-name">Auth · JWT RS256<br>MFA Ready</div>
+        </div>
+        <div class="sbadge-status">Session Verified</div>
+      </div>
+      <div class="sbadge">
+        <div class="sbadge-row">
+          <div class="sbadge-icon sbi-blue">⚡</div>
+          <div class="sbadge-name">Gemini AI<br>Secure Gateway</div>
+        </div>
+        <div class="sbadge-status" style="color:#60a5fa">Structured Output · Validated</div>
+      </div>
+    </div>
+
+    <!-- BROWSER WINDOW -->
+    <div class="browser">
+      <div class="browser-bar">
+        <div class="traffic">
+          <div class="dot dr"></div>
+          <div class="dot dy"></div>
+          <div class="dot dg"></div>
+        </div>
+        <div class="urlbar">
+          <span class="lock">🔒</span>
+          <span class="url-txt">https://careerpilot.app/dashboard</span>
+          <span class="secure-pill">SECURE</span>
+        </div>
+        <div class="bar-end">
+          <div class="bar-btn"></div>
+          <div class="bar-btn"></div>
+          <div class="bar-btn"></div>
+        </div>
+      </div>
+
+      <!-- DASHBOARD -->
+      <div class="db">
+        <!-- SIDEBAR -->
+        <div class="sb">
+          <div class="sb-logo">
+            <div class="logo-mark">CP</div>
+            <div class="logo-txt">
+              <div class="lt1">CareerPilot</div>
+              <div class="lt2">AI Platform v2.4</div>
+            </div>
+          </div>
+          <div class="nav-items">
+            <div class="ni act"><div class="ni-ic ni-blue">⊞</div>Dashboard</div>
+            <div class="ni"><div class="ni-ic ni-teal">📄</div>CV Studio &amp; ATS</div>
+            <div class="ni"><div class="ni-ic ni-green">💼</div>Opportunities</div>
+            <div class="ni"><div class="ni-ic ni-amber">📋</div>Applications</div>
+            <div class="ni"><div class="ni-ic ni-purple">🎙</div>Interview Coach</div>
+            <div class="ni"><div class="ni-ic ni-chart">📈</div>Analytics</div>
+            <div class="ni"><div class="ni-ic ni-gear">⚙</div>Settings</div>
+          </div>
+          <div class="sb-foot">
+            <div class="av">MG</div>
+            <div class="av-info">
+              <div class="av1">Mohamed G.</div>
+              <div class="av2"><div class="online-dot"></div>Secure Session</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MAIN -->
+        <div class="main">
+          <div class="topbar">
+            <div class="topbar-left">
+              <div class="tl1">Career Dashboard</div>
+              <div class="tl2">Last synced 2 mins ago &nbsp;·&nbsp; All systems operational</div>
+            </div>
+            <div class="topbar-right">
+              <div class="tbadge tb-g">🟢 Auth Verified · JWT RS256</div>
+              <div class="tbadge tb-b">⚡ AI Ready</div>
+              <div class="tbadge tb-g">🔒 CSRF Protected</div>
+              <div class="notif">🔔<div class="notif-dot"></div></div>
+              <div class="av-sm">MG</div>
+            </div>
+          </div>
+
+          <div class="dc">
+            <!-- METRICS -->
+            <div class="metrics">
+              <div class="mc mc-b">
+                <div class="mc-lbl">Career Readiness</div>
+                <div class="mc-val">87<span>%</span></div>
+                <div class="mc-tag t-b">↑ +5% this month</div>
+                <div class="mc-bar"><div class="mc-fill mf-b" style="width:87%"></div></div>
+              </div>
+              <div class="mc mc-g">
+                <div class="mc-lbl">ATS Match Rate</div>
+                <div class="mc-val">94<span>%</span></div>
+                <div class="mc-tag t-g">✓ ATS Compatible</div>
+                <div class="mc-bar"><div class="mc-fill mf-g" style="width:94%"></div></div>
+              </div>
+              <div class="mc mc-a">
+                <div class="mc-lbl">Applications Tracked</div>
+                <div class="mc-val">24</div>
+                <div class="mc-tag t-a">6 Active · 3 Interviews</div>
+                <div class="mc-sub" style="margin-top:4px">Applications pipeline</div>
+              </div>
+              <div class="mc mc-p">
+                <div class="mc-lbl">Interview Sessions</div>
+                <div class="mc-val">8</div>
+                <div class="mc-tag t-p">AI Coach · Voice Mode</div>
+                <div class="mc-sub" style="margin-top:4px">Sessions completed</div>
+              </div>
+            </div>
+
+            <!-- MID -->
+            <div class="mid">
+              <!-- Opportunities -->
+              <div class="card">
+                <div class="card-hdr">
+                  <div class="card-ttl">Top Matching Opportunities</div>
+                  <div class="card-pill cp-b">Live · Indeed + LinkedIn</div>
+                </div>
+                <div class="opp-wrap">
+                  <div class="opp-hdr"><div>Company / Role</div><div>Type</div><div>Match</div><div>Action</div></div>
+                  <div class="opp-row">
+                    <div><div class="opp-co">Vertex Systems</div><div class="opp-role">Senior AI Engineer · Remote</div></div>
+                    <div class="opp-type">Full-time</div>
+                    <div><div class="match-pct high">96%</div><div class="bar-mini"><div class="bar-mini-fill bmf-g" style="width:96%"></div></div></div>
+                    <div class="apply-btn">Apply →</div>
+                  </div>
+                  <div class="opp-row">
+                    <div><div class="opp-co">Nexlayer Inc.</div><div class="opp-role">Full-Stack Lead · Hybrid</div></div>
+                    <div class="opp-type">Full-time</div>
+                    <div><div class="match-pct high">91%</div><div class="bar-mini"><div class="bar-mini-fill bmf-g" style="width:91%"></div></div></div>
+                    <div class="apply-btn">Apply →</div>
+                  </div>
+                  <div class="opp-row">
+                    <div><div class="opp-co">CoreStack Ltd</div><div class="opp-role">Backend Engineer · Remote</div></div>
+                    <div class="opp-type">Contract</div>
+                    <div><div class="match-pct mid">88%</div><div class="bar-mini"><div class="bar-mini-fill bmf-b" style="width:88%"></div></div></div>
+                    <div class="apply-btn">Apply →</div>
+                  </div>
+                  <div class="opp-row">
+                    <div><div class="opp-co">Orbit Cloud</div><div class="opp-role">AI Engineer Intern · Remote</div></div>
+                    <div class="opp-type intern">Internship</div>
+                    <div><div class="match-pct low">85%</div><div class="bar-mini"><div class="bar-mini-fill bmf-p" style="width:85%"></div></div></div>
+                    <div class="apply-btn">Apply →</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Chart -->
+              <div class="card">
+                <div class="card-hdr">
+                  <div class="card-ttl">Career Progress Analytics</div>
+                  <div class="card-pill cp-g">↑ Improving</div>
+                </div>
+                <div class="chart-wrap">
+                  <div class="chart-svg-wrap">
+                    <svg class="chart" viewBox="0 0 340 140" preserveAspectRatio="xMidYMid meet">
+                      <defs>
+                        <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stop-color="#3b82f6" stop-opacity=".3"/>
+                          <stop offset="100%" stop-color="#3b82f6" stop-opacity=".02"/>
+                        </linearGradient>
+                        <linearGradient id="cgLine" x1="0" y1="0" x2="1" y2="0">
+                          <stop offset="0%" stop-color="#3b82f6"/>
+                          <stop offset="100%" stop-color="#22c55e"/>
+                        </linearGradient>
+                      </defs>
+                      <!-- Grid -->
+                      <line x1="0" y1="28" x2="340" y2="28" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
+                      <line x1="0" y1="56" x2="340" y2="56" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
+                      <line x1="0" y1="84" x2="340" y2="84" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
+                      <line x1="0" y1="112" x2="340" y2="112" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
+                      <!-- Y labels -->
+                      <text x="0" y="26" font-size="8" fill="#334155" font-family="Inter">100%</text>
+                      <text x="0" y="82" font-size="8" fill="#334155" font-family="Inter">50%</text>
+                      <!-- Area -->
+                      <path d="M 30,118 C 65,112 90,104 120,94 C 148,85 170,74 200,62 C 228,51 258,40 290,26 C 308,19 322,14 340,10 L 340,130 L 30,130 Z" fill="url(#cg)"/>
+                      <!-- Line -->
+                      <path d="M 30,118 C 65,112 90,104 120,94 C 148,85 170,74 200,62 C 228,51 258,40 290,26 C 308,19 322,14 340,10" fill="none" stroke="url(#cgLine)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      <!-- Points -->
+                      <circle cx="30" cy="118" r="3.5" fill="#3b82f6" stroke="#0b0f1a" stroke-width="1.5"/>
+                      <circle cx="120" cy="94" r="3.5" fill="#3b82f6" stroke="#0b0f1a" stroke-width="1.5"/>
+                      <circle cx="200" cy="62" r="3.5" fill="#38bdf8" stroke="#0b0f1a" stroke-width="1.5"/>
+                      <circle cx="290" cy="26" r="3.5" fill="#22c55e" stroke="#0b0f1a" stroke-width="1.5"/>
+                      <circle cx="340" cy="10" r="5" fill="#22c55e" stroke="#0b0f1a" stroke-width="2"/>
+                      <!-- Callout -->
+                      <rect x="296" y="0" width="42" height="17" rx="5" fill="rgba(34,197,94,.15)" stroke="rgba(34,197,94,.3)" stroke-width="1"/>
+                      <text x="304" y="12" font-size="9" fill="#22c55e" font-family="Inter" font-weight="800">87%</text>
+                      <!-- X labels -->
+                      <text x="20" y="128" font-size="8" fill="#334155" font-family="Inter">May</text>
+                      <text x="108" y="128" font-size="8" fill="#334155" font-family="Inter">Jun</text>
+                      <text x="190" y="128" font-size="8" fill="#334155" font-family="Inter">Jul</text>
+                      <text x="276" y="128" font-size="8" fill="#334155" font-family="Inter">Aug</text>
+                      <text x="325" y="128" font-size="8" fill="#22c55e" font-family="Inter">Now</text>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- BOTTOM CARDS -->
+            <div class="bot">
+              <div class="bcard">
+                <div class="bcard-ttl"><div class="bic bic-b">📄</div>CV Studio &amp; ATS Optimizer</div>
+                <div class="ats-big">✓ ATS Compatible: 94%</div>
+                <div class="resume-lines">
+                  <div class="rl" style="width:92%"></div>
+                  <div class="rl rl2" style="width:78%"></div>
+                  <div class="rl" style="width:86%"></div>
+                  <div class="rl rl2" style="width:64%"></div>
+                </div>
+              </div>
+
+              <div class="bcard">
+                <div class="bcard-ttl"><div class="bic bic-p">🎙</div>AI Interview Coach · Voice Mode</div>
+                <div class="wave">
+                  <div class="wb" style="height:10px;opacity:.35"></div>
+                  <div class="wb" style="height:18px;opacity:.55"></div>
+                  <div class="wb" style="height:24px;opacity:.75"></div>
+                  <div class="wb" style="height:28px"></div>
+                  <div class="wb" style="height:22px;opacity:.85"></div>
+                  <div class="wb" style="height:28px"></div>
+                  <div class="wb" style="height:16px;opacity:.5"></div>
+                  <div class="wb" style="height:26px;opacity:.9"></div>
+                  <div class="wb" style="height:20px;opacity:.65"></div>
+                  <div class="wb" style="height:12px;opacity:.4"></div>
+                  <div class="wb" style="height:24px;opacity:.7"></div>
+                  <div class="wb" style="height:18px;opacity:.55"></div>
+                </div>
+                <div style="font-size:8px;color:#475569">2-way voice · Speech recognition · Instant AI feedback</div>
+              </div>
+
+              <div class="bcard">
+                <div class="bcard-ttl"><div class="bic bic-g">📊</div>Skills Gap Tracker</div>
+                <div class="skill-rows">
+                  <div class="skill-row-item">
+                    <div class="skill-label-row"><span>React / TypeScript</span><span class="skill-pct">92%</span></div>
+                    <div class="skill-track"><div class="sf sf-b" style="width:92%"></div></div>
+                  </div>
+                  <div class="skill-row-item">
+                    <div class="skill-label-row"><span>AI / LLM Integration</span><span class="skill-pct">78%</span></div>
+                    <div class="skill-track"><div class="sf sf-g" style="width:78%"></div></div>
+                  </div>
+                  <div class="skill-row-item">
+                    <div class="skill-label-row"><span>System Design</span><span class="skill-pct">85%</span></div>
+                    <div class="skill-track"><div class="sf sf-p" style="width:85%"></div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /dc -->
+        </div><!-- /main -->
+      </div><!-- /db -->
+    </div><!-- /browser -->
+
+    <!-- RIGHT BADGES -->
+    <div class="side-badges">
+      <div class="sbadge">
+        <div class="sbadge-row">
+          <div class="sbadge-icon sbi-green">✅</div>
+          <div class="sbadge-name">CSRF Protected<br>Input Validated</div>
+        </div>
+        <div class="sbadge-status">Secure Session · HttpOnly</div>
+      </div>
+      <div class="sbadge">
+        <div class="sbadge-row">
+          <div class="sbadge-icon sbi-green">📊</div>
+          <div class="sbadge-name">Monitoring<br>Uptime 99.9%</div>
+        </div>
+        <div class="sbadge-status">Errors Logged Securely</div>
+      </div>
+      <div class="sbadge">
+        <div class="sbadge-row">
+          <div class="sbadge-icon sbi-green">🔄</div>
+          <div class="sbadge-name">Deps Updated<br>No CVEs Detected</div>
+        </div>
+        <div class="sbadge-status">npm audit · 0 vulnerabilities</div>
+      </div>
+      <div class="sbadge">
+        <div class="sbadge-row">
+          <div class="sbadge-icon sbi-blue">🗄️</div>
+          <div class="sbadge-name">Supabase<br>PostgreSQL Backend</div>
+        </div>
+        <div class="sbadge-status" style="color:#60a5fa">RLS Policies · Env Secrets</div>
+      </div>
+    </div>
+
+  </div><!-- /content-row -->
+
+  <!-- FOOTER -->
+  <div class="ftr">
+    <div class="ftr-pills">
+      <div class="fpill" style="color:#475569">Production-Ready</div>
+      <div class="fdot"></div>
+      <div class="fpill" style="color:#475569">Secure</div>
+      <div class="fdot"></div>
+      <div class="fpill" style="color:#475569">Tested</div>
+      <div class="fdot"></div>
+      <div class="fpill" style="color:#475569">Scalable</div>
+      <div class="fdot"></div>
+      <div class="fpill" style="color:#475569">AI-Powered</div>
+    </div>
+    <div class="ftr-ver">v2.4.0-stable &nbsp;·&nbsp; Node.js + React 19 + TypeScript &nbsp;·&nbsp; Supabase PostgreSQL &nbsp;·&nbsp; Gemini AI Gateway</div>
+  </div>
+</div>
+</body>
+</html>

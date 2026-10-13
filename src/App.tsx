@@ -1,0 +1,853 @@
+import React, { useState, useEffect } from 'react';
+import { Navbar } from './components/layout/Navbar.js';
+import { Sidebar } from './components/layout/Sidebar.js';
+import { NavigationRail } from './components/layout/NavigationRail.js';
+import { ContextualRightPanel } from './components/layout/ContextualRightPanel.js';
+import { DashboardView } from './components/dashboard/DashboardView.js';
+import { CareerView } from './components/career/CareerView.js';
+import { CVStudioView } from './components/cv/CVStudioView.js';
+import { OpportunitiesView } from './components/opportunities/OpportunitiesView.js';
+import { ApplicationsTrackerView } from './components/applications/ApplicationsTrackerView.js';
+import { MicroProjectsView } from './components/projects/MicroProjectsView.js';
+import { EmailIntelligenceView } from './components/email/EmailIntelligenceView.js';
+import { InterviewSimulatorView } from './components/interviews/InterviewSimulatorView.js';
+import { CoursesView } from './components/courses/CoursesView.js';
+import { AIAssistantView } from './components/assistant/AIAssistantView.js';
+import { SettingsAndPrivacyView } from './components/settings/SettingsAndPrivacyView.js';
+import { OnboardingModal } from './components/onboarding/OnboardingModal.js';
+import { LinkedInSyncModal } from './components/linkedin/LinkedInSyncModal.js';
+import { CommandPaletteModal } from './components/common/CommandPaletteModal.js';
+import { FloatingAICopilot } from './components/common/FloatingAICopilot.js';
+import { MobileNav } from './components/layout/MobileNav.js';
+import { api } from './lib/api.js';
+import {
+  CareerProfile,
+  ResumeVersion,
+  Opportunity,
+  Application,
+  MicroProject,
+  Course,
+  EmailEvent,
+  InterviewSession,
+  CareerMemoryFact,
+  CareerTimelineEvent,
+} from './types/index.js';
+
+const VALID_TABS: Record<string, string> = {
+  '': 'dashboard',
+  'dashboard': 'dashboard',
+  'home': 'dashboard',
+  'career': 'career',
+  'journey': 'career',
+  'cv': 'cv',
+  'workspace': 'cv',
+  'cv-builder': 'cv',
+  'resume': 'cv',
+  'opportunities': 'opportunities',
+  'jobs': 'opportunities',
+  'applications': 'applications',
+  'tracker': 'applications',
+  'projects': 'projects',
+  'courses': 'courses',
+  'learning': 'courses',
+  'email': 'email',
+  'interviews': 'interviews',
+  'assistant': 'assistant',
+  'ai': 'assistant',
+  'settings': 'settings',
+};
+
+function getTabFromPathname(pathname: string): { tab: string; isNotFound: boolean } {
+  const clean = pathname.replace(/^\/+|\/+$/g, '').toLowerCase();
+  const firstSegment = clean.split('/')[0];
+  if (firstSegment in VALID_TABS) {
+    return { tab: VALID_TABS[firstSegment], isNotFound: false };
+  }
+  return { tab: 'not-found', isNotFound: true };
+}
+
+export default function App() {
+  const [lang, setLang] = useState<'en' | 'ar'>(() => {
+    return (localStorage.getItem('careerpilot_lang') as 'en' | 'ar') || 'ar';
+  });
+  const [currentTab, setCurrentTab] = useState<string>(() => {
+    return getTabFromPathname(window.location.pathname).tab;
+  });
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Entities
+  const [profile, setProfile] = useState<CareerProfile | null>(null);
+  const [resumes, setResumes] = useState<ResumeVersion[]>([]);
+  const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
+  const [applications, setApplications] = useState<Application[]>([]);
+  const [projects, setProjects] = useState<MicroProject[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [emailEvents, setEmailEvents] = useState<EmailEvent[]>([]);
+  const [emailStatus, setEmailStatus] = useState<any>({
+    connected: false,
+    hasOAuthCredentials: false,
+    missingRequirement: null,
+  });
+  const [interviews, setInterviews] = useState<InterviewSession[]>([]);
+  const [memoryFacts, setMemoryFacts] = useState<CareerMemoryFact[]>([]);
+  const [timeline, setTimeline] = useState<CareerTimelineEvent[]>([]);
+  const [notifications, setNotifications] = useState<any[]>([]);
+
+  // Selection states
+  const [selectedOpportunity, setSelectedOpportunity] = useState<Opportunity | null>(null);
+  const [selectedProject, setSelectedProject] = useState<MicroProject | null>(null);
+  const [showOnboarding, setShowOnboarding] = useState<boolean>(false);
+  const [showLinkedInSync, setShowLinkedInSync] = useState<boolean>(false);
+  const [showCommandPalette, setShowCommandPalette] = useState<boolean>(false);
+  const [linkedinNotification, setLinkedinNotification] = useState<{
+    type: 'success' | 'error';
+    message: string;
+  } | null>(null);
+
+  // Navigation that syncs URL history and respects browser back/forward
+  const handleNavigate = (tab: string) => {
+    setCurrentTab(tab);
+    const targetPath = tab === 'dashboard' ? '/' : `/${tab}`;
+    if (window.location.pathname !== targetPath) {
+      window.history.pushState({ tab }, '', targetPath);
+    }
+  };
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const { tab } = getTabFromPathname(window.location.pathname);
+      setCurrentTab(tab);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  // Fetch initial state with resilient Promise.allSettled
+  const loadAllData = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const results = await Promise.allSettled([
+        api.getProfile(),
+        api.getResumes(),
+        api.getOpportunities(),
+        api.getApplications(),
+        api.getProjects(),
+        api.getCourses(),
+        api.getEmailEvents(),
+        api.getEmailStatus(),
+        api.getInterviews(),
+        api.getMemory(),
+        api.getTimeline(),
+        api.getNotifications(),
+      ]);
+
+      const [
+        profileRes,
+        resumesRes,
+        oppsRes,
+        appsRes,
+        projectsRes,
+        coursesRes,
+        emailEventsRes,
+        emailStatusRes,
+        interviewsRes,
+        memoryRes,
+        timelineRes,
+        notifsRes,
+      ] = results;
+
+      if (profileRes.status === 'fulfilled') setProfile(profileRes.value.profile);
+      if (resumesRes.status === 'fulfilled') setResumes(resumesRes.value.resumes);
+      if (oppsRes.status === 'fulfilled') setOpportunities(oppsRes.value.opportunities);
+      if (appsRes.status === 'fulfilled') setApplications(appsRes.value.applications);
+      if (projectsRes.status === 'fulfilled') setProjects(projectsRes.value.projects);
+      if (coursesRes.status === 'fulfilled') setCourses(coursesRes.value.courses);
+      if (emailEventsRes.status === 'fulfilled') setEmailEvents(emailEventsRes.value.events);
+      if (emailStatusRes.status === 'fulfilled') setEmailStatus(emailStatusRes.value);
+      if (interviewsRes.status === 'fulfilled') setInterviews(interviewsRes.value.interviews);
+      if (memoryRes.status === 'fulfilled') setMemoryFacts(memoryRes.value.memory);
+      if (timelineRes.status === 'fulfilled') setTimeline(timelineRes.value.timeline);
+      if (notifsRes.status === 'fulfilled') setNotifications(notifsRes.value.notifications);
+
+      if (profileRes.status === 'rejected') {
+        setError('Could not load user profile state from server.');
+      }
+    } catch (err: unknown) {
+      console.error('Failed to load application data:', err);
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadAllData();
+  }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('linkedin_connected') === 'true') {
+      setLinkedinNotification({
+        type: 'success',
+        message:
+          lang === 'ar'
+            ? 'تم ربط حسابك في LinkedIn ومزامنة بيانات الملف الشخصي بنجاح!'
+            : 'LinkedIn profile connected and synchronized successfully!',
+      });
+      window.history.replaceState({}, document.title, window.location.pathname);
+      loadAllData();
+    } else if (params.get('error')) {
+      setLinkedinNotification({
+        type: 'error',
+        message:
+          lang === 'ar'
+            ? `تعذر الربط مع LinkedIn: ${params.get('error')}`
+            : `LinkedIn OAuth error: ${params.get('error')}`,
+      });
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, [lang]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setShowCommandPalette((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  const handleToggleLang = () => {
+    setLang((prev) => {
+      const next = prev === 'en' ? 'ar' : 'en';
+      localStorage.setItem('careerpilot_lang', next);
+      return next;
+    });
+  };
+
+  // Handlers
+  const handleUpdateProfile = async (partial: Partial<CareerProfile>) => {
+    const res = await api.updateProfile(partial);
+    setProfile(res.profile);
+  };
+
+  const handleRegenerateDNA = async () => {
+    const res = await api.regenerateDNA();
+    setProfile(res.profile);
+    const tlRes = await api.getTimeline();
+    setTimeline(tlRes.timeline);
+  };
+
+  const handleRefreshNBA = async () => {
+    const res = await api.refreshNextBestAction();
+    setProfile(res.profile);
+  };
+
+  const handleSaveResume = async (resume: ResumeVersion) => {
+    const res = await api.saveResume(resume);
+    setResumes((prev) => {
+      const exists = prev.some((r) => r.id === res.resume.id);
+      if (exists) {
+        return prev.map((r) => (r.id === res.resume.id ? res.resume : r));
+      }
+      return [res.resume, ...prev];
+    });
+  };
+
+  const handleAnalyzeResume = async (resumeId: string) => {
+    const res = await api.analyzeResume(resumeId, profile?.targetRole);
+    return res.ats;
+  };
+
+  const handleTailorCV = async (payload: {
+    opportunityId?: string;
+    customJobDescription?: string;
+    customJobTitle?: string;
+    customCompany?: string;
+    resumeId?: string;
+    targetRole?: string;
+  }) => {
+    const res = await api.tailorCV(payload);
+    if (res?.tailoredResume) {
+      setResumes((prev) => {
+        const exists = prev.some((r) => r.id === res.tailoredResume.id);
+        if (exists) {
+          return prev.map((r) => (r.id === res.tailoredResume.id ? res.tailoredResume : r));
+        }
+        return [res.tailoredResume, ...prev];
+      });
+    }
+    return res;
+  };
+
+  // String-based wrapper used by OpportunitiesView / TailoredCVModal
+  const handleTailorCVById = async (opportunityId: string) => {
+    return handleTailorCV({ opportunityId });
+  };
+
+  const handleAddOpportunity = async (opp: Partial<Opportunity>) => {
+    const res = await api.addOpportunity(opp);
+    setOpportunities((prev) => [res.opportunity, ...prev]);
+  };
+
+  const handleDeleteOpportunity = async (id: string) => {
+    await api.deleteOpportunity(id);
+    setOpportunities((prev) => prev.filter((o) => o.id !== id));
+  };
+
+  const handleCalculateMatch = async (opportunityId: string) => {
+    const res = await api.calculateMatch(opportunityId);
+    return res.matchAnalysis;
+  };
+
+  const handlePrepareApplication = async (opportunityId: string) => {
+    const opp = opportunities.find((o) => o.id === opportunityId);
+    if (!opp) return;
+
+    // Check if application exists
+    let app = applications.find((a) => a.opportunityId === opportunityId);
+    if (!app) {
+      const res = await api.saveApplication({
+        opportunityId: opp.id,
+        jobTitle: opp.title,
+        company: opp.company,
+        status: 'Preparing',
+        answers: [],
+        events: [
+          {
+            id: `evt-${Date.now()}`,
+            date: new Date().toISOString().split('T')[0],
+            type: 'APPLICATION_CREATED',
+            description: `Started preparation for ${opp.title} at ${opp.company}`,
+          },
+        ],
+      });
+      app = res.application;
+      setApplications((prev) => [app!, ...prev]);
+    }
+    handleNavigate('applications');
+  };
+
+  const handleSaveApplication = async (app: Partial<Application>) => {
+    const res = await api.saveApplication(app);
+    setApplications((prev) => {
+      const idx = prev.findIndex((a) => a.id === res.application.id);
+      if (idx >= 0) {
+        const copy = [...prev];
+        copy[idx] = res.application;
+        return copy;
+      }
+      return [res.application, ...prev];
+    });
+  };
+
+  const handleGenerateProject = async (skillGap: string) => {
+    const res = await api.generateProject(skillGap, profile?.targetRole);
+    setProjects((prev) => [res.project, ...prev]);
+    return res.project;
+  };
+
+  const handleSubmitProject = async (
+    id: string,
+    data: { summary: string; codeUrl?: string; liveDemoUrl?: string }
+  ) => {
+    const res = await api.submitProject(id, data);
+    setProjects((prev) => prev.map((p) => (p.id === id ? res.project : p)));
+    // Refresh profile to reflect added evidence
+    const profRes = await api.getProfile();
+    setProfile(profRes.profile);
+    const tlRes = await api.getTimeline();
+    setTimeline(tlRes.timeline);
+    return res;
+  };
+
+  const handleEnrollCourse = async (id: string) => {
+    const res = await api.enrollCourse(id);
+    setCourses((prev) => prev.map((c) => (c.id === id ? res.course : c)));
+    return res;
+  };
+
+  const handleUpdateCourseProgress = async (
+    id: string,
+    progress: number,
+    completedModuleId?: string
+  ) => {
+    const res = await api.updateCourseProgress(id, progress, completedModuleId);
+    setCourses((prev) => prev.map((c) => (c.id === id ? res.course : c)));
+    return res;
+  };
+
+  const handleCompleteCourse = async (
+    id: string,
+    notes?: string,
+    certUrl?: string
+  ) => {
+    const res = await api.completeCourse(id, notes, certUrl);
+    setCourses((prev) => prev.map((c) => (c.id === id ? res.course : c)));
+    setProfile(res.profile);
+    const tlRes = await api.getTimeline();
+    setTimeline(tlRes.timeline);
+    const notifs = await api.getNotifications();
+    setNotifications(notifs.notifications);
+    return res;
+  };
+
+  const handleAddCourse = async (course: Partial<Course>) => {
+    const res = await api.saveCourse(course);
+    setCourses((prev) => [res.course, ...prev]);
+    return res;
+  };
+
+  const handleDeleteCourse = async (id: string) => {
+    await api.deleteCourse(id);
+    setCourses((prev) => prev.filter((c) => c.id !== id));
+  };
+
+  const handleRecommendCourses = async (focusArea?: string) => {
+    const res = await api.recommendCourses(focusArea);
+    setCourses(res.courses);
+    return res;
+  };
+
+  const handleClassifyEmail = async (data: {
+    subject: string;
+    sender: string;
+    snippet: string;
+  }) => {
+    const res = await api.classifyEmail(data);
+    setEmailEvents((prev) => [res.event, ...prev]);
+    const appsRes = await api.getApplications();
+    setApplications(appsRes.applications);
+    const tlRes = await api.getTimeline();
+    setTimeline(tlRes.timeline);
+    return res;
+  };
+
+  const handleStartInterview = async (data: {
+    jobRole?: string;
+    type: 'HR' | 'Behavioral' | 'Technical' | 'Mixed';
+  }) => {
+    const res = await api.startInterview(data);
+    setInterviews((prev) => [res.session, ...prev]);
+    return res.session;
+  };
+
+  const handleSubmitInterviewAnswer = async (
+    id: string,
+    data: { questionIndex: number; answer: string }
+  ) => {
+    const res = await api.submitInterviewAnswer(id, data);
+    setInterviews((prev) => prev.map((i) => (i.id === id ? res.session : i)));
+    const tlRes = await api.getTimeline();
+    setTimeline(tlRes.timeline);
+    return res;
+  };
+
+  const handleAddMemory = async (data: Omit<CareerMemoryFact, 'id' | 'updatedAt'>) => {
+    const res = await api.addMemoryFact(data);
+    setMemoryFacts((prev) => [res.fact, ...prev]);
+  };
+
+  const handleDeleteMemory = async (id: string) => {
+    await api.deleteMemoryFact(id);
+    setMemoryFacts((prev) => prev.filter((m) => m.id !== id));
+  };
+
+  const handleMarkNotificationRead = async (id: string) => {
+    await api.markNotificationRead(id);
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
+    );
+  };
+
+  const handleResetData = async () => {
+    await api.resetSystemData();
+    await loadAllData();
+  };
+
+  const handleParseLinkedInProfile = async (rawText: string) => {
+    return api.parseLinkedInProfile(rawText);
+  };
+
+  const handleSyncLinkedInProfile = async (extracted: any) => {
+    const res = await api.syncLinkedInProfile(extracted);
+    setProfile(res.profile);
+    setResumes((prev) => [res.resume, ...prev]);
+    const tlRes = await api.getTimeline();
+    setTimeline(tlRes.timeline);
+    const notifs = await api.getNotifications();
+    setNotifications(notifs.notifications);
+    return res;
+  };
+
+  const handleSyncPlatformFeeds = async () => {
+    const res = await api.syncPlatformFeeds();
+    setOpportunities(res.opportunities);
+    const tlRes = await api.getTimeline();
+    setTimeline(tlRes.timeline);
+    return res;
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-6 text-xs text-neutral-600">
+        <div className="text-center space-y-3">
+          <div className="w-6 h-6 border-2 border-neutral-900 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="font-medium">Initializing CareerPilot AI Operating System...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !profile) {
+    return (
+      <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-6 text-xs text-neutral-800">
+        <div className="bg-white border border-neutral-200 p-6 rounded-xl max-w-md w-full text-center space-y-4">
+          <h2 className="text-sm font-bold text-neutral-900">System Connection Error</h2>
+          <p className="text-neutral-600">{error || 'Could not load profile state.'}</p>
+          <button
+            onClick={loadAllData}
+            className="px-4 py-2 bg-neutral-900 text-white rounded-lg text-xs font-semibold"
+          >
+            Retry Connection
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      dir={lang === 'ar' ? 'rtl' : 'ltr'}
+      className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col selection:bg-indigo-500 selection:text-white"
+    >
+      {/* Top Bar Contract (Brand - Nav Links - Primary Action) */}
+      <Navbar
+        currentTab={currentTab}
+        onNavigate={handleNavigate}
+        lang={lang}
+        onToggleLang={handleToggleLang}
+        notifications={notifications}
+        onMarkNotificationRead={handleMarkNotificationRead}
+        onStartOnboarding={() => setShowOnboarding(true)}
+        onOpenLinkedInSync={() => setShowLinkedInSync(true)}
+        onOpenSearch={() => setShowCommandPalette(true)}
+      />
+      {/* LinkedIn OAuth Status Banner */}
+      {linkedinNotification && (
+        <div
+          className={`px-4 py-2.5 text-xs flex items-center justify-between border-b transition-all ${
+            linkedinNotification.type === 'success'
+              ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+              : 'bg-rose-50 text-rose-800 border-rose-200'
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            <span className="font-bold">
+              {linkedinNotification.type === 'success' ? 'LinkedIn:' : 'LinkedIn Notice:'}
+            </span>
+            <span>{linkedinNotification.message}</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setLinkedinNotification(null)}
+            className="p-1 hover:opacity-70 text-slate-500 font-bold"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
+      <div className="flex flex-1">
+        {/* Modern Compact Navigation Rail */}
+        <NavigationRail
+          currentTab={currentTab}
+          onNavigate={handleNavigate}
+          lang={lang}
+          onToggleLang={handleToggleLang}
+          metrics={{
+            applicationsCount: applications.length,
+            projectsCount: projects.length,
+            coursesCount: courses.length,
+            emailEventsCount: emailEvents.length,
+            readinessScore: profile.readiness?.overallScore ?? 84,
+          }}
+        />
+
+        {/* Central Workspace Viewport */}
+        <main className="flex-1 p-4 sm:p-6 lg:p-7 overflow-y-auto max-w-5xl mx-auto w-full">
+          {currentTab === 'dashboard' && (
+            <DashboardView
+              profile={profile}
+              opportunities={opportunities}
+              applications={applications}
+              emailEvents={emailEvents}
+              projects={projects}
+              courses={courses}
+              resumes={resumes}
+              interviews={interviews}
+              onNavigate={handleNavigate}
+              onRefreshNBA={handleRefreshNBA}
+              onSelectOpportunity={(opp) => {
+                setSelectedOpportunity(opp);
+                handleNavigate('opportunities');
+              }}
+              onSelectProject={(proj) => {
+                setSelectedProject(proj);
+                handleNavigate('projects');
+              }}
+              lang={lang}
+            />
+          )}
+
+          {currentTab === 'career' && (
+            <CareerView
+              profile={profile}
+              timeline={timeline}
+              resumes={resumes}
+              opportunities={opportunities}
+              applications={applications}
+              projects={projects}
+              courses={courses}
+              interviews={interviews}
+              onNavigate={handleNavigate}
+              onUpdateProfile={handleUpdateProfile}
+              onRegenerateDNA={handleRegenerateDNA}
+              onRunDiscovery={(answers) => api.runDiscovery(answers)}
+              onOpenLinkedInSync={() => setShowLinkedInSync(true)}
+              lang={lang}
+            />
+          )}
+
+          {currentTab === 'cv' && (
+            <CVStudioView
+              resumes={resumes}
+              opportunities={opportunities}
+              profile={profile}
+              onSaveResume={handleSaveResume}
+              onAnalyzeResume={handleAnalyzeResume}
+              onTailorCV={handleTailorCV}
+              onOpenLinkedInSync={() => setShowLinkedInSync(true)}
+              lang={lang}
+            />
+          )}
+
+          {currentTab === 'opportunities' && (
+            <OpportunitiesView
+              opportunities={opportunities}
+              onAddOpportunity={handleAddOpportunity}
+              onDeleteOpportunity={handleDeleteOpportunity}
+              onParseJD={(rawText) => api.parseJobDescription(rawText)}
+              onCalculateMatch={handleCalculateMatch}
+              onPrepareApplication={handlePrepareApplication}
+              onSyncFeeds={handleSyncPlatformFeeds}
+              onGetPlatformsStatus={api.getPlatformsStatus}
+              onTailorCV={handleTailorCVById}
+              onSaveResume={handleSaveResume}
+              onNavigateToCV={() => handleNavigate('cv')}
+              lang={lang}
+            />
+          )}
+
+          {currentTab === 'applications' && (
+            <ApplicationsTrackerView
+              applications={applications}
+              opportunities={opportunities}
+              resumes={resumes}
+              onSaveApplication={handleSaveApplication}
+              onGenerateCoverLetter={(oppId) => api.generateCoverLetter(oppId)}
+              onEvaluateQuality={(id) => api.evaluateApplicationQuality(id)}
+              onNavigateToCV={() => handleNavigate('cv')}
+              lang={lang}
+            />
+          )}
+
+          {currentTab === 'projects' && (
+            <MicroProjectsView
+              projects={projects}
+              profile={profile}
+              selectedProject={selectedProject}
+              onSelectProject={setSelectedProject}
+              onGenerateProject={handleGenerateProject}
+              onSubmitProject={handleSubmitProject}
+              lang={lang}
+            />
+          )}
+
+          {currentTab === 'courses' && (
+            <CoursesView
+              courses={courses}
+              profile={profile}
+              onEnrollCourse={handleEnrollCourse}
+              onUpdateProgress={handleUpdateCourseProgress}
+              onCompleteCourse={handleCompleteCourse}
+              onAddCourse={handleAddCourse}
+              onDeleteCourse={handleDeleteCourse}
+              onRecommendCourses={handleRecommendCourses}
+              onNavigateTab={handleNavigate}
+              lang={lang}
+            />
+          )}
+
+          {currentTab === 'email' && (
+            <EmailIntelligenceView
+              emailEvents={emailEvents}
+              emailStatus={emailStatus}
+              onClassifyEmail={handleClassifyEmail}
+              lang={lang}
+            />
+          )}
+
+          {currentTab === 'interviews' && (
+            <InterviewSimulatorView
+              interviews={interviews}
+              profile={profile}
+              onStartInterview={handleStartInterview}
+              onSubmitAnswer={handleSubmitInterviewAnswer}
+              lang={lang}
+            />
+          )}
+
+          {currentTab === 'assistant' && (
+            <AIAssistantView
+              profile={profile}
+              onSendMessage={(msg, hist) =>
+                api.sendAssistantMessage(msg, hist).then((r) => r.reply)
+              }
+              onNavigate={handleNavigate}
+              lang={lang}
+            />
+          )}
+
+          {currentTab === 'settings' && (
+            <SettingsAndPrivacyView
+              memoryFacts={memoryFacts}
+              onAddMemory={handleAddMemory}
+              onDeleteMemory={handleDeleteMemory}
+              onExportData={() => api.exportSystemData()}
+              onResetData={handleResetData}
+              lang={lang}
+            />
+          )}
+
+          {/* 404 Route Fallback - Never silently dump to homepage */}
+          {currentTab === 'not-found' && (
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-10 text-center space-y-4 max-w-xl mx-auto my-12 shadow-sm">
+              <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto font-black text-lg">
+                404
+              </div>
+              <h2 className="text-xl font-bold text-slate-900">
+                {lang === 'ar' ? 'الصفحة المطلوبة غير موجودة' : 'Page Not Found'}
+              </h2>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                {lang === 'ar'
+                  ? `المسار (${window.location.pathname}) غير مسجل في النظام. يمكنك العودة إلى مساحة العمل أو الانتقال لأحد الأقسام الرئيسية مباشرة.`
+                  : `The requested path "${window.location.pathname}" does not resolve to an active section.`}
+              </p>
+              <div className="pt-2 flex flex-wrap items-center justify-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('dashboard')}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-colors cursor-pointer"
+                >
+                  {lang === 'ar' ? 'العودة للرئيسية' : 'Return to Dashboard'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('cv')}
+                  className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
+                >
+                  {lang === 'ar' ? 'استوديو السيرة الذاتية' : 'CV Studio'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleNavigate('opportunities')}
+                  className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
+                >
+                  {lang === 'ar' ? 'اكتشف الوظائف' : 'Opportunities'}
+                </button>
+              </div>
+            </div>
+          )}
+        </main>
+
+        {/* Adaptive Contextual Right Panel (Desktop) */}
+        <ContextualRightPanel
+          currentTab={currentTab}
+          profile={profile}
+          resumes={resumes}
+          opportunities={opportunities}
+          applications={applications}
+          projects={projects}
+          courses={courses}
+          onNavigate={handleNavigate}
+          lang={lang}
+        />
+      </div>
+
+      {/* Progressive AI Onboarding Modal */}
+      <OnboardingModal
+        isOpen={showOnboarding}
+        onClose={() => setShowOnboarding(false)}
+        onComplete={async (data) => {
+          await handleUpdateProfile(data);
+          await handleRegenerateDNA();
+          await handleRefreshNBA();
+        }}
+        lang={lang}
+      />
+
+      {/* LinkedIn Profile & CV Sync Modal */}
+      <LinkedInSyncModal
+        isOpen={showLinkedInSync}
+        onClose={() => setShowLinkedInSync(false)}
+        onParseProfile={handleParseLinkedInProfile}
+        onSyncProfile={handleSyncLinkedInProfile}
+        lang={lang}
+      />
+
+      {/* Global Quick Search & Command Palette (Ctrl + K) */}
+      <CommandPaletteModal
+        isOpen={showCommandPalette}
+        onClose={() => setShowCommandPalette(false)}
+        onNavigate={handleNavigate}
+        opportunities={opportunities}
+        onOpenLinkedInSync={() => setShowLinkedInSync(true)}
+        onStartOnboarding={() => setShowOnboarding(true)}
+        lang={lang}
+      />
+
+      {/* Floating AI Career Copilot on every page */}
+      <FloatingAICopilot
+        profile={profile}
+        onSendMessage={(msg, hist) =>
+          api.sendAssistantMessage(msg, hist).then((r) => r.reply)
+        }
+        onNavigate={handleNavigate}
+        lang={lang}
+      />
+
+      {/* Mobile Sticky Bottom Navigation & Menu Drawer */}
+      <MobileNav
+        currentTab={currentTab}
+        onNavigate={handleNavigate}
+        lang={lang}
+        onToggleLang={handleToggleLang}
+        onStartOnboarding={() => setShowOnboarding(true)}
+        onOpenLinkedInSync={() => setShowLinkedInSync(true)}
+        metrics={{
+          applicationsCount: applications.length,
+          projectsCount: projects.length,
+          coursesCount: courses.length,
+          emailEventsCount: emailEvents.length,
+          readinessScore: profile.readiness?.overallScore ?? 84,
+        }}
+      />
+    </div>
+  );
+}

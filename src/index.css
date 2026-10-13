@@ -1,0 +1,177 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+/* ============================================================
+   CareerPilot AI — Design System Variables & Palette
+   ============================================================ */
+
+@layer base {
+  :root {
+    /* Brand Palette */
+    --color-navy: #0B1F3A;
+    --color-blue-primary: #2563EB;
+    --color-blue-bright: #1683F8;
+    --color-cyan: #22C7E8;
+    --color-teal: #20C997;
+    
+    /* Surfaces & Backgrounds */
+    --color-bg: #F7F9FC;
+    --color-surface-white: #FFFFFF;
+    --color-surface-soft: #EEF4FF;
+    --color-surface-muted: #F1F5F9;
+    --color-border: #E4EAF2;
+    --color-border-subtle: #EDF2F7;
+    
+    /* Typography */
+    --color-text-main: #17253B;
+    --color-text-secondary: #64748B;
+    --color-text-muted: #94A3B8;
+    
+    /* Semantic Feedback */
+    --color-success: #15803D;
+    --color-success-bg: #ECFDF5;
+    --color-warning: #B45309;
+    --color-warning-bg: #FFFBEB;
+    --color-error: #DC2626;
+    --color-error-bg: #FEF2F2;
+
+    /* Legacy Brand Variables mapped to new tokens */
+    --brand-50: #EEF4FF;
+    --brand-100: #DBEAFE;
+    --brand-200: #BFDBFE;
+    --brand-500: #2563EB;
+    --brand-600: #1D4ED8;
+    --brand-700: #0B1F3A;
+
+    --surface-bg: var(--color-bg);
+    --surface-card: var(--color-surface-white);
+    --surface-border: var(--color-border);
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-text-main);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  [dir="rtl"] {
+    font-family: 'IBM Plex Sans Arabic', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Scrollbars */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #CBD5E1;
+    border-radius: 99px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #94A3B8;
+  }
+
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* Text Selection */
+  ::selection {
+    background-color: #DBEAFE;
+    color: #1E3A8A;
+  }
+}
+
+/* ============================================================
+   Custom Animations
+   ============================================================ */
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulseSoft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.65; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.25s ease both;
+}
+
+.animate-pulse-soft {
+  animation: pulseSoft 2s ease-in-out infinite;
+}
+
+/* ============================================================
+   ATS Resume Print Styles (@media print)
+   ============================================================ */
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 10mm 14mm;
+  }
+
+  html, body {
+    background: #ffffff !important;
+    color: #111827 !important;
+    font-size: 10pt !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide navigation, sidebar, headers, controls, and UI chrome */
+  header, nav, aside, footer, .no-print, button, input, select, textarea {
+    display: none !important;
+  }
+
+  #root > div > div:first-child {
+    display: none !important; /* Hide sidebar / topbar */
+  }
+
+  /* ATS Resume Print Container */
+  #ats-resume-print-document {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: #ffffff !important;
+  }
+
+  .ats-print-section {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .ats-print-item {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+}
+
