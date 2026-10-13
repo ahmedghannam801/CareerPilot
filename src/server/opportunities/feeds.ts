@@ -261,7 +261,7 @@ export async function fetchLivePlatformJobs(profile: CareerProfile): Promise<Opp
   const jsearchKey =
     process.env.JSEARCH_RAPIDAPI_KEY ||
     process.env.RAPIDAPI_KEY ||
-    'e7e7907c0amshbb128f9a7510aa4p13152cjsnc1ff7f8eebfc';
+    '';
 
   if (jsearchKey) {
     const targetRole = profile.targetRole || 'Software Engineer';
