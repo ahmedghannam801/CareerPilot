@@ -23,6 +23,7 @@ import { clientDb } from './clientDb.js';
 import { getCurrentSession } from './supabaseClient.js';
 import { generateTailoredCV, evaluateJobMatch } from './resumeIntelligence.js';
 import { detectTrackFromRole, getTrackQuestions } from '../data/interviewQuestions.js';
+import { generateClientGeminiReply } from './geminiDirect.js';
 
 const API_BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 
@@ -1045,12 +1046,22 @@ export const api = {
         method: 'POST',
         body: JSON.stringify({ message, history }),
       });
-    } catch (err) {
-      const detail = err instanceof Error ? err.message : 'unknown error';
-      return {
-        success: false,
-        reply: `The AI assistant could not reach the server (${detail}). Please check that the API is deployed and VITE_API_URL is set, then try again.`,
-      };
+    } catch {
+      // If server endpoint is unreachable (e.g. 405 on Cloudflare Pages static CDN or server offline)
+      // gracefully invoke direct Gemini AI generation with smart offline fallbacks
+      try {
+        const reply = await generateClientGeminiReply(message, history);
+        return {
+          success: true,
+          reply,
+        };
+      } catch (geminiErr) {
+        const detail = geminiErr instanceof Error ? geminiErr.message : 'service unavailable';
+        return {
+          success: false,
+          reply: `عذراً، حدث خطأ أثناء الاتصال بمساعد الذكاء الاصطناعي (${detail}). يرجى التحقق من الاتصال والمحاولة مرة أخرى.`,
+        };
+      }
     }
   },
 

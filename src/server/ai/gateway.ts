@@ -39,11 +39,12 @@ const REQUEST_TIMEOUT_MS = 15000;
 // Models are configurable: GEMINI_MODELS="model-a,model-b" (first = preferred).
 // Prioritize verified active flash models with highest responsiveness and availability.
 const DEFAULT_MODELS = [
-  'gemini-3.5-flash',        // Primary — confirmed working, fast (1s)
-  'gemini-3.5-flash-lite',   // Fallback 1 — confirmed working
-  'gemini-3.6-flash',        // Fallback 2 — available
-  'gemini-3.7-flash',        // Fallback 3 — available
-  'gemini-flash-latest',     // Fallback 4 — alias, slower but reliable
+  'gemini-3.5-flash-lite',     // Primary — lightning fast (1.1s), highest availability
+  'gemini-flash-lite-latest',  // Fallback 1 — fast (1.3s), reliable
+  'gemini-3.1-flash-lite',     // Fallback 2 — stable (2.5s)
+  'gemini-3.8-flash',          // Fallback 3
+  'gemini-3.7-flash',          // Fallback 4
+  'gemini-3.5-flash',          // Fallback 5
 ];
 
 export function getCandidateModels(preferred?: string): string[] {
