@@ -793,16 +793,16 @@
 }
 
 /* ---- Hover fill-in for colored backgrounds ---- */
-.dark .hover\\:bg-blue-50:hover:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+.dark .hover\:bg-blue-50:hover:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
   background-color: rgba(59, 130, 246, 0.18) !important;
 }
-.dark .hover\\:bg-emerald-50:hover:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+.dark .hover\:bg-emerald-50:hover:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
   background-color: rgba(52, 211, 153, 0.15) !important;
 }
-.dark .hover\\:bg-amber-50:hover:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+.dark .hover\:bg-amber-50:hover:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
   background-color: rgba(251, 191, 36, 0.15) !important;
 }
-.dark .hover\\:bg-rose-50:hover:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+.dark .hover\:bg-rose-50:hover:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
   background-color: rgba(248, 113, 113, 0.15) !important;
 }
 
