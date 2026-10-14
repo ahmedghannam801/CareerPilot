@@ -87,7 +87,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <img
             src="/logo.png"
             alt="CareerPilot AI"
-            className="w-7 h-7 rounded-lg object-contain border border-slate-100 shadow-2xs"
+            className="w-8 h-8 rounded-full object-contain bg-white shadow-xs"
           />
           <div className="hidden sm:flex flex-col leading-none">
             <span className="text-xs font-black text-slate-900 tracking-tight">CareerPilot</span>

@@ -232,7 +232,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, lang, onToggleLan
             <img
               src="/logo.png"
               alt="CareerPilot AI"
-              className="w-10 h-10 rounded-xl object-contain border border-slate-700 shadow-md bg-white p-0.5"
+              className="w-11 h-11 rounded-full object-contain border border-blue-500/30 shadow-lg bg-white p-0.5"
               onError={(e) => {
                 (e.target as HTMLImageElement).style.display = 'none';
               }}
