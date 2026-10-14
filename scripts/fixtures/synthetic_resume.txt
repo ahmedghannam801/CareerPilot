@@ -1,0 +1,19 @@
+Ahmed Ghannam
+Email: ahmed.candidate@example.com
+Phone: +20 100 123 4567
+Location: Cairo, Egypt
+Title: Senior Full-Stack Engineer
+
+Professional Summary:
+Passionate senior software engineer with 6+ years of expertise designing scalable React, TypeScript, and Node.js microservices.
+
+Skills:
+React, TypeScript, Node.js, Express, Tailwind CSS, Docker, PostgreSQL, REST APIs, GraphQL, Python
+
+Experience:
+Lead Full-Stack Developer - Tech Innovators (2022 - Present)
+- Architected core analytics platform serving 150,000 active users, reducing query latency by 42%.
+- Integrated AI agents for document generation and interview automation with 98% uptime.
+
+Education:
+B.Sc. in Computer Science - Cairo University (2018 - 2022)

@@ -320,6 +320,243 @@
       "atsScore": 94,
       "createdAt": "2026-10-12T21:56:43.694Z",
       "updatedAt": "2026-10-12T21:56:43.694Z"
+    },
+    {
+      "id": "resume-1791977131372",
+      "userId": "user-default",
+      "title": "Uploaded CV - Ahmed Ghannam",
+      "targetRole": "Senior Full-Stack Engineer",
+      "isMaster": true,
+      "summary": "Passionate senior software engineer with 6+ years of expertise designing scalable React, TypeScript, and Node.js microservices.",
+      "skills": [
+        "Python",
+        "TypeScript",
+        "React",
+        "Node.js",
+        "Express",
+        "SQL",
+        "PostgreSQL",
+        "Docker",
+        "CSS",
+        "Tailwind CSS",
+        "REST APIs",
+        "GraphQL"
+      ],
+      "experience": [
+        {
+          "company": "Tech Innovators",
+          "role": "Lead Full-Stack Developer",
+          "period": "2022 - Present",
+          "bullets": [
+            "Architected core analytics platform serving 150,000 active users, reducing query latency by 42%.",
+            "Integrated AI agents for automated operations with 98% uptime."
+          ]
+        }
+      ],
+      "education": [
+        {
+          "institution": "Cairo University",
+          "degree": "B.Sc. in Computer Science",
+          "year": "2022"
+        }
+      ],
+      "projects": [],
+      "atsScore": 80,
+      "createdAt": "2026-10-14T11:25:31.372Z",
+      "updatedAt": "2026-10-14T11:25:31.372Z",
+      "atsFeedback": {
+        "overallScore": 80,
+        "structureScore": 15,
+        "contentScore": 20,
+        "actionVerbsScore": 5,
+        "metricsScore": 25,
+        "skillsScore": 15,
+        "strengths": [
+          "Professional summary clearly articulates career focus and competencies.",
+          "Good technical skills coverage with 12 verified technologies."
+        ],
+        "weaknesses": [
+          "No detailed experience bullet points found."
+        ],
+        "recommendations": [
+          "Add at least 3 bullet points per role demonstrating technical responsibilities."
+        ],
+        "missingKeywords": [],
+        "formattingScore": 100,
+        "relevanceScore": 100,
+        "impactScore": 60,
+        "detailedFindings": [
+          {
+            "id": "fnd-exp-empty",
+            "section": "experience",
+            "issue": "Experience section lacks bulleted accomplishments",
+            "location": "Work History",
+            "importance": "Critical",
+            "whyItMatters": "ATS score depends heavily on indexing experience bullet content.",
+            "recommendation": "Break down each role into 3-5 achievement bullets."
+          }
+        ],
+        "rubricVersion": "2026.2-deterministic",
+        "evaluatedAt": "2026-10-14T11:25:31.373Z"
+      }
+    },
+    {
+      "id": "resume-1791977255808",
+      "userId": "user-default",
+      "title": "Uploaded CV - Ahmed Ghannam",
+      "targetRole": "Senior Full-Stack Engineer",
+      "isMaster": true,
+      "summary": "Passionate senior software engineer with 6+ years of expertise designing scalable React, TypeScript, and Node.js microservices.",
+      "skills": [
+        "Python",
+        "TypeScript",
+        "React",
+        "Node.js",
+        "Express",
+        "SQL",
+        "PostgreSQL",
+        "Docker",
+        "CSS",
+        "Tailwind CSS",
+        "REST APIs",
+        "GraphQL"
+      ],
+      "experience": [
+        {
+          "company": "Tech Innovators",
+          "role": "Lead Full-Stack Developer",
+          "period": "2022 - Present",
+          "bullets": [
+            "Architected core analytics platform serving 150,000 active users, reducing query latency by 42%.",
+            "Integrated AI agents for automated operations with 98% uptime."
+          ]
+        }
+      ],
+      "education": [
+        {
+          "institution": "Cairo University",
+          "degree": "B.Sc. in Computer Science",
+          "year": "2022"
+        }
+      ],
+      "projects": [],
+      "atsScore": 80,
+      "createdAt": "2026-10-14T11:27:35.808Z",
+      "updatedAt": "2026-10-14T11:27:35.808Z",
+      "atsFeedback": {
+        "overallScore": 80,
+        "structureScore": 15,
+        "contentScore": 20,
+        "actionVerbsScore": 5,
+        "metricsScore": 25,
+        "skillsScore": 15,
+        "strengths": [
+          "Professional summary clearly articulates career focus and competencies.",
+          "Good technical skills coverage with 12 verified technologies."
+        ],
+        "weaknesses": [
+          "No detailed experience bullet points found."
+        ],
+        "recommendations": [
+          "Add at least 3 bullet points per role demonstrating technical responsibilities."
+        ],
+        "missingKeywords": [],
+        "formattingScore": 100,
+        "relevanceScore": 100,
+        "impactScore": 60,
+        "detailedFindings": [
+          {
+            "id": "fnd-exp-empty",
+            "section": "experience",
+            "issue": "Experience section lacks bulleted accomplishments",
+            "location": "Work History",
+            "importance": "Critical",
+            "whyItMatters": "ATS score depends heavily on indexing experience bullet content.",
+            "recommendation": "Break down each role into 3-5 achievement bullets."
+          }
+        ],
+        "rubricVersion": "2026.2-deterministic",
+        "evaluatedAt": "2026-10-14T11:27:35.808Z"
+      }
+    },
+    {
+      "id": "resume-1791977283725",
+      "userId": "user-default",
+      "title": "Uploaded CV - Ahmed Ghannam",
+      "targetRole": "Senior Full-Stack Engineer",
+      "isMaster": true,
+      "summary": "Passionate senior software engineer with 6+ years of expertise designing scalable React, TypeScript, and Node.js microservices.",
+      "skills": [
+        "Python",
+        "TypeScript",
+        "React",
+        "Node.js",
+        "Express",
+        "SQL",
+        "PostgreSQL",
+        "Docker",
+        "CSS",
+        "Tailwind CSS",
+        "REST APIs",
+        "GraphQL"
+      ],
+      "experience": [
+        {
+          "company": "Tech Innovators",
+          "role": "Lead Full-Stack Developer",
+          "period": "2022 - Present",
+          "bullets": [
+            "Architected core analytics platform serving 150,000 active users, reducing query latency by 42%.",
+            "Integrated AI agents for automated operations with 98% uptime."
+          ]
+        }
+      ],
+      "education": [
+        {
+          "institution": "Cairo University",
+          "degree": "B.Sc. in Computer Science",
+          "year": "2022"
+        }
+      ],
+      "projects": [],
+      "atsScore": 80,
+      "createdAt": "2026-10-14T11:28:03.725Z",
+      "updatedAt": "2026-10-14T11:28:03.725Z",
+      "atsFeedback": {
+        "overallScore": 80,
+        "structureScore": 15,
+        "contentScore": 20,
+        "actionVerbsScore": 5,
+        "metricsScore": 25,
+        "skillsScore": 15,
+        "strengths": [
+          "Professional summary clearly articulates career focus and competencies.",
+          "Good technical skills coverage with 12 verified technologies."
+        ],
+        "weaknesses": [
+          "No detailed experience bullet points found."
+        ],
+        "recommendations": [
+          "Add at least 3 bullet points per role demonstrating technical responsibilities."
+        ],
+        "missingKeywords": [],
+        "formattingScore": 100,
+        "relevanceScore": 100,
+        "impactScore": 60,
+        "detailedFindings": [
+          {
+            "id": "fnd-exp-empty",
+            "section": "experience",
+            "issue": "Experience section lacks bulleted accomplishments",
+            "location": "Work History",
+            "importance": "Critical",
+            "whyItMatters": "ATS score depends heavily on indexing experience bullet content.",
+            "recommendation": "Break down each role into 3-5 achievement bullets."
+          }
+        ],
+        "rubricVersion": "2026.2-deterministic",
+        "evaluatedAt": "2026-10-14T11:28:03.726Z"
+      }
     }
   ],
   "atsAnalysis": {
@@ -373,6 +610,60 @@
       "formattingScore": 92,
       "relevanceScore": 62,
       "impactScore": 59
+    },
+    "resume-1791977131372": {
+      "overallScore": 75,
+      "strengths": [
+        "Professional summary contains clear role focus and positioning.",
+        "Strong density of categorized technical skills.",
+        "Verified academic credentials clearly presented."
+      ],
+      "weaknesses": [
+        "Work experience contains roles without bulleted accomplishments."
+      ],
+      "recommendations": [
+        "Rewrite experience bullets using the Action Verb + Context + Measurable Outcome formula."
+      ],
+      "missingKeywords": [],
+      "formattingScore": 92,
+      "relevanceScore": 71,
+      "impactScore": 68
+    },
+    "resume-1791977255808": {
+      "overallScore": 75,
+      "strengths": [
+        "Professional summary contains clear role focus and positioning.",
+        "Strong density of categorized technical skills.",
+        "Verified academic credentials clearly presented."
+      ],
+      "weaknesses": [
+        "Work experience contains roles without bulleted accomplishments."
+      ],
+      "recommendations": [
+        "Rewrite experience bullets using the Action Verb + Context + Measurable Outcome formula."
+      ],
+      "missingKeywords": [],
+      "formattingScore": 92,
+      "relevanceScore": 71,
+      "impactScore": 68
+    },
+    "resume-1791977283725": {
+      "overallScore": 75,
+      "strengths": [
+        "Professional summary contains clear role focus and positioning.",
+        "Strong density of categorized technical skills.",
+        "Verified academic credentials clearly presented."
+      ],
+      "weaknesses": [
+        "Work experience contains roles without bulleted accomplishments."
+      ],
+      "recommendations": [
+        "Rewrite experience bullets using the Action Verb + Context + Measurable Outcome formula."
+      ],
+      "missingKeywords": [],
+      "formattingScore": 92,
+      "relevanceScore": 71,
+      "impactScore": 68
     }
   },
   "opportunities": [
@@ -2500,6 +2791,38 @@
   ],
   "applications": [
     {
+      "id": "test-app-interview",
+      "opportunityId": "opp-2",
+      "jobTitle": "AI Solutions Architect",
+      "company": "Beta AI",
+      "status": "Interview",
+      "answers": [],
+      "events": [],
+      "createdAt": "2026-10-14T11:28:03.698Z",
+      "updatedAt": "2026-10-14T11:28:03.698Z",
+      "attachments": [
+        {
+          "id": "att-1791977283718",
+          "fileName": "synthetic_resume.pdf",
+          "fileType": "application/pdf",
+          "fileSizeBytes": 767,
+          "uploadedAt": "2026-10-14T11:28:03.718Z",
+          "dataUrl": "data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iago8PCAvVGl0bGUgKEFobWVkIEdoYW5uYW0gLSBTZW5pb3IgRnVsbC1TdGFjayBBSSBFbmdpbmVlcikKICAgL0F1dGhvciAoQWhtZWQgR2hhbm5hbSkKICAgL1N1YmplY3QgKFNvZnR3YXJlIEVuZ2luZWVyaW5nIFJlc3VtZSkKPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL0NhdGFsb2cgL1BhZ2VzIDMgMCBSID4+CmVuZG9iagozIDAgb2JqCjw8IC9UeXBlIC9QYWdlcyAvS2lkcyBbNCAwIFJdIC9Db3VudCAxID4+CmVuZG9iago0IDAgb2JqCjw8IC9UeXBlIC9QYWdlIC9QYXJlbnQgMyAwIFIgL01lZGlhQm94IFswIDAgNjEyIDc5Ml0gL0NvbnRlbnRzIDUgMCBSID4+CmVuZG9iago1IDAgb2JqCjw8IC9MZW5ndGggMjYwID4+CnN0cmVhbQpCVAovRjEgMTIgVGYKNzIgNzEyIFRkCihBaG1lZCBHaGFubmFtIC0gU2VuaW9yIEZ1bGwtU3RhY2sgQUkgRW5naW5lZXIpIFRqCihFbWFpbDogYWhtZWRAZXhhbXBsZS5jb20gfCBQaG9uZTogKzIwMTAwMDAwMDAwMCB8IENhaXJvLCBFZ3lwdCkgVGoKKFNraWxsczogUmVhY3QsIFR5cGVTY3JpcHQsIE5vZGUuanMsIEV4cHJlc3MsIFRhaWx3aW5kIENTUywgR2VtaW5pIEFJLCBEb2NrZXIpIFRqCihFeHBlcmllbmNlOiBBcmNoaXRlY3RlZCBlbnRlcnByaXNlIGNsb3VkIHBsYXRmb3JtcyB3aXRoIDk5LjklIHVwdGltZS4pIFRqCkVUCmVuZHN0cmVhbQplbmRvYmoKeHJlZgowIDYKMDAwMDAwMDAwMCA2NTUzNSBmIAp0cmFpbGVyCjw8IC9TaXplIDYgL1Jvb3QgMiAwIFIgPj4KJSVFT0Y="
+        }
+      ]
+    },
+    {
+      "id": "test-app-preparing",
+      "opportunityId": "opp-1",
+      "jobTitle": "Frontend Engineer",
+      "company": "Alpha Corp",
+      "status": "Preparing",
+      "answers": [],
+      "events": [],
+      "createdAt": "2026-10-14T11:28:03.696Z",
+      "updatedAt": "2026-10-14T11:28:03.698Z"
+    },
+    {
       "opportunityId": "opp-3",
       "jobTitle": "AI Platform Systems Engineer",
       "company": "SupraData Cloud",
@@ -2714,6 +3037,66 @@
     }
   ],
   "emailEvents": [
+    {
+      "id": "test-email-1791977283706",
+      "subject": "Interview Invitation: Senior Full-Stack Engineer at TechCorp",
+      "sender": "talent@techcorp.example.com",
+      "snippet": "We would love to invite you for a 45-minute technical interview this Friday.",
+      "date": "2026-10-14T11:28:03.706Z",
+      "category": "interview_invitation",
+      "processed": false,
+      "read": false
+    },
+    {
+      "id": "test-email-1791977255783",
+      "subject": "Interview Invitation: Senior Full-Stack Engineer at TechCorp",
+      "sender": "talent@techcorp.example.com",
+      "snippet": "We would love to invite you for a 45-minute technical interview this Friday.",
+      "date": "2026-10-14T11:27:35.783Z",
+      "category": "interview_invitation",
+      "processed": false,
+      "read": false
+    },
+    {
+      "id": "test-email-1791977196236",
+      "subject": "sub",
+      "sender": "s@s.com",
+      "snippet": "snip",
+      "date": "2026-10-14T11:26:36.236Z",
+      "category": "interview_invitation",
+      "processed": true,
+      "read": true
+    },
+    {
+      "id": "test-email-1",
+      "subject": "sub",
+      "sender": "s@s.com",
+      "snippet": "snip",
+      "date": "2026-10-14T11:26:20.245Z",
+      "category": "interview_invitation",
+      "processed": true,
+      "read": true
+    },
+    {
+      "id": "test-123",
+      "subject": "test",
+      "sender": "a@b.com",
+      "snippet": "hello",
+      "date": "2026-10-14T11:25:59.454Z",
+      "category": "interview_invitation",
+      "processed": true,
+      "read": true
+    },
+    {
+      "id": "test-email-1791977131348",
+      "subject": "Interview Invitation: Senior Full-Stack Engineer at TechCorp",
+      "sender": "talent@techcorp.example.com",
+      "snippet": "We would love to invite you for a 45-minute technical interview this Friday.",
+      "date": "2026-10-14T11:25:31.349Z",
+      "category": "interview_invitation",
+      "processed": false,
+      "read": false
+    },
     {
       "id": "em-1791852197335",
       "subject": "Interview Confirmation: Senior AI Full-Stack Engineer at ScaleOps",

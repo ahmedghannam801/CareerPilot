@@ -1,3 +1,7 @@
+import dotenv from 'dotenv';
+dotenv.config();
+dotenv.config({ path: '.env.local', override: true });
+
 import { GoogleGenAI } from '@google/genai';
 import { z } from 'zod';
 import { featureFlags } from '../config/featureFlags.js';
@@ -33,8 +37,14 @@ const MAX_PROMPT_CHARS = 35000;
 const REQUEST_TIMEOUT_MS = 15000;
 
 // Models are configurable: GEMINI_MODELS="model-a,model-b" (first = preferred).
-// Original working order first (restored), then the *-latest aliases as safety nets.
-const DEFAULT_MODELS = ['gemini-3.8-flash', 'gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-flash-latest'];
+// Prioritize verified active flash models with highest responsiveness and availability.
+const DEFAULT_MODELS = [
+  'gemini-3.5-flash',
+  'gemini-3.5-flash-lite',
+  'gemini-2.5-flash',
+  'gemini-flash-latest',
+  'gemini-3.8-flash',
+];
 
 export function getCandidateModels(preferred?: string): string[] {
   const fromEnv = (process.env.GEMINI_MODELS || '')

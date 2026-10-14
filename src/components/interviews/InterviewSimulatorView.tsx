@@ -30,6 +30,7 @@ interface InterviewSimulatorViewProps {
   onStartInterview: (data: {
     jobRole?: string;
     type: 'HR' | 'Behavioral' | 'Technical' | 'Mixed';
+    language?: 'ar' | 'en';
   }) => Promise<InterviewSession>;
   onSubmitAnswer: (
     id: string,
@@ -119,6 +120,10 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
   // Sync interview lang ↔ voice language
   const isInterviewAr = interviewLang === 'ar';
 
+  useEffect(() => {
+    setVoiceLanguage(interviewLang === 'ar' ? 'ar-EG' : 'en-US');
+  }, [interviewLang]);
+
   const recognitionRef = useRef<any>(null);
   const timerRef = useRef<any>(null);
 
@@ -189,16 +194,31 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
 
   // Speak text with Text-to-Speech
   const handleSpeakQuestion = (text: string) => {
-    if (!isTTSSupported) return;
+    if (!isTTSSupported) {
+      setSpeechError(
+        isAr
+          ? 'خدمة النطق الصوتي (TTS) غير مدعومة في متصفحك الحالي.'
+          : 'Text-to-speech voice service is not supported in your current browser.'
+      );
+      return;
+    }
     stopSpeaking();
 
     try {
       const utterance = new SpeechSynthesisUtterance(text);
-      // Auto-detect language if Arabic characters present
-      const hasArabic = /[\u0600-\u06FF]/.test(text);
-      utterance.lang = hasArabic ? 'ar-SA' : voiceLanguage;
+      const hasArabic = /[\u0600-\u06FF]/.test(text) || interviewLang === 'ar';
+      utterance.lang = hasArabic ? 'ar-SA' : 'en-US';
       utterance.rate = 0.95;
       utterance.pitch = 1.0;
+
+      // Select natural matching voice if available
+      const voices = window.speechSynthesis.getVoices();
+      const matchingVoice = voices.find((v) =>
+        hasArabic ? v.lang.startsWith('ar') : v.lang.startsWith('en')
+      );
+      if (matchingVoice) {
+        utterance.voice = matchingVoice;
+      }
 
       utterance.onstart = () => {
         setIsSpeakingQuestion(true);
@@ -208,13 +228,24 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
         setIsSpeakingQuestion(false);
       };
 
-      utterance.onerror = () => {
+      utterance.onerror = (e) => {
         setIsSpeakingQuestion(false);
+        if (e.error !== 'canceled' && e.error !== 'interrupted') {
+          setSpeechError(
+            isAr
+              ? `تعذر تشغيل الصوت (${e.error}). يرجى التحقق من إعدادات الصوت في جهازك.`
+              : `Voice audio could not be played (${e.error}). Please check your audio output settings.`
+          );
+        }
       };
 
       window.speechSynthesis.speak(utterance);
     } catch (e) {
       setIsSpeakingQuestion(false);
+      const msg = e instanceof Error ? e.message : String(e);
+      setSpeechError(
+        isAr ? `خدمة الصوت غير متاحة: ${msg}` : `Voice service unavailable: ${msg}`
+      );
     }
   };
 

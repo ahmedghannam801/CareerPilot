@@ -602,15 +602,14 @@ export default function App() {
     return res;
   };
 
-  const handleMarkEmailRead = async (id: string) => {
-    // Find current state to determine toggle direction
+  const handleMarkEmailRead = async (id: string, explicitReadState?: boolean) => {
     const current = emailEvents.find((e) => e.id === id);
-    const isCurrentlyRead = Boolean(current?.read || current?.processed);
-    await api.markEmailRead(id);
+    const target = explicitReadState !== undefined ? explicitReadState : !(current?.read || current?.processed);
+    await api.markEmailRead(id, target);
     setEmailEvents((prev) =>
       prev.map((e) =>
         e.id === id
-          ? { ...e, read: !isCurrentlyRead, processed: e.processed }
+          ? { ...e, read: target, processed: target }
           : e
       )
     );
@@ -619,6 +618,7 @@ export default function App() {
   const handleStartInterview = async (data: {
     jobRole?: string;
     type: 'HR' | 'Behavioral' | 'Technical' | 'Mixed';
+    language?: 'ar' | 'en';
   }) => {
     const res = await api.startInterview(data);
     setInterviews((prev) => [res.session, ...prev]);

@@ -30,7 +30,7 @@ interface EmailIntelligenceViewProps {
     snippet: string;
     id?: string;
   }) => Promise<any>;
-  onMarkEmailRead?: (id: string) => void;
+  onMarkEmailRead?: (id: string, explicitReadState?: boolean) => void;
   lang: 'en' | 'ar';
 }
 
@@ -85,10 +85,9 @@ export const EmailIntelligenceView: React.FC<EmailIntelligenceViewProps> = ({
         id: selectedEventId || undefined,
       });
       setClassificationResult(res);
-      // Only mark as read if the event is currently unread — avoids toggling back to unread
-      const currentEvt = emailEvents.find((e) => e.id === selectedEventId);
-      if (selectedEventId && onMarkEmailRead && !currentEvt?.read && !currentEvt?.processed) {
-        onMarkEmailRead(selectedEventId);
+      // Explicitly mark as read (never toggle back to unread)
+      if (selectedEventId && onMarkEmailRead) {
+        onMarkEmailRead(selectedEventId, true);
       }
     } finally {
       setIsClassifying(false);
@@ -98,7 +97,8 @@ export const EmailIntelligenceView: React.FC<EmailIntelligenceViewProps> = ({
   const handleToggleRead = (evt: EmailEvent, e: React.MouseEvent) => {
     e.stopPropagation();
     if (onMarkEmailRead) {
-      onMarkEmailRead(evt.id);
+      const isCurrentlyRead = Boolean(evt.read || evt.processed);
+      onMarkEmailRead(evt.id, !isCurrentlyRead);
     }
   };
 

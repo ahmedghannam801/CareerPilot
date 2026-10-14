@@ -833,14 +833,18 @@ export const api = {
       };
     }
   },
-  markEmailRead: async (id: string) => {
+  markEmailRead: async (id: string, read?: boolean) => {
     try {
       return await request<{ success: boolean; event: EmailEvent }>(
         `/api/email/events/${id}/read`,
-        { method: 'POST' }
+        {
+          method: 'POST',
+          body: JSON.stringify({ read }),
+        }
       );
     } catch {
-      return { success: true };
+      const updated = clientDb.markEmailEventRead(id, read);
+      return { success: true, event: updated || undefined };
     }
   },
 
@@ -855,6 +859,7 @@ export const api = {
   startInterview: async (data: {
     jobRole?: string;
     type: 'HR' | 'Behavioral' | 'Technical' | 'Mixed';
+    language?: 'ar' | 'en';
   }) => {
     try {
       return await request<{ success: boolean; session: InterviewSession }>(
@@ -865,15 +870,28 @@ export const api = {
         }
       );
     } catch {
+      const isAr = data.language === 'ar';
       const session: InterviewSession = {
         id: `int-${Date.now()}`,
-        jobRole: data.jobRole || 'Senior Full-Stack AI Engineer',
+        jobRole: data.jobRole || (isAr ? 'مهندس برمجيات وذكاء اصطناعي' : 'Senior Full-Stack AI Engineer'),
         type: data.type,
+        language: data.language,
         currentQuestionIndex: 0,
         completed: false,
         overallScore: 0,
         createdAt: new Date().toISOString(),
-        questions: [
+        questions: isAr
+          ? [
+              {
+                id: 'q-1',
+                question: 'كيف تصمم بنية برمجية قابلة للتوسع والأمان للأنظمة السحابية والذكاء الاصطناعي؟',
+              },
+              {
+                id: 'q-2',
+                question: 'حدثني عن موقف واجهت فيه مشكلة معقدة في بيئة الإنتاج وكيف قمت بحلها.',
+              },
+            ]
+          : [
           {
             id: 'q-1',
             question: 'How do you design a reliable event-driven microservices architecture handling millions of requests daily?',

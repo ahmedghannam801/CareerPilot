@@ -306,6 +306,15 @@ export type ApplicationStatus =
   | 'Rejected'
   | 'Withdrawn';
 
+export interface ApplicationAttachment {
+  id: string;
+  fileName: string;
+  fileType: string;
+  fileSizeBytes: number;
+  uploadedAt: string;
+  dataUrl?: string;
+}
+
 export interface Application {
   id: string;
   opportunityId: string;
@@ -319,7 +328,8 @@ export interface Application {
   qualityScore?: number;
   qualityFeedback?: string[];
   notes?: string;
-  attachments?: string[]; // file names of supporting materials
+  attachments?: (string | ApplicationAttachment)[]; // supporting documents & certificates
+
   events: {
     id: string;
     date: string;
@@ -384,6 +394,7 @@ export interface InterviewSession {
   id: string;
   jobRole: string;
   type: 'HR' | 'Behavioral' | 'Technical' | 'Mixed';
+  language?: 'ar' | 'en';
   questions: {
     id: string;
     question: string;

@@ -555,17 +555,80 @@ Snippet: ${emailContent.snippet}`,
   /**
    * 11. Interview Simulator Agent
    */
+  async runInterviewQuestions(
+    role: string,
+    type: 'HR' | 'Behavioral' | 'Technical' | 'Mixed',
+    language: 'ar' | 'en' = 'en'
+  ): Promise<string[]> {
+    const isAr = language === 'ar';
+    const schema = z.object({
+      questions: z.array(z.string()).min(2).max(5),
+    });
+
+    try {
+      const res = await aiGateway.generateStructured({
+        agentName: 'Interview Question Generator',
+        promptVersion: 'interview_questions_v1',
+        systemInstruction: isAr
+          ? `أنت خبير مقابلات تقنية وشخصية في CareerPilot AI. قم بتوليد 3 أسئلة مقابلة واقعية وذكية باللغة العربية مخصصة لمنصب (${role}) ونوع المقابلة (${type}). ركز على أسئلة تحاكي المقابلات الواقعية في كبرى الشركات التقنية.`
+          : `You are an expert technical and behavioral interviewer in CareerPilot AI. Generate 3 realistic, high-impact interview questions in English tailored to the role (${role}) and interview type (${type}). Challenge real problem-solving, architectural choices, and practical experience.`,
+        prompt: `Generate 3 realistic interview questions for: Role: ${role}, Type: ${type}, Language: ${language}`,
+        schema,
+      });
+      if (res.questions && res.questions.length >= 2) {
+        return res.questions;
+      }
+    } catch (e) {
+      console.warn('[Interview Generator] AI generation failed, using curated bilingual bank:', e);
+    }
+
+    if (isAr) {
+      if (type === 'Behavioral') {
+        return [
+          'حدثني عن موقف واجهت فيه ضغطاً زمنياً كبيراً لتسليم مشروع تقني. كيف أعدت ترتيب أولوياتك وتواصلت مع فريقك؟',
+          'صف خلافاً تقنياً حدث بينك وبين زميل حول اختيار بنية برمجية أو تقنية معينة. كيف توصلتما للحل؟',
+          'كيف تتعامل مع متطلبات غير واضحة أو متغيرة باستمرار من صاحب العمل أو العميل؟',
+        ];
+      }
+      return [
+        `كيف تصمم بنية برمجية قابلة للتوسع والأمان لمنصب ${role} مع ضمان سرعة الاستجابة وأقل تكلفة للبنية التحتية؟`,
+        'ما هي خطواتك المنهجية لاكتشاف وحل مشكلة أداء معقدة (Performance Bottleneck) في بيئة الإنتاج؟',
+        'كيف تضمن جودة الشيفرة البرمجية واختبارات الأمان وCI/CD عند نشر تحديثات مستمرة؟',
+      ];
+    }
+
+    if (type === 'Behavioral') {
+      return [
+        'Tell me about a time an engineering project was falling behind schedule. How did you realign scope and communicate with stakeholders?',
+        'Describe a technical disagreement you had with a team member over an architectural decision. How did you resolve it?',
+        'How do you handle ambiguous or rapidly changing requirements from product stakeholders?',
+      ];
+    }
+    return [
+      `How do you design a resilient and scalable system architecture for a ${role} with strict latency and consistency requirements?`,
+      'Walk me through how you identify, profile, and eliminate a critical performance bottleneck in a high-traffic production application.',
+      'Explain your approach to database migrations, indexing strategies, and automated testing within a modern CI/CD pipeline.',
+    ];
+  },
+
   async runInterviewFeedback(
     role: string,
     question: string,
     userAnswer: string
   ) {
+    const isArabic = /[\u0600-\u06FF]/.test(question) || /[\u0600-\u06FF]/.test(userAnswer);
+
     return aiGateway.generateStructured({
       agentName: 'Interview Feedback Agent',
-      promptVersion: 'interview_feedback_v1',
+      promptVersion: 'interview_feedback_v2',
       systemInstruction: `You are the Interview Feedback Agent in CareerPilot AI.
 Evaluate the candidate's interview answer for structure (STAR method if behavioral), relevance, technical precision, and communication.
-Provide an objective score (0-100), key strengths, improvements, and an improved suggested response phrasing.`,
+Provide an objective score (0-100), key strengths, improvements, and an improved suggested response phrasing.
+CRITICAL LANGUAGE REQUIREMENT: ${
+        isArabic
+          ? 'The question or answer is in Arabic. You MUST formulate all strengths, improvements, and suggestedRefinement in clear, natural, professional Arabic.'
+          : 'Formulate all strengths, improvements, and suggestedRefinement in clear, natural, professional English.'
+      }`,
       prompt: `Role: ${role}
 Question: ${question}
 Candidate's Answer: ${userAnswer}`,

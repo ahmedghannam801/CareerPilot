@@ -450,6 +450,18 @@ class ClientDatabaseService {
     return this.state.emailEvents;
   }
 
+  markEmailEventRead(id: string, explicitReadState?: boolean): EmailEvent | null {
+    const event = this.state.emailEvents.find((e) => e.id === id);
+    if (event) {
+      const target = explicitReadState !== undefined ? explicitReadState : !(event.read || event.processed);
+      event.read = target;
+      event.processed = target;
+      this.persist();
+      return event;
+    }
+    return null;
+  }
+
   getEmailStatus() {
     return {
       connected: this.state.emailAccountConnected,

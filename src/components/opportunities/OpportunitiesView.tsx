@@ -168,14 +168,16 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
         }
 
         // 2. Work Model
-        if (filterWorkModel !== 'ALL' && opp.workModel !== filterWorkModel) {
-          return false;
+        if (filterWorkModel !== 'ALL') {
+          const model = (opp.workModel || '').trim().toLowerCase();
+          const target = filterWorkModel.trim().toLowerCase();
+          if (model !== target) return false;
         }
 
         // 3. Platform
         if (filterPlatform !== 'ALL') {
-          const plat = opp.sourcePlatform || 'Direct';
-          if (plat.toLowerCase() !== filterPlatform.toLowerCase()) return false;
+          const plat = (opp.sourcePlatform || 'Direct').trim().toLowerCase();
+          if (plat !== filterPlatform.trim().toLowerCase()) return false;
         }
 
         // 4. Match Score threshold
@@ -186,8 +188,10 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
         }
 
         // 5. Employment Type
-        if (filterEmploymentType !== 'ALL' && opp.employmentType !== filterEmploymentType) {
-          return false;
+        if (filterEmploymentType !== 'ALL') {
+          const emp = (opp.employmentType || '').trim().toLowerCase();
+          const target = filterEmploymentType.trim().toLowerCase();
+          if (emp !== target) return false;
         }
 
         return true;
@@ -444,7 +448,7 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
             </div>
           ) : (
             filteredOpps.map((opp) => {
-              const isSelected = selectedOpp?.id === opp.id;
+              const isSelected = effectiveSelectedOpp?.id === opp.id;
               const matchScore = opp.matchScore ?? null;
               const platform = opp.sourcePlatform || 'Direct';
               const isIntern =

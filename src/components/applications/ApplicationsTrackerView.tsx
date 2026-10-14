@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Layers,
   Sparkles,
@@ -16,7 +16,7 @@ import {
   Check,
   Send,
 } from 'lucide-react';
-import { Application, Opportunity, ApplicationStatus, ResumeVersion } from '../../types/index.js';
+import { Application, Opportunity, ApplicationStatus, ResumeVersion, ApplicationAttachment } from '../../types/index.js';
 import { formatDate } from '../../lib/utils.js';
 
 interface ApplicationsTrackerViewProps {
@@ -79,12 +79,13 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
   };
 
   const handleGenerateCoverLetter = async () => {
-    if (!selectedApp) return;
+    const current = effectiveSelectedApp || selectedApp;
+    if (!current) return;
     setIsGeneratingLetter(true);
     try {
-      const res = await onGenerateCoverLetter(selectedApp.opportunityId);
+      const res = await onGenerateCoverLetter(current.opportunityId);
       const updated = {
-        ...selectedApp,
+        ...current,
         coverLetter: res.letter.body,
       };
       await onSaveApplication(updated);
@@ -95,12 +96,13 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
   };
 
   const handleRunQualityAudit = async () => {
-    if (!selectedApp) return;
+    const current = effectiveSelectedApp || selectedApp;
+    if (!current) return;
     setIsEvaluating(true);
     try {
-      const res = await onEvaluateQuality(selectedApp.id);
+      const res = await onEvaluateQuality(current.id);
       const updated = {
-        ...selectedApp,
+        ...current,
         qualityScore: res.quality.score,
         qualityFeedback: res.quality.feedback,
       };
@@ -133,18 +135,28 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
     setNewCompany('');
   };
 
-  const filteredApps = filterStage === 'ALL'
-    ? applications
-    : applications.filter((a) => a.status === filterStage);
+  const filteredApps: Application[] = useMemo(() => {
+    if (filterStage === 'ALL') return applications;
+    return applications.filter(
+      (a: Application) => a.status.trim().toLowerCase() === filterStage.trim().toLowerCase()
+    );
+  }, [applications, filterStage]);
+
+  // Derived effective selection so detail pane never surfaces an out-of-stage application
+  const effectiveSelectedApp: Application | null = useMemo(() => {
+    if (!selectedApp) return filteredApps[0] || null;
+    const stillVisible = filteredApps.find((a: Application) => a.id === selectedApp.id);
+    return stillVisible ?? (filteredApps[0] || null);
+  }, [filteredApps, selectedApp]);
 
   // Auto-sync selected app: if current selection is filtered out, pick first visible
   useEffect(() => {
-    if (filteredApps.length === 0) {
+    if (effectiveSelectedApp && effectiveSelectedApp.id !== selectedApp?.id) {
+      setSelectedApp(effectiveSelectedApp);
+    } else if (filteredApps.length === 0 && selectedApp !== null) {
       setSelectedApp(null);
-    } else if (!filteredApps.find((a) => a.id === selectedApp?.id)) {
-      setSelectedApp(filteredApps[0]);
     }
-  }, [filterStage, applications]);
+  }, [effectiveSelectedApp, filteredApps.length, selectedApp]);
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
@@ -165,6 +177,7 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
         </div>
 
         <button
+          type="button"
           onClick={() => setShowAddModal(true)}
           className="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all shadow-sm inline-flex items-center gap-1.5 cursor-pointer"
         >
@@ -173,43 +186,75 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
         </button>
       </div>
 
-      {/* 4 Metric Summary Cards */}
+      {/* 4 Metric Summary Cards - Clickable to filter by stage */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="p-4 bg-white border border-slate-200/80 rounded-2xl shadow-2xs">
+        <button
+          type="button"
+          onClick={() => setFilterStage('ALL')}
+          className={`p-4 bg-white border text-left rtl:text-right rounded-2xl shadow-2xs transition-all cursor-pointer ${
+            filterStage === 'ALL'
+              ? 'border-blue-600 ring-2 ring-blue-500/20'
+              : 'border-slate-200/80 hover:border-slate-300'
+          }`}
+        >
           <span className="text-[11px] font-bold text-slate-500 block uppercase">
             {isAr ? 'إجمالي الطلبات' : 'Total Applications'}
           </span>
           <span className="text-2xl font-black font-mono text-slate-900 mt-1 block">
             {totalApps}
           </span>
-        </div>
+        </button>
 
-        <div className="p-4 bg-white border border-slate-200/80 rounded-2xl shadow-2xs">
+        <button
+          type="button"
+          onClick={() => setFilterStage('Applied')}
+          className={`p-4 bg-white border text-left rtl:text-right rounded-2xl shadow-2xs transition-all cursor-pointer ${
+            filterStage === 'Applied'
+              ? 'border-blue-600 ring-2 ring-blue-500/20'
+              : 'border-slate-200/80 hover:border-slate-300'
+          }`}
+        >
           <span className="text-[11px] font-bold text-blue-600 block uppercase">
             {isAr ? 'تم التقديم' : 'Applied'}
           </span>
           <span className="text-2xl font-black font-mono text-blue-600 mt-1 block">
             {appliedCount}
           </span>
-        </div>
+        </button>
 
-        <div className="p-4 bg-white border border-slate-200/80 rounded-2xl shadow-2xs">
+        <button
+          type="button"
+          onClick={() => setFilterStage('Interview')}
+          className={`p-4 bg-white border text-left rtl:text-right rounded-2xl shadow-2xs transition-all cursor-pointer ${
+            filterStage === 'Interview'
+              ? 'border-indigo-600 ring-2 ring-indigo-500/20'
+              : 'border-slate-200/80 hover:border-slate-300'
+          }`}
+        >
           <span className="text-[11px] font-bold text-indigo-600 block uppercase">
             {isAr ? 'مرحلة المقابلة' : 'Interviews'}
           </span>
           <span className="text-2xl font-black font-mono text-indigo-600 mt-1 block">
             {interviewsCount}
           </span>
-        </div>
+        </button>
 
-        <div className="p-4 bg-white border border-slate-200/80 rounded-2xl shadow-2xs">
+        <button
+          type="button"
+          onClick={() => setFilterStage('Offer')}
+          className={`p-4 bg-white border text-left rtl:text-right rounded-2xl shadow-2xs transition-all cursor-pointer ${
+            filterStage === 'Offer'
+              ? 'border-emerald-600 ring-2 ring-emerald-500/20'
+              : 'border-slate-200/80 hover:border-slate-300'
+          }`}
+        >
           <span className="text-[11px] font-bold text-emerald-600 block uppercase">
             {isAr ? 'عروض العمل' : 'Offers Received'}
           </span>
           <span className="text-2xl font-black font-mono text-emerald-600 mt-1 block">
             {offersCount}
           </span>
-        </div>
+        </button>
       </div>
 
       {/* Filter Tabs */}
@@ -262,7 +307,7 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
             </div>
           ) : (
             filteredApps.map((app) => {
-              const isSelected = selectedApp?.id === app.id;
+              const isSelected = effectiveSelectedApp?.id === app.id;
               const matchedOpp = opportunities.find((o) => o.id === app.opportunityId);
 
               return (
@@ -320,15 +365,15 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
 
         {/* Right Column: Application Preparation Console */}
         <div className="lg:col-span-7 space-y-6">
-          {selectedApp ? (
+          {effectiveSelectedApp ? (
             <div className="p-6 bg-white border border-slate-200/80 rounded-2xl space-y-6 shadow-2xs">
               <div className="border-b border-slate-100 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <span className="text-[11px] font-bold text-blue-600 block uppercase">
-                    {selectedApp.status}
+                    {effectiveSelectedApp.status}
                   </span>
-                  <h2 className="text-base font-bold text-slate-900">{selectedApp.jobTitle}</h2>
-                  <span className="text-xs text-slate-500 font-medium">{selectedApp.company}</span>
+                  <h2 className="text-base font-bold text-slate-900">{effectiveSelectedApp.jobTitle}</h2>
+                  <span className="text-xs text-slate-500 font-medium">{effectiveSelectedApp.company}</span>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -367,10 +412,10 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
 
                 <div className="flex flex-col sm:flex-row items-center gap-2">
                   <select
-                    value={selectedApp.tailoredResumeId || resumes.find((r) => r.isMaster)?.id || resumes[0]?.id || ''}
+                    value={effectiveSelectedApp.tailoredResumeId || resumes.find((r) => r.isMaster)?.id || resumes[0]?.id || ''}
                     onChange={async (e) => {
                       const newResumeId = e.target.value;
-                      const updated = { ...selectedApp, tailoredResumeId: newResumeId };
+                      const updated = { ...effectiveSelectedApp, tailoredResumeId: newResumeId };
                       await onSaveApplication(updated);
                       setSelectedApp(updated);
                     }}
@@ -390,41 +435,86 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
                     {isAr ? 'مرفقات ومواد داعمة:' : 'Supporting Materials:'}
                   </span>
                   <label
-                    htmlFor={`app-file-upload-${selectedApp.id}`}
+                    htmlFor={`app-file-upload-${effectiveSelectedApp.id}`}
                     className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg cursor-pointer transition-colors w-fit"
                   >
                     <FileText className="w-3.5 h-3.5" />
                     <span>{isAr ? 'رفع ملف مرفق (PDF، DOCX، TXT)' : 'Attach File (PDF, DOCX, TXT)'}</span>
                     <input
-                      id={`app-file-upload-${selectedApp.id}`}
+                      id={`app-file-upload-${effectiveSelectedApp.id}`}
                       type="file"
                       accept=".pdf,.doc,.docx,.txt"
                       className="sr-only"
-                      onChange={async (e) => {
+                      onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (!file) return;
-                        const existingAttachments = selectedApp.attachments || [];
-                        const updated = {
-                          ...selectedApp,
-                          attachments: [...existingAttachments, file.name],
+                        const reader = new FileReader();
+                        reader.onload = async () => {
+                          const dataUrl = typeof reader.result === 'string' ? reader.result : '';
+                          const newAtt: ApplicationAttachment = {
+                            id: `att-${Date.now()}`,
+                            fileName: file.name,
+                            fileType: file.type || file.name.split('.').pop() || 'document',
+                            fileSizeBytes: file.size,
+                            uploadedAt: new Date().toISOString(),
+                            dataUrl,
+                          };
+                          const existingAttachments = effectiveSelectedApp.attachments || [];
+                          const updated = {
+                            ...effectiveSelectedApp,
+                            attachments: [...existingAttachments, newAtt],
+                          };
+                          await onSaveApplication(updated);
+                          setSelectedApp(updated);
                         };
-                        await onSaveApplication(updated);
-                        setSelectedApp(updated);
+                        reader.readAsDataURL(file);
                         e.target.value = '';
                       }}
                     />
                   </label>
-                  {selectedApp.attachments && selectedApp.attachments.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 mt-1">
-                      {selectedApp.attachments.map((name, idx) => (
-                        <span
-                          key={idx}
-                          className="text-[11px] px-2 py-0.5 bg-white border border-slate-200 rounded font-mono text-slate-700 inline-flex items-center gap-1"
-                        >
-                          <FileText className="w-3 h-3 text-blue-500 shrink-0" />
-                          {name}
-                        </span>
-                      ))}
+                  {effectiveSelectedApp.attachments && effectiveSelectedApp.attachments.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mt-1.5">
+                      {effectiveSelectedApp.attachments.map((att: string | ApplicationAttachment, idx: number) => {
+                        const isObj = typeof att === 'object' && att !== null;
+                        const fileName = isObj ? att.fileName : String(att);
+                        const dataUrl = isObj ? att.dataUrl : undefined;
+
+                        return (
+                          <div
+                            key={isObj ? att.id : idx}
+                            className="text-[11px] px-2 py-1 bg-white border border-slate-200 rounded-lg font-mono text-slate-700 inline-flex items-center gap-1.5 shadow-2xs"
+                          >
+                            <FileText className="w-3 h-3 text-blue-500 shrink-0" />
+                            {dataUrl ? (
+                              <a
+                                href={dataUrl}
+                                download={fileName}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:underline max-w-[150px] truncate font-medium"
+                                title={isAr ? 'فتح أو تحميل الملف المرفق' : 'Reopen / Download file'}
+                              >
+                                {fileName}
+                              </a>
+                            ) : (
+                              <span className="max-w-[150px] truncate">{fileName}</span>
+                            )}
+                            <button
+                              type="button"
+                              onClick={async () => {
+                                const filtered = (effectiveSelectedApp.attachments || []).filter((_, i) => i !== idx);
+                                const updated = { ...effectiveSelectedApp, attachments: filtered };
+                                await onSaveApplication(updated);
+                                setSelectedApp(updated);
+                              }}
+                              className="text-slate-400 hover:text-red-500 ml-0.5 text-xs font-bold cursor-pointer"
+                              title={isAr ? 'حذف المرفق' : 'Remove attachment'}
+                            >
+                              ×
+                            </button>
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
@@ -438,14 +528,15 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
                   </h3>
                 </div>
 
-                {selectedApp.coverLetter ? (
+                {effectiveSelectedApp.coverLetter ? (
                   <div className="p-4 bg-slate-50/70 border border-slate-200/80 rounded-xl text-xs text-slate-700 leading-relaxed font-sans whitespace-pre-wrap">
-                    {selectedApp.coverLetter}
+                    {effectiveSelectedApp.coverLetter}
                   </div>
                 ) : (
                   <div className="p-6 text-center text-xs text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200 space-y-2">
                     <p>{isAr ? 'لم يتم توليد خطاب تقديم بعد لهذا الطلب.' : 'No cover letter generated yet.'}</p>
                     <button
+                      type="button"
                       onClick={handleGenerateCoverLetter}
                       className="text-xs font-bold text-blue-600 hover:underline cursor-pointer"
                     >
@@ -461,7 +552,7 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
                   {isAr ? 'سجل أحداث وتحديثات الطلب:' : 'Application Timeline:'}
                 </h3>
                 <div className="space-y-2">
-                  {selectedApp.events.map((evt) => (
+                  {effectiveSelectedApp.events.map((evt) => (
                     <div key={evt.id} className="p-3 bg-slate-50 rounded-xl text-xs border border-slate-200/60 flex items-start gap-2.5">
                       <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0 mt-0.5" />
                       <div>

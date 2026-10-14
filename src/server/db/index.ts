@@ -1463,11 +1463,12 @@ export class DatabaseService {
     return event;
   }
 
-  markEmailEventRead(id: string): EmailEvent | null {
+  markEmailEventRead(id: string, explicitReadState?: boolean): EmailEvent | null {
     const event = this.state.emailEvents.find((e) => e.id === id);
     if (event) {
-      event.read = true;
-      event.processed = true;
+      const target = explicitReadState !== undefined ? explicitReadState : !(event.read || event.processed);
+      event.read = target;
+      event.processed = target;
       this.save();
       return event;
     }

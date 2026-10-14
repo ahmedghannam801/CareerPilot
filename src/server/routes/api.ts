@@ -1118,7 +1118,11 @@ apiRouter.get('/email/status', (req: Request, res: Response) => {
 
 apiRouter.post('/email/events/:id/read', (req: Request, res: Response) => {
   try {
-    const updated = dbService.markEmailEventRead(req.params.id);
+    const { read } = req.body || {};
+    const updated = dbService.markEmailEventRead(
+      req.params.id,
+      typeof read === 'boolean' ? read : undefined
+    );
     if (!updated) {
       return res.status(404).json({ success: false, error: 'Email event not found' });
     }
@@ -1208,33 +1212,24 @@ apiRouter.get('/interviews', (req: Request, res: Response) => {
   }
 });
 
-apiRouter.post('/interviews/start', (req: Request, res: Response) => {
+apiRouter.post('/interviews/start', async (req: Request, res: Response) => {
   try {
-    const { jobRole, type } = req.body;
+    const { jobRole, type, language } = req.body;
     const profile = dbService.getProfile();
-    const role = jobRole || profile.targetRole;
+    const role = jobRole || profile.targetRole || 'Software Engineer';
+    const lang: 'ar' | 'en' = language === 'ar' ? 'ar' : 'en';
 
-    const technicalQuestions = [
-      'How do you design a resilient architecture when integrating non-deterministic LLM outputs with a strict database schema?',
-      'Walk me through how you identify and eliminate a performance bottleneck in a high-traffic Node.js or React application.',
-      'Explain your approach to database migrations, indexing, and connection pooling in production.',
-    ];
-    const behavioralQuestions = [
-      'Tell me about a time an engineering project was falling behind schedule. How did you realign scope and communicate with stakeholders?',
-      'Describe a disagreement you had with a team member over an architectural decision. How did you resolve it?',
-    ];
-
-    const questionsList = (type === 'Behavioral' ? behavioralQuestions : technicalQuestions).map(
-      (q, idx) => ({
-        id: `q-${idx + 1}`,
-        question: q,
-      })
-    );
+    const questionsListRaw = await AIAgents.runInterviewQuestions(role, type || 'Technical', lang);
+    const questionsList = questionsListRaw.map((q, idx) => ({
+      id: `q-${idx + 1}`,
+      question: q,
+    }));
 
     const session = {
       id: `int-${Date.now()}`,
       jobRole: role,
       type: type || 'Technical',
+      language: lang,
       questions: questionsList,
       currentQuestionIndex: 0,
       completed: false,
