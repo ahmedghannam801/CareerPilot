@@ -1,22 +1,43 @@
-# One-click backend (Express + AI agents) on Render: Dashboard -> New -> Blueprint -> pick this repo.
+# ─────────────────────────────────────────────────────────────────────────────
+# CareerPilot AI — Render.com One-Click Backend Blueprint
+# Steps: Render Dashboard → New → Blueprint → select this repo → Deploy
+# Then add the env var values marked sync:false in the Render dashboard.
+# ─────────────────────────────────────────────────────────────────────────────
 services:
   - type: web
     name: careerpilot-api
     runtime: node
     plan: free
+    region: oregon
     buildCommand: npm install --include=dev && npm run build
-    startCommand: npm start
+    startCommand: node --import tsx/esm server.ts
     healthCheckPath: /health
+    autoDeploy: true
     envVars:
       - key: NODE_ENV
         value: production
+      # ── Required: Google Gemini AI ───────────────────────────────────────────
       - key: GEMINI_API_KEY
-        sync: false
+        sync: false   # Paste from https://aistudio.google.com/app/apikey
+      # ── Required: Supabase (PostgreSQL persistence) ──────────────────────────
       - key: SUPABASE_URL
-        sync: false
+        sync: false   # e.g. https://xxxx.supabase.co
       - key: SUPABASE_ANON_KEY
-        sync: false
+        sync: false   # Supabase anon/public key
+      # ── Required: CORS — set to your Cloudflare Pages URL ───────────────────
       - key: CORS_ORIGIN
-        sync: false # your Cloudflare Pages URL, e.g. https://careerpilot.pages.dev
+        sync: false   # e.g. https://careerpilot-dic.pages.dev
       - key: APP_URL
+        sync: false   # same as CORS_ORIGIN
+      # ── Optional: RapidAPI/JSearch for live job feeds ────────────────────────
+      - key: RAPIDAPI_KEY
+        sync: false   # From https://rapidapi.com → JSearch API → My Apps
+      - key: JSEARCH_RAPIDAPI_KEY
+        sync: false   # Same key as RAPIDAPI_KEY
+      # ── Optional: LinkedIn OAuth (Sign In with LinkedIn) ─────────────────────
+      - key: LINKEDIN_CLIENT_ID
         sync: false
+      - key: LINKEDIN_CLIENT_SECRET
+        sync: false
+      - key: LINKEDIN_REDIRECT_URI
+        sync: false   # https://<your-render-url>/api/auth/linkedin/callback
