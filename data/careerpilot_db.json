@@ -557,6 +557,80 @@
         "rubricVersion": "2026.2-deterministic",
         "evaluatedAt": "2026-10-14T11:28:03.726Z"
       }
+    },
+    {
+      "id": "res-tailored-1792008305161",
+      "title": "Tailored: Senior Full-Stack AI Engineer (Target Tech Employers)",
+      "isMaster": false,
+      "targetRole": "Senior Full-Stack AI Engineer",
+      "summary": "Senior Full-Stack AI Engineer — Senior Full-Stack Engineer with 5+ years of experience architecting high-scale distributed web applications, type-safe APIs, and generative AI multi-agent workflows. Proven track record reducing API latency by 75% and delivering resilient production systems with TypeScript, React, and Node.js.",
+      "experience": [
+        {
+          "id": "exp-1",
+          "company": "Synthetix Platforms",
+          "role": "Senior Full-Stack Engineer",
+          "location": "Remote",
+          "startDate": "2023-07",
+          "current": true,
+          "responsibilities": [
+            "Engineered event-driven microservices handling 4M+ requests daily with Node.js and TypeScript",
+            "Architected real-time dashboard UI with React, Vite, and Tailwind, decreasing interaction latency by 45%",
+            "Built server-side LLM orchestration layer with structured schema validation and streaming"
+          ],
+          "achievements": [
+            "Reduced p95 API response times from 340ms to 78ms through redis caching and query optimization",
+            "Authored high-concurrency background job processor with automated failover and telemetry"
+          ]
+        },
+        {
+          "id": "exp-2",
+          "company": "CoreStack Solutions",
+          "role": "Software Engineer",
+          "location": "Hybrid",
+          "startDate": "2021-08",
+          "endDate": "2023-06",
+          "current": false,
+          "responsibilities": [
+            "Developed REST and GraphQL APIs using Express, TypeScript, and PostgreSQL",
+            "Collaborated with product teams to deliver customer-facing analytics and reporting"
+          ],
+          "achievements": [
+            "Spearheaded migration of legacy frontend to modular React components, boosting test coverage to 85%"
+          ]
+        }
+      ],
+      "education": [
+        {
+          "id": "edu-1",
+          "institution": "University of Technology",
+          "degree": "B.Sc. in Computer Science & Software Engineering",
+          "field": "Software Architecture & Distributed Systems",
+          "startDate": "2019-09",
+          "endDate": "2023-06",
+          "current": false,
+          "gpa": "3.8 / 4.0"
+        }
+      ],
+      "skills": [
+        "TypeScript",
+        "React & Next.js",
+        "PostgreSQL & Drizzle",
+        "LLM Orchestration & Multi-Agent Architecture",
+        "Docker & Cloud Deployment",
+        "System Architecture & API Design"
+      ],
+      "certifications": [
+        "AWS Certified Developer Associate",
+        "Advanced Relational Database Design & Performance Tuning"
+      ],
+      "atsScore": 92,
+      "createdAt": "2026-10-14T20:05:05.161Z",
+      "updatedAt": "2026-10-14T20:05:05.161Z",
+      "isTailored": true,
+      "companyName": "Target Tech Employers",
+      "opportunityId": "role-opp-1792008305161",
+      "templateVersion": "google_doc_ats_v1",
+      "sourceResumeId": "res-master"
     }
   ],
   "atsAnalysis": {
@@ -664,6 +738,25 @@
       "formattingScore": 92,
       "relevanceScore": 71,
       "impactScore": 68
+    },
+    "res-tailored-1792008305161": {
+      "overallScore": 100,
+      "strengths": [
+        "Professional summary contains clear role focus and positioning.",
+        "Work experience includes multiple bulleted achievements.",
+        "Strong density of categorized technical skills.",
+        "Verified academic credentials clearly presented."
+      ],
+      "weaknesses": [
+        "No critical defects found."
+      ],
+      "recommendations": [
+        "Maintain current resume structure."
+      ],
+      "missingKeywords": [],
+      "formattingScore": 92,
+      "relevanceScore": 95,
+      "impactScore": 90
     }
   },
   "opportunities": [

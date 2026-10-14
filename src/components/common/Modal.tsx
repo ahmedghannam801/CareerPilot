@@ -78,7 +78,7 @@ export const Modal: React.FC<ModalProps> = ({
         dir={dir}
         onClick={(e) => e.stopPropagation()}
         className={[
-          'relative bg-white rounded-2xl shadow-2xl border border-slate-200',
+          'relative bg-white dark:bg-[#111827] rounded-2xl shadow-2xl border border-slate-200 dark:border-[#374151]',
           'w-full',
           SIZE_MAP[size] ?? SIZE_MAP.lg,
           'max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2.5rem)]',
@@ -90,11 +90,11 @@ export const Modal: React.FC<ModalProps> = ({
         aria-modal="true"
       >
         {(title || showCloseButton) && (
-          <div className="flex items-start justify-between gap-4 p-4 sm:p-5 border-b border-slate-100 shrink-0">
+          <div className="flex items-start justify-between gap-4 p-4 sm:p-5 border-b border-slate-100 dark:border-[#1F2937] shrink-0">
             {title && (
               <div className="min-w-0 flex-1">
                 {typeof title === 'string' ? (
-                  <h2 className="text-sm font-bold text-slate-900 truncate">{title}</h2>
+                  <h2 className="text-sm font-bold text-slate-900 dark:text-[#F1F5F9] truncate">{title}</h2>
                 ) : (
                   title
                 )}
@@ -104,7 +104,7 @@ export const Modal: React.FC<ModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors shrink-0 cursor-pointer"
+                className="p-1.5 rounded-lg text-slate-400 dark:text-[#94A3B8] hover:text-slate-700 dark:hover:text-[#F1F5F9] hover:bg-slate-100 dark:hover:bg-[#1E293B] transition-colors shrink-0 cursor-pointer"
                 aria-label="Close"
               >
                 <X className="w-4 h-4" />
@@ -116,7 +116,7 @@ export const Modal: React.FC<ModalProps> = ({
           {children}
         </div>
         {footer && (
-          <div className="shrink-0 border-t border-slate-100 p-4 sm:p-5 bg-slate-50/70">
+          <div className="shrink-0 border-t border-slate-100 dark:border-[#1F2937] p-4 sm:p-5 bg-slate-50/70 dark:bg-[#1E293B]/70">
             {footer}
           </div>
         )}
@@ -167,7 +167,7 @@ export const Drawer: React.FC<DrawerProps> = ({
         dir={dir}
         onClick={(e) => e.stopPropagation()}
         className={[
-          'bg-white shadow-2xl flex flex-col h-full w-full max-w-[calc(100vw-1rem)] overflow-hidden',
+          'bg-white dark:bg-[#111827] shadow-2xl flex flex-col h-full w-full max-w-[calc(100vw-1rem)] overflow-hidden',
           width,
           slideClass,
         ].join(' ')}
@@ -175,10 +175,10 @@ export const Drawer: React.FC<DrawerProps> = ({
         aria-modal="true"
       >
         {title !== undefined && (
-          <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-100 shrink-0 sticky top-0 bg-white/95 backdrop-blur-xs z-10">
+          <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-100 dark:border-[#1F2937] shrink-0 sticky top-0 bg-white/95 dark:bg-[#111827]/95 backdrop-blur-xs z-10">
             <div className="min-w-0 flex-1">
               {typeof title === 'string' ? (
-                <h2 className="text-sm font-bold text-slate-900">{title}</h2>
+                <h2 className="text-sm font-bold text-slate-900 dark:text-[#F1F5F9]">{title}</h2>
               ) : (
                 title
               )}
@@ -186,7 +186,7 @@ export const Drawer: React.FC<DrawerProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="p-1.5 ml-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors shrink-0 cursor-pointer"
+              className="p-1.5 ml-2 rounded-lg text-slate-400 dark:text-[#94A3B8] hover:text-slate-700 dark:hover:text-[#F1F5F9] hover:bg-slate-100 dark:hover:bg-[#1E293B] transition-colors shrink-0 cursor-pointer"
               aria-label="Close"
             >
               <X className="w-5 h-5" />
@@ -197,7 +197,7 @@ export const Drawer: React.FC<DrawerProps> = ({
           {children}
         </div>
         {footer && (
-          <div className="shrink-0 border-t border-slate-200 p-4 bg-slate-50 sticky bottom-0">
+          <div className="shrink-0 border-t border-slate-200 dark:border-[#1F2937] p-4 bg-slate-50 dark:bg-[#1E293B] sticky bottom-0">
             {footer}
           </div>
         )}
