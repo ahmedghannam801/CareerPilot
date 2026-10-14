@@ -33,9 +33,10 @@ const MAX_PROMPT_CHARS = 35000;
 const REQUEST_TIMEOUT_MS = 15000;
 
 // Models are configurable: GEMINI_MODELS="model-a,model-b" (first = preferred).
-const DEFAULT_MODELS = ['gemini-3.5-flash', 'gemini-flash-latest', 'gemini-flash-lite-latest'];
+// Original working order first (restored), then the *-latest aliases as safety nets.
+const DEFAULT_MODELS = ['gemini-3.8-flash', 'gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-flash-latest'];
 
-function getCandidateModels(preferred?: string): string[] {
+export function getCandidateModels(preferred?: string): string[] {
   const fromEnv = (process.env.GEMINI_MODELS || '')
     .split(',')
     .map((m) => m.trim())

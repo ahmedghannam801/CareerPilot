@@ -9,6 +9,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist",
+    "check:ai": "tsx scripts/check-gemini.ts",
     "lint": "tsc --noEmit",
     "test": "tsx scripts/run-quality-gate.ts",
     "deploy": "npm run build && wrangler pages deploy dist --project-name careerpilot"
