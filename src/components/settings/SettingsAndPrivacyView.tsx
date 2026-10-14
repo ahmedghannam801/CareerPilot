@@ -29,8 +29,8 @@ interface SettingsAndPrivacyViewProps {
   onExportData: () => Promise<any>;
   onResetData: () => Promise<void>;
   lang: 'en' | 'ar';
-  theme?: 'light' | 'dark';
-  onSetTheme?: (theme: 'light' | 'dark') => void;
+  theme?: 'light' | 'dark' | 'system';
+  onSetTheme?: (theme: 'light' | 'dark' | 'system') => void;
 }
 
 export const SettingsAndPrivacyView: React.FC<SettingsAndPrivacyViewProps> = ({
@@ -119,7 +119,7 @@ export const SettingsAndPrivacyView: React.FC<SettingsAndPrivacyViewProps> = ({
                 : 'Choose your preferred visual theme across all workspaces and dashboards'}
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <button
               type="button"
               onClick={() => onSetTheme?.('light')}
@@ -143,6 +143,18 @@ export const SettingsAndPrivacyView: React.FC<SettingsAndPrivacyViewProps> = ({
             >
               <Moon className="w-4 h-4 text-blue-200" />
               <span>{lang === 'ar' ? 'ليلي (Dark)' : 'Dark Mode'}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => onSetTheme?.('system')}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
+                theme === 'system'
+                  ? 'bg-purple-50 border-purple-400 text-purple-700 shadow-xs'
+                  : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-600'
+              }`}
+            >
+              <Activity className="w-4 h-4 text-purple-500" />
+              <span>{lang === 'ar' ? 'تلقائي (System)' : 'System'}</span>
             </button>
           </div>
         </div>

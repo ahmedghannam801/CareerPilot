@@ -135,8 +135,19 @@ export const ATSResumeDocument: React.FC<ATSResumeDocumentProps> = ({
   })();
 
   const handleExportPDF = () => {
+    // Generate the print-ready HTML content
+    const printContent = document.getElementById('ats-resume-printable');
+    if (!printContent) {
+      alert(isAr ? 'خطأ: لم يتم العثور على محتوى السيرة الذاتية' : 'Error: Resume content not found');
+      return;
+    }
+
     const pw = window.open('', '_blank', 'width=900,height=1100');
-    if (!pw) { window.print(); return; }
+    if (!pw) {
+      // Fallback to browser print if popup blocked
+      window.print();
+      return;
+    }
     const isGD  = template === 'google_doc';
     const isMod = template === 'modern';
 
@@ -166,6 +177,12 @@ export const ATSResumeDocument: React.FC<ATSResumeDocumentProps> = ({
           </div>
         </div>`).join('');
       const certHtml = (resume.certifications || []).map(c => `<div class="cert-item">\u2022 ${c}</div>`).join('');
+      const projHtml = ((resume as any).projects || []).map((p: any) => `
+        <div class="exp-item">
+          <div class="job-title">${p.title}</div>
+          <div class="job-co" style="margin-top:2px">${p.description || p.scenario}</div>
+          ${p.technologies ? `<div class="job-co" style="color:#1f3864;margin-top:2px"><strong>Technologies:</strong> ${Array.isArray(p.technologies) ? p.technologies.join(', ') : p.technologies}</div>` : ''}
+        </div>`).join('');
       bodyHtml = `
         <div class="doc-header">
           <div class="doc-name">${fullName}</div>
@@ -180,6 +197,7 @@ export const ATSResumeDocument: React.FC<ATSResumeDocumentProps> = ({
         <div class="section"><div class="section-title">Professional Summary</div><p class="summary">${resume.summary}</p></div>
         <div class="section"><div class="section-title">Core Skills</div><div class="skills-block">${skHtml}</div></div>
         <div class="section"><div class="section-title">Professional Experience</div>${expHtml}</div>
+        ${projHtml ? `<div class="section"><div class="section-title">${isAr ? '\u0627\u0644\u0645\u0634\u0627\u0631\u064a\u0639' : 'Projects'}</div>${projHtml}</div>` : ''}
         ${eduHtml ? `<div class="section"><div class="section-title">Education</div>${eduHtml}</div>` : ''}
         ${certHtml ? `<div class="section"><div class="section-title">Training &amp; Certifications</div>${certHtml}</div>` : ''}
         <div class="section"><div class="section-title">Languages</div>
@@ -210,6 +228,15 @@ export const ATSResumeDocument: React.FC<ATSResumeDocumentProps> = ({
           <div class="edu-item">
             <div class="exp-head"><span>${e.degree} in ${e.field}</span><span>${fmtDate(e.startDate)} \u2013 ${e.current ? 'Present' : fmtDate(e.endDate)}</span></div>
             <div class="exp-subhead"><span>${e.institution}</span>${e.gpa ? `<span>GPA: ${e.gpa}</span>` : ''}</div>
+          </div>`).join('')}
+        </div>` : ''}
+        ${((resume as any).projects || []).length ? `
+        <div class="section"><div class="section-title">${isAr ? '\u0627\u0644\u0645\u0634\u0627\u0631\u064a\u0639' : 'Projects'}</div>
+          ${((resume as any).projects).map((p: any) => `
+          <div class="exp-item">
+            <div class="exp-head"><span>${p.title}</span></div>
+            <div class="exp-subhead"><span>${p.description || p.scenario}</span></div>
+            ${p.technologies ? `<div style="font-size:9pt;color:#4b5563;margin-top:3px"><strong>Technologies:</strong> ${Array.isArray(p.technologies) ? p.technologies.join(', ') : p.technologies}</div>` : ''}
           </div>`).join('')}
         </div>` : ''}
         ${(resume.certifications || []).length ? `
@@ -433,6 +460,27 @@ export const ATSResumeDocument: React.FC<ATSResumeDocumentProps> = ({
                   <GDHeading title="Training & Certifications" />
                   <div style={{ fontSize: '9.5pt', lineHeight: 1.6, color: '#111' }}>
                     {resume.certifications.map((c, i) => <div key={i}>&bull; {c}</div>)}
+                  </div>
+                </>
+              )}
+
+              {(resume as any).projects && (resume as any).projects.length > 0 && (
+                <>
+                  <GDHeading title={isAr ? "المشاريع" : "Projects"} />
+                  <div className="space-y-2">
+                    {(resume as any).projects.map((proj: any) => (
+                      <div key={proj.id || proj.title}>
+                        <div style={{ fontSize: '10pt', fontWeight: 700, color: '#111' }}>{proj.title}</div>
+                        <div style={{ fontSize: '9pt', color: '#555', lineHeight: 1.4, marginTop: '2px' }}>
+                          {proj.description || proj.scenario}
+                        </div>
+                        {proj.technologies && (
+                          <div style={{ fontSize: '9pt', color: '#1f3864', marginTop: '2px' }}>
+                            <strong>Technologies:</strong> {Array.isArray(proj.technologies) ? proj.technologies.join(', ') : proj.technologies}
+                          </div>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 </>
               )}
