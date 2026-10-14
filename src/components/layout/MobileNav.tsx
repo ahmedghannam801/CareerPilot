@@ -190,22 +190,25 @@ export const MobileNav: React.FC<MobileNavProps> = ({
 
       {/* Slide-over Mobile Drawer */}
       {drawerOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex justify-end md:hidden">
-          <div className="bg-white w-4/5 max-w-sm h-full shadow-2xl flex flex-col justify-between overflow-y-auto animate-in slide-in-from-right duration-200">
-            <div className="p-5 space-y-6">
-              {/* Drawer Header */}
-              <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 bg-neutral-900 rounded-sm" />
-                  <span className="font-bold text-sm text-neutral-900">CareerPilot AI</span>
-                </div>
-                <button
-                  onClick={() => setDrawerOpen(false)}
-                  className="p-1.5 text-neutral-400 hover:text-neutral-900 rounded-lg"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex justify-end md:hidden" onClick={() => setDrawerOpen(false)}>
+          <div className="bg-white w-4/5 max-w-sm h-full shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-right duration-200" onClick={(e) => e.stopPropagation()}>
+            {/* Drawer Header */}
+            <div className="p-5 border-b border-neutral-100 flex items-center justify-between shrink-0 bg-white">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 bg-neutral-900 rounded-sm" />
+                <span className="font-bold text-sm text-neutral-900">CareerPilot AI</span>
               </div>
+              <button
+                type="button"
+                onClick={() => setDrawerOpen(false)}
+                className="p-1.5 text-neutral-400 hover:text-neutral-900 rounded-lg cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Scrollable Body */}
+            <div className="p-5 space-y-6 flex-1 overflow-y-auto overscroll-contain">
 
               {/* Quick Actions in Mobile Drawer */}
               <div className="flex items-center gap-2">
@@ -292,7 +295,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
             </div>
 
             {/* Drawer Footer */}
-            <div className="p-4 border-t border-neutral-100 text-center text-[11px] text-neutral-400">
+            <div className="p-4 border-t border-neutral-100 text-center text-[11px] text-neutral-400 shrink-0 bg-neutral-50/50">
               CareerPilot AI Operating System
             </div>
           </div>

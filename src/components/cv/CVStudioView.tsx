@@ -1175,13 +1175,21 @@ ${currentResume.skills.join(' • ')}
 
       {/* Multi-Step Generate / Tailor CV Modal */}
       {showGenerateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200"
+          onClick={() => {
+            if (generationStep !== 'generating' && generationStep !== 'building' && generationStep !== 'saving') {
+              setShowGenerateModal(false);
+              setGenerationStep('idle');
+            }
+          }}
+        >
           <div
-            className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-lg w-full overflow-hidden flex flex-col max-h-[90vh]"
+            className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-lg w-full overflow-hidden flex flex-col max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2.5rem)]"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
+            <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/70 shrink-0">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-xs">
                   <Sparkles className="w-4 h-4" />
@@ -1213,7 +1221,7 @@ ${currentResume.skills.join(' • ')}
             </div>
 
             {/* Modal Body */}
-            <div className="p-5 space-y-4 overflow-y-auto">
+            <div className="p-5 space-y-4 flex-1 overflow-y-auto overscroll-contain">
               {/* Selected Template Badge */}
               <div className="p-3 bg-blue-50/70 border border-blue-200/60 rounded-xl flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -1422,7 +1430,7 @@ ${currentResume.skills.join(' • ')}
             </div>
 
             {/* Modal Footer Actions */}
-            <div className="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-2">
+            <div className="shrink-0 p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-2">
               <button
                 type="button"
                 onClick={() => {

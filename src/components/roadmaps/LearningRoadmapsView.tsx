@@ -1009,13 +1009,13 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
           SKILL DETAILS & CURATED RESOURCES DRAWER
           ==================================================================== */}
       {selectedNode && (
-        <div className="fixed inset-0 z-50 flex items-center justify-end bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-end bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200" onClick={() => setSelectedNode(null)}>
           <div
-            className="bg-white w-full max-w-xl h-full shadow-2xl overflow-y-auto flex flex-col justify-between"
+            className="bg-white w-full max-w-xl h-full shadow-2xl flex flex-col overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Drawer Header */}
-            <div className="p-5 border-b border-slate-100 flex items-center justify-between sticky top-0 bg-white/95 backdrop-blur-xs z-10">
+            <div className="p-5 border-b border-slate-100 flex items-center justify-between shrink-0 bg-white/95 backdrop-blur-xs z-10">
               <div className="space-y-0.5">
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase bg-blue-50 text-blue-700">
                   {selectedNode.category}
@@ -1035,7 +1035,7 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
             </div>
 
             {/* Drawer Body Content */}
-            <div className="p-5 space-y-6 flex-1">
+            <div className="p-5 space-y-6 flex-1 overflow-y-auto overscroll-contain">
               {/* Overview & Why it Matters */}
               <div className="space-y-2">
                 <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
@@ -1210,7 +1210,7 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
             </div>
 
             {/* Drawer Footer Actions */}
-            <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-3 sticky bottom-0">
+            <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-3 shrink-0">
               <div className="flex items-center gap-2">
                 <button
                   type="button"
@@ -1244,14 +1244,14 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
           MODAL: AI CUSTOM ROADMAP GENERATOR
           ==================================================================== */}
       {showGenerateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setShowGenerateModal(false)}>
           <div
-            className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-lg w-full overflow-hidden space-y-5 p-6"
+            className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-lg w-full flex flex-col max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2.5rem)] overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+            <div className="flex items-center justify-between border-b border-slate-100 p-5 shrink-0 bg-white">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center">
+                <div className="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-xs">
                   <Sparkles className="w-4 h-4" />
                 </div>
                 <div>
@@ -1266,20 +1266,20 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
               <button
                 type="button"
                 onClick={() => setShowGenerateModal(false)}
-                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
+                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            {generationError && (
-              <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 flex items-start gap-2">
-                <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
-                <span>{generationError}</span>
-              </div>
-            )}
+            <div className="flex-1 overflow-y-auto p-5 space-y-4 overscroll-contain text-xs">
+              {generationError && (
+                <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                  <span>{generationError}</span>
+                </div>
+              )}
 
-            <div className="space-y-4 text-xs">
               <div className="space-y-1.5">
                 <label className="font-bold text-slate-700 block">
                   {isAr ? 'المسمى الوظيفي المستهدف:' : 'Target Job Role / Career Goal:'}
@@ -1316,7 +1316,7 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
               </div>
             </div>
 
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-end gap-2">
+            <div className="shrink-0 p-4 border-t border-slate-100 bg-slate-50/70 flex items-center justify-end gap-2">
               <button
                 type="button"
                 onClick={() => setShowGenerateModal(false)}

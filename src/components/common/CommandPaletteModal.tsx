@@ -170,13 +170,13 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-start justify-center p-4 pt-16 sm:pt-24 animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-start justify-center p-3 pt-6 sm:p-4 sm:pt-20 animate-in fade-in duration-150" onClick={onClose}>
       <div
-        className="bg-white rounded-2xl shadow-2xl border border-neutral-200 max-w-2xl w-full overflow-hidden flex flex-col max-h-[80vh]"
+        className="bg-white rounded-2xl shadow-2xl border border-neutral-200 max-w-2xl w-full overflow-hidden flex flex-col max-h-[calc(100dvh-3rem)] sm:max-h-[80vh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search Input Bar */}
-        <div className="flex items-center gap-3 p-4 border-b border-neutral-200 bg-neutral-50/50">
+        <div className="flex items-center gap-3 p-4 border-b border-neutral-200 bg-neutral-50/50 shrink-0">
           <Search className="w-5 h-5 text-neutral-400 shrink-0" />
           <input
             type="text"
@@ -345,7 +345,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
         </div>
 
         {/* Footer Hint */}
-        <div className="p-3 border-t border-neutral-100 bg-neutral-50/70 flex items-center justify-between text-[11px] text-neutral-500">
+        <div className="shrink-0 p-3 border-t border-neutral-100 bg-neutral-50/70 flex items-center justify-between text-[11px] text-neutral-500">
           <span>{isAr ? 'استخدم الأسهم أو الفأرة للتنقل' : 'Use arrow keys or click to navigate'}</span>
           <span className="font-mono text-[10px]">CareerPilot AI Command Hub</span>
         </div>

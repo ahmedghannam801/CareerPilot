@@ -138,9 +138,9 @@ export const FloatingAICopilot: React.FC<FloatingAICopilotProps> = ({
       {isOpen && (
         <div
           className={`fixed bottom-20 md:bottom-8 ${
-            isAr ? 'left-5' : 'right-5'
-          } z-50 w-[370px] sm:w-[410px] bg-white border border-neutral-200 rounded-2xl shadow-2xl overflow-hidden flex flex-col transition-all duration-300 ${
-            isMinimized ? 'h-14' : 'h-[520px] max-h-[85vh]'
+            isAr ? 'left-3 sm:left-5' : 'right-3 sm:right-5'
+          } z-50 w-[calc(100vw-1.5rem)] sm:w-[410px] max-w-[410px] bg-white border border-neutral-200 rounded-2xl shadow-2xl overflow-hidden flex flex-col transition-all duration-300 ${
+            isMinimized ? 'h-14' : 'h-[520px] max-h-[calc(100dvh-6rem)] sm:max-h-[85vh]'
           }`}
         >
           {/* Header */}
@@ -221,7 +221,7 @@ export const FloatingAICopilot: React.FC<FloatingAICopilotProps> = ({
               </div>
 
               {/* Quick Prompts Chips */}
-              <div className="p-2 border-t border-neutral-100 bg-white flex items-center gap-1.5 overflow-x-auto no-scrollbar">
+              <div className="shrink-0 p-2 border-t border-neutral-100 bg-white flex items-center gap-1.5 overflow-x-auto no-scrollbar">
                 {quickChips.map((chip, idx) => (
                   <button
                     key={idx}
@@ -235,7 +235,7 @@ export const FloatingAICopilot: React.FC<FloatingAICopilotProps> = ({
               </div>
 
               {/* Chat Input */}
-              <div className="p-3 border-t border-neutral-200 bg-white">
+              <div className="shrink-0 p-3 border-t border-neutral-200 bg-white">
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();

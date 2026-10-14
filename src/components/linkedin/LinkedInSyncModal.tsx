@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Sparkles,
   CheckCircle2,
@@ -123,11 +123,19 @@ Advanced Relational Database Design & Performance Tuning`;
     }
   };
 
+  useEffect(() => {
+    const origOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = origOverflow;
+    };
+  }, []);
+
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white rounded-xl max-w-3xl w-full p-6 space-y-6 shadow-2xl my-8 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-hidden" onClick={onClose}>
+      <div className="bg-white rounded-2xl max-w-3xl w-full shadow-2xl border border-slate-200 flex flex-col max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2.5rem)] overflow-hidden" onClick={(e) => e.stopPropagation()}>
         {/* Modal Header */}
-        <div className="flex items-start justify-between border-b border-neutral-100 pb-4">
+        <div className="flex items-start justify-between border-b border-neutral-100 p-5 sm:p-6 shrink-0 bg-white">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-[#0077B5] text-white flex items-center justify-center font-bold text-sm">
               in
@@ -144,12 +152,16 @@ Advanced Relational Database Design & Performance Tuning`;
             </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
-            className="text-neutral-400 hover:text-neutral-900 transition-colors p-1"
+            className="text-neutral-400 hover:text-neutral-900 transition-colors p-1.5 rounded-lg hover:bg-neutral-100 cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
+
+        {/* Scrollable Content Body */}
+        <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6 overscroll-contain">
 
         {/* Direct OAuth 2.0 Connection Option */}
         <div className="p-4 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -489,6 +501,7 @@ Advanced Relational Database Design & Performance Tuning`;
             )}
           </div>
         )}
+        </div>
       </div>
     </div>
   );

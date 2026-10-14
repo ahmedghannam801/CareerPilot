@@ -341,9 +341,10 @@ export const MicroProjectsView: React.FC<MicroProjectsViewProps> = ({
 
       {/* Generate Modal */}
       {showGenerateModal && (
-        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 space-y-5 shadow-2xl">
-            <div>
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4" onClick={() => setShowGenerateModal(false)}>
+          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl flex flex-col max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2.5rem)] overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            {/* Header */}
+            <div className="p-5 border-b border-slate-100 shrink-0">
               <h3 className="text-base font-bold text-slate-900">
                 {isAr ? 'توليد مشروع عملي ذكي' : 'Generate Targeted Micro-Project'}
               </h3>
@@ -354,43 +355,50 @@ export const MicroProjectsView: React.FC<MicroProjectsViewProps> = ({
               </p>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-700">
-                {isAr ? 'المهارة المستهدفة:' : 'Target Skill:'}
-              </label>
-              <input
-                type="text"
-                value={skillGapInput}
-                onChange={(e) => setSkillGapInput(e.target.value)}
-                className="w-full text-xs p-3 border border-slate-300 rounded-xl outline-none"
-              />
-            </div>
+            {/* Body */}
+            <div className="flex-1 overflow-y-auto p-5 space-y-4">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-slate-700">
+                  {isAr ? 'المهارة المستهدفة:' : 'Target Skill:'}
+                </label>
+                <input
+                  type="text"
+                  value={skillGapInput}
+                  onChange={(e) => setSkillGapInput(e.target.value)}
+                  className="w-full text-xs p-3 border border-slate-300 rounded-xl outline-none"
+                />
+              </div>
 
-            <div className="space-y-1.5">
-              <span className="text-[11px] font-semibold text-slate-500">
-                {isAr ? 'اقتراحات سريعة بنقرة واحدة:' : 'Quick Suggestions:'}
-              </span>
-              <div className="flex flex-wrap gap-1.5">
-                {quickSkills.map((s, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setSkillGapInput(s)}
-                    className="text-[11px] px-2.5 py-1 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 rounded-lg text-slate-700 transition-colors cursor-pointer"
-                  >
-                    {s}
-                  </button>
-                ))}
+              <div className="space-y-1.5">
+                <span className="text-[11px] font-semibold text-slate-500">
+                  {isAr ? 'اقتراحات سريعة بنقرة واحدة:' : 'Quick Suggestions:'}
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  {quickSkills.map((s, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => setSkillGapInput(s)}
+                      className="text-[11px] px-2.5 py-1 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 rounded-lg text-slate-700 transition-colors cursor-pointer"
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2">
+            {/* Footer */}
+            <div className="shrink-0 p-4 border-t border-slate-100 bg-slate-50/70 flex items-center justify-end gap-2">
               <button
+                type="button"
                 onClick={() => setShowGenerateModal(false)}
                 className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 cursor-pointer"
               >
                 {isAr ? 'إلغاء' : 'Cancel'}
               </button>
               <button
+                type="button"
                 onClick={handleGenerate}
                 disabled={isGenerating || !skillGapInput.trim()}
                 className="px-5 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all shadow-sm inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
