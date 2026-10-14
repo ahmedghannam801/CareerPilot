@@ -14,6 +14,8 @@ import {
   User,
   AlertCircle,
   Loader2,
+  FileText,
+  X,
 } from 'lucide-react';
 import {
   signInWithEmail,
@@ -41,6 +43,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, lang, onToggleLan
   const [oauthLoading, setOauthLoading] = useState<'google' | 'linkedin' | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
 
   React.useEffect(() => {
     const oauthError = getOAuthErrorFromUrl();
@@ -97,6 +101,10 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, lang, onToggleLan
       setError(
         isAr ? 'كلمة المرور يجب ألا تقل عن 8 أحرف' : 'Password must be at least 8 characters'
       );
+      return;
+    }
+    if (mode === 'signup' && !agreedToTerms) {
+      setError(isAr ? 'يجب الموافقة على شروط الاستخدام وسياسة الخصوصية للمتابعة' : 'You must agree to the Terms of Service and Privacy Policy to continue');
       return;
     }
 
@@ -485,6 +493,47 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, lang, onToggleLan
                   )}
                 </div>
 
+                {/* Terms & Conditions Checkbox — signup only */}
+                {mode === 'signup' && (
+                  <div className="flex items-start gap-2.5 pt-1">
+                    <button
+                      type="button"
+                      id="terms-checkbox"
+                      onClick={() => setAgreedToTerms(!agreedToTerms)}
+                      className={`mt-0.5 w-4 h-4 rounded border-2 flex-shrink-0 flex items-center justify-center transition-all cursor-pointer ${
+                        agreedToTerms
+                          ? 'bg-blue-600 border-blue-600'
+                          : 'bg-transparent border-slate-500 hover:border-blue-400'
+                      }`}
+                    >
+                      {agreedToTerms && (
+                        <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 12 12">
+                          <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      )}
+                    </button>
+                    <span className="text-[11px] text-slate-400 leading-relaxed">
+                      {isAr ? 'أوافق على ' : 'I agree to the '}
+                      <button
+                        type="button"
+                        onClick={() => setShowTermsModal(true)}
+                        className="text-blue-400 hover:text-blue-300 underline cursor-pointer"
+                      >
+                        {isAr ? 'شروط الاستخدام' : 'Terms of Service'}
+                      </button>
+                      {isAr ? ' و' : ' and '}
+                      <button
+                        type="button"
+                        onClick={() => setShowTermsModal(true)}
+                        className="text-blue-400 hover:text-blue-300 underline cursor-pointer"
+                      >
+                        {isAr ? 'سياسة الخصوصية' : 'Privacy Policy'}
+                      </button>
+                      {isAr ? ' الخاصة بـ CareerPilot AI' : ' of CareerPilot AI'}
+                    </span>
+                  </div>
+                )}
+
                 <div className="flex items-center justify-end text-xs text-slate-400">
                   <div className="flex items-center gap-1 text-[11px] text-slate-500">
                     <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
@@ -514,6 +563,46 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, lang, onToggleLan
 
         {/* Footer badges */}
         <div className="mt-6 flex flex-wrap items-center justify-center gap-4 text-[11px] text-slate-400">
+          {/* Terms Modal */}
+          {showTermsModal && (
+            <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm" onClick={() => setShowTermsModal(false)}>
+              <div
+                className="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-lg max-h-[80vh] overflow-y-auto p-6 space-y-4 relative"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button type="button" onClick={() => setShowTermsModal(false)} className="absolute top-4 right-4 text-slate-400 hover:text-white cursor-pointer">
+                  <X className="w-5 h-5" />
+                </button>
+                <div className="flex items-center gap-2 mb-2">
+                  <FileText className="w-5 h-5 text-blue-400" />
+                  <h3 className="text-base font-bold text-white">{isAr ? 'شروط الاستخدام وسياسة الخصوصية' : 'Terms of Service & Privacy Policy'}</h3>
+                </div>
+                <div className="text-xs text-slate-300 space-y-3 leading-relaxed">
+                  <p className="font-semibold text-slate-200">{isAr ? '١. قبول الشروط' : '1. Acceptance of Terms'}</p>
+                  <p>{isAr ? 'باستخدامك لـ CareerPilot AI، فأنت توافق على هذه الشروط وتلتزم بها. إذا كنت لا توافق على أي من هذه الشروط، يرجى عدم استخدام الخدمة.' : 'By using CareerPilot AI, you agree to be bound by these Terms. If you do not agree to any of these terms, please do not use the service.'}</p>
+                  <p className="font-semibold text-slate-200">{isAr ? '٢. استخدام الخدمة' : '2. Use of Service'}</p>
+                  <p>{isAr ? 'CareerPilot AI هي منصة مساعدة مهنية بالذكاء الاصطناعي. لا تضمن المنصة توظيفك أو نجاح طلباتك الوظيفية. المحتوى المولّد بالذكاء الاصطناعي للمساعدة فقط.' : 'CareerPilot AI is an AI-powered career assistance platform. We do not guarantee employment or job application success. AI-generated content is for assistance only.'}</p>
+                  <p className="font-semibold text-slate-200">{isAr ? '٣. البيانات والخصوصية' : '3. Data & Privacy'}</p>
+                  <p>{isAr ? 'نحن نجمع بيانات الملف الشخصي والسير الذاتية والتفاعلات لتحسين التوصيات. لا نبيع بياناتك لأطراف ثالثة. يمكنك تصدير أو حذف بياناتك في أي وقت من إعدادات الخصوصية.' : 'We collect profile data, resumes, and interactions to improve recommendations. We do not sell your data to third parties. You can export or delete your data at any time from Privacy Settings.'}</p>
+                  <p className="font-semibold text-slate-200">{isAr ? '٤. حقوق الملكية الفكرية' : '4. Intellectual Property'}</p>
+                  <p>{isAr ? 'السير الذاتية والمحتوى الذي تُنشئه يخصك. نحتفظ بحق استخدام البيانات المجمّعة وغير المعرّفة لتحسين الخدمة.' : 'Resumes and content you create belong to you. We retain the right to use aggregated, anonymized data to improve the service.'}</p>
+                  <p className="font-semibold text-slate-200">{isAr ? '٥. التواصل مع المطور' : '5. Contact Developer'}</p>
+                  <p>{isAr ? 'للاستفسارات والدعم الفني، تواصل مع مطور المنصة أحمد إبراهيم عبر:' : 'For inquiries and technical support, contact platform developer Ahmed Ebrahim at:'}</p>
+                  <p>WhatsApp: <a href="https://wa.me/201027053876" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">01027053876</a></p>
+                  <p>LinkedIn: <a href="https://www.linkedin.com/in/ahmed-ebrahim2" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">linkedin.com/in/ahmed-ebrahim2</a></p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => { setAgreedToTerms(true); setShowTermsModal(false); }}
+                  className="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl transition-all cursor-pointer mt-2"
+                >
+                  {isAr ? 'أوافق على الشروط والأحكام' : 'I Agree to Terms & Conditions'}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="flex flex-wrap items-center justify-center gap-4 text-[11px] text-slate-400">
           <div className="flex items-center gap-1.5">
             <CheckCircle2 className="w-3.5 h-3.5 text-blue-400" />
             <span>{t.atsBadge}</span>

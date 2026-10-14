@@ -32,6 +32,7 @@ import {
   InterviewSession,
 } from '../../types/index.js';
 import { CareerJourneyMap } from '../journey/CareerJourneyMap.js';
+import { calculateProfileCompletion, calculateDynamicCareerReadiness } from '../../lib/scoring.js';
 
 interface DashboardViewProps {
   profile: CareerProfile;
@@ -73,18 +74,19 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const pendingProjects = projects.filter((p) => p.status === 'in_progress' || p.status === 'available');
   const topOpportunity = opportunities[0];
 
-  // Deterministic profile completion (0-100%)
-  const profileCompletion = Math.min(
-    100,
-    (profile.fullName?.trim() ? 15 : 0) +
-    (profile.email?.trim() ? 15 : 0) +
-    (profile.targetRole?.trim() ? 15 : 0) +
-    (profile.headline?.trim() ? 15 : 0) +
-    ((profile.skills && profile.skills.length >= 3) ? 15 : (profile.skills && profile.skills.length > 0) ? 5 : 0) +
-    (((profile.experience && profile.experience.length > 0) || (profile.education && profile.education.length > 0)) ? 25 : 0)
-  );
+  // Deterministic profile completion (0-100%) dynamically calculated
+  const profileCompletion = calculateProfileCompletion(profile);
 
-  const readinessScore = profile.readiness?.overallScore ?? 0;
+  // Dynamic 8-pillar career readiness score calculated from live projects, interviews & resumes
+  const dynamicReadiness = calculateDynamicCareerReadiness(profile, {
+    projects,
+    interviews,
+    resumes,
+  });
+  const readinessScore = profile.readiness?.overallScore && profile.readiness.overallScore > 0
+    ? profile.readiness.overallScore
+    : dynamicReadiness.overallScore;
+
   const matchOpportunity = opportunities.find((o) => o.matchScore !== undefined && o.matchScore !== null);
 
   let nextMove = {

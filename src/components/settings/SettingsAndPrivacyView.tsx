@@ -13,6 +13,10 @@ import {
   RefreshCw,
   Sun,
   Moon,
+  MessageCircle,
+  Linkedin,
+  Code2,
+  ExternalLink,
 } from 'lucide-react';
 import { CareerMemoryFact } from '../../types/index.js';
 import { formatDate } from '../../lib/utils.js';
@@ -270,6 +274,63 @@ export const SettingsAndPrivacyView: React.FC<SettingsAndPrivacyViewProps> = ({
           {lang === 'ar'
             ? 'النظام مزود بنظام حماية تلقائي ضد تجاوز الميزانية، ومراقبة زمن الاستجابة، وحد أقصى لحجم المستندات (35,000 حرف).'
             : 'Multi-model fallback active with bounded retries, maximum 35,000 document character limits, and 25-second query timeouts.'}
+        </p>
+      </div>
+
+      {/* Developer Contact */}
+      <div className="p-6 bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/60 rounded-xl space-y-4 relative overflow-hidden">
+        {/* Decorative glow */}
+        <div className="absolute top-0 right-0 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="flex items-center gap-2.5 relative">
+          <div className="w-9 h-9 rounded-xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center">
+            <Code2 className="w-4.5 h-4.5 text-blue-400" />
+          </div>
+          <div>
+            <h2 className="text-sm font-bold text-white">
+              {lang === 'ar' ? 'تواصل مع مطور التطبيق' : 'Contact the Developer'}
+            </h2>
+            <p className="text-[11px] text-slate-400">
+              {lang === 'ar' ? 'أحمد إبراهيم — مطور CareerPilot AI' : 'Ahmed Ebrahim — CareerPilot AI Developer'}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap gap-3 relative">
+          {/* WhatsApp */}
+          <a
+            href="https://wa.me/201027053876"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#25D366]/15 hover:bg-[#25D366]/25 border border-[#25D366]/30 rounded-xl text-xs font-semibold text-[#25D366] transition-all group"
+          >
+            <MessageCircle className="w-4 h-4 group-hover:scale-110 transition-transform" />
+            <div className="text-start">
+              <div className="text-[10px] text-white/50 leading-tight">{lang === 'ar' ? 'واتساب' : 'WhatsApp'}</div>
+              <div>01027053876</div>
+            </div>
+            <ExternalLink className="w-3 h-3 opacity-50" />
+          </a>
+
+          {/* LinkedIn */}
+          <a
+            href="https://www.linkedin.com/in/ahmed-ebrahim2"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#0A66C2]/15 hover:bg-[#0A66C2]/25 border border-[#0A66C2]/30 rounded-xl text-xs font-semibold text-[#60A5FA] transition-all group"
+          >
+            <Linkedin className="w-4 h-4 group-hover:scale-110 transition-transform" />
+            <div className="text-start">
+              <div className="text-[10px] text-white/50 leading-tight">LinkedIn</div>
+              <div>ahmed-ebrahim2</div>
+            </div>
+            <ExternalLink className="w-3 h-3 opacity-50" />
+          </a>
+        </div>
+
+        <p className="text-[11px] text-slate-500 relative">
+          {lang === 'ar'
+            ? 'للإبلاغ عن مشاكل، اقتراح ميزات جديدة، أو أي استفسارات تقنية.'
+            : 'For bug reports, feature suggestions, or any technical inquiries.'}
         </p>
       </div>
     </div>

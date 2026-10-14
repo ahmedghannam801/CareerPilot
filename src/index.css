@@ -628,6 +628,191 @@
 }
 
 /* ============================================================
+   DARK MODE — OPACITY-MODIFIED CLASS OVERRIDES
+   (Tailwind generates unique class names for /50, /70, /40 etc.
+    These are NOT caught by the generic bg-X-50 selectors above)
+   ============================================================ */
+
+/* bg-blue-50/XX opacity variants */
+.dark [class*="bg-blue-50\/"]:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark [class*="bg-blue-50\/70"]:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark [class*="bg-blue-50\/40"]:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark [class*="bg-blue-50\/30"]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: rgba(59, 130, 246, 0.15) !important;
+}
+
+/* bg-slate-50/XX opacity variants */
+.dark [class*="bg-slate-50\/"]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: rgba(30, 41, 59, 0.8) !important;
+}
+
+/* bg-emerald-50/XX opacity variants */
+.dark [class*="bg-emerald-50\/"]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: rgba(52, 211, 153, 0.12) !important;
+}
+
+/* bg-amber-50/XX opacity variants */
+.dark [class*="bg-amber-50\/"]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: rgba(251, 191, 36, 0.12) !important;
+}
+
+/* bg-rose-50/XX opacity variants */
+.dark [class*="bg-rose-50\/"]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: rgba(248, 113, 113, 0.12) !important;
+}
+
+/* bg-purple-50/XX opacity variants */
+.dark [class*="bg-purple-50\/"]:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark [class*="bg-indigo-50\/"]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: rgba(99, 102, 241, 0.12) !important;
+}
+
+/* bg-neutral-50/XX and bg-gray-50/XX opacity variants */
+.dark [class*="bg-neutral-50\/"]:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark [class*="bg-gray-50\/"]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: rgba(30, 41, 59, 0.7) !important;
+}
+
+/* bg-white/XX opacity variants (e.g., bg-white/20) — keep as-is for glassmorphism on dark elements */
+/* bg-slate-900/XX opacity variants — keep as-is (already dark) */
+
+/* ---- Ring opacity variants for focus states on dark ---- */
+.dark [class*="ring-blue-500\/"]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  --tw-ring-color: rgba(59, 130, 246, 0.3) !important;
+}
+.dark [class*="ring-slate-200\/"]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  --tw-ring-color: rgba(55, 65, 81, 0.5) !important;
+}
+
+/* ---- Border opacity variants ---- */
+.dark [class*="border-blue-200\/"]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  border-color: rgba(59, 130, 246, 0.25) !important;
+}
+.dark [class*="border-slate-200\/"]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  border-color: rgba(55, 65, 81, 0.6) !important;
+}
+.dark [class*="border-neutral-200\/"]:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  border-color: rgba(55, 65, 81, 0.6) !important;
+}
+
+/* ---- Extra text color classes that appear dark on dark bg ---- */
+.dark .text-neutral-300:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  color: #CBD5E1 !important;
+}
+.dark .text-neutral-200:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  color: #E2E8F0 !important;
+}
+
+/* ---- bg-slate-800/XX used in glassmorphism cards (leave dark) ---- */
+
+/* ---- Fill-in: bg-blue-100 and variants ---- */
+.dark .bg-blue-100:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: rgba(59, 130, 246, 0.18) !important;
+  color: #93C5FD !important;
+}
+.dark .bg-indigo-100:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: rgba(99, 102, 241, 0.18) !important;
+  color: #A5B4FC !important;
+}
+.dark .bg-emerald-100:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark .bg-green-100:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: rgba(52, 211, 153, 0.18) !important;
+  color: #6EE7B7 !important;
+}
+.dark .bg-amber-100:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark .bg-yellow-100:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: rgba(251, 191, 36, 0.18) !important;
+  color: #FCD34D !important;
+}
+.dark .bg-rose-100:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark .bg-red-100:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: rgba(248, 113, 113, 0.18) !important;
+  color: #FCA5A5 !important;
+}
+.dark .bg-purple-100:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: rgba(168, 85, 247, 0.18) !important;
+  color: #D8B4FE !important;
+}
+.dark .bg-cyan-100:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: rgba(34, 199, 232, 0.18) !important;
+  color: #67E8F9 !important;
+}
+.dark .bg-orange-100:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: rgba(251, 146, 60, 0.18) !important;
+  color: #FDBA74 !important;
+}
+
+/* ---- Specific text fixes for -100 background badges ---- */
+.dark .text-blue-800:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  color: #93C5FD !important;
+}
+.dark .text-indigo-800:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  color: #A5B4FC !important;
+}
+.dark .text-emerald-800:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark .text-green-800:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  color: #6EE7B7 !important;
+}
+.dark .text-amber-800:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  color: #FCD34D !important;
+}
+.dark .text-rose-800:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark .text-red-800:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  color: #FCA5A5 !important;
+}
+.dark .text-purple-800:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  color: #D8B4FE !important;
+}
+.dark .text-orange-800:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  color: #FDBA74 !important;
+}
+.dark .text-cyan-800:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  color: #67E8F9 !important;
+}
+
+/* ---- Border -100, -300 (for active/highlighted cards) ---- */
+.dark .border-blue-100:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  border-color: rgba(59, 130, 246, 0.25) !important;
+}
+.dark .border-blue-300:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  border-color: rgba(59, 130, 246, 0.45) !important;
+}
+.dark .border-emerald-100:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  border-color: rgba(52, 211, 153, 0.25) !important;
+}
+.dark .border-amber-100:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark .border-amber-200:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  border-color: rgba(251, 191, 36, 0.25) !important;
+}
+.dark .border-rose-100:not([data-ats-document="true"]):not([data-ats-document="true"] *),
+.dark .border-red-200:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  border-color: rgba(248, 113, 113, 0.25) !important;
+}
+.dark .border-purple-100:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  border-color: rgba(168, 85, 247, 0.25) !important;
+}
+
+/* ---- Hover fill-in for colored backgrounds ---- */
+.dark .hover\\:bg-blue-50:hover:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: rgba(59, 130, 246, 0.18) !important;
+}
+.dark .hover\\:bg-emerald-50:hover:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: rgba(52, 211, 153, 0.15) !important;
+}
+.dark .hover\\:bg-amber-50:hover:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: rgba(251, 191, 36, 0.15) !important;
+}
+.dark .hover\\:bg-rose-50:hover:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: rgba(248, 113, 113, 0.15) !important;
+}
+
+/* ---- Applications tracker / status badge overrides ---- */
+.dark .bg-slate-200:not([data-ats-document="true"]):not([data-ats-document="true"] *) {
+  background-color: #2D3748 !important;
+  color: #CBD5E1 !important;
+}
+
+/* ============================================================
    ATS Resume Print Styles (@media print)
    ============================================================ */
 

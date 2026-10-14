@@ -26,6 +26,7 @@ import {
   syncApplicationToCloud,
   syncResumeToCloud,
 } from './supabaseClient.js';
+import { calculateDynamicCareerReadiness } from './scoring.js';
 
 const STORAGE_KEY = 'careerpilot_client_db_v2';
 
@@ -191,11 +192,21 @@ class ClientDatabaseService {
     return this.state.profile;
   }
 
+  recalculateReadiness(): void {
+    if (!this.state.profile) return;
+    this.state.profile.readiness = calculateDynamicCareerReadiness(this.state.profile, {
+      projects: this.state.microProjects,
+      interviews: this.state.interviews,
+      resumes: this.state.resumes,
+    });
+  }
+
   updateProfile(partial: Partial<CareerProfile>): CareerProfile {
     this.state.profile = {
       ...this.state.profile,
       ...partial,
     };
+    this.recalculateReadiness();
     this.persist();
     syncProfileToCloud(this.state.profile).catch(() => {});
     return this.state.profile;
@@ -241,6 +252,7 @@ class ClientDatabaseService {
     } else {
       this.state.resumes.unshift(resume);
     }
+    this.recalculateReadiness();
     this.persist();
     syncResumeToCloud(resume).catch(() => {});
     return resume;
@@ -370,6 +382,7 @@ class ClientDatabaseService {
     } else {
       this.state.microProjects.unshift(proj);
     }
+    this.recalculateReadiness();
     this.persist();
     return proj;
   }
@@ -482,6 +495,7 @@ class ClientDatabaseService {
     } else {
       this.state.interviews.unshift(interview);
     }
+    this.recalculateReadiness();
     this.persist();
     return interview;
   }

@@ -276,9 +276,12 @@ ${currentResume.skills.join(' • ')}
   };
 
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
     const file = e.target.files?.[0];
     if (file) handleFileUpload(file);
-    e.target.value = '';
+    // Reset input so same file can be re-selected
+    setTimeout(() => { e.target.value = ''; }, 0);
   };
 
   return (
@@ -380,7 +383,7 @@ ${currentResume.skills.join(' • ')}
               onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
               onDragLeave={() => setIsDragOver(false)}
               onDrop={handleDrop}
-              onClick={() => document.getElementById('cv-file-input')?.click()}
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); document.getElementById('cv-file-input')?.click(); }}
             >
               <input
                 id="cv-file-input"

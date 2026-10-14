@@ -27,6 +27,7 @@ import {
 } from '../../types/index.js';
 import { formatDate } from '../../lib/utils.js';
 import { CareerJourneyMap } from '../journey/CareerJourneyMap.js';
+import { calculateDynamicCareerReadiness } from '../../lib/scoring.js';
 
 interface CareerViewProps {
   profile: CareerProfile;
@@ -76,7 +77,14 @@ export const CareerView: React.FC<CareerViewProps> = ({
   const [isDiscovering, setIsDiscovering] = useState(false);
 
   const dna = profile.dna;
-  const readiness = profile.readiness;
+  const dynamicReadiness = calculateDynamicCareerReadiness(profile, {
+    projects,
+    interviews,
+    resumes,
+  });
+  const readiness = (profile.readiness && profile.readiness.overallScore > 0)
+    ? profile.readiness
+    : dynamicReadiness;
 
   const handleRegenerateDNA = async () => {
     setIsRegeneratingDNA(true);
