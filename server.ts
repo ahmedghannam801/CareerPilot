@@ -9,6 +9,7 @@ import { fileURLToPath } from 'url';
 import { apiRouter } from './src/server/routes/api.js';
 
 import { logger } from './src/server/monitoring/logger.js';
+import { aiGateway } from './src/server/ai/gateway.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -82,6 +83,7 @@ async function startServer() {
         timestamp: new Date().toISOString(),
         uptimeSeconds: Math.round(process.uptime()),
         environment: process.env.NODE_ENV || 'development',
+        aiConfigured: aiGateway.isConfigured(),
         memory: {
           rssMb: Math.round(mem.rss / (1024 * 1024)),
           heapUsedMb: Math.round(mem.heapUsed / (1024 * 1024)),

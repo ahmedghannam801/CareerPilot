@@ -30,7 +30,33 @@ export interface AIGatewayMetrics {
 }
 
 const MAX_PROMPT_CHARS = 35000;
-const REQUEST_TIMEOUT_MS = 25000;
+const REQUEST_TIMEOUT_MS = 15000;
+
+// Models are configurable: GEMINI_MODELS="model-a,model-b" (first = preferred).
+const DEFAULT_MODELS = ['gemini-3.5-flash', 'gemini-flash-latest', 'gemini-flash-lite-latest'];
+
+function getCandidateModels(preferred?: string): string[] {
+  const fromEnv = (process.env.GEMINI_MODELS || '')
+    .split(',')
+    .map((m) => m.trim())
+    .filter(Boolean);
+  const list = fromEnv.length ? fromEnv : DEFAULT_MODELS;
+  return Array.from(new Set(preferred ? [preferred, ...list] : list));
+}
+
+// Errors that will fail identically on every model: stop instead of burning time on fallbacks.
+function isFatalConfigError(err: unknown): boolean {
+  const msg = (err instanceof Error ? err.message : String(err)).toLowerCase();
+  return (
+    msg.includes('api key') ||
+    msg.includes('api_key') ||
+    msg.includes('permission_denied') ||
+    msg.includes('unauthenticated') ||
+    msg.includes('"code":401') ||
+    msg.includes('"code":403') ||
+    msg.includes('fetch failed')
+  );
+}
 const MAX_CONCURRENT_REQUESTS = 10;
 const MAX_USER_CONCURRENT_REQUESTS = 2;
 const MAX_USER_REQUESTS_PER_MINUTE = 25;
@@ -132,6 +158,10 @@ export class AIGateway {
     }
   }
 
+  public isConfigured(): boolean {
+    return Boolean(this.client || process.env.GEMINI_API_KEY);
+  }
+
   public getLogs(): AIAgentRunLog[] {
     return this.logs;
   }
@@ -216,13 +246,7 @@ export class AIGateway {
 
     this.acquireUserSlot(userId);
     const startTime = Date.now();
-    const candidateModels = [
-      options.model || 'gemini-3.5-flash-lite',
-      'gemini-flash-lite-latest',
-      'gemini-3.5-flash',
-      'gemini-3.6-flash',
-      'gemini-3.8-flash',
-    ];
+    const candidateModels = getCandidateModels(options.model);
 
     try {
       const client = this.getClient();
@@ -261,8 +285,9 @@ export class AIGateway {
           return text;
         } catch (err: unknown) {
           lastError = err;
-          console.warn(`[AIGateway] Model ${model} encountered error, trying next candidate:`, err);
-          await new Promise((r) => setTimeout(r, 600));
+          console.warn(`[AIGateway] Model ${model} encountered error:`, err instanceof Error ? err.message : err);
+          if (isFatalConfigError(err)) break;
+          await new Promise((r) => setTimeout(r, 300));
         }
       }
 
@@ -323,13 +348,7 @@ export class AIGateway {
 
     this.acquireUserSlot(userId);
     const startTime = Date.now();
-    const candidateModels = [
-      options.model || 'gemini-3.5-flash-lite',
-      'gemini-flash-lite-latest',
-      'gemini-3.5-flash',
-      'gemini-3.6-flash',
-      'gemini-3.8-flash',
-    ];
+    const candidateModels = getCandidateModels(options.model);
 
     try {
       const client = this.getClient();
@@ -396,8 +415,9 @@ export class AIGateway {
           return validated;
         } catch (err: unknown) {
           lastError = err;
-          console.warn(`[AIGateway] Model ${model} structured generation error, trying fallback:`, err);
-          await new Promise((r) => setTimeout(r, 400));
+          console.warn(`[AIGateway] Model ${model} structured generation error:`, err instanceof Error ? err.message : err);
+          if (isFatalConfigError(err)) break;
+          await new Promise((r) => setTimeout(r, 300));
         }
       }
 

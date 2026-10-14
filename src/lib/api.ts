@@ -1000,13 +1000,11 @@ export const api = {
         method: 'POST',
         body: JSON.stringify({ message, history }),
       });
-    } catch {
-      const prof = clientDb.getProfile();
-      const scoreText = prof.readiness?.overallScore != null ? `${prof.readiness.overallScore}%` : 'comprehensive';
-      const skillsText = prof.skills?.length ? prof.skills.slice(0, 3).map((s) => s.canonicalName).join(', ') : 'modern engineering';
+    } catch (err) {
+      const detail = err instanceof Error ? err.message : 'unknown error';
       return {
-        success: true,
-        reply: `I have analyzed your career profile and current goals. Your experience with ${skillsText} provides a solid foundation with ${scoreText} career readiness. Would you like me to tailor your CV for a specific opportunity or generate an interview simulation?`,
+        success: false,
+        reply: `The AI assistant could not reach the server (${detail}). Please check that the API is deployed and VITE_API_URL is set, then try again.`,
       };
     }
   },
