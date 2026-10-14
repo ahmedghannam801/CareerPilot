@@ -393,6 +393,7 @@ export interface EmailEvent {
 export interface InterviewSession {
   id: string;
   jobRole: string;
+  trackId?: string;
   type: 'HR' | 'Behavioral' | 'Technical' | 'Mixed';
   language?: 'ar' | 'en';
   questions: {

@@ -20,17 +20,39 @@ import {
   HelpCircle,
   Headphones,
   X,
+  Layers,
+  Server,
+  Layout,
+  Smartphone,
+  Cloud,
+  Cpu,
+  Database,
+  Shield,
+  Palette,
+  CheckSquare,
+  Target,
+  BookOpen,
+  Compass,
 } from 'lucide-react';
 import { InterviewSession, CareerProfile } from '../../types/index.js';
 import { formatDate } from '../../lib/utils.js';
+import {
+  TRACKS_CATALOG,
+  detectTrackFromRole,
+  CareerTrackId,
+  CareerTrackMeta,
+  TRACK_QUESTIONS,
+} from '../../data/interviewQuestions.js';
 
 interface InterviewSimulatorViewProps {
   interviews: InterviewSession[];
   profile: CareerProfile;
   onStartInterview: (data: {
     jobRole?: string;
+    trackId?: string;
     type: 'HR' | 'Behavioral' | 'Technical' | 'Mixed';
     language?: 'ar' | 'en';
+    count?: number;
   }) => Promise<InterviewSession>;
   onSubmitAnswer: (
     id: string,
@@ -93,9 +115,32 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
   const [interviewType, setInterviewType] = useState<
     'HR' | 'Behavioral' | 'Technical' | 'Mixed'
   >('Technical');
+  const [selectedTrack, setSelectedTrack] = useState<CareerTrackId>(() => {
+    return detectTrackFromRole(profile?.targetRole);
+  });
+  const [questionCount, setQuestionCount] = useState<number>(4);
   const [isStarting, setIsStarting] = useState(false);
   const [answerDraft, setAnswerDraft] = useState('');
   const [isSubmittingAnswer, setIsSubmittingAnswer] = useState(false);
+
+  // Helper to render track icon
+  const renderTrackIcon = (iconName: string, className = 'w-4 h-4') => {
+    switch (iconName) {
+      case 'Layout': return <Layout className={className} />;
+      case 'Server': return <Server className={className} />;
+      case 'Layers': return <Layers className={className} />;
+      case 'Smartphone': return <Smartphone className={className} />;
+      case 'Cloud': return <Cloud className={className} />;
+      case 'Cpu': return <Cpu className={className} />;
+      case 'Database': return <Database className={className} />;
+      case 'Shield': return <Shield className={className} />;
+      case 'Palette': return <Palette className={className} />;
+      case 'CheckSquare': return <CheckSquare className={className} />;
+      case 'Target': return <Target className={className} />;
+      case 'BookOpen': return <BookOpen className={className} />;
+      default: return <Compass className={className} />;
+    }
+  };
 
   // Session running state
   const [isSessionRunning, setIsSessionRunning] = useState(false);
@@ -348,9 +393,17 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
     setIsStarting(true);
     setShowReview(false);
     try {
+      const currentTrackMeta = TRACKS_CATALOG.find((t) => t.id === selectedTrack);
+      const roleTitle = currentTrackMeta
+        ? (isInterviewAr ? currentTrackMeta.nameAr : currentTrackMeta.nameEn)
+        : profile.targetRole;
+
       const session = await onStartInterview({
-        jobRole: profile.targetRole,
+        jobRole: roleTitle,
+        trackId: selectedTrack,
         type: interviewType,
+        language: interviewLang,
+        count: questionCount,
       });
       setActiveSession(session);
       setSelectedQuestionIndex(0);
@@ -402,6 +455,14 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
+  const currentTrackMeta = TRACKS_CATALOG.find((t) => t.id === selectedTrack) || TRACKS_CATALOG[0];
+  const trackQuestionsPool = TRACK_QUESTIONS[selectedTrack];
+  const totalTrackQuestions =
+    (trackQuestionsPool?.Technical?.[isInterviewAr ? 'ar' : 'en']?.length || 0) +
+    (trackQuestionsPool?.Behavioral?.[isInterviewAr ? 'ar' : 'en']?.length || 0) +
+    (trackQuestionsPool?.HR?.[isInterviewAr ? 'ar' : 'en']?.length || 0) +
+    (trackQuestionsPool?.Mixed?.[isInterviewAr ? 'ar' : 'en']?.length || 0);
+
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
       {/* ── Header ─────────────────────────────────────────────────────── */}
@@ -409,7 +470,7 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="text-xs text-neutral-500">
-              {isAr ? 'محاكي المقابلات الصوتي الذكي' : 'AI Voice Interview Simulator'}
+              {isAr ? 'محاكي المقابلات الصوتي والذكي' : 'AI Voice & Track-Based Interview Simulator'}
             </span>
             {isSessionRunning && (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-rose-100 text-rose-800 animate-pulse">
@@ -423,19 +484,21 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
               </span>
             )}
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-neutral-900">
-            {isAr ? 'محاكي المقابلات الصوتي + تصحيح AI' : 'Voice Interview Simulator & AI Coach'}
+          <h1 className="text-2xl font-bold tracking-tight text-neutral-900 flex items-center gap-2">
+            <span>{isAr ? 'محاكي المقابلات التخصصي' : 'Specialized Track Interview Simulator'}</span>
+            <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">
+              {isInterviewAr ? currentTrackMeta.nameAr : currentTrackMeta.nameEn}
+            </span>
           </h1>
           <p className="text-xs text-neutral-500 mt-1">
             {isInterviewAr
-              ? `تدريب مخصص لوظيفة ${profile.targetRole} — عربي / إنجليزي — مع تصحيح كامل في النهاية`
-              : `Targeted for ${profile.targetRole} — Arabic / English — full AI corrections at the end`}
+              ? `أسئلة واقعية تتغير تلقائياً حسب تخصصك مع بنك ضخم من الأسئلة وتصحيح تفاعلي بالذكاء الاصطناعي`
+              : `Realistic dynamic questions tailored to your track with a massive question bank and AI feedback`}
           </p>
         </div>
 
         {/* Controls */}
         <div className="flex flex-wrap items-center gap-2">
-
           {/* ── Interview Language Toggle ── */}
           <div className="flex items-center bg-neutral-100 p-1 rounded-xl border border-neutral-200 text-xs gap-0.5">
             <button
@@ -474,19 +537,6 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
             <span className={`w-2 h-2 rounded-full ${isVoiceMode ? 'bg-indigo-600 animate-pulse' : 'bg-neutral-300'}`} />
           </button>
 
-          {/* ── Type selector ── */}
-          <select
-            value={interviewType}
-            onChange={(e) => setInterviewType(e.target.value as any)}
-            className="text-xs p-2 border border-neutral-300 rounded-lg outline-none bg-white cursor-pointer"
-            disabled={isSessionRunning}
-          >
-            <option value="Technical">{isInterviewAr ? 'تقنية' : 'Technical'}</option>
-            <option value="Behavioral">{isInterviewAr ? 'سلوكية (STAR)' : 'Behavioral (STAR)'}</option>
-            <option value="HR">{isInterviewAr ? 'HR ثقافة' : 'HR & Culture'}</option>
-            <option value="Mixed">{isInterviewAr ? 'مختلطة' : 'Mixed'}</option>
-          </select>
-
           {/* ── START button (when not running) ── */}
           {!isSessionRunning && (
             <button
@@ -495,7 +545,7 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
               className="px-4 py-2.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition-colors inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50 shadow-sm"
             >
               <Play className="w-3.5 h-3.5" />
-              <span>{isStarting ? (isInterviewAr ? 'جاري البدء…' : 'Starting…') : (isInterviewAr ? '▶ بدء المقابلة' : '▶ Start Interview')}</span>
+              <span>{isStarting ? (isInterviewAr ? 'جاري التحضير…' : 'Preparing…') : (isInterviewAr ? '▶ ابدأ المقابلة الآن' : '▶ Start Interview')}</span>
             </button>
           )}
 
@@ -506,9 +556,133 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
               className="px-4 py-2.5 text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 rounded-xl transition-colors inline-flex items-center gap-1.5 cursor-pointer shadow-sm animate-pulse"
             >
               <Square className="w-3.5 h-3.5" />
-              <span>{isInterviewAr ? '⏹ إيقاف وعرض التصحيحات' : '⏹ Stop & Review Corrections'}</span>
+              <span>{isInterviewAr ? '⏹ إيقاف وعرض التصحيحات' : '⏹ Stop & Review'}</span>
             </button>
           )}
+        </div>
+      </div>
+
+      {/* ── Career Track & Interview Configuration Bar ────────────────── */}
+      <div className="p-5 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl shadow-lg border border-indigo-900/40 space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-indigo-800/40 pb-3">
+          <div className="flex items-center gap-2">
+            <span className="p-1.5 rounded-lg bg-indigo-600/30 text-indigo-400 border border-indigo-500/30">
+              <Compass className="w-4 h-4" />
+            </span>
+            <div>
+              <h2 className="text-sm font-bold text-white">
+                {isInterviewAr ? 'اختر تخصصك البرمجي (Track Selector)' : 'Choose Your Career Track'}
+              </h2>
+              <p className="text-[11px] text-indigo-200/70">
+                {isInterviewAr
+                  ? 'اختر مجالك لتوليد أسئلة واقعية ومتخصصة من بنك الأسئلة أو الذكاء الاصطناعي'
+                  : 'Select your track to dynamically calibrate question depth and domain requirements'}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Question count selector */}
+            <div className="flex items-center bg-indigo-950/80 p-1 rounded-xl border border-indigo-800/50 text-xs">
+              <span className="text-[10px] text-indigo-300 px-2 font-medium">
+                {isInterviewAr ? 'العدد:' : 'Count:'}
+              </span>
+              {[3, 4, 6].map((cnt) => (
+                <button
+                  key={cnt}
+                  type="button"
+                  onClick={() => setQuestionCount(cnt)}
+                  disabled={isSessionRunning}
+                  className={`px-2.5 py-1 rounded-lg font-bold text-xs transition-all cursor-pointer ${
+                    questionCount === cnt
+                      ? 'bg-indigo-600 text-white shadow-xs'
+                      : 'text-indigo-300 hover:text-white'
+                  }`}
+                >
+                  {cnt} {isInterviewAr ? 'أسئلة' : 'Q'}
+                </button>
+              ))}
+            </div>
+
+            {/* Type selector */}
+            <div className="flex items-center bg-indigo-950/80 p-1 rounded-xl border border-indigo-800/50 text-xs gap-1">
+              {(['Technical', 'Behavioral', 'HR', 'Mixed'] as const).map((t) => {
+                const label =
+                  t === 'Technical'
+                    ? isInterviewAr ? 'تقنية' : 'Tech'
+                    : t === 'Behavioral'
+                    ? isInterviewAr ? 'سلوكية (STAR)' : 'Behavioral'
+                    : t === 'HR'
+                    ? isInterviewAr ? 'HR ثقافة' : 'HR'
+                    : isInterviewAr ? 'مختلطة' : 'Mixed';
+                return (
+                  <button
+                    key={t}
+                    type="button"
+                    onClick={() => setInterviewType(t)}
+                    disabled={isSessionRunning}
+                    className={`px-2.5 py-1 rounded-lg font-bold text-xs transition-all cursor-pointer ${
+                      interviewType === t
+                        ? 'bg-emerald-600 text-white shadow-xs'
+                        : 'text-indigo-300 hover:text-white'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Tracks horizontal chips */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-indigo-700/50">
+          {TRACKS_CATALOG.map((track) => {
+            const isSelected = selectedTrack === track.id;
+            return (
+              <button
+                key={track.id}
+                type="button"
+                onClick={() => {
+                  if (!isSessionRunning) setSelectedTrack(track.id);
+                }}
+                disabled={isSessionRunning}
+                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 border ${
+                  isSelected
+                    ? 'bg-gradient-to-r from-indigo-500 to-blue-600 text-white border-indigo-400 shadow-md shadow-indigo-500/20 ring-2 ring-indigo-400/40'
+                    : 'bg-indigo-950/40 text-indigo-200 border-indigo-800/40 hover:bg-indigo-900/60 hover:text-white'
+                }`}
+              >
+                <span className={isSelected ? 'text-white' : 'text-indigo-400'}>
+                  {renderTrackIcon(track.icon, 'w-3.5 h-3.5')}
+                </span>
+                <span>{isInterviewAr ? track.nameAr : track.nameEn}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Selected Track Details Preview */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 text-xs border-t border-indigo-900/50">
+          <div className="flex items-center gap-2 text-indigo-200">
+            <span className="font-bold text-white">
+              {isInterviewAr ? currentTrackMeta.nameAr : currentTrackMeta.nameEn}:
+            </span>
+            <span className="text-indigo-300/90 text-[11px]">
+              {isInterviewAr ? currentTrackMeta.descriptionAr : currentTrackMeta.descriptionEn}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-900/40 text-emerald-300 border border-emerald-700/40">
+              <Sparkles className="w-3 h-3 text-emerald-400" />
+              <span>
+                {isInterviewAr
+                  ? `${totalTrackQuestions}+ سؤال جاهز لهذا التراك`
+                  : `${totalTrackQuestions}+ questions ready`}
+              </span>
+            </span>
+          </div>
         </div>
       </div>
 

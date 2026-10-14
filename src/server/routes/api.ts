@@ -1214,12 +1214,19 @@ apiRouter.get('/interviews', (req: Request, res: Response) => {
 
 apiRouter.post('/interviews/start', async (req: Request, res: Response) => {
   try {
-    const { jobRole, type, language } = req.body;
+    const { jobRole, trackId, type, language, count } = req.body;
     const profile = dbService.getProfile();
-    const role = jobRole || profile.targetRole || 'Software Engineer';
+    const role = jobRole || profile.targetRole || 'Full-Stack & AI Engineer';
     const lang: 'ar' | 'en' = language === 'ar' ? 'ar' : 'en';
+    const questionCount = typeof count === 'number' && count > 0 && count <= 10 ? count : 4;
 
-    const questionsListRaw = await AIAgents.runInterviewQuestions(role, type || 'Technical', lang);
+    const questionsListRaw = await AIAgents.runInterviewQuestions(
+      role,
+      type || 'Technical',
+      lang,
+      trackId,
+      questionCount
+    );
     const questionsList = questionsListRaw.map((q, idx) => ({
       id: `q-${idx + 1}`,
       question: q,
@@ -1228,6 +1235,7 @@ apiRouter.post('/interviews/start', async (req: Request, res: Response) => {
     const session = {
       id: `int-${Date.now()}`,
       jobRole: role,
+      trackId: trackId || undefined,
       type: type || 'Technical',
       language: lang,
       questions: questionsList,

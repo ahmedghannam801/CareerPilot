@@ -153,6 +153,86 @@ export async function syncStateToSupabase(state: {
       count += appRecords.length;
     }
 
+    // 4. Resumes
+    if (state.resumes && state.resumes.length > 0) {
+      const resumeRecords = state.resumes.map((r) => ({
+        id: r.id,
+        title: r.title,
+        is_master: r.isMaster,
+        summary: r.summary,
+        experience: r.experience,
+        education: r.education,
+        skills: r.skills,
+        target_role: r.targetRole,
+        ats_score: r.atsScore,
+        created_at: r.createdAt,
+        updated_at: r.updatedAt,
+      }));
+      await client.from('resumes').upsert(resumeRecords);
+      count += resumeRecords.length;
+    }
+
+    // 5. Courses
+    if (state.courses && state.courses.length > 0) {
+      const courseRecords = state.courses.map((c) => ({
+        id: c.id,
+        title: c.title,
+        provider: c.provider,
+        instructor: c.instructor,
+        domain: c.domain,
+        target_role: c.targetRole,
+        level: c.level,
+        duration: c.duration,
+        rating: c.rating,
+        reviews_count: c.reviewsCount,
+        url: c.url,
+        description: c.description,
+        skills_gained: c.skillsGained,
+        relevance_reason: c.relevanceReason,
+        cost: c.cost,
+        certificate_available: c.certificateAvailable,
+        enrollment_status: c.enrollmentStatus,
+        progress_percentage: c.progressPercentage,
+        modules: c.modules,
+        source: c.source,
+      }));
+      await client.from('courses').upsert(courseRecords);
+      count += courseRecords.length;
+    }
+
+    // 6. Micro-Projects
+    if (state.microProjects && state.microProjects.length > 0) {
+      const projectRecords = state.microProjects.map((p) => ({
+        id: p.id,
+        title: p.title,
+        target_skill: p.targetSkill,
+        duration: p.duration,
+        scenario: p.scenario,
+        objective: p.objective,
+        tasks: p.tasks,
+        status: p.status,
+        evaluation: p.evaluation,
+      }));
+      await client.from('micro_projects').upsert(projectRecords);
+      count += projectRecords.length;
+    }
+
+    // 7. Interview Sessions
+    if (state.interviews && state.interviews.length > 0) {
+      const interviewRecords = state.interviews.map((i) => ({
+        id: i.id,
+        job_role: i.jobRole,
+        type: i.type,
+        questions: i.questions,
+        overall_score: i.overallScore,
+        summary_feedback: i.summaryFeedback,
+        completed: i.completed,
+        created_at: i.createdAt,
+      }));
+      await client.from('interview_sessions').upsert(interviewRecords);
+      count += interviewRecords.length;
+    }
+
     return { success: true, syncedRecords: count };
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);

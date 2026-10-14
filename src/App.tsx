@@ -617,8 +617,10 @@ export default function App() {
 
   const handleStartInterview = async (data: {
     jobRole?: string;
+    trackId?: string;
     type: 'HR' | 'Behavioral' | 'Technical' | 'Mixed';
     language?: 'ar' | 'en';
+    count?: number;
   }) => {
     const res = await api.startInterview(data);
     setInterviews((prev) => [res.session, ...prev]);

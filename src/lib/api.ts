@@ -22,6 +22,7 @@ import {
 import { clientDb } from './clientDb.js';
 import { getCurrentSession } from './supabaseClient.js';
 import { generateTailoredCV, evaluateJobMatch } from './resumeIntelligence.js';
+import { detectTrackFromRole, getTrackQuestions } from '../data/interviewQuestions.js';
 
 const API_BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 
@@ -858,8 +859,10 @@ export const api = {
   },
   startInterview: async (data: {
     jobRole?: string;
+    trackId?: string;
     type: 'HR' | 'Behavioral' | 'Technical' | 'Mixed';
     language?: 'ar' | 'en';
+    count?: number;
   }) => {
     try {
       return await request<{ success: boolean; session: InterviewSession }>(
@@ -871,36 +874,29 @@ export const api = {
       );
     } catch {
       const isAr = data.language === 'ar';
+      const count = typeof data.count === 'number' && data.count > 0 ? data.count : 4;
+      const detectedTrack = data.trackId || detectTrackFromRole(data.jobRole);
+      const generatedQuestions = getTrackQuestions(
+        detectedTrack,
+        data.type || 'Technical',
+        data.language || 'en',
+        count
+      );
+
       const session: InterviewSession = {
         id: `int-${Date.now()}`,
         jobRole: data.jobRole || (isAr ? 'مهندس برمجيات وذكاء اصطناعي' : 'Senior Full-Stack AI Engineer'),
+        trackId: detectedTrack,
         type: data.type,
         language: data.language,
         currentQuestionIndex: 0,
         completed: false,
         overallScore: 0,
         createdAt: new Date().toISOString(),
-        questions: isAr
-          ? [
-              {
-                id: 'q-1',
-                question: 'كيف تصمم بنية برمجية قابلة للتوسع والأمان للأنظمة السحابية والذكاء الاصطناعي؟',
-              },
-              {
-                id: 'q-2',
-                question: 'حدثني عن موقف واجهت فيه مشكلة معقدة في بيئة الإنتاج وكيف قمت بحلها.',
-              },
-            ]
-          : [
-          {
-            id: 'q-1',
-            question: 'How do you design a reliable event-driven microservices architecture handling millions of requests daily?',
-          },
-          {
-            id: 'q-2',
-            question: 'Describe an instance where you optimized high latency in an API endpoint. What was your diagnosis methodology?',
-          },
-        ],
+        questions: generatedQuestions.map((q, idx) => ({
+          id: `q-${idx + 1}`,
+          question: q,
+        })),
       };
       clientDb.saveInterview(session);
       return { success: true, session };
@@ -926,22 +922,53 @@ export const api = {
       });
     } catch {
       const session = clientDb.getInterviews().find((i) => i.id === id);
-      const feedback = {
-        score: 92,
-        strengths: [
-          'Detailed technical specificity',
-          'Clear articulation of architectural trade-offs',
-        ],
-        improvements: ['Include monitoring and observability considerations'],
-        suggestedRefinement: 'Consider highlighting how you handle data consistency and circuit breaking.',
-      };
+      const isAr = session?.language === 'ar' || /[\u0600-\u06FF]/.test(data.answer);
+      const ansLen = (data.answer || '').trim().length;
+      const score = Math.min(96, Math.max(60, Math.floor(68 + Math.min(ansLen / 12, 26))));
+
+      const feedback = isAr
+        ? {
+            score,
+            strengths: [
+              'استجابة دقيقة ومنظمة تناولت صلب السؤال مباشرة.',
+              'استخدام مصطلحات تقنية واضحة ومناسبة لمستوى الدور المستهدف.',
+            ],
+            improvements: [
+              'إضافة تفاصيل رقمية أو مقاييس أداء (Latency / Cost / Scale) لتعزيز الحجة.',
+              'توضيح استراتيجية التعامل مع الحالات الطارئة (Edge Cases).',
+            ],
+            suggestedRefinement:
+              'صيغة مقترحة: ابدأ بتحديد التحدي البرمجي بدقة، ثم اذكر الحل المعماري مع توضيح سبب اختياره مقارنة بالبدائل، واختم بالأثر والنتائج.',
+          }
+        : {
+            score,
+            strengths: [
+              'Clear, well-structured response addressing the core question.',
+              'Demonstrates strong familiarity with production practices and trade-offs.',
+            ],
+            improvements: [
+              'Quantify outcomes with concrete metrics (latency, cost reduction, scale).',
+              'Explicitly mention monitoring, failover, or edge-case handling.',
+            ],
+            suggestedRefinement:
+              'Optimal phrasing: Frame the technical problem, articulate why this architectural choice beats alternatives, and conclude with measured system impact.',
+          };
+
       if (session) {
         if (session.questions[data.questionIndex]) {
           session.questions[data.questionIndex].userAnswer = data.answer;
           session.questions[data.questionIndex].feedback = feedback;
         }
-        session.overallScore = 92;
-        session.completed = true;
+        const answeredScores = session.questions
+          .map((q) => q.feedback?.score)
+          .filter((s): s is number => typeof s === 'number');
+        session.overallScore =
+          answeredScores.length > 0
+            ? Math.round(answeredScores.reduce((a, b) => a + b, 0) / answeredScores.length)
+            : score;
+        if (data.questionIndex + 1 >= session.questions.length) {
+          session.completed = true;
+        }
         clientDb.saveInterview(session);
       }
       return { success: true, session: session!, feedback };
