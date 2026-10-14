@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Briefcase,
   Sparkles,
@@ -213,6 +213,22 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
     filterEmploymentType,
     sortBy,
   ]);
+
+  // Auto-sync detail pane: if active filters exclude the current selection, use first visible item
+  const effectiveSelectedOpp = useMemo(() => {
+    if (!selectedOpp) return filteredOpps[0] || null;
+    const stillVisible = filteredOpps.find((o) => o.id === selectedOpp.id);
+    return stillVisible ?? (filteredOpps[0] || null);
+  }, [filteredOpps, selectedOpp]);
+
+  // Commit the auto-selected item back into state (clears stale match analysis too)
+  useEffect(() => {
+    if (effectiveSelectedOpp && effectiveSelectedOpp.id !== selectedOpp?.id) {
+      setSelectedOpp(effectiveSelectedOpp);
+      setMatchAnalysis(null);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [effectiveSelectedOpp]);
 
   const isAr = lang === 'ar';
 
@@ -559,25 +575,25 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
 
         {/* Right: Detailed Match Inspector & Gap Analysis */}
         <div className="lg:col-span-7 space-y-6">
-          {selectedOpp ? (
+          {effectiveSelectedOpp ? (
             <div className="p-6 bg-white border border-neutral-200 rounded-xl space-y-6">
               {/* Header Info */}
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                 <div>
                   <div className="text-xs text-neutral-500 mb-1 flex items-center gap-2">
-                    <span>{selectedOpp.company}</span>
+                    <span>{effectiveSelectedOpp.company}</span>
                     <span aria-hidden="true">·</span>
                     <span className="font-mono text-[10px] bg-neutral-100 px-1.5 py-0.5 rounded text-neutral-700">
-                      {selectedOpp.sourcePlatform || 'Direct Platform'}
+                      {effectiveSelectedOpp.sourcePlatform || 'Direct Platform'}
                     </span>
                     <span
                       className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                        selectedOpp.employmentType === 'Internship'
+                        effectiveSelectedOpp.employmentType === 'Internship'
                           ? 'bg-amber-100 text-amber-800'
                           : 'bg-emerald-50 text-emerald-700'
                       }`}
                     >
-                      {selectedOpp.employmentType === 'Internship'
+                      {effectiveSelectedOpp.employmentType === 'Internship'
                         ? lang === 'ar'
                           ? 'تدريب'
                           : 'Internship'
@@ -586,15 +602,15 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
                         : 'Job'}
                     </span>
                   </div>
-                  <h2 className="text-lg font-bold text-neutral-900">{selectedOpp.title}</h2>
+                  <h2 className="text-lg font-bold text-neutral-900">{effectiveSelectedOpp.title}</h2>
                   <div className="text-xs text-neutral-600 mt-1 flex items-center gap-2">
-                    <span>{selectedOpp.location}</span>
+                    <span>{effectiveSelectedOpp.location}</span>
                     <span aria-hidden="true">·</span>
-                    <span>{selectedOpp.workModel}</span>
-                    {selectedOpp.salary && (
+                    <span>{effectiveSelectedOpp.workModel}</span>
+                    {effectiveSelectedOpp.salary && (
                       <>
                         <span aria-hidden="true">·</span>
-                        <span className="font-mono tabular-nums font-semibold">{selectedOpp.salary}</span>
+                        <span className="font-mono tabular-nums font-semibold">{effectiveSelectedOpp.salary}</span>
                       </>
                     )}
                   </div>
@@ -604,21 +620,21 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
                   {/* Primary in-app direct apply & prep button */}
                   <button
                     type="button"
-                    onClick={() => onPrepareApplication(selectedOpp.id)}
+                    onClick={() => onPrepareApplication(effectiveSelectedOpp.id)}
                     className="px-3.5 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors inline-flex items-center gap-1.5 shadow-xs cursor-pointer"
                   >
                     <CheckCircle2 className="w-3.5 h-3.5" />
                     <span>
-                      {selectedOpp.employmentType === 'Internship'
+                      {effectiveSelectedOpp.employmentType === 'Internship'
                         ? (lang === 'ar' ? 'التقديم المباشر على التدريب' : 'Direct Apply & Prep')
                         : (lang === 'ar' ? 'التقديم المباشر على الوظيفة' : 'Direct Apply & Prep')}
                     </span>
                   </button>
 
                   {/* Secondary external posting link */}
-                  {selectedOpp.sourceUrl && (
+                  {effectiveSelectedOpp.sourceUrl && (
                     <a
-                      href={selectedOpp.sourceUrl}
+                      href={effectiveSelectedOpp.sourceUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="px-3 py-2 text-xs font-medium text-neutral-700 bg-white hover:bg-neutral-100 border border-neutral-300 rounded-lg transition-colors inline-flex items-center gap-1.5"
@@ -631,7 +647,7 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
 
                   <button
                     type="button"
-                    onClick={() => handleOpenTailorModal(selectedOpp)}
+                    onClick={() => handleOpenTailorModal(effectiveSelectedOpp!)}
                     className="px-3.5 py-2 text-xs font-bold text-neutral-900 bg-amber-50 hover:bg-amber-100 border border-amber-300 rounded-lg transition-colors inline-flex items-center gap-1.5 shadow-xs cursor-pointer"
                   >
                     <Sparkles className="w-3.5 h-3.5 text-amber-600" />
@@ -640,7 +656,7 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
 
                   <button
                     type="button"
-                    onClick={() => onPrepareApplication(selectedOpp.id)}
+                    onClick={() => onPrepareApplication(effectiveSelectedOpp.id)}
                     className="px-3 py-2 text-xs font-medium text-neutral-700 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors whitespace-nowrap cursor-pointer"
                   >
                     {lang === 'ar' ? 'سجل التقديم' : 'Track App'}
@@ -743,7 +759,7 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
                 <h3 className="text-xs font-semibold text-neutral-900 uppercase tracking-wider mb-2">
                   {lang === 'ar' ? 'نبذة عن الدور الوظيفي (Role Overview)' : 'Role Overview'}
                 </h3>
-                <p className="text-xs text-neutral-700 leading-relaxed">{selectedOpp.description}</p>
+                <p className="text-xs text-neutral-700 leading-relaxed">{effectiveSelectedOpp.description}</p>
               </div>
 
               {/* Requirements & Qualifications Section */}
@@ -752,9 +768,9 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
                   <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
                   <span>{lang === 'ar' ? 'المتطلبات والمؤهلات (Requirements & Qualifications)' : 'Requirements & Qualifications'}</span>
                 </h3>
-                {selectedOpp.requirements && selectedOpp.requirements.length > 0 ? (
+                {effectiveSelectedOpp.requirements && effectiveSelectedOpp.requirements.length > 0 ? (
                   <ul className="space-y-1.5 list-disc list-inside text-xs text-neutral-700 bg-neutral-50/70 p-3 rounded-lg border border-neutral-200/70">
-                    {selectedOpp.requirements.map((req, i) => (
+                    {effectiveSelectedOpp.requirements.map((req, i) => (
                       <li key={i} className="leading-relaxed">
                         <span className="text-neutral-800">{req}</span>
                       </li>
@@ -774,9 +790,9 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
                 <h4 className="text-xs font-bold text-neutral-900 uppercase tracking-wider">
                   {lang === 'ar' ? 'المسؤوليات والمهارات الإضافية (Responsibilities & Preferred Qualifications)' : 'Responsibilities & Preferred Qualifications'}
                 </h4>
-                {selectedOpp.preferredSkills && selectedOpp.preferredSkills.length > 0 ? (
+                {effectiveSelectedOpp.preferredSkills && effectiveSelectedOpp.preferredSkills.length > 0 ? (
                   <div className="flex flex-wrap gap-1.5">
-                    {selectedOpp.preferredSkills.map((skill, idx) => (
+                    {effectiveSelectedOpp.preferredSkills.map((skill, idx) => (
                       <span
                         key={idx}
                         className="px-2.5 py-1 text-[11px] font-medium bg-blue-50 text-blue-700 border border-blue-200/70 rounded-md"
@@ -794,21 +810,21 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
 
               {/* Source & Actions */}
               <div className="pt-4 border-t border-neutral-100 flex justify-between items-center text-xs">
-                {selectedOpp.sourceUrl ? (
+                {effectiveSelectedOpp.sourceUrl ? (
                   <a
-                    href={selectedOpp.sourceUrl}
+                    href={effectiveSelectedOpp.sourceUrl}
                     target="_blank"
                     rel="noreferrer"
                     className="text-neutral-600 hover:text-neutral-900 inline-flex items-center gap-1 font-medium"
                   >
-                    <span>View original posting on {selectedOpp.sourcePlatform || 'platform'}</span>
+                    <span>View original posting on {effectiveSelectedOpp.sourcePlatform || 'platform'}</span>
                     <ExternalLink className="w-3.5 h-3.5" />
                   </a>
                 ) : (
                   <div />
                 )}
                 <button
-                  onClick={() => onDeleteOpportunity(selectedOpp.id)}
+                  onClick={() => onDeleteOpportunity(effectiveSelectedOpp.id)}
                   className="text-neutral-400 hover:text-neutral-900 inline-flex items-center gap-1 ml-auto"
                 >
                   <Trash2 className="w-3.5 h-3.5" />

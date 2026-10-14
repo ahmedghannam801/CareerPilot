@@ -85,7 +85,9 @@ export const EmailIntelligenceView: React.FC<EmailIntelligenceViewProps> = ({
         id: selectedEventId || undefined,
       });
       setClassificationResult(res);
-      if (selectedEventId && onMarkEmailRead) {
+      // Only mark as read if the event is currently unread — avoids toggling back to unread
+      const currentEvt = emailEvents.find((e) => e.id === selectedEventId);
+      if (selectedEventId && onMarkEmailRead && !currentEvt?.read && !currentEvt?.processed) {
         onMarkEmailRead(selectedEventId);
       }
     } finally {

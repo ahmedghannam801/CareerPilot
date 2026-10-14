@@ -319,6 +319,7 @@ export interface Application {
   qualityScore?: number;
   qualityFeedback?: string[];
   notes?: string;
+  attachments?: string[]; // file names of supporting materials
   events: {
     id: string;
     date: string;

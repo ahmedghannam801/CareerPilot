@@ -603,9 +603,16 @@ export default function App() {
   };
 
   const handleMarkEmailRead = async (id: string) => {
+    // Find current state to determine toggle direction
+    const current = emailEvents.find((e) => e.id === id);
+    const isCurrentlyRead = Boolean(current?.read || current?.processed);
     await api.markEmailRead(id);
     setEmailEvents((prev) =>
-      prev.map((e) => (e.id === id ? { ...e, read: !e.read, processed: true } : e))
+      prev.map((e) =>
+        e.id === id
+          ? { ...e, read: !isCurrentlyRead, processed: e.processed }
+          : e
+      )
     );
   };
 
