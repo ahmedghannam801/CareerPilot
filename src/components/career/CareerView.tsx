@@ -618,8 +618,8 @@ export const CareerView: React.FC<CareerViewProps> = ({
               {timeline.map((evt) => (
                 <div key={evt.id} className="relative">
                   <span
-                    className="absolute -left-[31px] top-1 w-2.5 h-2.5 rounded-full ring-4"
-                    style={{ backgroundColor: 'var(--text-primary)', ringColor: 'var(--surface-primary)' }}
+                    className="absolute -left-[31px] top-1 w-2.5 h-2.5 rounded-full"
+                    style={{ backgroundColor: 'var(--text-primary)', boxShadow: '0 0 0 4px var(--surface-primary)' }}
                   />
                   <div className="flex items-center gap-2 type-mono-label mb-1" style={{ color: 'var(--text-tertiary)' }}>
                     <span className="font-mono tabular-nums">{formatDate(evt.date)}</span>

@@ -192,18 +192,24 @@ export const CareerJourneyMap: React.FC<CareerJourneyMapProps> = ({
 
   if (mode === 'compact') {
     return (
-      <div className="bg-white border border-[#E4EAF2] rounded-2xl p-4 sm:p-5 shadow-xs">
+      <div className="card-surface" style={{ borderRadius: '16px', padding: '16px 20px' }}>
         {/* Header */}
         <div className="flex items-center justify-between gap-3 mb-4">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[#EEF4FF] text-[#2563EB] flex items-center justify-center shrink-0">
+            <div
+              className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+              style={{
+                backgroundColor: 'rgba(184, 196, 255, 0.12)',
+                color: 'var(--primary)',
+              }}
+            >
               <Compass className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-[#17253B]">
+              <h2 className="text-body-strong" style={{ color: 'var(--on-surface)' }}>
                 {isAr ? 'مساري المهني (Career Journey)' : 'My Career Journey'}
               </h2>
-              <p className="text-[12px] text-[#64748B]">
+              <p className="text-micro" style={{ color: 'var(--on-surface-variant)' }}>
                 {isAr
                   ? `المحطة الحالية: ${stages.find((s) => s.id === currentStageId)?.titleAr.replace(/^\d+\.\s*/, '')}`
                   : `Current checkpoint: ${stages.find((s) => s.id === currentStageId)?.titleEn.replace(/^\d+\.\s*/, '')}`}
@@ -212,12 +218,24 @@ export const CareerJourneyMap: React.FC<CareerJourneyMapProps> = ({
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            <span className="text-xs font-bold text-[#2563EB] bg-[#EEF4FF] px-2.5 py-1 rounded-full border border-[#2563EB]/20">
+            <span
+              className="badge-pill text-label-caps"
+              style={{
+                color: 'var(--primary)',
+                backgroundColor: 'rgba(184, 196, 255, 0.12)',
+                border: '1px solid rgba(184, 196, 255, 0.3)',
+              }}
+            >
               {overallJourneyPct}% {isAr ? 'مكتمل' : 'Progress'}
             </span>
             <button
+              type="button"
               onClick={() => onNavigate('career')}
-              className="text-xs font-semibold text-[#2563EB] hover:text-[#1D4ED8] flex items-center gap-1 transition-colors cursor-pointer"
+              className="text-micro flex items-center gap-1 transition-colors cursor-pointer"
+              style={{
+                color: 'var(--primary)',
+                fontWeight: 500,
+              }}
             >
               <span>{isAr ? 'خريطة الطريق الكاملة' : 'Full Roadmap'}</span>
               <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
@@ -226,7 +244,10 @@ export const CareerJourneyMap: React.FC<CareerJourneyMapProps> = ({
         </div>
 
         {/* Progression Track */}
-        <div className="grid grid-cols-5 gap-2 pt-2 border-t border-[#EDF2F7]">
+        <div
+          className="grid grid-cols-5 gap-2 pt-2"
+          style={{ borderTop: '1px solid var(--outline-variant)' }}
+        >
           {stages.map((stg) => {
             const Icon = stg.icon;
             const isCompleted = stg.status === 'completed';
@@ -234,25 +255,37 @@ export const CareerJourneyMap: React.FC<CareerJourneyMapProps> = ({
 
             return (
               <button
+                type="button"
                 key={stg.id}
                 onClick={() => onNavigate(stg.targetTab)}
-                className={`group flex flex-col items-center text-center p-2 rounded-xl transition-all cursor-pointer relative ${
-                  isCurrent
-                    ? 'bg-[#EEF4FF] border border-[#2563EB]/30'
-                    : isCompleted
-                    ? 'hover:bg-slate-50'
-                    : 'opacity-70 hover:opacity-100 hover:bg-slate-50'
-                }`}
+                className="group flex flex-col items-center text-center p-2 rounded-xl transition-all cursor-pointer relative"
+                style={{
+                  backgroundColor: isCurrent
+                    ? 'rgba(184, 196, 255, 0.08)'
+                    : 'transparent',
+                  border: isCurrent
+                    ? '1px solid rgba(184, 196, 255, 0.3)'
+                    : '1px solid transparent',
+                  opacity: isCompleted || isCurrent ? 1 : 0.7,
+                }}
               >
                 {/* Node circle */}
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center mb-1.5 transition-transform group-hover:scale-105 ${
-                    isCompleted
-                      ? 'bg-[#15803D] text-white shadow-xs'
+                  className="w-8 h-8 rounded-full flex items-center justify-center mb-1.5 transition-transform group-hover:scale-105"
+                  style={{
+                    backgroundColor: isCompleted
+                      ? 'var(--tertiary)'
                       : isCurrent
-                      ? 'bg-[#2563EB] text-white ring-4 ring-[#2563EB]/15'
-                      : 'bg-[#F1F5F9] text-[#94A3B8] border border-[#E4EAF2]'
-                  }`}
+                      ? 'var(--primary-container)'
+                      : 'var(--surface-container)',
+                    color: isCompleted
+                      ? 'var(--on-tertiary)'
+                      : isCurrent
+                      ? 'var(--on-primary-container)'
+                      : 'var(--on-surface-variant)',
+                    border: isCompleted || isCurrent ? 'none' : '1px solid var(--outline-variant)',
+                    boxShadow: isCurrent ? '0 0 0 4px rgba(184, 196, 255, 0.15)' : 'none',
+                  }}
                 >
                   {isCompleted ? (
                     <CheckCircle2 className="w-4 h-4" />
@@ -263,26 +296,36 @@ export const CareerJourneyMap: React.FC<CareerJourneyMapProps> = ({
 
                 {/* Stage short title */}
                 <span
-                  className={`text-[11px] font-semibold leading-tight line-clamp-1 ${
-                    isCurrent
-                      ? 'text-[#2563EB]'
+                  className="text-label-caps leading-tight line-clamp-1"
+                  style={{
+                    color: isCurrent
+                      ? 'var(--primary)'
                       : isCompleted
-                      ? 'text-[#17253B]'
-                      : 'text-[#64748B]'
-                  }`}
+                      ? 'var(--on-surface)'
+                      : 'var(--on-surface-variant)',
+                    fontSize: '11px',
+                    fontWeight: 600,
+                  }}
                 >
                   {isAr ? stg.titleAr.replace(/^\d+\.\s*/, '') : stg.titleEn.replace(/^\d+\.\s*/, '')}
                 </span>
 
                 {/* Status chip */}
                 <span
-                  className={`text-[9.5px] font-medium mt-1 px-1.5 py-0.5 rounded-full ${
-                    isCompleted
-                      ? 'text-[#15803D] bg-emerald-50'
+                  className="text-micro mt-1 px-1.5 py-0.5 rounded-full"
+                  style={{
+                    color: isCompleted
+                      ? 'var(--tertiary)'
                       : isCurrent
-                      ? 'text-[#2563EB] bg-blue-100/60 font-bold'
-                      : 'text-[#94A3B8]'
-                  }`}
+                      ? 'var(--primary)'
+                      : 'var(--on-surface-variant)',
+                    backgroundColor: isCompleted
+                      ? 'rgba(78, 222, 163, 0.12)'
+                      : isCurrent
+                      ? 'rgba(184, 196, 255, 0.12)'
+                      : 'transparent',
+                    fontWeight: isCurrent ? 600 : 500,
+                  }}
                 >
                   {isCompleted
                     ? isAr ? 'مكتمل' : 'Done'
@@ -300,36 +343,75 @@ export const CareerJourneyMap: React.FC<CareerJourneyMapProps> = ({
 
   // Detailed Full Roadmap View
   return (
-    <div className="bg-white border border-[#E4EAF2] rounded-2xl p-6 sm:p-8 space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#EDF2F7]">
+    <div className="card-surface space-y-6" style={{ borderRadius: '16px', padding: '24px 32px' }}>
+      <div
+        className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6"
+        style={{ borderBottom: '1px solid var(--outline-variant)' }}
+      >
         <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-[#2563EB] uppercase tracking-wider mb-1">
+          <div
+            className="flex items-center gap-2 text-label-caps mb-1"
+            style={{ color: 'var(--primary)' }}
+          >
             <Compass className="w-3.5 h-3.5" />
             <span>{isAr ? 'خريطة التقدم المهني الشاملة' : 'Interactive Career Progression Route'}</span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-black text-[#17253B]">
+          <h2 className="text-headline-md" style={{ color: 'var(--on-surface)' }}>
             {isAr ? 'مسارك من التأسيس إلى اقتناص الوظيفة' : 'From Career Foundation to Job Placement'}
           </h2>
-          <p className="text-xs sm:text-sm text-[#64748B] mt-1">
+          <p className="text-body-sm mt-1" style={{ color: 'var(--on-surface-variant)' }}>
             {isAr
               ? 'نهج مبني على الأدلة الحقيقية: 5 محطات متسلسلة تقودك نحو هدفك الوظيفي بثقة.'
               : 'Evidence-based route: 5 connected checkpoints designed to advance your trajectory.'}
           </p>
         </div>
 
-        <div className="flex items-center gap-3 bg-[#EEF4FF] border border-[#2563EB]/20 px-4 py-3 rounded-xl shrink-0">
+        <div
+          className="flex items-center gap-3 px-4 py-3 rounded-xl shrink-0"
+          style={{
+            backgroundColor: 'rgba(184, 196, 255, 0.12)',
+            border: '1px solid rgba(184, 196, 255, 0.3)',
+          }}
+        >
           <div className="text-end">
-            <div className="text-xs text-[#64748B]">{isAr ? 'إجمالي الإنجاز' : 'Total Progress'}</div>
-            <div className="text-xl font-black text-[#2563EB]">{overallJourneyPct}%</div>
+            <div className="text-micro" style={{ color: 'var(--on-surface-variant)' }}>
+              {isAr ? 'إجمالي الإنجاز' : 'Total Progress'}
+            </div>
+            <div className="text-headline-sm" style={{ color: 'var(--primary)', fontWeight: 700 }}>
+              {overallJourneyPct}%
+            </div>
           </div>
-          <div className="w-10 h-10 rounded-full border-3 border-[#2563EB] border-t-transparent flex items-center justify-center font-bold text-xs text-[#2563EB]">
+          <div
+            className="w-10 h-10 rounded-full flex items-center justify-center text-micro"
+            style={{
+              border: '3px solid var(--primary-container)',
+              borderTopColor: 'transparent',
+              color: 'var(--primary)',
+              fontWeight: 600,
+            }}
+          >
             {completedStages}/5
           </div>
         </div>
       </div>
 
       {/* Connected Vertical Checkpoints */}
-      <div className="relative space-y-6 before:absolute before:top-4 before:bottom-4 before:start-6 before:w-0.5 before:bg-[#E4EAF2]">
+      <div
+        className="relative space-y-6"
+        style={{
+          position: 'relative',
+        }}
+      >
+        <div
+          style={{
+            position: 'absolute',
+            top: '16px',
+            bottom: '16px',
+            insetInlineStart: '24px',
+            width: '2px',
+            backgroundColor: 'var(--outline-variant)',
+          }}
+        />
         {stages.map((stg) => {
           const Icon = stg.icon;
           const isCompleted = stg.status === 'completed';
@@ -338,23 +420,39 @@ export const CareerJourneyMap: React.FC<CareerJourneyMapProps> = ({
           return (
             <div
               key={stg.id}
-              className={`relative flex items-start gap-4 sm:gap-6 p-4 sm:p-5 rounded-2xl border transition-all ${
-                isCurrent
-                  ? 'bg-[#F7F9FC] border-[#2563EB] shadow-xs ring-1 ring-[#2563EB]/20'
+              className="relative flex items-start gap-4 sm:gap-6 p-4 sm:p-5 rounded-2xl transition-all"
+              style={{
+                backgroundColor: isCurrent
+                  ? 'var(--surface-container)'
                   : isCompleted
-                  ? 'bg-white border-[#E4EAF2] hover:border-slate-300'
-                  : 'bg-white/50 border-[#E4EAF2] opacity-75'
-              }`}
+                  ? 'var(--surface-container-low)'
+                  : 'var(--surface-container-lowest)',
+                border: isCurrent
+                  ? '1px solid var(--primary)'
+                  : '1px solid var(--outline-variant)',
+                boxShadow: isCurrent
+                  ? 'inset 0 1px 0 0 rgba(255, 255, 255, 0.05), 0 0 0 1px var(--primary)'
+                  : 'none',
+                opacity: isCompleted || isCurrent ? 1 : 0.75,
+              }}
             >
               {/* Checkpoint Badge */}
               <div
-                className={`relative z-10 w-12 h-12 rounded-xl flex items-center justify-center shrink-0 font-bold transition-all ${
-                  isCompleted
-                    ? 'bg-[#15803D] text-white shadow-xs'
+                className="relative z-10 w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-all"
+                style={{
+                  backgroundColor: isCompleted
+                    ? 'var(--tertiary)'
                     : isCurrent
-                    ? 'bg-[#2563EB] text-white ring-4 ring-[#2563EB]/20'
-                    : 'bg-[#F1F5F9] text-[#94A3B8] border border-[#E4EAF2]'
-                }`}
+                    ? 'var(--primary-container)'
+                    : 'var(--surface-container)',
+                  color: isCompleted
+                    ? 'var(--on-tertiary)'
+                    : isCurrent
+                    ? 'var(--on-primary-container)'
+                    : 'var(--on-surface-variant)',
+                  border: isCompleted || isCurrent ? 'none' : '1px solid var(--outline-variant)',
+                  boxShadow: isCurrent ? '0 0 0 4px rgba(184, 196, 255, 0.2)' : 'none',
+                }}
               >
                 {isCompleted ? <CheckCircle2 className="w-6 h-6" /> : <Icon className="w-5 h-5" />}
               </div>
@@ -363,17 +461,28 @@ export const CareerJourneyMap: React.FC<CareerJourneyMapProps> = ({
               <div className="flex-1 min-w-0">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 mb-1.5">
                   <div className="flex items-center gap-2">
-                    <h3 className="text-base font-bold text-[#17253B]">
+                    <h3 className="text-title-base" style={{ color: 'var(--on-surface)', fontWeight: 600 }}>
                       {isAr ? stg.titleAr : stg.titleEn}
                     </h3>
                     <span
-                      className={`text-[10.5px] font-bold px-2 py-0.5 rounded-full ${
-                        isCompleted
-                          ? 'bg-emerald-50 text-[#15803D] border border-emerald-200'
+                      className="badge-pill text-label-caps"
+                      style={{
+                        backgroundColor: isCompleted
+                          ? 'rgba(78, 222, 163, 0.12)'
                           : isCurrent
-                          ? 'bg-blue-50 text-[#2563EB] border border-blue-200'
-                          : 'bg-slate-100 text-[#64748B]'
-                      }`}
+                          ? 'rgba(184, 196, 255, 0.12)'
+                          : 'var(--surface-container)',
+                        color: isCompleted
+                          ? 'var(--tertiary)'
+                          : isCurrent
+                          ? 'var(--primary)'
+                          : 'var(--on-surface-variant)',
+                        border: isCompleted
+                          ? '1px solid rgba(78, 222, 163, 0.25)'
+                          : isCurrent
+                          ? '1px solid rgba(184, 196, 255, 0.3)'
+                          : '1px solid var(--outline-variant)',
+                      }}
                     >
                       {isCompleted
                         ? isAr ? 'مكتمل بنجاح' : 'Completed'
@@ -383,40 +492,53 @@ export const CareerJourneyMap: React.FC<CareerJourneyMapProps> = ({
                     </span>
                   </div>
 
-                  <span className="text-xs font-semibold text-[#64748B]">
+                  <span className="text-mono-metric" style={{ color: 'var(--on-surface-variant)' }}>
                     {stg.progressPct}%
                   </span>
                 </div>
 
-                <p className="text-xs sm:text-sm text-[#64748B] mb-3">
+                <p className="text-body-sm mb-3" style={{ color: 'var(--on-surface-variant)' }}>
                   {isAr ? stg.subtitleAr : stg.subtitleEn}
                 </p>
 
                 {/* Progress Bar */}
-                <div className="w-full h-1.5 bg-[#F1F5F9] rounded-full overflow-hidden mb-3">
+                <div
+                  className="w-full h-1.5 rounded-full overflow-hidden mb-3"
+                  style={{ backgroundColor: 'var(--surface-container)' }}
+                >
                   <div
                     className="h-full rounded-full transition-all duration-500"
                     style={{
                       width: `${stg.progressPct}%`,
-                      backgroundColor: isCompleted ? '#15803D' : '#2563EB',
+                      backgroundColor: isCompleted ? 'var(--tertiary)' : 'var(--primary-container)',
                     }}
                   />
                 </div>
 
                 {/* Evidence & Action Row */}
-                <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[#EDF2F7]">
-                  <div className="text-xs text-[#64748B] flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-[#2563EB]" />
+                <div
+                  className="flex flex-wrap items-center justify-between gap-2 pt-2"
+                  style={{ borderTop: '1px solid var(--outline-variant)' }}
+                >
+                  <div className="text-body-sm flex items-center gap-1.5" style={{ color: 'var(--on-surface-variant)' }}>
+                    <Sparkles className="w-3.5 h-3.5" style={{ color: 'var(--primary)' }} />
                     <span>{isAr ? stg.evidenceTextAr : stg.evidenceTextEn}</span>
                   </div>
 
                   <button
+                    type="button"
                     onClick={() => onNavigate(stg.targetTab)}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                      isCurrent
-                        ? 'bg-[#2563EB] text-white hover:bg-[#1D4ED8] shadow-xs'
-                        : 'bg-[#EEF4FF] text-[#2563EB] hover:bg-[#DBEAFE]'
-                    }`}
+                    className="px-3.5 py-1.5 rounded-xl text-micro transition-all flex items-center gap-1.5 cursor-pointer"
+                    style={{
+                      backgroundColor: isCurrent
+                        ? 'var(--primary-container)'
+                        : 'rgba(184, 196, 255, 0.12)',
+                      color: isCurrent
+                        ? 'var(--on-primary-container)'
+                        : 'var(--primary)',
+                      fontWeight: 600,
+                      border: isCurrent ? 'none' : '1px solid rgba(184, 196, 255, 0.3)',
+                    }}
                   >
                     <span>{isAr ? stg.nextActionLabelAr : stg.nextActionLabelEn}</span>
                     <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />

@@ -598,22 +598,50 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-hidden">
-      <div className="bg-white rounded-2xl sm:rounded-3xl max-w-2xl w-full shadow-2xl overflow-hidden border border-slate-200/80 flex flex-col max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2.5rem)]">
+    <div className="glass-surface fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-hidden">
+      <div
+        className="card-surface rounded-2xl sm:rounded-3xl max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2.5rem)]"
+        style={{
+          border: '1px solid var(--border)',
+        }}
+      >
         {/* Header */}
-        <div className="bg-[#0B1F3A] px-6 py-5 text-white flex items-center justify-between shrink-0">
+        <div
+          className="px-6 py-5 flex items-center justify-between shrink-0"
+          style={{
+            background: 'var(--primary)',
+            color: 'var(--on-primary)',
+          }}
+        >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-blue-500/20 border border-blue-400/30 flex items-center justify-center text-blue-400 shadow-inner">
+            <div
+              className="w-10 h-10 rounded-2xl flex items-center justify-center shadow-inner"
+              style={{
+                background: 'var(--primary-container)',
+                border: '1px solid var(--border-subtle)',
+                color: 'var(--on-primary-container)',
+              }}
+            >
               <Sparkles className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-sm font-black tracking-wide">CareerPilot AI</h3>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-400/20">
+                <h3 className="text-body-sm font-black tracking-wide">CareerPilot AI</h3>
+                <span
+                  className="badge-pill text-body-xs"
+                  style={{
+                    background: 'var(--primary-container)',
+                    color: 'var(--on-primary-container)',
+                    border: '1px solid var(--border-subtle)',
+                  }}
+                >
                   {isAr ? 'الإعداد الشخصي الذكي' : 'One-Time Onboarding'}
                 </span>
               </div>
-              <p className="text-xs text-slate-300/80 font-medium mt-0.5">
+              <p
+                className="text-body-xs font-medium mt-0.5"
+                style={{ color: 'var(--on-primary-variant)' }}
+              >
                 {isAr
                   ? 'بناء ملفك المهني الذكي وتوليد خارطة الطريق المخصصة'
                   : 'Architecting your Career Profile & Personalized Learning Roadmap'}
@@ -623,30 +651,60 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+            className="p-1.5 rounded-xl transition-colors cursor-pointer"
+            style={{
+              color: 'var(--on-surface-variant)',
+            }}
             title={isAr ? 'إغلاق' : 'Close'}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'var(--surface-container-highest)';
+              e.currentTarget.style.color = 'var(--on-surface)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent';
+              e.currentTarget.style.color = 'var(--on-surface-variant)';
+            }}
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Progress Bar & Stage Indicator */}
-        <div className="px-6 pt-4 pb-2 bg-slate-50 border-b border-slate-100 shrink-0">
-          <div className="flex items-center justify-between text-xs text-slate-600 mb-2">
+        <div
+          className="px-6 pt-4 pb-2 shrink-0"
+          style={{
+            background: 'var(--surface-container-low)',
+            borderBottom: '1px solid var(--border-subtle)',
+          }}
+        >
+          <div className="flex items-center justify-between text-body-xs mb-2" style={{ color: 'var(--on-surface-variant)' }}>
             <span className="font-bold flex items-center gap-2">
               <span>{isAr ? `الخطوة ${step} من ${totalSteps}` : `Step ${step} of ${totalSteps}`}</span>
               {draftRestored && (
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 font-medium">
+                <span
+                  className="badge-pill text-body-xs"
+                  style={{
+                    background: 'var(--warning-container)',
+                    color: 'var(--on-warning-container)',
+                    border: '1px solid var(--border)',
+                  }}
+                >
                   {isAr ? 'مسترجع تلقائياً' : 'Draft Restored'}
                 </span>
               )}
             </span>
-            <span className="font-extrabold text-blue-600">{Math.round((step / totalSteps) * 100)}%</span>
+            <span className="font-extrabold" style={{ color: 'var(--primary)' }}>{Math.round((step / totalSteps) * 100)}%</span>
           </div>
-          <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+          <div
+            className="w-full h-2 rounded-full overflow-hidden"
+            style={{ background: 'var(--surface-container-high)' }}
+          >
             <div
-              className="h-full bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full transition-all duration-300"
-              style={{ width: `${(step / totalSteps) * 100}%` }}
+              className="h-full rounded-full transition-all duration-300"
+              style={{
+                width: `${(step / totalSteps) * 100}%`,
+                background: 'linear-gradient(to right, var(--primary), var(--secondary))',
+              }}
             />
           </div>
         </div>
@@ -654,8 +712,15 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
         {/* Content Body */}
         <div className="px-6 py-6 overflow-y-auto flex-1 space-y-5">
           {errorMessage && (
-            <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl flex items-start gap-3 text-rose-800 text-xs">
-              <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+            <div
+              className="p-3.5 rounded-2xl flex items-start gap-3 text-body-xs"
+              style={{
+                background: 'var(--error-container)',
+                border: '1px solid var(--error)',
+                color: 'var(--on-error-container)',
+              }}
+            >
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" style={{ color: 'var(--error)' }} />
               <div>
                 <p className="font-bold">{isAr ? 'حدث خطأ أثناء الحفظ:' : 'Action failed:'}</p>
                 <p className="mt-0.5">{errorMessage}</p>
@@ -669,13 +734,13 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
           {step === 1 && (
             <div className="space-y-4">
               <div>
-                <span className="text-[11px] font-bold text-blue-600 uppercase tracking-wider">
+                <span className="text-label-caps" style={{ color: 'var(--primary)' }}>
                   {isAr ? 'المرحلة 1 من 10 • الهوية المهنية' : 'Step 1 of 10 • Career Identity'}
                 </span>
-                <h4 className="text-lg font-black text-[#0B1F3A] mt-1">
+                <h4 className="text-headline-lg font-black mt-1" style={{ color: 'var(--on-surface)' }}>
                   {isAr ? 'ما الذي يصف وضعك الحالي بأفضل شكل؟' : 'What best describes your current situation?'}
                 </h4>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-body-xs mt-1" style={{ color: 'var(--on-surface-variant)' }}>
                   {isAr
                     ? 'نستخدم إجابتك لتحديد الأسئلة التابعة وخارطة الطريق ونوع الفرص الأنسب لك.'
                     : 'We tailor the roadmap structure, prerequisite depth, and opportunities to your exact stage.'}
@@ -691,25 +756,40 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                       key={stage.value}
                       type="button"
                       onClick={() => setFormData({ ...formData, careerStatus: stage.value })}
-                      className={`p-4 rounded-2xl border-2 text-start transition-all cursor-pointer flex flex-col justify-between ${
-                        isSelected
-                          ? 'border-blue-600 bg-blue-50/60 ring-2 ring-blue-600/20'
-                          : 'border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50/50'
-                      }`}
+                      className="p-4 rounded-2xl text-start transition-all cursor-pointer flex flex-col justify-between"
+                      style={{
+                        border: isSelected ? '2px solid var(--primary)' : '2px solid var(--border)',
+                        background: isSelected ? 'var(--primary-container)' : 'var(--surface)',
+                        boxShadow: isSelected ? '0 0 0 2px var(--primary-container)' : 'none',
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isSelected) {
+                          e.currentTarget.style.borderColor = 'var(--border-focus)';
+                          e.currentTarget.style.background = 'var(--surface-container-low)';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isSelected) {
+                          e.currentTarget.style.borderColor = 'var(--border)';
+                          e.currentTarget.style.background = 'var(--surface)';
+                        }
+                      }}
                     >
                       <div className="flex items-center justify-between mb-3">
                         <div
-                          className={`w-9 h-9 rounded-xl flex items-center justify-center ${
-                            isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'
-                          }`}
+                          className="w-9 h-9 rounded-xl flex items-center justify-center"
+                          style={{
+                            background: isSelected ? 'var(--primary)' : 'var(--surface-container)',
+                            color: isSelected ? 'var(--on-primary)' : 'var(--on-surface-variant)',
+                          }}
                         >
                           <Icon className="w-5 h-5" />
                         </div>
-                        {isSelected && <CheckCircle2 className="w-5 h-5 text-blue-600" />}
+                        {isSelected && <CheckCircle2 className="w-5 h-5" style={{ color: 'var(--primary)' }} />}
                       </div>
                       <div>
-                        <h5 className="text-sm font-bold text-[#0B1F3A]">{isAr ? stage.labelAr : stage.labelEn}</h5>
-                        <p className="text-xs text-slate-500 mt-1 leading-relaxed">{isAr ? stage.descAr : stage.descEn}</p>
+                        <h5 className="text-body-sm font-bold" style={{ color: 'var(--on-surface)' }}>{isAr ? stage.labelAr : stage.labelEn}</h5>
+                        <p className="text-body-xs mt-1 leading-relaxed" style={{ color: 'var(--on-surface-variant)' }}>{isAr ? stage.descAr : stage.descEn}</p>
                       </div>
                     </button>
                   );
@@ -724,15 +804,15 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
           {step === 2 && (
             <div className="space-y-4">
               <div>
-                <span className="text-[11px] font-bold text-blue-600 uppercase tracking-wider">
+                <span className="text-label-caps" style={{ color: 'var(--primary)' }}>
                   {isAr ? 'المرحلة 2 من 10 • الهدف المهني' : 'Step 2 of 10 • Primary Goal'}
                 </span>
-                <h4 className="text-lg font-black text-[#0B1F3A] mt-1">
+                <h4 className="text-headline-lg font-black mt-1" style={{ color: 'var(--on-surface)' }}>
                   {isAr
                     ? 'ما أهم نتيجة تريد تحقيقها خلال الـ 3 إلى 6 أشهر القادمة؟'
                     : 'What is the most important result you want to achieve in the next 3–6 months?'}
                 </h4>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-body-xs mt-1" style={{ color: 'var(--on-surface-variant)' }}>
                   {isAr
                     ? 'يحدد هدفك الأولويات والمشاريع العملية والموارد التي سنرشحها لك أولاً.'
                     : 'Your primary goal defines roadmap priorities, milestone deliverables, and dashboard actions.'}
@@ -747,11 +827,24 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                       key={goal.id}
                       type="button"
                       onClick={() => setFormData({ ...formData, primaryGoal: goal.labelEn })}
-                      className={`p-3 rounded-xl border text-start text-xs font-semibold transition-all cursor-pointer flex items-center justify-between ${
-                        isPrimary
-                          ? 'border-blue-600 bg-blue-600 text-white shadow-xs'
-                          : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
-                      }`}
+                      className="p-3 rounded-xl text-start text-body-xs font-semibold transition-all cursor-pointer flex items-center justify-between"
+                      style={{
+                        border: isPrimary ? '1px solid var(--primary)' : '1px solid var(--border)',
+                        background: isPrimary ? 'var(--primary)' : 'var(--surface)',
+                        color: isPrimary ? 'var(--on-primary)' : 'var(--on-surface)',
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isPrimary) {
+                          e.currentTarget.style.borderColor = 'var(--border-focus)';
+                          e.currentTarget.style.background = 'var(--surface-container-low)';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isPrimary) {
+                          e.currentTarget.style.borderColor = 'var(--border)';
+                          e.currentTarget.style.background = 'var(--surface)';
+                        }
+                      }}
                     >
                       <span>{isAr ? goal.labelAr : goal.labelEn}</span>
                       {isPrimary && <Check className="w-4 h-4 shrink-0" />}
@@ -761,8 +854,8 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
               </div>
 
               {/* Custom Goal */}
-              <div className="pt-2 border-t border-slate-100">
-                <label className="block text-xs font-bold text-slate-700 mb-1.5">
+              <div className="pt-2" style={{ borderTop: '1px solid var(--border-subtle)' }}>
+                <label className="block text-body-xs font-bold mb-1.5" style={{ color: 'var(--on-surface)' }}>
                   {isAr ? 'أو اكتب هدفاً مخصصاً:' : 'Or describe a specific custom goal:'}
                 </label>
                 <input
@@ -776,7 +869,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                     })
                   }
                   placeholder={isAr ? 'مثال: الحصول على منحة تدريبية في هندسة النظم السحابية...' : 'e.g. Land a scholarship in Cloud Architecture...'}
-                  className="w-full px-3.5 py-2.5 text-xs border border-slate-300 rounded-xl outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20"
+                  className="input-field w-full text-body-xs"
                 />
               </div>
             </div>
@@ -788,13 +881,13 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
           {step === 3 && (
             <div className="space-y-4">
               <div>
-                <span className="text-[11px] font-bold text-blue-600 uppercase tracking-wider">
+                <span className="text-label-caps" style={{ color: 'var(--primary)' }}>
                   {isAr ? 'المرحلة 3 من 10 • المجالات والاهتمامات' : 'Step 3 of 10 • Career Interests'}
                 </span>
-                <h4 className="text-lg font-black text-[#0B1F3A] mt-1">
+                <h4 className="text-headline-lg font-black mt-1" style={{ color: 'var(--on-surface)' }}>
                   {isAr ? 'ما المجالات التي تهتم باستكشافها أو التخصص فيها؟' : 'Which fields are you interested in exploring or developing?'}
                 </h4>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-body-xs mt-1" style={{ color: 'var(--on-surface-variant)' }}>
                   {isAr
                     ? 'اختر مجالك الأساسي ومجالات الاهتمام الداعمة، أو اختر مساعدتك في الاستكشاف.'
                     : 'Select your core interests to prioritize resources and match curated roadmaps.'}
@@ -808,7 +901,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                   value={interestSearch}
                   onChange={(e) => setInterestSearch(e.target.value)}
                   placeholder={isAr ? 'ابحث في المجالات...' : 'Search fields & domains...'}
-                  className="w-full px-3.5 py-2 text-xs border border-slate-300 rounded-xl outline-none focus:border-blue-500"
+                  className="input-field w-full text-body-xs"
                 />
               </div>
 
@@ -834,18 +927,29 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                           }));
                         }
                       }}
-                      className={`p-2.5 rounded-xl border text-start text-xs font-semibold transition-all cursor-pointer flex items-center justify-between ${
-                        isSelected || (dom.id === 'discover_more' && formData.needsDiscovery)
-                          ? 'border-blue-600 bg-blue-50 text-blue-800'
-                          : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
-                      }`}
+                      className="p-2.5 rounded-xl text-start text-body-xs font-semibold transition-all cursor-pointer flex items-center justify-between"
+                      style={{
+                        border: (isSelected || (dom.id === 'discover_more' && formData.needsDiscovery)) ? '1px solid var(--primary)' : '1px solid var(--border)',
+                        background: (isSelected || (dom.id === 'discover_more' && formData.needsDiscovery)) ? 'var(--primary-container)' : 'var(--surface)',
+                        color: (isSelected || (dom.id === 'discover_more' && formData.needsDiscovery)) ? 'var(--on-primary-container)' : 'var(--on-surface)',
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!(isSelected || (dom.id === 'discover_more' && formData.needsDiscovery))) {
+                          e.currentTarget.style.borderColor = 'var(--border-focus)';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!(isSelected || (dom.id === 'discover_more' && formData.needsDiscovery))) {
+                          e.currentTarget.style.borderColor = 'var(--border)';
+                        }
+                      }}
                     >
                       <div className="flex items-center gap-2">
-                        <Icon className="w-4 h-4 text-blue-600" />
+                        <Icon className="w-4 h-4" style={{ color: 'var(--primary)' }} />
                         <span>{isAr ? dom.nameAr : dom.nameEn}</span>
                       </div>
                       {(isSelected || (dom.id === 'discover_more' && formData.needsDiscovery)) && (
-                        <Check className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                        <Check className="w-3.5 h-3.5 shrink-0" style={{ color: 'var(--primary)' }} />
                       )}
                     </button>
                   );
@@ -859,7 +963,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                   value={customInterestInput}
                   onChange={(e) => setCustomInterestInput(e.target.value)}
                   placeholder={isAr ? 'أضف مجالاً آخر...' : 'Add custom interest...'}
-                  className="flex-1 px-3 py-2 text-xs border border-slate-300 rounded-xl outline-none focus:border-blue-500"
+                  className="input-field flex-1 text-body-xs"
                 />
                 <button
                   type="button"
@@ -873,7 +977,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                       setCustomInterestInput('');
                     }
                   }}
-                  className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl cursor-pointer"
+                  className="btn-secondary text-body-xs cursor-pointer"
                 >
                   {isAr ? 'إضافة' : 'Add'}
                 </button>
@@ -887,13 +991,13 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
           {step === 4 && (
             <div className="space-y-4">
               <div>
-                <span className="text-[11px] font-bold text-blue-600 uppercase tracking-wider">
+                <span className="text-label-caps" style={{ color: 'var(--primary)' }}>
                   {isAr ? 'المرحلة 4 من 10 • المسمى الوظيفي المستهدف' : 'Step 4 of 10 • Target Role & Trajectory'}
                 </span>
-                <h4 className="text-lg font-black text-[#0B1F3A] mt-1">
+                <h4 className="text-headline-lg font-black mt-1" style={{ color: 'var(--on-surface)' }}>
                   {isAr ? 'هل حددت المسمى الوظيفي أو المسار الذي تريده؟' : 'Do you already know which job or career path you want to pursue?'}
                 </h4>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-body-xs mt-1" style={{ color: 'var(--on-surface-variant)' }}>
                   {isAr
                     ? 'اختر وضعك الحالي وسنقوم بتوجيه خارطة الطريق ومقترحات المهارات نحوه.'
                     : 'We customize your roadmap to your exact target role rather than giving you a generic curriculum.'}
@@ -910,27 +1014,29 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                 ].map((type) => (
                   <label
                     key={type.id}
-                    className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
-                      formData.roleDirectionType === type.id
-                        ? 'border-blue-600 bg-blue-50/50 text-blue-900 font-bold'
-                        : 'border-slate-200 hover:border-slate-300 text-slate-700'
-                    }`}
+                    className="flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all text-body-xs"
+                    style={{
+                      border: formData.roleDirectionType === type.id ? '1px solid var(--primary)' : '1px solid var(--border)',
+                      background: formData.roleDirectionType === type.id ? 'var(--primary-container)' : 'var(--surface)',
+                      color: formData.roleDirectionType === type.id ? 'var(--on-primary-container)' : 'var(--on-surface)',
+                      fontWeight: formData.roleDirectionType === type.id ? 'bold' : 'normal',
+                    }}
                   >
                     <input
                       type="radio"
                       name="roleDirectionType"
                       checked={formData.roleDirectionType === type.id}
                       onChange={() => setFormData({ ...formData, roleDirectionType: type.id as any })}
-                      className="text-blue-600"
+                      style={{ accentColor: 'var(--primary)' }}
                     />
-                    <span className="text-xs">{isAr ? type.labelAr : type.labelEn}</span>
+                    <span>{isAr ? type.labelAr : type.labelEn}</span>
                   </label>
                 ))}
               </div>
 
               {/* Target role input */}
               <div className="space-y-2 pt-2">
-                <label className="block text-xs font-bold text-slate-700">
+                <label className="block text-body-xs font-bold" style={{ color: 'var(--on-surface)' }}>
                   {isAr ? 'المسمى الوظيفي المستهدف:' : 'Target Job Title:'}
                 </label>
                 <input
@@ -938,22 +1044,24 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                   value={formData.targetRole}
                   onChange={(e) => setFormData({ ...formData, targetRole: e.target.value })}
                   placeholder={isAr ? 'مثال: Full-Stack Software Engineer, Data Analyst...' : 'e.g. Full-Stack Software Engineer, AI Engineer...'}
-                  className="w-full px-3.5 py-2.5 text-xs border border-slate-300 rounded-xl outline-none focus:border-blue-500"
+                  className="input-field w-full text-body-xs"
                 />
 
                 <div className="pt-1">
-                  <span className="text-[11px] text-slate-500 font-medium">{isAr ? 'اقتراحات شائعة:' : 'Quick suggestions:'}</span>
+                  <span className="text-body-xs font-medium" style={{ color: 'var(--on-surface-variant)' }}>{isAr ? 'اقتراحات شائعة:' : 'Quick suggestions:'}</span>
                   <div className="flex flex-wrap gap-1.5 mt-1.5">
                     {SUGGESTED_ROLES.map((role) => (
                       <button
                         key={role}
                         type="button"
                         onClick={() => setFormData({ ...formData, targetRole: role })}
-                        className={`px-2.5 py-1 text-[11px] rounded-lg border transition-colors cursor-pointer ${
-                          formData.targetRole === role
-                            ? 'bg-blue-600 text-white border-blue-600 font-bold'
-                            : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
-                        }`}
+                        className="badge-pill text-body-xs transition-colors cursor-pointer"
+                        style={{
+                          background: formData.targetRole === role ? 'var(--primary)' : 'var(--surface-container-low)',
+                          color: formData.targetRole === role ? 'var(--on-primary)' : 'var(--on-surface)',
+                          border: formData.targetRole === role ? '1px solid var(--primary)' : '1px solid var(--border)',
+                          fontWeight: formData.targetRole === role ? 'bold' : 'normal',
+                        }}
                       >
                         {role}
                       </button>
@@ -970,13 +1078,13 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
           {step === 5 && (
             <div className="space-y-4">
               <div>
-                <span className="text-[11px] font-bold text-blue-600 uppercase tracking-wider">
+                <span className="text-label-caps" style={{ color: 'var(--primary)' }}>
                   {isAr ? 'المرحلة 5 من 10 • مستوى الخبرة' : 'Step 5 of 10 • Current Experience'}
                 </span>
-                <h4 className="text-lg font-black text-[#0B1F3A] mt-1">
+                <h4 className="text-headline-lg font-black mt-1" style={{ color: 'var(--on-surface)' }}>
                   {isAr ? 'ما مستوى خبرتك الحالي في هذا المجال؟' : 'What experience do you currently have in this field?'}
                 </h4>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-body-xs mt-1" style={{ color: 'var(--on-surface-variant)' }}>
                   {isAr
                     ? 'يساعدنا تقديرك الذاتي على عدم تكرار ما تعرفه وتحديد نقطة بداية الخارطة المناسبة.'
                     : 'Helps place you at the right roadmap stage without repeating what you already know.'}
@@ -991,17 +1099,30 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                       key={lvl.id}
                       type="button"
                       onClick={() => setFormData({ ...formData, experienceLevel: lvl.id })}
-                      className={`w-full p-3.5 rounded-2xl border text-start transition-all cursor-pointer flex items-center justify-between ${
-                        isSelected
-                          ? 'border-blue-600 bg-blue-50/60 ring-1 ring-blue-600'
-                          : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
-                      }`}
+                      className="w-full p-3.5 rounded-2xl text-start transition-all cursor-pointer flex items-center justify-between"
+                      style={{
+                        border: isSelected ? '1px solid var(--primary)' : '1px solid var(--border)',
+                        background: isSelected ? 'var(--primary-container)' : 'var(--surface)',
+                        boxShadow: isSelected ? '0 0 0 1px var(--primary)' : 'none',
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isSelected) {
+                          e.currentTarget.style.borderColor = 'var(--border-focus)';
+                          e.currentTarget.style.background = 'var(--surface-container-low)';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isSelected) {
+                          e.currentTarget.style.borderColor = 'var(--border)';
+                          e.currentTarget.style.background = 'var(--surface)';
+                        }
+                      }}
                     >
                       <div>
-                        <div className="text-xs font-bold text-[#0B1F3A]">{isAr ? lvl.labelAr : lvl.labelEn}</div>
-                        <div className="text-[11px] text-slate-500 mt-0.5">{isAr ? lvl.descAr : lvl.descEn}</div>
+                        <div className="text-body-xs font-bold" style={{ color: 'var(--on-surface)' }}>{isAr ? lvl.labelAr : lvl.labelEn}</div>
+                        <div className="text-body-xs mt-0.5" style={{ color: 'var(--on-surface-variant)' }}>{isAr ? lvl.descAr : lvl.descEn}</div>
                       </div>
-                      {isSelected && <CheckCircle2 className="w-5 h-5 text-blue-600 shrink-0" />}
+                      {isSelected && <CheckCircle2 className="w-5 h-5 shrink-0" style={{ color: 'var(--primary)' }} />}
                     </button>
                   );
                 })}
@@ -1015,13 +1136,13 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
           {step === 6 && (
             <div className="space-y-4">
               <div>
-                <span className="text-[11px] font-bold text-blue-600 uppercase tracking-wider">
+                <span className="text-label-caps" style={{ color: 'var(--primary)' }}>
                   {isAr ? 'المرحلة 6 من 10 • المهارات الحالية' : 'Step 6 of 10 • Existing Skills & Evidence'}
                 </span>
-                <h4 className="text-lg font-black text-[#0B1F3A] mt-1">
+                <h4 className="text-headline-lg font-black mt-1" style={{ color: 'var(--on-surface)' }}>
                   {isAr ? 'ما المهارات أو الأدوات التي تتقنها بالفعل؟' : 'Which skills or tools do you already have?'}
                 </h4>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-body-xs mt-1" style={{ color: 'var(--on-surface-variant)' }}>
                   {isAr
                     ? 'اختر مهاراتك لتجاوز الدروس التأسيسية التي أتقنتها مسبقاً.'
                     : 'Select your proven skills so your roadmap focuses only on the high-value missing competencies.'}
@@ -1030,7 +1151,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
 
               {/* Popular skills chips */}
               <div>
-                <span className="text-xs font-bold text-slate-700">{isAr ? 'مهارات وأدوات شائعة (انقر للاختيار):' : 'Popular skills (click to select):'}</span>
+                <span className="text-body-xs font-bold" style={{ color: 'var(--on-surface)' }}>{isAr ? 'مهارات وأدوات شائعة (انقر للاختيار):' : 'Popular skills (click to select):'}</span>
                 <div className="flex flex-wrap gap-1.5 mt-2 max-h-36 overflow-y-auto">
                   {POPULAR_SKILLS.map((sk) => {
                     const isSelected = formData.existingSkills.includes(sk);
@@ -1046,11 +1167,13 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                               : [...prev.existingSkills, sk],
                           }));
                         }}
-                        className={`px-3 py-1 text-xs rounded-full border transition-all cursor-pointer flex items-center gap-1.5 ${
-                          isSelected
-                            ? 'bg-blue-600 text-white border-blue-600 font-bold'
-                            : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
-                        }`}
+                        className="badge-pill text-body-xs transition-all cursor-pointer flex items-center gap-1.5"
+                        style={{
+                          background: isSelected ? 'var(--primary)' : 'var(--surface-container-low)',
+                          color: isSelected ? 'var(--on-primary)' : 'var(--on-surface)',
+                          border: isSelected ? '1px solid var(--primary)' : '1px solid var(--border)',
+                          fontWeight: isSelected ? 'bold' : 'normal',
+                        }}
                       >
                         {isSelected && <Check className="w-3 h-3" />}
                         <span>{sk}</span>
@@ -1067,7 +1190,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                   value={customSkillInput}
                   onChange={(e) => setCustomSkillInput(e.target.value)}
                   placeholder={isAr ? 'أضف مهارة مخصصة (مثال: C++, AWS Lambda)...' : 'Add custom skill (e.g. C++, PyTorch, Docker)...'}
-                  className="flex-1 px-3 py-2 text-xs border border-slate-300 rounded-xl outline-none focus:border-blue-500"
+                  className="input-field flex-1 text-body-xs"
                 />
                 <button
                   type="button"
@@ -1080,25 +1203,31 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                       setCustomSkillInput('');
                     }
                   }}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl cursor-pointer"
+                  className="btn-secondary text-body-xs cursor-pointer"
                 >
                   {isAr ? 'إضافة' : 'Add'}
                 </button>
               </div>
 
               {/* Optional CV Quick Upload */}
-              <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+              <div
+                className="p-3.5 rounded-2xl space-y-2"
+                style={{
+                  background: 'var(--surface-container-low)',
+                  border: '1px solid var(--border)',
+                }}
+              >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <FileText className="w-4 h-4 text-blue-600" />
-                    <span className="text-xs font-bold text-slate-800">
+                    <FileText className="w-4 h-4" style={{ color: 'var(--primary)' }} />
+                    <span className="text-body-xs font-bold" style={{ color: 'var(--on-surface)' }}>
                       {isAr ? 'اختياري: رفع سيرة ذاتية لاستخراج المهارات' : 'Optional: Upload CV to extract skills'}
                     </span>
                   </div>
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="px-3 py-1 text-xs font-bold bg-white border border-slate-300 hover:border-slate-400 rounded-lg cursor-pointer flex items-center gap-1.5"
+                    className="btn-secondary text-body-xs cursor-pointer flex items-center gap-1.5"
                   >
                     <Upload className="w-3 h-3" />
                     <span>{formData.cvFileName ? formData.cvFileName : isAr ? 'اختر ملفاً' : 'Choose File'}</span>
@@ -1112,13 +1241,27 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                   />
                 </div>
                 {formData.cvParsedPreview && (
-                  <div className="p-2.5 bg-white rounded-xl border border-blue-200 text-xs text-blue-900">
+                  <div
+                    className="p-2.5 rounded-xl text-body-xs"
+                    style={{
+                      background: 'var(--surface)',
+                      border: '1px solid var(--primary)',
+                      color: 'var(--on-primary-container)',
+                    }}
+                  >
                     <p className="font-bold">
                       {isAr ? 'تم استخراج مهارات مبدئية:' : 'Extracted candidate skills:'}
                     </p>
                     <div className="flex flex-wrap gap-1 mt-1">
                       {formData.cvParsedPreview.extractedSkills?.map((s) => (
-                        <span key={s} className="px-2 py-0.5 rounded-md bg-blue-100 text-blue-800 text-[11px] font-semibold">
+                        <span
+                          key={s}
+                          className="badge-pill text-body-xs"
+                          style={{
+                            background: 'var(--primary-container)',
+                            color: 'var(--on-primary-container)',
+                          }}
+                        >
                           {s}
                         </span>
                       ))}
@@ -1135,16 +1278,16 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
           {step === 7 && (
             <div className="space-y-4">
               <div>
-                <span className="text-[11px] font-bold text-blue-600 uppercase tracking-wider">
+                <span className="text-label-caps" style={{ color: 'var(--primary)' }}>
                   {isAr ? 'المرحلة 7 من 10 • تفاصيل مسارك' : 'Step 7 of 10 • Stage-Specific Details'}
                 </span>
-                <h4 className="text-lg font-black text-[#0B1F3A] mt-1">
+                <h4 className="text-headline-lg font-black mt-1" style={{ color: 'var(--on-surface)' }}>
                   {formData.careerStatus === 'student' && (isAr ? 'التفاصيل الأكاديمية والتدريبية' : 'Academic & Study Details')}
                   {formData.careerStatus === 'fresh_graduate' && (isAr ? 'خطة الانتقال لسوق العمل' : 'Workforce Transition Plan')}
                   {formData.careerStatus === 'experienced_professional' && (isAr ? 'تفاصيل الخبرة والترقية' : 'Experience & Advancement Plan')}
                   {formData.careerStatus === 'career_changer' && (isAr ? 'خطة التحول المهني' : 'Career Pivot & Transferable Skills')}
                 </h4>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-body-xs mt-1" style={{ color: 'var(--on-surface-variant)' }}>
                   {isAr ? 'أسئلة موجهة خصيصاً لمرحلتك الحالية دون أسئلة غير ملائمة.' : 'Tailored follow-ups based on your current professional stage.'}
                 </p>
               </div>
@@ -1153,22 +1296,22 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
               {formData.careerStatus === 'student' && (
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">{isAr ? 'مجال الدراسة / الكلية:' : 'Field of Study / Major:'}</label>
+                    <label className="block text-body-xs font-bold mb-1" style={{ color: 'var(--on-surface)' }}>{isAr ? 'مجال الدراسة / الكلية:' : 'Field of Study / Major:'}</label>
                     <input
                       type="text"
                       value={formData.fieldOfStudy}
                       onChange={(e) => setFormData({ ...formData, fieldOfStudy: e.target.value })}
                       placeholder={isAr ? 'مثال: هندسة الحاسوب، نظم معلومات، تجارة...' : 'e.g. Computer Science, Business Analytics...'}
-                      className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl outline-none focus:border-blue-500"
+                      className="input-field w-full text-body-xs"
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">{isAr ? 'السنة الدراسية:' : 'Academic Stage:'}</label>
+                      <label className="block text-body-xs font-bold mb-1" style={{ color: 'var(--on-surface)' }}>{isAr ? 'السنة الدراسية:' : 'Academic Stage:'}</label>
                       <select
                         value={formData.academicYear}
                         onChange={(e) => setFormData({ ...formData, academicYear: e.target.value })}
-                        className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl outline-none bg-white focus:border-blue-500"
+                        className="input-field w-full text-body-xs"
                       >
                         <option value="1st">{isAr ? 'السنة الأولى' : '1st Year'}</option>
                         <option value="2nd">{isAr ? 'السنة الثانية' : '2nd Year'}</option>
@@ -1178,13 +1321,13 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                       </select>
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">{isAr ? 'سنة التخرج المتوقعة:' : 'Expected Graduation:'}</label>
+                      <label className="block text-body-xs font-bold mb-1" style={{ color: 'var(--on-surface)' }}>{isAr ? 'سنة التخرج المتوقعة:' : 'Expected Graduation:'}</label>
                       <input
                         type="text"
                         value={formData.expectedGraduation}
                         onChange={(e) => setFormData({ ...formData, expectedGraduation: e.target.value })}
                         placeholder="2027"
-                        className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl outline-none focus:border-blue-500"
+                        className="input-field w-full text-body-xs"
                       />
                     </div>
                   </div>
@@ -1195,21 +1338,21 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
               {formData.careerStatus === 'fresh_graduate' && (
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">{isAr ? 'المؤهل / التخصص الجامعي:' : 'Degree / Major:'}</label>
+                    <label className="block text-body-xs font-bold mb-1" style={{ color: 'var(--on-surface)' }}>{isAr ? 'المؤهل / التخصص الجامعي:' : 'Degree / Major:'}</label>
                     <input
                       type="text"
                       value={formData.degree}
                       onChange={(e) => setFormData({ ...formData, degree: e.target.value })}
                       placeholder={isAr ? 'مثال: بكالوريوس هندسة البرمجيات...' : 'e.g. BS in Software Engineering...'}
-                      className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl outline-none focus:border-blue-500"
+                      className="input-field w-full text-body-xs"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">{isAr ? 'ما العائق الأكبر الذي تواجهه حالياً؟' : 'What is your main current obstacle?'}</label>
+                    <label className="block text-body-xs font-bold mb-1" style={{ color: 'var(--on-surface)' }}>{isAr ? 'ما العائق الأكبر الذي تواجهه حالياً؟' : 'What is your main current obstacle?'}</label>
                     <select
                       value={formData.mainObstacle}
                       onChange={(e) => setFormData({ ...formData, mainObstacle: e.target.value })}
-                      className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl outline-none bg-white focus:border-blue-500"
+                      className="input-field w-full text-body-xs"
                     >
                       <option value="experience">{isAr ? 'نقص الخبرة العملية والمشاريع القوية' : 'Lack of verified project experience'}</option>
                       <option value="cv">{isAr ? 'عدم توافق السيرة الذاتية مع أنظمة الـ ATS' : 'Resume ATS score & recruiter callbacks'}</option>
@@ -1225,21 +1368,21 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                 <div className="space-y-3">
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">{isAr ? 'وظيفتك الحالية:' : 'Current Role:'}</label>
+                      <label className="block text-body-xs font-bold mb-1" style={{ color: 'var(--on-surface)' }}>{isAr ? 'وظيفتك الحالية:' : 'Current Role:'}</label>
                       <input
                         type="text"
                         value={formData.currentRole}
                         onChange={(e) => setFormData({ ...formData, currentRole: e.target.value })}
                         placeholder={isAr ? 'مثال: Frontend Developer...' : 'e.g. Frontend Developer...'}
-                        className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl outline-none focus:border-blue-500"
+                        className="input-field w-full text-body-xs"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">{isAr ? 'سنوات الخبرة:' : 'Years of Experience:'}</label>
+                      <label className="block text-body-xs font-bold mb-1" style={{ color: 'var(--on-surface)' }}>{isAr ? 'سنوات الخبرة:' : 'Years of Experience:'}</label>
                       <select
                         value={formData.yearsOfExperience}
                         onChange={(e) => setFormData({ ...formData, yearsOfExperience: e.target.value })}
-                        className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl outline-none bg-white focus:border-blue-500"
+                        className="input-field w-full text-body-xs"
                       >
                         <option value="1-2">{isAr ? '1–2 سنوات' : '1–2 years'}</option>
                         <option value="3-5">{isAr ? '3–5 سنوات' : '3–5 years'}</option>
@@ -1249,11 +1392,11 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">{isAr ? 'اتجاهك المطلوب:' : 'Career Trajectory Goal:'}</label>
+                    <label className="block text-body-xs font-bold mb-1" style={{ color: 'var(--on-surface)' }}>{isAr ? 'اتجاهك المطلوب:' : 'Career Trajectory Goal:'}</label>
                     <select
                       value={formData.careerDirection}
                       onChange={(e) => setFormData({ ...formData, careerDirection: e.target.value })}
-                      className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl outline-none bg-white focus:border-blue-500"
+                      className="input-field w-full text-body-xs"
                     >
                       <option value="grow">{isAr ? 'التعمق والتخصص الدقيق في نفس المجال' : 'Deepen technical specialization'}</option>
                       <option value="promote">{isAr ? 'الترقية لمستوى Senior / Lead' : 'Promotion to Senior or Tech Lead'}</option>
@@ -1267,22 +1410,22 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
               {formData.careerStatus === 'career_changer' && (
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">{isAr ? 'مجالك الحالي أو السابق:' : 'Current / Previous Field:'}</label>
+                    <label className="block text-body-xs font-bold mb-1" style={{ color: 'var(--on-surface)' }}>{isAr ? 'مجالك الحالي أو السابق:' : 'Current / Previous Field:'}</label>
                     <input
                       type="text"
                       value={formData.previousField}
                       onChange={(e) => setFormData({ ...formData, previousField: e.target.value })}
                       placeholder={isAr ? 'مثال: الهندسة المدنية، المحاسبة، التدريس...' : 'e.g. Civil Engineering, Accounting, Teaching...'}
-                      className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl outline-none focus:border-blue-500"
+                      className="input-field w-full text-body-xs"
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">{isAr ? 'المدى الزمني للانتقال:' : 'Transition Horizon:'}</label>
+                      <label className="block text-body-xs font-bold mb-1" style={{ color: 'var(--on-surface)' }}>{isAr ? 'المدى الزمني للانتقال:' : 'Transition Horizon:'}</label>
                       <select
                         value={formData.transitionTimeframe}
                         onChange={(e) => setFormData({ ...formData, transitionTimeframe: e.target.value })}
-                        className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl outline-none bg-white focus:border-blue-500"
+                        className="input-field w-full text-body-xs"
                       >
                         <option value="3-6_months">{isAr ? '3–6 أشهر' : '3–6 months'}</option>
                         <option value="6-12_months">{isAr ? '6–12 شهراً' : '6–12 months'}</option>
@@ -1290,11 +1433,11 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                       </select>
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">{isAr ? 'نمط التحول:' : 'Transition Model:'}</label>
+                      <label className="block text-body-xs font-bold mb-1" style={{ color: 'var(--on-surface)' }}>{isAr ? 'نمط التحول:' : 'Transition Model:'}</label>
                       <select
                         value={formData.gradualTransition ? 'gradual' : 'full'}
                         onChange={(e) => setFormData({ ...formData, gradualTransition: e.target.value === 'gradual' })}
-                        className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl outline-none bg-white focus:border-blue-500"
+                        className="input-field w-full text-body-xs"
                       >
                         <option value="gradual">{isAr ? 'تدريجي بجانب عملي الحالي' : 'Gradual while working'}</option>
                         <option value="full">{isAr ? 'تفرغ كامل للتحول' : 'Full-time pivot'}</option>
@@ -1312,15 +1455,15 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
           {step === 8 && (
             <div className="space-y-4">
               <div>
-                <span className="text-[11px] font-bold text-blue-600 uppercase tracking-wider">
+                <span className="text-label-caps" style={{ color: 'var(--primary)' }}>
                   {isAr ? 'المرحلة 8 من 10 • الوقت الأسبوعي' : 'Step 8 of 10 • Weekly Commitment'}
                 </span>
-                <h4 className="text-lg font-black text-[#0B1F3A] mt-1">
+                <h4 className="text-headline-lg font-black mt-1" style={{ color: 'var(--on-surface)' }}>
                   {isAr
                     ? 'كم ساعة أسبوعياً يمكنك تخصيصها للتعلم والتطبيق العملي؟'
                     : 'How much time can you realistically spend on learning each week?'}
                 </h4>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-body-xs mt-1" style={{ color: 'var(--on-surface-variant)' }}>
                   {isAr
                     ? 'نحسب مدة إنهاء خارطة الطريق بناءً على وقتك الفعلي حتى تكون التقديرات واقعية وموثوقة.'
                     : 'We schedule roadmap stages and estimated completion dates based on your real weekly hours.'}
@@ -1335,20 +1478,33 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                       key={opt.id}
                       type="button"
                       onClick={() => setFormData({ ...formData, weeklyHours: opt.id, weeklyHoursNumber: opt.hoursNumber })}
-                      className={`w-full p-4 rounded-2xl border text-start transition-all cursor-pointer flex items-center justify-between ${
-                        isSelected
-                          ? 'border-blue-600 bg-blue-50/60 ring-2 ring-blue-600/20'
-                          : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
-                      }`}
+                      className="w-full p-4 rounded-2xl text-start transition-all cursor-pointer flex items-center justify-between"
+                      style={{
+                        border: isSelected ? '1px solid var(--primary)' : '1px solid var(--border)',
+                        background: isSelected ? 'var(--primary-container)' : 'var(--surface)',
+                        boxShadow: isSelected ? '0 0 0 2px var(--primary-container)' : 'none',
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isSelected) {
+                          e.currentTarget.style.borderColor = 'var(--border-focus)';
+                          e.currentTarget.style.background = 'var(--surface-container-low)';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isSelected) {
+                          e.currentTarget.style.borderColor = 'var(--border)';
+                          e.currentTarget.style.background = 'var(--surface)';
+                        }
+                      }}
                     >
                       <div className="flex items-center gap-3">
-                        <Clock className={`w-5 h-5 ${isSelected ? 'text-blue-600' : 'text-slate-400'}`} />
+                        <Clock className="w-5 h-5" style={{ color: isSelected ? 'var(--primary)' : 'var(--on-surface-variant)' }} />
                         <div>
-                          <div className="text-xs font-bold text-[#0B1F3A]">{isAr ? opt.labelAr : opt.labelEn}</div>
-                          <div className="text-[11px] text-slate-500 mt-0.5">{isAr ? opt.descAr : opt.descEn}</div>
+                          <div className="text-body-xs font-bold" style={{ color: 'var(--on-surface)' }}>{isAr ? opt.labelAr : opt.labelEn}</div>
+                          <div className="text-body-xs mt-0.5" style={{ color: 'var(--on-surface-variant)' }}>{isAr ? opt.descAr : opt.descEn}</div>
                         </div>
                       </div>
-                      {isSelected && <CheckCircle2 className="w-5 h-5 text-blue-600 shrink-0" />}
+                      {isSelected && <CheckCircle2 className="w-5 h-5 shrink-0" style={{ color: 'var(--primary)' }} />}
                     </button>
                   );
                 })}
@@ -1362,13 +1518,13 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
           {step === 9 && (
             <div className="space-y-4">
               <div>
-                <span className="text-[11px] font-bold text-blue-600 uppercase tracking-wider">
+                <span className="text-label-caps" style={{ color: 'var(--primary)' }}>
                   {isAr ? 'المرحلة 9 من 10 • تفضيلات التعلم' : 'Step 9 of 10 • Learning Preferences'}
                 </span>
-                <h4 className="text-lg font-black text-[#0B1F3A] mt-1">
+                <h4 className="text-headline-lg font-black mt-1" style={{ color: 'var(--on-surface)' }}>
                   {isAr ? 'كيف تفضل أن تتعلم وتستوعب المهارات الجديدة؟' : 'How do you prefer to learn new skills?'}
                 </h4>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-body-xs mt-1" style={{ color: 'var(--on-surface-variant)' }}>
                   {isAr
                     ? 'سنرتب لك المصادر التعليمية المعتمدة (YouTube، Coursera، التوثيق الرسمي) وفق تفضيلك.'
                     : 'We rank verified courses, videos, and official docs based on your learning style.'}
@@ -1377,7 +1533,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
 
               {/* Formats */}
               <div>
-                <span className="text-xs font-bold text-slate-700">{isAr ? 'الصيغ المفضلة (اختر ما يناسبك):' : 'Preferred Formats:'}</span>
+                <span className="text-body-xs font-bold" style={{ color: 'var(--on-surface)' }}>{isAr ? 'الصيغ المفضلة (اختر ما يناسبك):' : 'Preferred Formats:'}</span>
                 <div className="grid grid-cols-2 gap-2 mt-2">
                   {[
                     { id: 'video', labelEn: 'Video Tutorials & Courses', labelAr: 'فيديوهات وكورسات مرئية' },
@@ -1398,12 +1554,15 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                               : [...prev.learningFormats, fmt.id as any],
                           }));
                         }}
-                        className={`p-2.5 rounded-xl border text-start text-xs font-semibold transition-all cursor-pointer flex items-center justify-between ${
-                          isChecked ? 'border-blue-600 bg-blue-50 text-blue-800' : 'border-slate-200 bg-white text-slate-700'
-                        }`}
+                        className="p-2.5 rounded-xl text-start text-body-xs font-semibold transition-all cursor-pointer flex items-center justify-between"
+                        style={{
+                          border: isChecked ? '1px solid var(--primary)' : '1px solid var(--border)',
+                          background: isChecked ? 'var(--primary-container)' : 'var(--surface)',
+                          color: isChecked ? 'var(--on-primary-container)' : 'var(--on-surface)',
+                        }}
                       >
                         <span>{isAr ? fmt.labelAr : fmt.labelEn}</span>
-                        {isChecked && <Check className="w-3.5 h-3.5 text-blue-600" />}
+                        {isChecked && <Check className="w-3.5 h-3.5" style={{ color: 'var(--primary)' }} />}
                       </button>
                     );
                   })}
@@ -1413,11 +1572,11 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
               {/* Cost & Language */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">{isAr ? 'تكلفة الموارد المفضلة:' : 'Resource Cost Preference:'}</label>
+                  <label className="block text-body-xs font-bold mb-1" style={{ color: 'var(--on-surface)' }}>{isAr ? 'تكلفة الموارد المفضلة:' : 'Resource Cost Preference:'}</label>
                   <select
                     value={formData.resourceCostPreference}
                     onChange={(e) => setFormData({ ...formData, resourceCostPreference: e.target.value as any })}
-                    className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl outline-none bg-white focus:border-blue-500"
+                    className="input-field w-full text-body-xs"
                   >
                     <option value="free_only">{isAr ? 'مصادر مجانية بالكامل فقط' : 'Free resources only (YouTube / Docs)'}</option>
                     <option value="mostly_free">{isAr ? 'غالباً مجانية مع بدائل مدفوعة' : 'Mostly free with paid alternatives'}</option>
@@ -1426,11 +1585,11 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">{isAr ? 'لغة التعلم المفضلة:' : 'Preferred Learning Language:'}</label>
+                  <label className="block text-body-xs font-bold mb-1" style={{ color: 'var(--on-surface)' }}>{isAr ? 'لغة التعلم المفضلة:' : 'Preferred Learning Language:'}</label>
                   <select
                     value={formData.learningLanguage}
                     onChange={(e) => setFormData({ ...formData, learningLanguage: e.target.value as any })}
-                    className="w-full px-3 py-2 text-xs border border-slate-300 rounded-xl outline-none bg-white focus:border-blue-500"
+                    className="input-field w-full text-body-xs"
                   >
                     <option value="Both">{isAr ? 'العربية والإنجليزية معاً' : 'Both Arabic & English'}</option>
                     <option value="Arabic">{isAr ? 'العربية بشكل أساسي' : 'Arabic'}</option>
@@ -1447,13 +1606,13 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
           {step === 10 && (
             <div className="space-y-4">
               <div>
-                <span className="text-[11px] font-bold text-blue-600 uppercase tracking-wider">
+                <span className="text-label-caps" style={{ color: 'var(--primary)' }}>
                   {isAr ? 'المرحلة 10 من 10 • مراجعة واعتماد الخطة' : 'Step 10 of 10 • Plan Review & Confirmation'}
                 </span>
-                <h4 className="text-lg font-black text-[#0B1F3A] mt-1">
+                <h4 className="text-headline-lg font-black mt-1" style={{ color: 'var(--on-surface)' }}>
                   {isAr ? 'مراجعة خطتك المهنية وخارطة الطريق المقترحة' : 'Review Your Personalized Career Plan'}
                 </h4>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-body-xs mt-1" style={{ color: 'var(--on-surface-variant)' }}>
                   {isAr
                     ? 'تحقق من صحة البيانات أدناه. عند التأكيد، سيتم تفعيل حسابك وحفظ الخارطة في قاعدة البيانات.'
                     : 'Verify your plan summary. Confirming will initialize your career workspace and enroll you into your roadmap.'}
@@ -1461,79 +1620,111 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
               </div>
 
               {/* Career DNA Preview Card */}
-              <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
-                <div className="flex items-center justify-between pb-2 border-b border-slate-200/80">
+              <div
+                className="p-4 rounded-2xl space-y-3"
+                style={{
+                  background: 'var(--surface-container-low)',
+                  border: '1px solid var(--border)',
+                }}
+              >
+                <div className="flex items-center justify-between pb-2 border-hairline">
                   <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-blue-600" />
-                    <span className="text-xs font-bold text-slate-800">
+                    <Sparkles className="w-4 h-4" style={{ color: 'var(--primary)' }} />
+                    <span className="text-body-xs font-bold" style={{ color: 'var(--on-surface)' }}>
                       {isAr ? 'ملخص الهوية المهنية (Career DNA)' : 'Career DNA Overview'}
                     </span>
                   </div>
                   <button
                     type="button"
                     onClick={() => setStep(1)}
-                    className="text-[11px] font-bold text-blue-600 hover:text-blue-800 cursor-pointer"
+                    className="text-body-xs font-bold cursor-pointer"
+                    style={{ color: 'var(--primary)' }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.color = 'var(--primary-variant)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = 'var(--primary)';
+                    }}
                   >
                     {isAr ? 'تعديل الإجابات' : 'Edit Answers'}
                   </button>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 text-xs">
+                <div className="grid grid-cols-2 gap-3 text-body-xs">
                   <div>
-                    <span className="text-slate-500 text-[11px]">{isAr ? 'المرحلة المهنية:' : 'Career Stage:'}</span>
-                    <p className="font-bold text-slate-800 capitalize">
+                    <span className="text-body-xs" style={{ color: 'var(--on-surface-variant)' }}>{isAr ? 'المرحلة المهنية:' : 'Career Stage:'}</span>
+                    <p className="font-bold capitalize" style={{ color: 'var(--on-surface)' }}>
                       {formData.careerStatus.replace('_', ' ')}
                     </p>
                   </div>
                   <div>
-                    <span className="text-slate-500 text-[11px]">{isAr ? 'الهدف الأساسي:' : 'Primary Goal:'}</span>
-                    <p className="font-bold text-slate-800">{formData.primaryGoal}</p>
+                    <span className="text-body-xs" style={{ color: 'var(--on-surface-variant)' }}>{isAr ? 'الهدف الأساسي:' : 'Primary Goal:'}</span>
+                    <p className="font-bold" style={{ color: 'var(--on-surface)' }}>{formData.primaryGoal}</p>
                   </div>
                   <div>
-                    <span className="text-slate-500 text-[11px]">{isAr ? 'المسمى المستهدف:' : 'Target Role:'}</span>
-                    <p className="font-bold text-slate-800">{formData.targetRole || matchedRoadmap.targetRole}</p>
+                    <span className="text-body-xs" style={{ color: 'var(--on-surface-variant)' }}>{isAr ? 'المسمى المستهدف:' : 'Target Role:'}</span>
+                    <p className="font-bold" style={{ color: 'var(--on-surface)' }}>{formData.targetRole || matchedRoadmap.targetRole}</p>
                   </div>
                   <div>
-                    <span className="text-slate-500 text-[11px]">{isAr ? 'الالتزام الأسبوعي:' : 'Weekly Commitment:'}</span>
-                    <p className="font-bold text-slate-800">{formData.weeklyHoursNumber} {isAr ? 'ساعات/أسبوع' : 'hrs/week'}</p>
+                    <span className="text-body-xs" style={{ color: 'var(--on-surface-variant)' }}>{isAr ? 'الالتزام الأسبوعي:' : 'Weekly Commitment:'}</span>
+                    <p className="font-bold" style={{ color: 'var(--on-surface)' }}>{formData.weeklyHoursNumber} {isAr ? 'ساعات/أسبوع' : 'hrs/week'}</p>
                   </div>
                 </div>
               </div>
 
               {/* Recommended Roadmap Card */}
-              <div className="p-4 bg-gradient-to-br from-blue-50/80 to-indigo-50/50 border border-blue-200 rounded-2xl space-y-3">
+              <div
+                className="p-4 rounded-2xl space-y-3"
+                style={{
+                  background: 'linear-gradient(to bottom right, var(--primary-container), var(--secondary-container))',
+                  border: '1px solid var(--primary)',
+                }}
+              >
                 <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-extrabold text-blue-700 uppercase tracking-wide">
+                  <span className="text-label-caps" style={{ color: 'var(--on-primary-container)' }}>
                     {isAr ? 'خارطة الطريق المطابقة والمرشحة لك' : 'Recommended Learning Roadmap'}
                   </span>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-600 text-white">
+                  <span
+                    className="badge-pill text-body-xs"
+                    style={{
+                      background: 'var(--primary)',
+                      color: 'var(--on-primary)',
+                    }}
+                  >
                     {matchedRoadmap.difficulty}
                   </span>
                 </div>
 
                 <div>
-                  <h5 className="text-sm font-black text-[#0B1F3A]">
+                  <h5 className="text-body-sm font-black" style={{ color: 'var(--on-surface)' }}>
                     {isAr ? matchedRoadmap.titleAr : matchedRoadmap.title}
                   </h5>
-                  <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                  <p className="text-body-xs mt-1 leading-relaxed" style={{ color: 'var(--on-surface-variant)' }}>
                     {isAr ? matchedRoadmap.descriptionAr : matchedRoadmap.description}
                   </p>
                 </div>
 
                 {/* Stages preview */}
-                <div className="pt-2 border-t border-blue-200/60 space-y-2">
-                  <span className="text-[11px] font-bold text-slate-700">
+                <div className="pt-2 space-y-2 border-hairline">
+                  <span className="text-body-xs font-bold" style={{ color: 'var(--on-surface)' }}>
                     {isAr
                       ? `مراحل الخارطة (${matchedRoadmap.stages.length} مراحل • تقديري ${Math.round(matchedRoadmap.estimatedTotalHours / formData.weeklyHoursNumber)} أسبوع):`
                       : `Roadmap Stages (${matchedRoadmap.stages.length} Stages • ~${Math.round(matchedRoadmap.estimatedTotalHours / formData.weeklyHoursNumber)} weeks total):`}
                   </span>
                   <div className="space-y-1.5">
                     {matchedRoadmap.stages.map((stg, i) => (
-                      <div key={stg.id} className="flex items-center justify-between text-xs bg-white/80 px-3 py-1.5 rounded-xl border border-blue-100">
-                        <span className="font-semibold text-slate-800">
+                      <div
+                        key={stg.id}
+                        className="flex items-center justify-between text-body-xs rounded-xl px-3 py-1.5"
+                        style={{
+                          background: 'var(--surface)',
+                          border: '1px solid var(--border-subtle)',
+                        }}
+                      >
+                        <span className="font-semibold" style={{ color: 'var(--on-surface)' }}>
                           {i + 1}. {isAr ? stg.titleAr : stg.title}
                         </span>
-                        <span className="text-[11px] text-slate-500 font-medium">
+                        <span className="text-body-xs font-medium" style={{ color: 'var(--on-surface-variant)' }}>
                           {stg.nodes.length} {isAr ? 'مهارات' : 'skills'}
                         </span>
                       </div>
@@ -1546,14 +1737,20 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
         </div>
 
         {/* Footer Navigation */}
-        <div className="px-6 py-4 bg-slate-50 border-t border-slate-200/80 flex items-center justify-between shrink-0">
+        <div
+          className="px-6 py-4 flex items-center justify-between shrink-0"
+          style={{
+            background: 'var(--surface-container-low)',
+            borderTop: '1px solid var(--border-subtle)',
+          }}
+        >
           <div>
             {step > 1 ? (
               <button
                 type="button"
                 onClick={handleBack}
                 disabled={isSubmitting}
-                className="px-4 py-2 text-xs font-bold text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-100 rounded-xl border border-slate-200 transition-colors inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                className="btn-secondary text-body-xs inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
               >
                 <ArrowLeft className="w-3.5 h-3.5 rtl:rotate-180" />
                 <span>{isAr ? 'السابق' : 'Back'}</span>
@@ -1562,7 +1759,14 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
               <button
                 type="button"
                 onClick={handleResetDraft}
-                className="text-[11px] font-semibold text-slate-500 hover:text-rose-600 transition-colors flex items-center gap-1 cursor-pointer"
+                className="text-body-xs font-semibold transition-colors flex items-center gap-1 cursor-pointer"
+                style={{ color: 'var(--on-surface-variant)' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = 'var(--error)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = 'var(--on-surface-variant)';
+                }}
               >
                 <RotateCcw className="w-3 h-3" />
                 <span>{isAr ? 'بدء من جديد' : 'Reset Form'}</span>
@@ -1578,7 +1782,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                 type="button"
                 onClick={handleNext}
                 disabled={!canProceed()}
-                className="px-6 py-2.5 text-xs font-extrabold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition-all inline-flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn-primary text-body-xs inline-flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <span>{isAr ? 'متابعة' : 'Continue'}</span>
                 <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
@@ -1588,7 +1792,11 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                 type="button"
                 onClick={handleFinalConfirm}
                 disabled={isSubmitting}
-                className="px-6 py-2.5 text-xs font-extrabold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 rounded-xl shadow-md transition-all inline-flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                className="text-body-xs font-extrabold rounded-xl shadow-md transition-all inline-flex items-center gap-2 cursor-pointer disabled:opacity-50 px-6 py-2.5"
+                style={{
+                  background: 'linear-gradient(to right, var(--primary), var(--secondary))',
+                  color: 'var(--on-primary)',
+                }}
               >
                 {isSubmitting ? (
                   <span>{isAr ? 'جاري الحفظ والتسجيل...' : 'Saving & Enrolling...'}</span>

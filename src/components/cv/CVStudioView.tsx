@@ -566,16 +566,16 @@ ${currentResume.skills.join(' • ')}
 
       {/* Top Header Card — only shown when resumes exist */}
       {resumes.length > 0 && <>
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 bg-white border border-slate-200/80 rounded-2xl shadow-2xs">
+      <div className="card-surface flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-2xl">
         <div>
-          <div className="text-xs font-semibold text-blue-600 mb-1 flex items-center gap-1.5">
+          <div className="text-label-caps mb-1 flex items-center gap-1.5" style={{ color: 'var(--primary)' }}>
             <Sparkles className="w-3.5 h-3.5" />
             <span>{isAr ? 'استوديو السيرة الذاتية الذكي و فحص ATS' : 'Smart CV Studio & ATS Compliance Engine'}</span>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+          <h1 className="text-display-hero" style={{ color: 'var(--on-surface)' }}>
             {isAr ? 'استوديو السيرة الذاتية (CV Studio & ATS PDF)' : 'CV Studio & ATS Optimizer'}
           </h1>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-body-base mt-1" style={{ color: 'var(--on-surface-muted)' }}>
             {isAr
               ? 'توليد سيرة ذاتية PDF متوافقة مع أنظمة الفرز الآلي ATS بناءً على الوصف الوظيفي (Job Description)'
               : 'Audit ATS parsing compliance, tailor against any Job Description, and export clean vector PDF resumes'}
@@ -588,7 +588,7 @@ ${currentResume.skills.join(' • ')}
           <button
             type="button"
             onClick={() => setShowGenerateModal(true)}
-            className="px-4 py-2 text-xs font-bold text-white rounded-xl transition-all shadow-sm inline-flex items-center gap-1.5 cursor-pointer bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 hover:shadow-md"
+            className="btn-primary px-4 py-2 text-label-sm rounded-xl transition-all inline-flex items-center gap-1.5 cursor-pointer"
           >
             <Sparkles className="w-3.5 h-3.5" />
             <span>{isAr ? 'توليد السيرة بالذكاء الاصطناعي' : 'Generate / Tailor CV'}</span>
@@ -602,7 +602,7 @@ ${currentResume.skills.join(' • ')}
               const found = resumes.find((r) => r.id === e.target.value);
               if (found) setSummaryDraft(found.summary);
             }}
-            className="text-xs py-2 px-3 border border-slate-300 rounded-xl bg-slate-50 text-slate-800 font-semibold outline-none cursor-pointer max-w-[220px]"
+            className="input-field text-body-sm py-2 px-3 rounded-xl font-semibold outline-none cursor-pointer max-w-[220px]"
           >
             {resumes.map((r) => (
               <option key={r.id} value={r.id}>
@@ -615,9 +615,9 @@ ${currentResume.skills.join(' • ')}
           <button
             type="button"
             onClick={onOpenLinkedInSync}
-            className="px-3 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+            className="btn-secondary px-3 py-2 text-label-sm rounded-xl transition-colors inline-flex items-center gap-1.5 cursor-pointer"
           >
-            <div className="w-4 h-4 rounded bg-[#0077b5] text-white text-[10px] font-bold flex items-center justify-center">
+            <div className="w-4 h-4 rounded text-[10px] font-bold flex items-center justify-center" style={{ background: '#0077b5', color: 'white' }}>
               in
             </div>
             <span>{isAr ? 'استيراد LinkedIn' : 'Import'}</span>
@@ -631,7 +631,7 @@ ${currentResume.skills.join(' • ')}
               setPreviewSubMode('a4document');
               setTimeout(() => window.print(), 250);
             }}
-            className="px-3.5 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+            className="btn-secondary px-3.5 py-2 text-label-sm rounded-xl transition-colors inline-flex items-center gap-1.5 cursor-pointer"
           >
             <Printer className="w-3.5 h-3.5" />
             <span>{isAr ? 'طباعة / حفظ PDF' : 'Print / PDF'}</span>
@@ -641,16 +641,16 @@ ${currentResume.skills.join(' • ')}
           <button
             type="button"
             onClick={handleCopyCV}
-            className="px-3 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+            className="btn-secondary px-3 py-2 text-label-sm rounded-xl transition-colors inline-flex items-center gap-1.5 cursor-pointer"
           >
-            {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+            {copied ? <Check className="w-3.5 h-3.5" style={{ color: 'var(--success)' }} /> : <Copy className="w-3.5 h-3.5" />}
             <span>{copied ? (isAr ? 'تم النسخ!' : 'Copied!') : isAr ? 'نسخ النص' : 'Copy'}</span>
           </button>
 
           {/* Upload existing CV button */}
           <label
             htmlFor="cv-header-upload"
-            className="px-3 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+            className="btn-secondary px-3 py-2 text-label-sm rounded-xl transition-colors inline-flex items-center gap-1.5 cursor-pointer"
           >
             <input
               id="cv-header-upload"
@@ -668,7 +668,7 @@ ${currentResume.skills.join(' • ')}
             type="button"
             onClick={handleRunAudit}
             disabled={isAuditing}
-            className="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all shadow-sm inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+            className="btn-primary px-4 py-2 text-label-sm rounded-xl transition-all inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
           >
             <Sparkles className={`w-3.5 h-3.5 ${isAuditing ? 'animate-spin' : ''}`} />
             <span>{isAuditing ? (isAr ? 'جاري الفحص...' : 'Auditing...') : isAr ? 'فحص ATS' : 'Run ATS Audit'}</span>
@@ -677,26 +677,26 @@ ${currentResume.skills.join(' • ')}
       </div>
 
       {/* Official Google Doc Template Showcase & Control Card */}
-      <div className="p-4 sm:p-5 bg-gradient-to-r from-slate-900 to-[#1f3864] text-white rounded-2xl shadow-sm space-y-3">
+      <div className="p-4 sm:p-5 rounded-2xl space-y-3" style={{ background: 'linear-gradient(to right, var(--surface-dark), #1f3864)', color: 'white' }}>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <span className="text-[11px] font-bold text-blue-300 uppercase tracking-wider flex items-center gap-1.5">
+              <span className="text-label-caps flex items-center gap-1.5" style={{ color: 'var(--primary-muted)' }}>
                 <FileCode className="w-3.5 h-3.5" />
                 <span>{isAr ? 'القالب المعتمد المختار:' : 'Active Template:'}</span>
               </span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
+              <span className="badge-pill text-label-sm" style={{ background: 'rgba(16, 185, 129, 0.2)', color: 'rgb(110, 231, 183)', borderColor: 'rgba(16, 185, 129, 0.3)' }}>
                 96%+ ATS Pass Rate
               </span>
             </div>
-            <h2 className="text-base sm:text-lg font-bold">
+            <h2 className="text-headline-lg font-bold">
               {selectedTemplate === 'google_doc'
                 ? isAr ? '📄 قالب قوقل دوك التنفيذي (Navy Executive Google Doc)' : '📄 Navy Executive ATS (Official Google Doc)'
                 : selectedTemplate === 'classic'
                 ? isAr ? '🏛️ القالب الكلاسيكي الأكاديمي (Classic ATS)' : '🏛️ Classic Academic ATS'
                 : isAr ? '💻 قالب التقنية العصري (Modern Tech ATS)' : '💻 Modern Tech ATS'}
             </h2>
-            <p className="text-xs text-slate-300 leading-relaxed max-w-2xl">
+            <p className="text-body-sm leading-relaxed max-w-2xl" style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
               {isAr
                 ? 'نموذج السيرة الذاتية المهني الرسمي: ترويسات بالأزرق الداكن (#1f3864)، خط Carlito/Calibri، وتنسيق أحادي العمود معتمد لدى أنظمة التوظيف العالمية Workday وTaleo وGreenhouse.'
                 : 'Official Navy #1f3864 layout with Carlito typography, balanced margins, and single-column ATS structure.'}
@@ -709,7 +709,8 @@ ${currentResume.skills.join(' • ')}
               href="https://docs.google.com/document/d/1jSVGtqNaoYSt2qSfCAsc39NBS-pxVAEu/edit?usp=sharing"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-3 py-2 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-semibold inline-flex items-center gap-1.5 transition-colors border border-white/20"
+              className="px-3 py-2 rounded-xl text-label-sm font-semibold inline-flex items-center gap-1.5 transition-colors border"
+              style={{ background: 'rgba(255, 255, 255, 0.1)', borderColor: 'rgba(255, 255, 255, 0.2)', color: 'white' }}
             >
               <ExternalLink className="w-3.5 h-3.5" />
               <span>{isAr ? 'عرض القالب في Google Docs' : 'View Google Doc'}</span>
@@ -719,7 +720,8 @@ ${currentResume.skills.join(' • ')}
             <select
               value={selectedTemplate}
               onChange={(e) => handleTemplateChange(e.target.value as ATSTemplate)}
-              className="text-xs py-2 px-3 border border-slate-600 rounded-xl bg-slate-800 text-white font-semibold outline-none cursor-pointer"
+              className="text-body-sm py-2 px-3 border rounded-xl font-semibold outline-none cursor-pointer"
+              style={{ background: 'rgba(0, 0, 0, 0.3)', borderColor: 'rgba(255, 255, 255, 0.2)', color: 'white' }}
             >
               <option value="google_doc">📄 Navy Executive (Google Doc)</option>
               <option value="classic">🏛️ Classic Academic ATS</option>
@@ -730,15 +732,14 @@ ${currentResume.skills.join(' • ')}
       </div>
 
       {/* Main Mode Navigation Tabs (Clear & Intuitive) */}
-      <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 pb-1">
+      <div className="flex flex-wrap items-center gap-2 pb-1 border-hairline" style={{ borderColor: 'var(--border)' }}>
         <button
           type="button"
           onClick={() => setActiveTab('preview')}
-          className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer ${
-            activeTab === 'preview'
-              ? 'bg-blue-600 text-white shadow-sm'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+          className={`flex items-center gap-2 px-4 py-2.5 text-label-sm rounded-xl transition-all cursor-pointer ${
+            activeTab === 'preview' ? 'btn-primary' : ''
           }`}
+          style={activeTab !== 'preview' ? { color: 'var(--on-surface-muted)', background: 'transparent' } : {}}
         >
           <FileText className="w-4 h-4" />
           <span>{isAr ? '1. استعراض وتعديل السيرة (View & Edit)' : '1. View & Edit CV'}</span>
@@ -747,16 +748,15 @@ ${currentResume.skills.join(' • ')}
         <button
           type="button"
           onClick={() => setActiveTab('ats')}
-          className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer ${
-            activeTab === 'ats'
-              ? 'bg-blue-600 text-white shadow-sm'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+          className={`flex items-center gap-2 px-4 py-2.5 text-label-sm rounded-xl transition-all cursor-pointer ${
+            activeTab === 'ats' ? 'btn-primary' : ''
           }`}
+          style={activeTab !== 'ats' ? { color: 'var(--on-surface-muted)', background: 'transparent' } : {}}
         >
           <Award className="w-4 h-4" />
           <span>{isAr ? '2. فحص وتوافق ATS (Score & Audit)' : '2. ATS Score & Audit'}</span>
           {atsResult?.overallScore && (
-            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-white/20 text-white font-bold">
+            <span className="badge-pill text-label-sm font-mono" style={{ background: 'rgba(255, 255, 255, 0.2)' }}>
               {atsResult.overallScore}%
             </span>
           )}
@@ -765,16 +765,15 @@ ${currentResume.skills.join(' • ')}
         <button
           type="button"
           onClick={() => setActiveTab('tailor')}
-          className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer ${
-            activeTab === 'tailor'
-              ? 'bg-blue-600 text-white shadow-sm'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+          className={`flex items-center gap-2 px-4 py-2.5 text-label-sm rounded-xl transition-all cursor-pointer ${
+            activeTab === 'tailor' ? 'btn-primary' : ''
           }`}
+          style={activeTab !== 'tailor' ? { color: 'var(--on-surface-muted)', background: 'transparent' } : {}}
         >
           <Target className="w-4 h-4" />
           <span>{isAr ? '3. تخصيص للوظيفة وتوليد ATS PDF (Job Tailoring)' : '3. Tailor for Job & Export PDF'}</span>
           {tailoredResumeObj && (
-            <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-400 text-slate-900 font-bold">
+            <span className="badge-pill text-label-sm font-bold" style={{ background: 'var(--success)', color: 'var(--surface)' }}>
               PDF Ready
             </span>
           )}
@@ -782,15 +781,14 @@ ${currentResume.skills.join(' • ')}
         <button
           type="button"
           onClick={() => setActiveTab('library')}
-          className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer ${
-            activeTab === 'library'
-              ? 'bg-blue-600 text-white shadow-sm'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+          className={`flex items-center gap-2 px-4 py-2.5 text-label-sm rounded-xl transition-all cursor-pointer ${
+            activeTab === 'library' ? 'btn-primary' : ''
           }`}
+          style={activeTab !== 'library' ? { color: 'var(--on-surface-muted)', background: 'transparent' } : {}}
         >
           <Layers className="w-4 h-4" />
           <span>{isAr ? '4. مكتبة السير الذاتية (CV Library)' : '4. CV Library'}</span>
-          <span className="text-[10px] px-1.5 rounded-full bg-current/10 font-mono">{resumes.length}</span>
+          <span className="badge-pill text-label-sm font-mono">{resumes.length}</span>
         </button>
       </div>
 
@@ -800,17 +798,18 @@ ${currentResume.skills.join(' • ')}
       {activeTab === 'preview' && currentResume && (
         <div className="space-y-4">
           {/* Sub-mode toggle: Section Editor vs A4 Printable Document */}
-          <div className="flex items-center justify-between p-3 bg-white border border-slate-200/80 rounded-xl">
-            <span className="text-xs font-semibold text-slate-700">
+          <div className="card-surface flex items-center justify-between p-3 rounded-xl">
+            <span className="text-label-sm" style={{ color: 'var(--on-surface)' }}>
               {isAr ? 'طريقة العرض:' : 'View Mode:'}
             </span>
-            <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg text-xs font-semibold">
+            <div className="flex items-center gap-1 p-1 rounded-lg text-label-sm" style={{ background: 'var(--surface-elevated)' }}>
               <button
                 type="button"
                 onClick={() => setPreviewSubMode('editor')}
                 className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer ${
-                  previewSubMode === 'editor' ? 'bg-white text-blue-600 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900'
+                  previewSubMode === 'editor' ? 'surface-elevated font-bold' : ''
                 }`}
+                style={previewSubMode === 'editor' ? { background: 'var(--surface)', color: 'var(--primary)' } : { color: 'var(--on-surface-muted)' }}
               >
                 {isAr ? 'محرر الأقسام' : 'Section Editor'}
               </button>
@@ -818,8 +817,9 @@ ${currentResume.skills.join(' • ')}
                 type="button"
                 onClick={() => setPreviewSubMode('a4document')}
                 className={`px-3 py-1.5 rounded-md transition-colors cursor-pointer ${
-                  previewSubMode === 'a4document' ? 'bg-white text-blue-600 shadow-2xs font-bold' : 'text-slate-600 hover:text-slate-900'
+                  previewSubMode === 'a4document' ? 'surface-elevated font-bold' : ''
                 }`}
+                style={previewSubMode === 'a4document' ? { background: 'var(--surface)', color: 'var(--primary)' } : { color: 'var(--on-surface-muted)' }}
               >
                 {isAr ? 'معاينة ورقة A4 وتصدير PDF' : 'A4 Document & PDF Export'}
               </button>
@@ -838,25 +838,25 @@ ${currentResume.skills.join(' • ')}
               onSaveAsNewVersion={handleSaveTailoredAsNew}
             />
           ) : (
-            <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 space-y-8 shadow-2xs">
+            <div className="card-surface rounded-2xl p-6 sm:p-8 space-y-8">
               {/* Resume Header */}
-              <div className="border-b border-slate-200/80 pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="border-hairline pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4" style={{ borderColor: 'var(--border)' }}>
                 <div>
-                  <span className="text-[11px] font-bold text-blue-600 uppercase tracking-wider block mb-1">
+                  <span className="text-label-caps block mb-1" style={{ color: 'var(--primary)' }}>
                     {currentResume.isMaster ? (isAr ? 'النسخة المعتمدة (Master Resume)' : 'Master Resume') : currentResume.title}
                   </span>
-                  <h2 className="text-xl font-bold text-slate-900">{currentResume.title}</h2>
-                  <span className="text-xs text-slate-400 mt-1 block">
+                  <h2 className="text-headline-lg" style={{ color: 'var(--on-surface)' }}>{currentResume.title}</h2>
+                  <span className="text-body-sm mt-1 block" style={{ color: 'var(--on-surface-muted)' }}>
                     {isAr ? 'آخر تحديث: ' : 'Last modified: '} {formatDate(currentResume.updatedAt)}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  <span className="badge-pill text-label-sm" style={{ background: 'var(--success-muted)', color: 'var(--success)', borderColor: 'var(--success-muted)' }}>
                     {isAr ? 'جاهزة للتقديم (ATS Ready)' : 'ATS Ready'}
                   </span>
                   {currentResume.atsScore && (
-                    <span className="text-xs font-mono font-bold px-3 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                    <span className="badge-pill text-label-sm font-mono font-bold" style={{ background: 'var(--primary-muted)', color: 'var(--primary)', borderColor: 'var(--primary-muted)' }}>
                       ATS: {currentResume.atsScore}%
                     </span>
                   )}
@@ -866,20 +866,24 @@ ${currentResume.skills.join(' • ')}
               {/* Summary Section */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                  <h3 className="text-label-caps" style={{ color: 'var(--on-surface)' }}>
                     {isAr ? 'النبذة المهنية (Professional Summary)' : 'Professional Summary'}
                   </h3>
                   {isEditingSummary ? (
                     <button
                       onClick={handleSaveSummary}
-                      className="text-xs font-bold text-blue-600 hover:underline cursor-pointer"
+                      className="text-label-sm font-bold cursor-pointer transition-colors"
+                      style={{ color: 'var(--primary)' }}
                     >
                       {isAr ? 'حفظ التعديل' : 'Save Summary'}
                     </button>
                   ) : (
                     <button
                       onClick={() => setIsEditingSummary(true)}
-                      className="text-xs font-bold text-slate-500 hover:text-blue-600 inline-flex items-center gap-1 cursor-pointer"
+                      className="text-label-sm font-bold inline-flex items-center gap-1 cursor-pointer transition-colors"
+                      style={{ color: 'var(--on-surface-muted)' }}
+                      onMouseEnter={(e) => e.currentTarget.style.color = 'var(--primary)'}
+                      onMouseLeave={(e) => e.currentTarget.style.color = 'var(--on-surface-muted)'}
                     >
                       <Edit3 className="w-3 h-3" />
                       <span>{isAr ? 'تعديل النبذة' : 'Edit'}</span>
@@ -892,10 +896,10 @@ ${currentResume.skills.join(' • ')}
                     rows={4}
                     value={summaryDraft}
                     onChange={(e) => setSummaryDraft(e.target.value)}
-                    className="w-full text-xs p-3.5 border border-blue-300 rounded-xl focus:ring-2 focus:ring-blue-100 outline-none leading-relaxed text-slate-800 font-sans"
+                    className="input-field w-full text-body-sm p-3.5 rounded-xl outline-none leading-relaxed"
                   />
                 ) : (
-                  <p className="text-xs text-slate-700 leading-relaxed bg-slate-50/70 p-4 rounded-xl border border-slate-100 italic">
+                  <p className="text-body-sm leading-relaxed p-4 rounded-xl border-hairline italic" style={{ color: 'var(--on-surface)', background: 'var(--surface-elevated)', borderColor: 'var(--border)' }}>
                     "{currentResume.summary}"
                   </p>
                 )}
@@ -903,29 +907,29 @@ ${currentResume.skills.join(' • ')}
 
               {/* Experience Section */}
               <div className="space-y-4">
-                <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                <h3 className="text-label-caps" style={{ color: 'var(--on-surface)' }}>
                   {isAr ? 'الخبرات المهنية المعتمدة (Work Experience)' : 'Work Experience'} ({currentResume.experience.length})
                 </h3>
 
                 <div className="space-y-3">
                   {currentResume.experience.map((exp) => (
-                    <div key={exp.id} className="p-4 bg-slate-50/50 border border-slate-200/70 rounded-xl space-y-2">
+                    <div key={exp.id} className="p-4 rounded-xl space-y-2 border-hairline" style={{ background: 'var(--surface-elevated)', borderColor: 'var(--border)' }}>
                       <div className="flex items-start justify-between">
                         <div>
-                          <h4 className="text-xs font-bold text-slate-900">{exp.role}</h4>
-                          <span className="text-[11px] text-slate-500 font-medium">
+                          <h4 className="text-body-base font-bold" style={{ color: 'var(--on-surface)' }}>{exp.role}</h4>
+                          <span className="text-body-sm font-medium" style={{ color: 'var(--on-surface-muted)' }}>
                             {exp.company} · {exp.location}
                           </span>
                         </div>
-                        <span className="font-mono text-[11px] text-slate-500 bg-white px-2 py-0.5 rounded border border-slate-200">
+                        <span className="font-mono text-body-sm px-2 py-0.5 rounded border-hairline" style={{ color: 'var(--on-surface-muted)', background: 'var(--surface)', borderColor: 'var(--border)' }}>
                           {exp.startDate} – {exp.current ? (isAr ? 'حتى الآن' : 'Present') : exp.endDate}
                         </span>
                       </div>
 
                       <div className="space-y-1 pt-1">
                         {exp.achievements.map((ach, idx) => (
-                          <div key={idx} className="flex items-start gap-2 text-xs text-slate-700 leading-relaxed">
-                            <span className="text-blue-500 font-bold">·</span>
+                          <div key={idx} className="flex items-start gap-2 text-body-sm leading-relaxed" style={{ color: 'var(--on-surface)' }}>
+                            <span className="font-bold" style={{ color: 'var(--primary)' }}>·</span>
                             <span>{ach}</span>
                           </div>
                         ))}
@@ -938,13 +942,14 @@ ${currentResume.skills.join(' • ')}
               {/* Skills Section */}
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                  <h3 className="text-label-caps" style={{ color: 'var(--on-surface)' }}>
                     {isAr ? 'المهارات والكلمات المفتاحية (Technical Skills & ATS Keywords)' : 'Skills & Keywords'} ({isEditingSkills ? skillsDraft.length : currentResume.skills.length})
                   </h3>
                   {isEditingSkills ? (
                     <button
                       onClick={handleSaveSkills}
-                      className="text-xs font-bold text-blue-600 hover:underline cursor-pointer"
+                      className="text-label-sm font-bold cursor-pointer transition-colors"
+                      style={{ color: 'var(--primary)' }}
                     >
                       {isAr ? 'حفظ المهارات' : 'Save Skills'}
                     </button>
@@ -954,7 +959,10 @@ ${currentResume.skills.join(' • ')}
                         setIsEditingSkills(true);
                         setSkillsDraft([...currentResume.skills]);
                       }}
-                      className="text-xs font-bold text-slate-500 hover:text-blue-600 inline-flex items-center gap-1 cursor-pointer"
+                      className="text-label-sm font-bold inline-flex items-center gap-1 cursor-pointer transition-colors"
+                      style={{ color: 'var(--on-surface-muted)' }}
+                      onMouseEnter={(e) => e.currentTarget.style.color = 'var(--primary)'}
+                      onMouseLeave={(e) => e.currentTarget.style.color = 'var(--on-surface-muted)'}
                     >
                       <Edit3 className="w-3 h-3" />
                       <span>{isAr ? 'تعديل وإضافة' : 'Edit'}</span>
@@ -977,13 +985,13 @@ ${currentResume.skills.join(' • ')}
                           }
                         }}
                         placeholder={isAr ? 'أضف مهارة جديدة (مثلاً: React, Python, AWS)' : 'Add new skill (e.g., React, Python, AWS)'}
-                        className="flex-1 text-xs p-2.5 border border-blue-300 rounded-xl focus:ring-2 focus:ring-blue-100 outline-none"
+                        className="input-field flex-1 text-body-sm p-2.5 rounded-xl outline-none"
                       />
                       <button
                         type="button"
                         onClick={handleAddSkill}
                         disabled={!newSkillInput.trim()}
-                        className="px-4 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                        className="btn-primary px-4 py-2.5 text-label-sm rounded-xl transition-colors inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                       >
                         <Plus className="w-3.5 h-3.5" />
                         <span>{isAr ? 'إضافة' : 'Add'}</span>
@@ -995,13 +1003,17 @@ ${currentResume.skills.join(' • ')}
                       {skillsDraft.map((skill, i) => (
                         <span
                           key={i}
-                          className="text-xs font-semibold px-2.5 py-1 bg-slate-100 text-slate-800 rounded-lg border border-slate-200 transition-colors inline-flex items-center gap-1.5 group"
+                          className="badge-pill text-label-sm font-semibold transition-colors inline-flex items-center gap-1.5 group"
+                          style={{ background: 'var(--surface-elevated)', color: 'var(--on-surface)', borderColor: 'var(--border)' }}
                         >
                           {skill}
                           <button
                             type="button"
                             onClick={() => handleRemoveSkill(i)}
-                            className="text-slate-400 hover:text-red-600 cursor-pointer"
+                            className="cursor-pointer transition-colors"
+                            style={{ color: 'var(--on-surface-muted)' }}
+                            onMouseEnter={(e) => e.currentTarget.style.color = 'var(--error)'}
+                            onMouseLeave={(e) => e.currentTarget.style.color = 'var(--on-surface-muted)'}
                           >
                             <X className="w-3 h-3" />
                           </button>
@@ -1010,7 +1022,7 @@ ${currentResume.skills.join(' • ')}
                     </div>
 
                     {skillsDraft.length === 0 && (
-                      <p className="text-xs text-slate-400 text-center py-4 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                      <p className="text-body-sm text-center py-4 rounded-xl border border-dashed" style={{ color: 'var(--on-surface-muted)', background: 'var(--surface-elevated)', borderColor: 'var(--border)' }}>
                         {isAr ? 'لا توجد مهارات بعد. أضف مهاراتك أعلاه.' : 'No skills yet. Add your skills above.'}
                       </p>
                     )}
@@ -1020,7 +1032,8 @@ ${currentResume.skills.join(' • ')}
                     {currentResume.skills.map((skill, i) => (
                       <span
                         key={i}
-                        className="text-xs font-semibold px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg border border-slate-200/80 transition-colors"
+                        className="badge-pill text-label-sm font-semibold transition-colors"
+                        style={{ background: 'var(--surface-elevated)', color: 'var(--on-surface)', borderColor: 'var(--border)' }}
                       >
                         {skill}
                       </span>
@@ -1038,13 +1051,13 @@ ${currentResume.skills.join(' • ')}
           ======================================================== */}
       {activeTab === 'ats' && (
         <div className="space-y-6">
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-6 space-y-6 shadow-2xs">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
+          <div className="card-surface rounded-2xl p-6 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-hairline pb-5" style={{ borderColor: 'var(--border)' }}>
               <div>
-                <h3 className="text-base font-bold text-slate-900">
+                <h3 className="text-headline-lg" style={{ color: 'var(--on-surface)' }}>
                   {isAr ? 'نتائج وتوافق أنظمة الفرز الآلي (ATS Score)' : 'ATS Parsing & Compliance Audit'}
                 </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-body-sm mt-0.5" style={{ color: 'var(--on-surface-muted)' }}>
                   {isAr
                     ? 'فحص شامل لمطابقة الكلمات المفتاحية، التنسيق الخالي من الجداول المعقدة، ووضوح التسلسل الزمني'
                     : 'Real-time scan against enterprise ATS engines (Workday, Greenhouse, Lever, Taleo)'}
@@ -1054,7 +1067,7 @@ ${currentResume.skills.join(' • ')}
               <button
                 onClick={handleRunAudit}
                 disabled={isAuditing}
-                className="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all shadow-sm inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                className="btn-primary px-4 py-2 text-label-sm rounded-xl transition-all inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
               >
                 <Sparkles className={`w-3.5 h-3.5 ${isAuditing ? 'animate-spin' : ''}`} />
                 <span>{isAuditing ? (isAr ? 'جاري إعادة الفحص...' : 'Re-evaluating...') : isAr ? 'إعادة الفحص الآن' : 'Re-Run Audit'}</span>
@@ -1064,48 +1077,48 @@ ${currentResume.skills.join(' • ')}
             {atsResult ? (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Score Circle Card */}
-                <div className="p-6 bg-slate-50 rounded-2xl border border-slate-200/80 text-center space-y-3">
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                <div className="p-6 rounded-2xl border-hairline text-center space-y-3" style={{ background: 'var(--surface-elevated)', borderColor: 'var(--border)' }}>
+                  <span className="text-label-caps block" style={{ color: 'var(--on-surface-muted)' }}>
                     {isAr ? 'الدرجة الإجمالية' : 'Overall ATS Score'}
                   </span>
-                  <div className="text-5xl font-black text-blue-600 font-mono tracking-tight">
+                  <div className="text-5xl font-black font-mono tracking-tight" style={{ color: 'var(--primary)' }}>
                     {atsResult.overallScore}%
                   </div>
-                  <span className="inline-flex px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">
+                  <span className="badge-pill text-label-sm font-bold" style={{ background: 'var(--success-muted)', color: 'var(--success)' }}>
                     {atsResult.overallScore >= 80 ? (isAr ? 'ممتاز ومطابق' : 'High Pass Probability') : (isAr ? 'يحتاج تحسين' : 'Needs Optimization')}
                   </span>
                 </div>
 
                 {/* Strengths & Passed Checks */}
-                <div className="p-6 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-3">
-                  <span className="text-xs font-bold text-slate-800 block">
+                <div className="p-6 rounded-2xl border-hairline space-y-3" style={{ background: 'var(--surface-elevated)', borderColor: 'var(--border)' }}>
+                  <span className="text-label-caps block" style={{ color: 'var(--on-surface)' }}>
                     {isAr ? 'العناصر المطابقة بنجاح:' : 'Passed ATS Checks:'}
                   </span>
-                  <div className="space-y-2 text-xs">
-                    <div className="flex items-center gap-2 text-slate-700">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <div className="space-y-2 text-body-sm">
+                    <div className="flex items-center gap-2" style={{ color: 'var(--on-surface)' }}>
+                      <CheckCircle2 className="w-4 h-4 shrink-0" style={{ color: 'var(--success)' }} />
                       <span>{isAr ? 'تنسيق نصوص نظيف بدون جداول معقدة' : 'Clean layout structure'}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-slate-700">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <div className="flex items-center gap-2" style={{ color: 'var(--on-surface)' }}>
+                      <CheckCircle2 className="w-4 h-4 shrink-0" style={{ color: 'var(--success)' }} />
                       <span>{isAr ? 'أرقام وإنجازات محددة (Metrics)' : 'Quantifiable achievements detected'}</span>
                     </div>
-                    <div className="flex items-center gap-2 text-slate-700">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <div className="flex items-center gap-2" style={{ color: 'var(--on-surface)' }}>
+                      <CheckCircle2 className="w-4 h-4 shrink-0" style={{ color: 'var(--success)' }} />
                       <span>{isAr ? 'مهارات متوافقة مع المسمى الوظيفي' : 'Role-relevant core keywords present'}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Recommendations */}
-                <div className="p-6 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-3">
-                  <span className="text-xs font-bold text-slate-800 block">
+                <div className="p-6 rounded-2xl border-hairline space-y-3" style={{ background: 'var(--surface-elevated)', borderColor: 'var(--border)' }}>
+                  <span className="text-label-caps block" style={{ color: 'var(--on-surface)' }}>
                     {isAr ? 'توصيات لرفع التقييم لـ 95%:' : 'Recommendations for 95%+:'}
                   </span>
-                  <div className="space-y-2 text-xs text-slate-600">
+                  <div className="space-y-2 text-body-sm" style={{ color: 'var(--on-surface-muted)' }}>
                     {atsResult.recommendations?.map((rec, i) => (
                       <div key={i} className="flex items-start gap-1.5">
-                        <span className="text-amber-500 font-bold">→</span>
+                        <span className="font-bold" style={{ color: 'var(--warning)' }}>→</span>
                         <span>{rec}</span>
                       </div>
                     ))}
@@ -1113,8 +1126,8 @@ ${currentResume.skills.join(' • ')}
                 </div>
               </div>
             ) : (
-              <div className="p-12 text-center text-xs text-slate-500 space-y-3 bg-slate-50 rounded-2xl border border-slate-200">
-                <Sparkles className="w-8 h-8 text-blue-500 mx-auto" />
+              <div className="p-12 text-center text-body-sm space-y-3 rounded-2xl border-hairline" style={{ color: 'var(--on-surface-muted)', background: 'var(--surface-elevated)', borderColor: 'var(--border)' }}>
+                <Sparkles className="w-8 h-8 mx-auto" style={{ color: 'var(--primary)' }} />
                 <p>
                   {isAr
                     ? 'اضغط على زر "فحص ATS" أعلاه لتشغيل المحاكي الذكي والحصول على تقرير دقيق.'
@@ -1122,7 +1135,7 @@ ${currentResume.skills.join(' • ')}
                 </p>
                 <button
                   onClick={handleRunAudit}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold cursor-pointer"
+                  className="btn-primary px-4 py-2 rounded-xl text-label-sm font-bold cursor-pointer"
                 >
                   {isAr ? 'تشغيل الفحص الآن' : 'Run Audit Now'}
                 </button>
@@ -1161,20 +1174,22 @@ ${currentResume.skills.join(' • ')}
             </div>
 
             {/* Input Source Mode Selector */}
-            <div className="flex items-center gap-2 p-1.5 bg-slate-100 rounded-xl w-fit text-xs font-bold">
+            <div className="flex items-center gap-2 p-1.5 rounded-xl w-fit text-label-sm" style={{ background: 'var(--surface-elevated)' }}>
               <button
                 onClick={() => setTailorSourceType('saved')}
                 className={`px-3.5 py-1.5 rounded-lg transition-colors cursor-pointer ${
-                  tailorSourceType === 'saved' ? 'bg-white text-blue-600 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+                  tailorSourceType === 'saved' ? 'surface-elevated font-bold' : ''
                 }`}
+                style={tailorSourceType === 'saved' ? { background: 'var(--surface)', color: 'var(--primary)' } : { color: 'var(--on-surface-muted)' }}
               >
                 {isAr ? '1. من الوظائف والتدريبات المحفوظة' : '1. From Saved Opportunities'}
               </button>
               <button
                 onClick={() => setTailorSourceType('custom')}
                 className={`px-3.5 py-1.5 rounded-lg transition-colors cursor-pointer ${
-                  tailorSourceType === 'custom' ? 'bg-white text-blue-600 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+                  tailorSourceType === 'custom' ? 'surface-elevated font-bold' : ''
                 }`}
+                style={tailorSourceType === 'custom' ? { background: 'var(--surface)', color: 'var(--primary)' } : { color: 'var(--on-surface-muted)' }}
               >
                 {isAr ? '2. لصق إعلان وظيفة مخصص (Custom Job Description)' : '2. Paste Custom Job Description'}
               </button>
@@ -1183,14 +1198,14 @@ ${currentResume.skills.join(' • ')}
             {/* Source Input 1: Saved Opportunities */}
             {tailorSourceType === 'saved' && (
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-700 block">
+                <label className="text-label-sm font-bold block" style={{ color: 'var(--on-surface)' }}>
                   {isAr ? 'اختر الوظيفة المستهدفة:' : 'Target Opportunity:'}
                 </label>
                 <div className="flex flex-col sm:flex-row items-center gap-3">
                   <select
                     value={selectedOppId}
                     onChange={(e) => setSelectedOppId(e.target.value)}
-                    className="w-full sm:flex-1 text-xs p-3 border border-slate-300 rounded-xl outline-none bg-slate-50 cursor-pointer text-slate-800 font-semibold"
+                    className="input-field w-full sm:flex-1 text-body-sm p-3 rounded-xl outline-none cursor-pointer font-semibold"
                   >
                     {opportunities.map((opp) => (
                       <option key={opp.id} value={opp.id}>
@@ -1202,7 +1217,7 @@ ${currentResume.skills.join(' • ')}
                   <button
                     onClick={handleTailorSubmit}
                     disabled={isTailoring || !selectedOppId}
-                    className="w-full sm:w-auto px-6 py-3 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all shadow-sm inline-flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                    className="btn-primary w-full sm:w-auto px-6 py-3 text-label-sm rounded-xl transition-all inline-flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                   >
                     <Sparkles className={`w-3.5 h-3.5 ${isTailoring ? 'animate-spin' : ''}`} />
                     <span>{isTailoring ? (isAr ? 'جاري التوليد بالذكاء الاصطناعي...' : 'Tailoring CV...') : isAr ? 'توليد سيرة ذاتية PDF للوظيفة' : 'Generate Tailored ATS CV'}</span>
@@ -1210,12 +1225,12 @@ ${currentResume.skills.join(' • ')}
                 </div>
 
                 {activeOpp && (
-                  <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/70 text-xs text-slate-600 flex items-center justify-between">
+                  <div className="p-3 rounded-xl border-hairline text-body-sm flex items-center justify-between" style={{ background: 'var(--surface-elevated)', borderColor: 'var(--border)', color: 'var(--on-surface-muted)' }}>
                     <span>
                       {isAr ? 'المتطلبات الأساسية: ' : 'Core Requirements: '}
                       {activeOpp.requirements.slice(0, 5).join(', ')}
                     </span>
-                    <span className="font-mono text-[11px] text-blue-600 font-bold shrink-0">
+                    <span className="font-mono text-label-sm font-bold shrink-0" style={{ color: 'var(--primary)' }}>
                       {activeOpp.company}
                     </span>
                   </div>
@@ -1228,7 +1243,7 @@ ${currentResume.skills.join(' • ')}
               <div className="space-y-3">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs font-bold text-slate-700 block mb-1">
+                    <label className="text-label-sm font-bold block mb-1" style={{ color: 'var(--on-surface)' }}>
                       {isAr ? 'المسمى الوظيفي المستهدف:' : 'Target Job Title:'}
                     </label>
                     <input
@@ -1236,11 +1251,11 @@ ${currentResume.skills.join(' • ')}
                       placeholder="e.g. Senior Full-Stack AI Engineer"
                       value={customJobTitle}
                       onChange={(e) => setCustomJobTitle(e.target.value)}
-                      className="w-full text-xs p-2.5 border border-slate-300 rounded-xl outline-none focus:border-blue-500 bg-slate-50"
+                      className="input-field w-full text-body-sm p-2.5 rounded-xl outline-none"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-slate-700 block mb-1">
+                    <label className="text-label-sm font-bold block mb-1" style={{ color: 'var(--on-surface)' }}>
                       {isAr ? 'اسم الشركة / المؤسسة:' : 'Target Company:'}
                     </label>
                     <input
@@ -1248,13 +1263,13 @@ ${currentResume.skills.join(' • ')}
                       placeholder="e.g. TechCorp / Startup / Remote"
                       value={customCompany}
                       onChange={(e) => setCustomCompany(e.target.value)}
-                      className="w-full text-xs p-2.5 border border-slate-300 rounded-xl outline-none focus:border-blue-500 bg-slate-50"
+                      className="input-field w-full text-body-sm p-2.5 rounded-xl outline-none"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-slate-700 block mb-1">
+                  <label className="text-label-sm font-bold block mb-1" style={{ color: 'var(--on-surface)' }}>
                     {isAr ? 'نص الوصف الوظيفي والشروط المطلوبة (Paste Job Description):' : 'Paste Job Description / Requirements:'}
                   </label>
                   <textarea
@@ -1266,7 +1281,7 @@ ${currentResume.skills.join(' • ')}
                     }
                     value={customJobDescription}
                     onChange={(e) => setCustomJobDescription(e.target.value)}
-                    className="w-full text-xs p-3 border border-slate-300 rounded-xl outline-none focus:border-blue-500 bg-slate-50 leading-relaxed font-sans"
+                    className="input-field w-full text-body-sm p-3 rounded-xl outline-none leading-relaxed font-sans"
                   />
                 </div>
 
@@ -1274,7 +1289,7 @@ ${currentResume.skills.join(' • ')}
                   <button
                     onClick={handleTailorSubmit}
                     disabled={isTailoring || !customJobDescription.trim()}
-                    className="px-6 py-3 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all shadow-sm inline-flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                    className="btn-primary px-6 py-3 text-label-sm rounded-xl transition-all inline-flex items-center gap-2 cursor-pointer disabled:opacity-50"
                   >
                     <Sparkles className={`w-3.5 h-3.5 ${isTailoring ? 'animate-spin' : ''}`} />
                     <span>{isTailoring ? (isAr ? 'جاري التحليل والتوليد...' : 'Optimizing for Job...') : isAr ? 'توليد سيرة ذاتية PDF للوظيفة' : 'Generate Tailored ATS CV'}</span>
@@ -1288,16 +1303,16 @@ ${currentResume.skills.join(' • ')}
           {tailorResult && tailoredResumeObj && (
             <div className="space-y-6">
               {/* Overview Badge Card */}
-              <div className="p-6 bg-gradient-to-r from-blue-900 to-indigo-900 text-white rounded-2xl shadow-sm space-y-4">
+              <div className="p-6 rounded-2xl space-y-4" style={{ background: 'linear-gradient(to right, rgb(30, 58, 138), rgb(67, 56, 202))', color: 'white' }}>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
-                    <span className="text-[11px] font-bold text-blue-300 uppercase tracking-wider block mb-1">
+                    <span className="text-label-caps block mb-1" style={{ color: 'rgba(191, 219, 254, 1)' }}>
                       {isAr ? 'تم توليد وتكييف السيرة الذاتية بنجاح' : 'ATS Optimization Complete'}
                     </span>
-                    <h3 className="text-xl font-bold">
+                    <h3 className="text-headline-lg font-bold">
                       {tailorResult.targetRole || customJobTitle || activeOpp?.title}
                     </h3>
-                    <p className="text-xs text-blue-200 mt-1">
+                    <p className="text-body-sm mt-1" style={{ color: 'rgba(191, 219, 254, 0.8)' }}>
                       {isAr
                         ? 'تم إدراج الكلمات المفتاحية، وتحديث النبذة المهنية، وإبراز الإنجازات المتطابقة بدقة.'
                         : 'Keywords prioritized, summary targeted, and quantified accomplishments highlighted.'}
@@ -1305,18 +1320,19 @@ ${currentResume.skills.join(' • ')}
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <div className="px-4 py-2 bg-emerald-500/20 border border-emerald-400/30 rounded-xl text-center">
-                      <div className="text-2xl font-black font-mono text-emerald-300">
+                    <div className="px-4 py-2 rounded-xl text-center border" style={{ background: 'rgba(16, 185, 129, 0.2)', borderColor: 'rgba(16, 185, 129, 0.3)' }}>
+                      <div className="text-2xl font-black font-mono" style={{ color: 'rgb(110, 231, 183)' }}>
                         {tailorResult.atsScore || 96}%
                       </div>
-                      <span className="text-[10px] text-emerald-200 font-bold block">
+                      <span className="text-label-sm font-bold block" style={{ color: 'rgb(167, 243, 208)' }}>
                         {isAr ? 'توافق ATS' : 'ATS Match'}
                       </span>
                     </div>
 
                     <button
                       onClick={() => handleSaveTailoredAsNew(tailoredResumeObj)}
-                      className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-sm transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+                      className="px-4 py-2.5 rounded-xl text-label-sm font-bold transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+                      style={{ background: 'rgb(16, 185, 129)', color: 'white' }}
                     >
                       <CheckCheck className="w-4 h-4" />
                       <span>{isAr ? 'حفظ كنسخة جديدة في حسابي' : 'Save as New CV Version'}</span>
@@ -1326,15 +1342,16 @@ ${currentResume.skills.join(' • ')}
 
                 {/* Keyword Match Tags */}
                 {tailorResult.atsKeywordMatches && tailorResult.atsKeywordMatches.length > 0 && (
-                  <div className="pt-2 border-t border-white/10 space-y-2">
-                    <span className="text-xs font-bold text-blue-200 block">
+                  <div className="pt-2 space-y-2" style={{ borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                    <span className="text-label-sm font-bold block" style={{ color: 'rgba(191, 219, 254, 1)' }}>
                       {isAr ? 'الكلمات المفتاحية المطابقة بنجاح في السيرة الذاتية:' : 'Matched Keywords in CV:'}
                     </span>
                     <div className="flex flex-wrap gap-1.5">
                       {tailorResult.atsKeywordMatches.map((kw: string, i: number) => (
                         <span
                           key={i}
-                          className="px-2.5 py-0.5 rounded-lg bg-blue-500/30 text-white border border-blue-400/30 text-xs font-medium"
+                          className="px-2.5 py-0.5 rounded-lg text-label-sm font-medium border"
+                          style={{ background: 'rgba(59, 130, 246, 0.3)', color: 'white', borderColor: 'rgba(59, 130, 246, 0.3)' }}
                         >
                           ✓ {kw}
                         </span>
@@ -1347,10 +1364,10 @@ ${currentResume.skills.join(' • ')}
               {/* LIVE ATS RESUME DOCUMENT VIEWER & PDF DOWNLOADER */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between px-2">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                  <h4 className="text-label-caps" style={{ color: 'var(--on-surface)' }}>
                     {isAr ? 'معاينة وثيقة السيرة الذاتية PDF (A4 Document)' : 'Live A4 ATS PDF Document Preview'}
                   </h4>
-                  <span className="text-xs text-slate-500">
+                  <span className="text-body-sm" style={{ color: 'var(--on-surface-muted)' }}>
                     {isAr ? 'جاهزة للحفظ بصيغة PDF فوراً' : 'Ready to export / print'}
                   </span>
                 </div>
@@ -1680,50 +1697,50 @@ ${currentResume.skills.join(' • ')}
       {activeTab === 'library' && (
         <div className="space-y-6">
           {/* Master CVs Section */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 shadow-xs">
+          <div className="card-surface rounded-2xl p-6 space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
-                  <FileText className="w-4 h-4 text-blue-600" />
+                <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'var(--primary-muted)' }}>
+                  <FileText className="w-4 h-4" style={{ color: 'var(--primary)' }} />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900">{isAr ? 'السيرة الذاتية الرئيسية (Master CV)' : 'Master CV'}</h3>
-                  <p className="text-[11px] text-slate-500">{isAr ? 'النسخة الأصلية الكاملة — لا تُعدَّل عند التخصيص' : 'Original full version — never overwritten by tailoring'}</p>
+                  <h3 className="text-headline-sm" style={{ color: 'var(--on-surface)' }}>{isAr ? 'السيرة الذاتية الرئيسية (Master CV)' : 'Master CV'}</h3>
+                  <p className="text-body-sm" style={{ color: 'var(--on-surface-muted)' }}>{isAr ? 'النسخة الأصلية الكاملة — لا تُعدَّل عند التخصيص' : 'Original full version — never overwritten by tailoring'}</p>
                 </div>
               </div>
-              <span className="text-xs font-bold text-blue-600 bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-full">
+              <span className="badge-pill text-label-sm font-bold" style={{ color: 'var(--primary)', background: 'var(--primary-muted)', borderColor: 'var(--primary-muted)' }}>
                 {masterCVs.length} {isAr ? 'نسخة' : 'version(s)'}
               </span>
             </div>
             {masterCVs.length === 0 ? (
-              <div className="text-center py-8 text-xs text-slate-500 bg-slate-50 rounded-xl border border-dashed border-slate-300">
+              <div className="text-center py-8 text-body-sm rounded-xl border border-dashed" style={{ color: 'var(--on-surface-muted)', background: 'var(--surface-elevated)', borderColor: 'var(--border)' }}>
                 <p>{isAr ? 'لا توجد سيرة ذاتية رئيسية بعد' : 'No Master CV yet'}</p>
-                <button type="button" onClick={() => setShowGenerateModal(true)} className="mt-2 text-xs font-bold text-blue-600 hover:underline cursor-pointer">
+                <button type="button" onClick={() => setShowGenerateModal(true)} className="mt-2 text-label-sm font-bold cursor-pointer transition-colors" style={{ color: 'var(--primary)' }}>
                   {isAr ? 'إنشاء السيرة الرئيسية' : 'Create Master CV'}
                 </button>
               </div>
             ) : (
               <div className="space-y-3">
                 {masterCVs.map((cv) => (
-                  <div key={cv.id} className="p-4 bg-slate-50 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div key={cv.id} className="p-4 rounded-xl border-hairline flex flex-col sm:flex-row sm:items-center justify-between gap-3" style={{ background: 'var(--surface-elevated)', borderColor: 'var(--border)' }}>
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-slate-900">{cv.title}</span>
-                        <span className="text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200 px-1.5 py-0.5 rounded-full">Master</span>
+                        <span className="text-body-base font-bold" style={{ color: 'var(--on-surface)' }}>{cv.title}</span>
+                        <span className="badge-pill text-label-sm font-bold" style={{ background: 'var(--primary-muted)', color: 'var(--primary)', borderColor: 'var(--primary-muted)' }}>Master</span>
                         {cv.atsScore != null && (
-                          <span className="text-[10px] font-bold bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded-full">ATS: {cv.atsScore}%</span>
+                          <span className="badge-pill text-label-sm font-bold" style={{ background: 'var(--success-muted)', color: 'var(--success)' }}>ATS: {cv.atsScore}%</span>
                         )}
                       </div>
-                      <div className="text-[11px] text-slate-500">{isAr ? 'آخر تحديث: ' : 'Updated: '}{formatDate(cv.updatedAt)}</div>
+                      <div className="text-body-sm" style={{ color: 'var(--on-surface-muted)' }}>{isAr ? 'آخر تحديث: ' : 'Updated: '}{formatDate(cv.updatedAt)}</div>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
-                      <button type="button" onClick={() => { setSelectedResumeId(cv.id); setActiveTab('preview'); }} className="px-3 py-1.5 text-xs font-semibold text-blue-600 bg-blue-50 border border-blue-200 rounded-xl hover:bg-blue-100 transition-colors cursor-pointer">
+                      <button type="button" onClick={() => { setSelectedResumeId(cv.id); setActiveTab('preview'); }} className="btn-primary px-3 py-1.5 text-label-sm rounded-xl transition-colors cursor-pointer">
                         {isAr ? 'عرض' : 'View'}
                       </button>
-                      <button type="button" onClick={() => { setSelectedResumeId(cv.id); setActiveTab('ats'); }} className="px-3 py-1.5 text-xs font-semibold text-slate-600 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer">
+                      <button type="button" onClick={() => { setSelectedResumeId(cv.id); setActiveTab('ats'); }} className="btn-secondary px-3 py-1.5 text-label-sm rounded-xl transition-colors cursor-pointer">
                         {isAr ? 'فحص ATS' : 'ATS Audit'}
                       </button>
-                      <button type="button" onClick={() => exportResumeToWordDoc(cv, profile || undefined)} className="px-3 py-1.5 text-xs font-semibold text-slate-600 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer inline-flex items-center gap-1">
+                      <button type="button" onClick={() => exportResumeToWordDoc(cv, profile || undefined)} className="btn-secondary px-3 py-1.5 text-label-sm rounded-xl transition-colors cursor-pointer inline-flex items-center gap-1">
                         <Download className="w-3 h-3" />DOCX
                       </button>
                     </div>
@@ -1734,51 +1751,51 @@ ${currentResume.skills.join(' • ')}
           </div>
 
           {/* Tailored CVs Section */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 shadow-xs">
+          <div className="card-surface rounded-2xl p-6 space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">
-                  <Target className="w-4 h-4 text-emerald-600" />
+                <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'var(--success-muted)' }}>
+                  <Target className="w-4 h-4" style={{ color: 'var(--success)' }} />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900">{isAr ? 'السير المخصصة (Tailored CVs)' : 'Tailored CVs'}</h3>
-                  <p className="text-[11px] text-slate-500">{isAr ? 'نسخ مخصصة لوظائف محددة — السيرة الرئيسية محمية' : 'Job-specific versions — Master CV always preserved'}</p>
+                  <h3 className="text-headline-sm" style={{ color: 'var(--on-surface)' }}>{isAr ? 'السير المخصصة (Tailored CVs)' : 'Tailored CVs'}</h3>
+                  <p className="text-body-sm" style={{ color: 'var(--on-surface-muted)' }}>{isAr ? 'نسخ مخصصة لوظائف محددة — السيرة الرئيسية محمية' : 'Job-specific versions — Master CV always preserved'}</p>
                 </div>
               </div>
-              <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">
+              <span className="badge-pill text-label-sm font-bold" style={{ color: 'var(--success)', background: 'var(--success-muted)', borderColor: 'var(--success-muted)' }}>
                 {tailoredCVs.length} {isAr ? 'نسخة مخصصة' : 'tailored'}
               </span>
             </div>
             {tailoredCVs.length === 0 ? (
-              <div className="text-center py-8 text-xs text-slate-500 bg-slate-50 rounded-xl border border-dashed border-slate-300">
+              <div className="text-center py-8 text-body-sm rounded-xl border border-dashed" style={{ color: 'var(--on-surface-muted)', background: 'var(--surface-elevated)', borderColor: 'var(--border)' }}>
                 <p>{isAr ? 'لا توجد سير مخصصة بعد' : 'No tailored CVs yet'}</p>
-                <button type="button" onClick={() => setActiveTab('tailor')} className="mt-2 text-xs font-bold text-emerald-600 hover:underline cursor-pointer">
+                <button type="button" onClick={() => setActiveTab('tailor')} className="mt-2 text-label-sm font-bold cursor-pointer transition-colors" style={{ color: 'var(--success)' }}>
                   {isAr ? 'بدء تخصيص السيرة لوظيفة' : 'Tailor CV for a Job'}
                 </button>
               </div>
             ) : (
               <div className="space-y-3">
                 {tailoredCVs.map((cv) => (
-                  <div key={cv.id} className="p-4 bg-slate-50 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div key={cv.id} className="p-4 rounded-xl border-hairline flex flex-col sm:flex-row sm:items-center justify-between gap-3" style={{ background: 'var(--surface-elevated)', borderColor: 'var(--border)' }}>
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-xs font-bold text-slate-900">{cv.title}</span>
-                        {cv.companyName && <span className="text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 px-1.5 py-0.5 rounded-full">{cv.companyName}</span>}
-                        {cv.atsScore != null && <span className="text-[10px] font-bold bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded-full">ATS: {cv.atsScore}%</span>}
+                        <span className="text-body-base font-bold" style={{ color: 'var(--on-surface)' }}>{cv.title}</span>
+                        {cv.companyName && <span className="badge-pill text-label-sm font-bold" style={{ background: 'var(--success-muted)', color: 'var(--success)', borderColor: 'var(--success-muted)' }}>{cv.companyName}</span>}
+                        {cv.atsScore != null && <span className="badge-pill text-label-sm font-bold" style={{ background: 'var(--surface-elevated)', color: 'var(--on-surface)' }}>ATS: {cv.atsScore}%</span>}
                       </div>
-                      <div className="flex items-center gap-2 text-[11px] text-slate-500">
+                      <div className="flex items-center gap-2 text-body-sm" style={{ color: 'var(--on-surface-muted)' }}>
                         <span>{isAr ? 'تاريخ: ' : 'Created: '}{formatDate(cv.createdAt)}</span>
-                        {cv.opportunityId && <><span>•</span><span className="text-blue-600 font-semibold">{isAr ? 'مرتبط بوظيفة' : 'Linked to opportunity'}</span></>}
+                        {cv.opportunityId && <><span>•</span><span className="font-semibold" style={{ color: 'var(--primary)' }}>{isAr ? 'مرتبط بوظيفة' : 'Linked to opportunity'}</span></>}
                       </div>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
-                      <button type="button" onClick={() => { setSelectedResumeId(cv.id); setActiveTab('preview'); }} className="px-3 py-1.5 text-xs font-semibold text-blue-600 bg-blue-50 border border-blue-200 rounded-xl hover:bg-blue-100 transition-colors cursor-pointer">
+                      <button type="button" onClick={() => { setSelectedResumeId(cv.id); setActiveTab('preview'); }} className="btn-primary px-3 py-1.5 text-label-sm rounded-xl transition-colors cursor-pointer">
                         {isAr ? 'عرض' : 'View'}
                       </button>
-                      <button type="button" onClick={() => exportResumeToWordDoc(cv, profile || undefined)} className="px-3 py-1.5 text-xs font-semibold text-slate-600 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer inline-flex items-center gap-1">
+                      <button type="button" onClick={() => exportResumeToWordDoc(cv, profile || undefined)} className="btn-secondary px-3 py-1.5 text-label-sm rounded-xl transition-colors cursor-pointer inline-flex items-center gap-1">
                         <Download className="w-3 h-3" />DOCX
                       </button>
-                      <button type="button" onClick={() => { setSelectedResumeId(cv.id); setActiveTab('preview'); setPreviewSubMode('a4document'); setTimeout(() => window.print(), 250); }} className="px-3 py-1.5 text-xs font-semibold text-slate-600 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer inline-flex items-center gap-1">
+                      <button type="button" onClick={() => { setSelectedResumeId(cv.id); setActiveTab('preview'); setPreviewSubMode('a4document'); setTimeout(() => window.print(), 250); }} className="btn-secondary px-3 py-1.5 text-label-sm rounded-xl transition-colors cursor-pointer inline-flex items-center gap-1">
                         <Printer className="w-3 h-3" />PDF
                       </button>
                     </div>

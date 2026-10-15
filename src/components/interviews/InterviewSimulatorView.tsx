@@ -684,17 +684,17 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
 
       {/* ── End-of-Session Corrections Review Panel ──────────────────── */}
       {showReview && activeSession && (
-        <div className="p-6 bg-gradient-to-br from-indigo-50 to-blue-50 border-2 border-indigo-200 rounded-2xl space-y-5">
+        <div className="p-6 rounded-2xl space-y-5 surface-elevated" style={{ background: 'var(--gradient-subtle)', borderWidth: '2px', borderColor: 'var(--primary-muted)' }}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center">
-                <Award className="w-5 h-5 text-white" />
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: 'var(--primary)' }}>
+                <Award className="w-5 h-5" style={{ color: 'var(--surface)' }} />
               </div>
               <div>
-                <h2 className="font-bold text-neutral-900 text-base">
+                <h2 className="heading-base">
                   {isInterviewAr ? '📋 تقرير المقابلة الكامل — تصحيحات AI' : '📋 Full Interview Report — AI Corrections'}
                 </h2>
-                <p className="text-xs text-neutral-500">
+                <p className="body-xs" style={{ color: 'var(--text-tertiary)' }}>
                   {isInterviewAr
                     ? `جلسة ${activeSession.type} · ${formatTimer(sessionElapsed)} · ${activeSession.questions.filter(q => q.userAnswer).length} إجابات`
                     : `${activeSession.type} session · ${formatTimer(sessionElapsed)} · ${activeSession.questions.filter(q => q.userAnswer).length} answers`}
@@ -703,13 +703,15 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
             </div>
             <div className="flex items-center gap-2">
               {activeSession.overallScore && (
-                <span className="text-2xl font-black text-indigo-700 bg-white px-4 py-1.5 rounded-xl border border-indigo-200 shadow-sm">
+                <span className="text-2xl font-black px-4 py-1.5 rounded-xl border-hairline surface-elevated" style={{ color: 'var(--primary-strong)' }}>
                   {activeSession.overallScore}%
                 </span>
               )}
               <button
+                type="button"
                 onClick={() => setShowReview(false)}
-                className="p-1.5 hover:bg-indigo-100 rounded-lg text-neutral-400 hover:text-neutral-700 cursor-pointer"
+                className="p-1.5 rounded-lg cursor-pointer transition-colors"
+                style={{ color: 'var(--text-tertiary)' }}
               >
                 <X className="w-4 h-4" />
               </button>
@@ -718,20 +720,20 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
 
           <div className="space-y-4">
             {activeSession.questions.map((q, idx) => (
-              <div key={q.id || idx} className="p-4 bg-white border border-neutral-200 rounded-xl space-y-3">
+              <div key={q.id || idx} className="p-4 surface-elevated border-hairline rounded-xl space-y-3">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold flex items-center justify-center shrink-0">
+                    <span className="w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center shrink-0" style={{ backgroundColor: 'var(--primary-subtle)', color: 'var(--primary-strong)' }}>
                       {idx + 1}
                     </span>
-                    <p className="text-xs font-semibold text-neutral-900">{q.question}</p>
+                    <p className="body-sm font-semibold">{q.question}</p>
                   </div>
                   {q.feedback?.score && (
-                    <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded-full shrink-0 ${
-                      q.feedback.score >= 75 ? 'bg-emerald-100 text-emerald-800'
-                      : q.feedback.score >= 50 ? 'bg-amber-100 text-amber-800'
-                      : 'bg-rose-100 text-rose-800'
-                    }`}>
+                    <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-full shrink-0" style={
+                      q.feedback.score >= 75 ? { backgroundColor: 'var(--success-subtle)', color: 'var(--success-strong)' }
+                      : q.feedback.score >= 50 ? { backgroundColor: 'var(--warning-subtle)', color: 'var(--warning-strong)' }
+                      : { backgroundColor: 'var(--error-subtle)', color: 'var(--error-strong)' }
+                    }>
                       {q.feedback.score}%
                     </span>
                   )}
@@ -739,45 +741,45 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
 
                 {q.userAnswer ? (
                   <>
-                    <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg">
-                      <span className="text-[10px] font-mono text-neutral-400 uppercase block mb-1">
+                    <div className="p-3 border-hairline rounded-lg" style={{ backgroundColor: 'var(--surface-sunken)' }}>
+                      <span className="text-[10px] font-mono uppercase block mb-1" style={{ color: 'var(--text-tertiary)' }}>
                         {isInterviewAr ? 'إجابتك:' : 'Your Answer:'}
                       </span>
-                      <p className="text-xs text-neutral-700 italic">"{q.userAnswer}"</p>
+                      <p className="body-sm italic" style={{ color: 'var(--text-secondary)' }}>"{q.userAnswer}"</p>
                     </div>
 
                     {q.feedback ? (
                       <div className="space-y-2">
                         {q.feedback.strengths.length > 0 && (
                           <div>
-                            <span className="text-[11px] font-semibold text-emerald-700 block mb-1">
+                            <span className="text-[11px] font-semibold block mb-1" style={{ color: 'var(--success-strong)' }}>
                               {isInterviewAr ? '✅ نقاط القوة:' : '✅ Strengths:'}
                             </span>
                             {q.feedback.strengths.map((s, i) => (
-                              <div key={i} className="text-xs text-neutral-700 flex items-start gap-1.5 mb-0.5">
-                                <CheckCircle2 className="w-3 h-3 text-emerald-500 shrink-0 mt-0.5" />
+                              <div key={i} className="body-sm flex items-start gap-1.5 mb-0.5">
+                                <CheckCircle2 className="w-3 h-3 shrink-0 mt-0.5" style={{ color: 'var(--success)' }} />
                                 <span>{s}</span>
                               </div>
                             ))}
                           </div>
                         )}
                         {q.feedback.suggestedRefinement && (
-                          <div className="p-3 bg-indigo-50 border border-indigo-200 rounded-lg">
-                            <span className="text-[11px] font-semibold text-indigo-800 block mb-1">
+                          <div className="p-3 border-hairline rounded-lg" style={{ backgroundColor: 'var(--primary-subtle)' }}>
+                            <span className="text-[11px] font-semibold block mb-1" style={{ color: 'var(--primary-strong)' }}>
                               {isInterviewAr ? '💡 الإجابة المثالية المقترحة:' : '💡 Suggested Ideal Answer:'}
                             </span>
-                            <p className="text-xs text-indigo-900 italic">"{q.feedback.suggestedRefinement}"</p>
+                            <p className="body-sm italic" style={{ color: 'var(--primary-text)' }}>"{q.feedback.suggestedRefinement}"</p>
                           </div>
                         )}
                       </div>
                     ) : (
-                      <div className="text-xs text-neutral-400 italic">
+                      <div className="body-sm italic" style={{ color: 'var(--text-tertiary)' }}>
                         {isInterviewAr ? '(لم يتم التقييم بعد)' : '(Not yet evaluated)'}
                       </div>
                     )}
                   </>
                 ) : (
-                  <div className="text-xs text-neutral-400 italic px-2">
+                  <div className="body-sm italic px-2" style={{ color: 'var(--text-tertiary)' }}>
                     {isInterviewAr ? '⚠️ لم تتم الإجابة على هذا السؤال' : '⚠️ Question not answered'}
                   </div>
                 )}
@@ -787,15 +789,19 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
 
           <div className="flex gap-2 pt-2">
             <button
+              type="button"
               onClick={() => { setShowReview(false); handleStartNew(); }}
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl inline-flex items-center gap-1.5 cursor-pointer"
+              className="px-4 py-2 text-xs font-bold rounded-xl inline-flex items-center gap-1.5 cursor-pointer"
+              style={{ backgroundColor: 'var(--primary)', color: 'var(--surface)' }}
             >
               <RefreshCw className="w-3.5 h-3.5" />
               {isInterviewAr ? 'بدء جلسة جديدة' : 'New Session'}
             </button>
             <button
+              type="button"
               onClick={() => setShowReview(false)}
-              className="px-4 py-2 bg-white border border-neutral-200 hover:bg-neutral-50 text-neutral-700 text-xs font-semibold rounded-xl inline-flex items-center gap-1.5 cursor-pointer"
+              className="px-4 py-2 surface-elevated border-hairline text-xs font-semibold rounded-xl inline-flex items-center gap-1.5 cursor-pointer"
+              style={{ color: 'var(--text-secondary)' }}
             >
               {isInterviewAr ? 'إغلاق التقرير' : 'Close Report'}
             </button>
@@ -807,12 +813,12 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left: Previous Sessions */}
         <div className="lg:col-span-4 space-y-4">
-          <div className="p-4 bg-white border border-neutral-200 rounded-xl space-y-3">
+          <div className="p-4 surface-elevated border-hairline rounded-xl space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-neutral-900">
+              <span className="body-sm font-semibold">
                 {isAr ? 'جلسات التدريب السابقة' : 'Practice Sessions'}
               </span>
-              <span className="text-[11px] font-mono text-neutral-500">
+              <span className="text-[11px] font-mono" style={{ color: 'var(--text-tertiary)' }}>
                 {interviews.length} {isAr ? 'جلسات' : 'sessions'}
               </span>
             </div>
@@ -829,28 +835,30 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
                       setActiveSession(int);
                       setSelectedQuestionIndex(0);
                     }}
-                    className={`p-3 rounded-lg border text-xs cursor-pointer transition-all ${
-                      isSelected
-                        ? 'border-indigo-600 bg-indigo-50/50 shadow-xs'
-                        : 'border-neutral-200 bg-white hover:bg-neutral-50'
-                    }`}
+                    className="p-3 rounded-lg border-hairline body-sm cursor-pointer transition-all"
+                    style={isSelected ? {
+                      borderColor: 'var(--primary)',
+                      backgroundColor: 'var(--primary-subtle)'
+                    } : {
+                      backgroundColor: 'var(--surface)'
+                    }}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1.5">
-                        <span className="font-semibold text-neutral-900">{int.type}</span>
+                        <span className="font-semibold">{int.type}</span>
                         {int.completed && (
-                          <span className="text-[10px] bg-neutral-100 text-neutral-600 px-1.5 py-0.2 rounded font-mono">
+                          <span className="text-[10px] px-1.5 py-0.2 rounded font-mono" style={{ backgroundColor: 'var(--surface-raised)', color: 'var(--text-secondary)' }}>
                             {isAr ? 'مكتملة' : 'Done'}
                           </span>
                         )}
                       </div>
                       {int.overallScore && (
-                        <span className="font-mono tabular-nums font-bold text-indigo-700 bg-indigo-100/70 px-2 py-0.5 rounded text-[11px]">
+                        <span className="font-mono tabular-nums font-bold px-2 py-0.5 rounded text-[11px]" style={{ color: 'var(--primary-strong)', backgroundColor: 'var(--primary-subtle)' }}>
                           {int.overallScore}%
                         </span>
                       )}
                     </div>
-                    <div className="text-[11px] text-neutral-500 mt-1 flex justify-between">
+                    <div className="text-[11px] mt-1 flex justify-between" style={{ color: 'var(--text-tertiary)' }}>
                       <span>{int.jobRole}</span>
                       <span>{formatDate(int.createdAt)}</span>
                     </div>
@@ -864,15 +872,15 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
         {/* Right: Active Simulator Console */}
         <div className="lg:col-span-8 space-y-6">
           {activeSession ? (
-            <div className="p-6 bg-white border border-neutral-200 rounded-xl space-y-6">
+            <div className="p-6 surface-elevated border-hairline rounded-xl space-y-6">
               {/* Session Top Bar & Question Selector Tabs */}
-              <div className="border-b border-neutral-100 pb-4 space-y-3">
+              <div className="pb-4 space-y-3" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div>
-                    <span className="text-xs font-bold text-neutral-900">
+                    <span className="body-sm font-bold">
                       {activeSession.jobRole} · {activeSession.type}
                     </span>
-                    <div className="text-[11px] text-neutral-500 mt-0.5">
+                    <div className="text-[11px] mt-0.5" style={{ color: 'var(--text-tertiary)' }}>
                       {isInterviewAr ? 'السؤال' : 'Question'} {selectedQuestionIndex + 1} {isInterviewAr ? 'من' : 'of'}{' '}
                       {activeSession.questions.length}
                     </div>
@@ -880,7 +888,7 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
 
                   <div className="flex items-center gap-2">
                     {activeSession.completed && (
-                      <span className="text-xs font-mono font-bold bg-neutral-900 text-white px-2.5 py-1 rounded">
+                      <span className="text-xs font-mono font-bold px-2.5 py-1 rounded" style={{ backgroundColor: 'var(--text-primary)', color: 'var(--surface)' }}>
                         {isInterviewAr ? 'النتيجة الإجمالية' : 'Overall'}: {activeSession.overallScore}%
                       </span>
                     )}
@@ -898,32 +906,36 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
                     return (
                       <button
                         key={q.id || idx}
+                        type="button"
                         onClick={() => {
                           stopSpeaking();
                           stopListening();
                           setSelectedQuestionIndex(idx);
                         }}
-                        className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-semibold flex items-center justify-between transition-all cursor-pointer ${
-                          isCur
-                            ? 'bg-neutral-900 text-white shadow-xs'
-                            : hasScore
-                            ? 'bg-neutral-100 text-neutral-800 hover:bg-neutral-200'
-                            : 'bg-neutral-50 text-neutral-400 hover:bg-neutral-100'
-                        }`}
+                        className="flex-1 py-1.5 px-2 rounded-lg text-xs font-semibold flex items-center justify-between transition-all cursor-pointer"
+                        style={isCur ? {
+                          backgroundColor: 'var(--text-primary)',
+                          color: 'var(--surface)'
+                        } : hasScore ? {
+                          backgroundColor: 'var(--surface-raised)',
+                          color: 'var(--text-primary)'
+                        } : {
+                          backgroundColor: 'var(--surface-subtle)',
+                          color: 'var(--text-tertiary)'
+                        }}
                       >
                         <span>
                           {isAr ? 'سؤال' : 'Q'} {idx + 1}
                         </span>
                         {hasScore ? (
                           <span
-                            className={`text-[10px] font-mono font-bold ${
-                              isCur ? 'text-emerald-300' : 'text-emerald-700'
-                            }`}
+                            className="text-[10px] font-mono font-bold"
+                            style={{ color: isCur ? 'var(--success-subtle-text)' : 'var(--success-strong)' }}
                           >
                             {q.feedback!.score}%
                           </span>
                         ) : hasAnswer ? (
-                          <CheckCircle2 className="w-3 h-3 text-neutral-400" />
+                          <CheckCircle2 className="w-3 h-3" style={{ color: 'var(--text-tertiary)' }} />
                         ) : null}
                       </button>
                     );
@@ -934,13 +946,13 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
               {/* Current Question Display & Interviewer Audio Card */}
               {currentQ && (
                 <div className="space-y-4">
-                  <div className="p-5 bg-gradient-to-br from-neutral-900 to-neutral-800 text-white rounded-xl shadow-sm space-y-3 relative overflow-hidden">
+                  <div className="p-5 rounded-xl space-y-3 relative overflow-hidden" style={{ background: 'var(--gradient-dark)', color: 'var(--surface)' }}>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center">
-                          <Headphones className="w-3.5 h-3.5 text-indigo-300" />
+                        <div className="w-6 h-6 rounded-full flex items-center justify-center" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}>
+                          <Headphones className="w-3.5 h-3.5" style={{ color: 'var(--primary-subtle-text)' }} />
                         </div>
-                        <span className="text-[11px] font-mono tracking-wider text-neutral-300 uppercase">
+                        <span className="text-[11px] font-mono tracking-wider uppercase" style={{ color: 'var(--text-on-dark-secondary)' }}>
                           {isAr ? 'سؤال مسؤول المقابلة (AI Interviewer)' : 'INTERVIEWER QUESTION'}
                         </span>
                       </div>
@@ -949,37 +961,41 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
                       <div className="flex items-center gap-2">
                         {isSpeakingQuestion ? (
                           <button
+                            type="button"
                             onClick={stopSpeaking}
-                            className="flex items-center gap-1.5 px-2.5 py-1 bg-rose-500/80 hover:bg-rose-500 text-white rounded-full text-[11px] font-semibold transition-all cursor-pointer animate-pulse"
+                            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer animate-pulse"
+                            style={{ backgroundColor: 'var(--error)', color: 'var(--surface)' }}
                           >
                             <Square className="w-3 h-3" />
                             <span>{isAr ? 'إيقاف الصوت' : 'Stop Audio'}</span>
                           </button>
                         ) : (
                           <button
+                            type="button"
                             onClick={() => handleSpeakQuestion(currentQ.question)}
-                            className="flex items-center gap-1.5 px-2.5 py-1 bg-white/15 hover:bg-white/25 text-white rounded-full text-[11px] font-semibold transition-all cursor-pointer"
+                            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all cursor-pointer"
+                            style={{ backgroundColor: 'rgba(255, 255, 255, 0.15)', color: 'var(--surface)' }}
                           >
-                            <Volume2 className="w-3.5 h-3.5 text-indigo-300" />
+                            <Volume2 className="w-3.5 h-3.5" style={{ color: 'var(--primary-subtle-text)' }} />
                             <span>{isAr ? 'استمع للسؤال' : 'Listen Question'}</span>
                           </button>
                         )}
                       </div>
                     </div>
 
-                    <h3 className="text-base font-semibold leading-relaxed text-neutral-100">
+                    <h3 className="text-base font-semibold leading-relaxed">
                       "{currentQ.question}"
                     </h3>
 
                     {/* Interviewer Speaking Soundwave Animation */}
                     {isSpeakingQuestion && (
-                      <div className="pt-2 flex items-center gap-2 text-indigo-300 text-xs">
+                      <div className="pt-2 flex items-center gap-2 text-xs" style={{ color: 'var(--primary-subtle-text)' }}>
                         <div className="flex items-end gap-1 h-4">
-                          <span className="w-1 bg-indigo-400 animate-pulse rounded-full h-2" />
-                          <span className="w-1 bg-indigo-300 animate-pulse rounded-full h-4 delay-75" />
-                          <span className="w-1 bg-indigo-400 animate-pulse rounded-full h-3 delay-150" />
-                          <span className="w-1 bg-indigo-300 animate-pulse rounded-full h-4 delay-100" />
-                          <span className="w-1 bg-indigo-400 animate-pulse rounded-full h-1 delay-200" />
+                          <span className="w-1 rounded-full h-2 animate-pulse" style={{ backgroundColor: 'var(--primary-subtle-text)' }} />
+                          <span className="w-1 rounded-full h-4 animate-pulse delay-75" style={{ backgroundColor: 'var(--primary-subtle-text)' }} />
+                          <span className="w-1 rounded-full h-3 animate-pulse delay-150" style={{ backgroundColor: 'var(--primary-subtle-text)' }} />
+                          <span className="w-1 rounded-full h-4 animate-pulse delay-100" style={{ backgroundColor: 'var(--primary-subtle-text)' }} />
+                          <span className="w-1 rounded-full h-1 animate-pulse delay-200" style={{ backgroundColor: 'var(--primary-subtle-text)' }} />
                         </div>
                         <span className="text-[11px] font-medium">
                           {isAr ? 'مسؤول المقابلة يتحدث الآن...' : 'Interviewer is speaking...'}
@@ -990,19 +1006,20 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
 
                   {/* If previous feedback exists on this question */}
                   {currentQ.feedback ? (
-                    <div className="p-5 border border-neutral-200 rounded-xl bg-neutral-50/70 space-y-4 text-xs">
-                      <div className="flex items-center justify-between border-b border-neutral-200/70 pb-3">
+                    <div className="p-5 border-hairline rounded-xl space-y-4 text-xs" style={{ backgroundColor: 'var(--surface-subtle)' }}>
+                      <div className="flex items-center justify-between pb-3" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
                         <div className="flex items-center gap-2">
-                          <Award className="w-4 h-4 text-indigo-600" />
-                          <span className="font-bold text-neutral-900 text-sm">
+                          <Award className="w-4 h-4" style={{ color: 'var(--primary)' }} />
+                          <span className="heading-sm">
                             {isAr ? 'تقييم وتوجيه الذكاء الاصطناعي (STAR Coaching)' : 'AI Coaching & Feedback'}
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="font-mono tabular-nums font-bold text-sm bg-neutral-900 text-white px-3 py-0.5 rounded-full">
+                          <span className="font-mono tabular-nums font-bold text-sm px-3 py-0.5 rounded-full" style={{ backgroundColor: 'var(--text-primary)', color: 'var(--surface)' }}>
                             {currentQ.feedback.score}%
                           </span>
                           <button
+                            type="button"
                             onClick={() =>
                               handleSpeakQuestion(
                                 `${isAr ? 'النتيجة' : 'Score'}: ${currentQ.feedback!.score}%. ${
@@ -1011,7 +1028,8 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
                               )
                             }
                             title={isAr ? 'قراءة التقييم صوتياً' : 'Read feedback aloud'}
-                            className="p-1.5 text-neutral-500 hover:text-neutral-900 hover:bg-neutral-200 rounded-lg cursor-pointer"
+                            className="p-1.5 rounded-lg cursor-pointer transition-colors"
+                            style={{ color: 'var(--text-tertiary)' }}
                           >
                             <Volume2 className="w-4 h-4" />
                           </button>
@@ -1020,11 +1038,11 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
 
                       {/* Candidate Answer Display */}
                       {currentQ.userAnswer && (
-                        <div className="p-3 bg-white border border-neutral-200 rounded-lg space-y-1">
-                          <span className="text-[10px] font-mono text-neutral-500 uppercase block">
+                        <div className="p-3 surface-elevated border-hairline rounded-lg space-y-1">
+                          <span className="text-[10px] font-mono uppercase block" style={{ color: 'var(--text-tertiary)' }}>
                             {isAr ? 'إجابتك المسجلة:' : 'Your Answer:'}
                           </span>
-                          <p className="text-neutral-700 italic leading-relaxed">
+                          <p className="italic leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                             "{currentQ.userAnswer}"
                           </p>
                         </div>
@@ -1032,13 +1050,13 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
 
                       {/* Strengths */}
                       <div>
-                        <span className="font-semibold text-emerald-800 block mb-1.5">
+                        <span className="font-semibold block mb-1.5" style={{ color: 'var(--success-strong)' }}>
                           {isAr ? 'نقاط القوة في إجابتك:' : 'Key Strengths:'}
                         </span>
-                        <div className="space-y-1 text-neutral-700">
+                        <div className="space-y-1" style={{ color: 'var(--text-secondary)' }}>
                           {currentQ.feedback.strengths.map((s, i) => (
                             <div key={i} className="flex items-start gap-1.5">
-                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                              <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: 'var(--success)' }} />
                               <span>{s}</span>
                             </div>
                           ))}
@@ -1046,11 +1064,11 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
                       </div>
 
                       {/* Suggested Refinement */}
-                      <div className="pt-2 border-t border-neutral-200/70 text-neutral-800">
-                        <span className="font-semibold text-indigo-900 block mb-1">
+                      <div className="pt-2" style={{ borderTop: '1px solid var(--border-subtle)' }}>
+                        <span className="font-semibold block mb-1" style={{ color: 'var(--primary-strong)' }}>
                           {isAr ? 'صيغة الإجابة المثالية المقترحة:' : 'Suggested STAR Refinement:'}
                         </span>
-                        <p className="italic text-neutral-700 bg-white p-3 rounded-lg border border-neutral-200 leading-relaxed">
+                        <p className="italic p-3 rounded-lg border-hairline leading-relaxed surface-elevated" style={{ color: 'var(--text-secondary)' }}>
                           "{currentQ.feedback.suggestedRefinement}"
                         </p>
                       </div>
@@ -1059,12 +1077,14 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
                       {selectedQuestionIndex + 1 < activeSession.questions.length && (
                         <div className="pt-2 flex justify-end">
                           <button
+                            type="button"
                             onClick={() => {
                               stopSpeaking();
                               stopListening();
                               setSelectedQuestionIndex(selectedQuestionIndex + 1);
                             }}
-                            className="px-4 py-2 text-xs font-semibold text-white bg-neutral-900 hover:bg-neutral-800 rounded-lg inline-flex items-center gap-1.5 cursor-pointer shadow-xs"
+                            className="px-4 py-2 text-xs font-semibold rounded-lg inline-flex items-center gap-1.5 cursor-pointer"
+                            style={{ backgroundColor: 'var(--text-primary)', color: 'var(--surface)' }}
                           >
                             <span>{isAr ? 'الانتقال للسؤال التالي' : 'Next Question'}</span>
                             <ChevronRight className="w-3.5 h-3.5" />
@@ -1076,18 +1096,24 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
                     /* Interactive Voice & Text Answer Form */
                     <div className="space-y-4">
                       {/* Voice Recording Control Bar */}
-                      <div className="p-4 bg-gradient-to-r from-neutral-50 via-indigo-50/30 to-neutral-50 border border-neutral-200 rounded-xl space-y-3">
+                      <div className="p-4 rounded-xl space-y-3 border-hairline" style={{ background: 'var(--gradient-subtle)' }}>
                         <div className="flex flex-wrap items-center justify-between gap-3">
                           <div className="flex items-center gap-2">
                             {/* Big Pulse Record Button */}
                             <button
                               type="button"
                               onClick={toggleListening}
-                              className={`px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all cursor-pointer shadow-sm ${
-                                isListeningAnswer
-                                  ? 'bg-rose-600 hover:bg-rose-700 text-white animate-pulse ring-4 ring-rose-200'
-                                  : 'bg-indigo-600 hover:bg-indigo-700 text-white hover:shadow-md'
+                              className={`px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all cursor-pointer ${
+                                isListeningAnswer ? 'animate-pulse' : ''
                               }`}
+                              style={isListeningAnswer ? {
+                                backgroundColor: 'var(--error)',
+                                color: 'var(--surface)',
+                                boxShadow: '0 0 0 4px var(--error-subtle)'
+                              } : {
+                                backgroundColor: 'var(--primary)',
+                                color: 'var(--surface)'
+                              }}
                             >
                               {isListeningAnswer ? (
                                 <>
@@ -1104,14 +1130,14 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
 
                             {/* Live Recording Indicator */}
                             {isListeningAnswer && (
-                              <div className="flex items-center gap-2 px-3 py-1 bg-white border border-rose-200 rounded-lg text-xs font-mono text-rose-600">
-                                <span className="w-2 h-2 rounded-full bg-rose-600 animate-ping" />
+                              <div className="flex items-center gap-2 px-3 py-1 surface-elevated border-hairline rounded-lg text-xs font-mono" style={{ color: 'var(--error)' }}>
+                                <span className="w-2 h-2 rounded-full animate-ping" style={{ backgroundColor: 'var(--error)' }} />
                                 <span>REC {formatTimer(recordingSeconds)}</span>
                               </div>
                             )}
                           </div>
 
-                          <div className="flex items-center gap-2 text-xs text-neutral-500">
+                          <div className="flex items-center gap-2 text-xs" style={{ color: 'var(--text-tertiary)' }}>
                             <span className="text-[11px]">
                               {isAr
                                 ? 'اللغة الحالية: ' + (voiceLanguage === 'ar-EG' ? 'عربي' : 'English')
@@ -1122,25 +1148,25 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
 
                         {/* Speech Error Banner */}
                         {speechError && (
-                          <div className="p-2.5 bg-rose-50 border border-rose-200 rounded-lg text-rose-800 text-xs flex items-center gap-2">
-                            <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+                          <div className="p-2.5 border-hairline rounded-lg text-xs flex items-center gap-2" style={{ backgroundColor: 'var(--error-subtle)', color: 'var(--error-strong)' }}>
+                            <AlertCircle className="w-4 h-4 shrink-0" style={{ color: 'var(--error)' }} />
                             <span>{speechError}</span>
                           </div>
                         )}
 
                         {/* Live Waveform when speaking */}
                         {isListeningAnswer && (
-                          <div className="p-3 bg-white border border-indigo-100 rounded-lg flex items-center justify-between">
-                            <div className="flex items-center gap-1.5 text-xs text-indigo-700 font-semibold">
-                              <Radio className="w-4 h-4 text-indigo-600 animate-pulse" />
+                          <div className="p-3 surface-elevated border-hairline rounded-lg flex items-center justify-between">
+                            <div className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: 'var(--primary-strong)' }}>
+                              <Radio className="w-4 h-4 animate-pulse" style={{ color: 'var(--primary)' }} />
                               <span>{isAr ? 'الميكروفون يستمع لك الآن... تكلم بطلاقة' : 'Listening live... speak naturally'}</span>
                             </div>
                             <div className="flex items-end gap-1 h-5">
-                              <span className="w-1 bg-indigo-500 animate-pulse rounded-full h-3" />
-                              <span className="w-1 bg-indigo-600 animate-pulse rounded-full h-5 delay-75" />
-                              <span className="w-1 bg-indigo-400 animate-pulse rounded-full h-2 delay-150" />
-                              <span className="w-1 bg-indigo-600 animate-pulse rounded-full h-4 delay-100" />
-                              <span className="w-1 bg-indigo-500 animate-pulse rounded-full h-5 delay-200" />
+                              <span className="w-1 animate-pulse rounded-full h-3" style={{ backgroundColor: 'var(--primary)' }} />
+                              <span className="w-1 animate-pulse rounded-full h-5 delay-75" style={{ backgroundColor: 'var(--primary-strong)' }} />
+                              <span className="w-1 animate-pulse rounded-full h-2 delay-150" style={{ backgroundColor: 'var(--primary-muted)' }} />
+                              <span className="w-1 animate-pulse rounded-full h-4 delay-100" style={{ backgroundColor: 'var(--primary-strong)' }} />
+                              <span className="w-1 animate-pulse rounded-full h-5 delay-200" style={{ backgroundColor: 'var(--primary)' }} />
                             </div>
                           </div>
                         )}
@@ -1149,13 +1175,13 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
                       {/* Text Input / Transcription Box */}
                       <div className="space-y-1.5">
                         <div className="flex items-center justify-between text-xs">
-                          <label className="font-semibold text-neutral-800">
+                          <label className="font-semibold" style={{ color: 'var(--text-primary)' }}>
                             {isAr
                               ? 'نص إجابتك (يتم تفريغه تلقائياً من الصوت، أو يمكنك الكتابة والتعديل):'
                               : 'Your Answer (Transcribed automatically from speech, or type directly):'}
                           </label>
                           {answerDraft && (
-                            <span className="text-neutral-400 font-mono text-[11px]">
+                            <span className="font-mono text-[11px]" style={{ color: 'var(--text-tertiary)' }}>
                               {answerDraft.split(/\s+/).filter(Boolean).length} {isAr ? 'كلمة' : 'words'}
                             </span>
                           )}
@@ -1170,7 +1196,12 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
                               ? 'تحدث في الميكروفون بالأعلى لتفريغ إجابتك هنا، أو اكتب مباشرة بصيغة STAR (الموقف، الإجراء، والنتيجة)...'
                               : 'Speak using the microphone above to transcribe in real time, or type your STAR response directly...'
                           }
-                          className="w-full text-xs p-3.5 border border-neutral-300 rounded-xl outline-none focus:ring-2 focus:ring-indigo-600/20 focus:border-indigo-600 leading-relaxed font-sans"
+                          className="w-full text-xs p-3.5 border-hairline rounded-xl outline-none leading-relaxed font-sans"
+                          style={{
+                            backgroundColor: 'var(--surface)',
+                            color: 'var(--text-primary)',
+                            '--tw-ring-color': 'var(--primary-muted)'
+                          } as React.CSSProperties}
                         />
                       </div>
 
@@ -1180,15 +1211,18 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
                           type="button"
                           onClick={() => setAnswerDraft('')}
                           disabled={!answerDraft || isSubmittingAnswer}
-                          className="text-xs text-neutral-400 hover:text-neutral-700 underline cursor-pointer disabled:opacity-30"
+                          className="text-xs underline cursor-pointer disabled:opacity-30"
+                          style={{ color: 'var(--text-tertiary)' }}
                         >
                           {isAr ? 'مسح الإجابة' : 'Clear Draft'}
                         </button>
 
                         <button
+                          type="button"
                           onClick={handleSubmit}
                           disabled={isSubmittingAnswer || !answerDraft.trim()}
-                          className="px-5 py-2.5 text-xs font-semibold text-white bg-neutral-900 hover:bg-neutral-800 rounded-xl transition-all inline-flex items-center gap-2 cursor-pointer shadow-sm disabled:opacity-40"
+                          className="px-5 py-2.5 text-xs font-semibold rounded-xl transition-all inline-flex items-center gap-2 cursor-pointer disabled:opacity-40"
+                          style={{ backgroundColor: 'var(--text-primary)', color: 'var(--surface)' }}
                         >
                           <Send className="w-3.5 h-3.5" />
                           <span>
@@ -1208,17 +1242,26 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
               )}
             </div>
           ) : (
-            <div className="p-16 text-center text-xs text-neutral-500 bg-white border border-neutral-200 rounded-xl space-y-3">
-              <Headphones className="w-8 h-8 text-neutral-400 mx-auto" />
+            <div className="p-16 text-center body-sm surface-elevated border-hairline rounded-xl space-y-3" style={{ color: 'var(--text-tertiary)' }}>
+              <Headphones className="w-8 h-8 mx-auto" style={{ color: 'var(--text-tertiary)' }} />
               <p>
                 {isAr
                   ? 'لا توجد جلسة نشطة. اختر جلسة من القائمة أو ابدأ محاكاة صوتية جديدة بالأعلى.'
                   : 'No active session. Select a session or start a new voice simulation above.'}
               </p>
               <button
+                type="button"
                 onClick={handleStartNew}
-                className="px-4 py-2 bg-neutral-900 text-white rounded-lg text-xs font-semibold cursor-pointer inline-flex items-center gap-1.5"
+                className="px-4 py-2 rounded-lg text-xs font-semibold cursor-pointer inline-flex items-center gap-1.5"
+                style={{ backgroundColor: 'var(--text-primary)', color: 'var(--surface)' }}
               >
                 <Mic className="w-3.5 h-3.5" />
                 <span>{isAr ? 'بدء محاكاة الآن' : 'Start Simulation Now'}</span>
               </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};

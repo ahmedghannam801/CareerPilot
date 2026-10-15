@@ -67,8 +67,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
   return (
     <aside
       dir={isAr ? 'rtl' : 'ltr'}
-      className="hidden md:flex flex-col shrink-0 bg-white border-e border-slate-200/70 w-56 sticky top-14 h-[calc(100vh-56px)] overflow-y-auto z-30"
-      style={{ boxShadow: '1px 0 0 rgba(0,0,0,0.04)' }}
+      className="hidden md:flex flex-col shrink-0 w-56 sticky top-14 h-[calc(100vh-56px)] overflow-y-auto z-30 border-hairline"
+      style={{
+        backgroundColor: 'var(--surface-container-low)',
+        borderInlineEndColor: 'var(--outline-variant)',
+        borderInlineEndWidth: '1px',
+        borderInlineEndStyle: 'solid',
+      }}
     >
       <nav className="flex-1 p-3 space-y-0.5">
         {enrichedItems.map((item) => {
@@ -79,42 +84,77 @@ export const Sidebar: React.FC<SidebarProps> = ({
           return (
             <button
               key={item.id}
+              type="button"
               onClick={() => onNavigate(item.id)}
-              className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-medium transition-all cursor-pointer group ${
-                isActive
-                  ? 'text-white'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+              className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-micro font-medium transition-all cursor-pointer group ${
+                isActive ? '' : ''
               }`}
               style={
                 isActive
                   ? {
-                      background: 'linear-gradient(135deg, #4f6ef7 0%, #6c8aff 100%)',
-                      boxShadow: '0 2px 8px rgba(79,110,247,0.2)',
+                      backgroundColor: 'var(--primary-container)',
+                      color: 'var(--on-primary-container)',
+                      boxShadow: '0 2px 8px -2px rgba(184, 196, 255, 0.3)',
                     }
-                  : {}
+                  : {
+                      backgroundColor: 'transparent',
+                      color: 'var(--on-surface-variant)',
+                    }
               }
+              onMouseEnter={(e) => {
+                if (!isActive) {
+                  e.currentTarget.style.backgroundColor = 'var(--surface-container)';
+                  e.currentTarget.style.color = 'var(--on-surface)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isActive) {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.color = 'var(--on-surface-variant)';
+                }
+              }}
             >
               <Icon
-                className={`w-4 h-4 shrink-0 ${
-                  isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-600'
-                }`}
+                className="w-4 h-4 shrink-0"
+                style={{
+                  color: isActive ? 'var(--on-primary-container)' : 'currentColor',
+                  opacity: isActive ? 1 : 0.7,
+                }}
               />
               <span className="flex-1 truncate text-start">{label}</span>
               <div className="flex items-center gap-1">
                 {item.badge && (
                   <span
-                    className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
-                      isActive ? 'bg-white/20 text-white' : 'bg-blue-50 text-blue-600'
-                    }`}
+                    className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                    style={
+                      isActive
+                        ? {
+                            backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                            color: 'var(--on-primary-container)',
+                          }
+                        : {
+                            backgroundColor: 'rgba(184, 196, 255, 0.12)',
+                            color: 'var(--primary)',
+                          }
+                    }
                   >
                     {item.badge}
                   </span>
                 )}
                 {item.count !== undefined && item.count > 0 && (
                   <span
-                    className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center ${
-                      isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'
-                    }`}
+                    className="text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center"
+                    style={
+                      isActive
+                        ? {
+                            backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                            color: 'var(--on-primary-container)',
+                          }
+                        : {
+                            backgroundColor: 'var(--surface-container)',
+                            color: 'var(--on-surface-variant)',
+                          }
+                    }
                   >
                     {item.count}
                   </span>
@@ -126,32 +166,70 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </nav>
 
       {/* Readiness Score Footer */}
-      <div className="p-3 border-t border-slate-100 m-3 mt-0 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl">
+      <div
+        className="p-3 m-3 mt-0 rounded-lg"
+        style={{
+          backgroundColor: 'var(--surface-container)',
+          borderTop: '1px solid var(--outline-variant)',
+        }}
+      >
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-1.5">
-            <TrendingUp className="w-3.5 h-3.5 text-blue-600" />
-            <span className="text-[11px] font-semibold text-slate-700">
+            <TrendingUp
+              className="w-3.5 h-3.5"
+              style={{ color: 'var(--primary)' }}
+            />
+            <span
+              className="text-label-caps"
+              style={{
+                color: 'var(--on-surface)',
+                fontSize: '11px',
+                textTransform: 'none',
+              }}
+            >
               {isAr ? 'جاهزيتك' : 'Readiness'}
             </span>
           </div>
-          <span className="text-xs font-bold text-blue-700">
+          <span
+            className="text-mono-metric"
+            style={{
+              color: 'var(--primary)',
+              fontSize: '12px',
+            }}
+          >
             {metrics?.readinessScore !== undefined && metrics?.readinessScore !== null
               ? `${metrics.readinessScore}%`
-              : (isAr ? '—' : '—')}
+              : '—'}
           </span>
         </div>
-        <div className="w-full h-1.5 bg-white/80 rounded-full overflow-hidden">
+        <div
+          className="w-full h-1.5 rounded-full overflow-hidden"
+          style={{
+            backgroundColor: 'var(--surface-container-high)',
+          }}
+        >
           <div
             className="h-full rounded-full transition-all duration-700"
             style={{
               width: `${metrics?.readinessScore ?? 0}%`,
-              background: 'linear-gradient(90deg, #4f6ef7, #22c55e)',
+              background: 'linear-gradient(90deg, var(--primary-container), var(--tertiary))',
             }}
           />
         </div>
         <button
+          type="button"
           onClick={() => onNavigate('career')}
-          className="w-full mt-2 text-[11px] font-semibold text-blue-600 hover:text-blue-800 transition-colors cursor-pointer text-center"
+          className="w-full mt-2 text-micro font-medium transition-colors cursor-pointer text-center"
+          style={{
+            color: 'var(--primary)',
+            fontSize: '11px',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = 'var(--primary-fixed-dim)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = 'var(--primary)';
+          }}
         >
           {isAr ? 'عرض التفاصيل ←' : 'View Details →'}
         </button>

@@ -53,35 +53,36 @@ export const ContextualRightPanel: React.FC<ContextualRightPanelProps> = ({
 
   return (
     <aside
-      className="hidden xl:flex flex-col shrink-0 w-72 2xl:w-80 bg-white border-s border-[#E4EAF2] p-4 2xl:p-5 sticky top-14 h-[calc(100vh-56px)] overflow-y-auto z-20 space-y-4"
+      className="hidden xl:flex flex-col shrink-0 w-72 2xl:w-80 border-s border-hairline p-4 2xl:p-5 sticky top-14 h-[calc(100vh-56px)] overflow-y-auto z-20 space-y-4"
+      style={{ backgroundColor: 'var(--surface-container-lowest)' }}
     >
       {/* 1. Current Target Trajectory Card */}
-      <div className="bg-[#F7F9FC] border border-[#E4EAF2] rounded-2xl p-4">
-        <div className="flex items-center justify-between text-xs text-[#64748B] mb-1.5">
-          <span className="flex items-center gap-1.5 font-bold uppercase tracking-wider text-[10px] text-[#2563EB]">
-            <Target className="w-3.5 h-3.5 text-[#2563EB]" />
+      <div className="card-surface rounded-2xl p-4">
+        <div className="flex items-center justify-between mb-1.5">
+          <span className="flex items-center gap-1.5 text-label-caps" style={{ color: 'var(--primary)' }}>
+            <Target className="w-3.5 h-3.5" style={{ color: 'var(--primary)' }} />
             {isAr ? 'الهدف المهني النشط' : 'Active Career Goal'}
           </span>
           {readiness !== null ? (
-            <span className="text-[11px] font-black text-[#17253B]">{readiness}%</span>
+            <span className="text-micro font-semibold" style={{ color: 'var(--on-surface)' }}>{readiness}%</span>
           ) : (
-            <span className="text-[11px] text-[#94A3B8]">{isAr ? 'لم يُحسب' : 'Not set'}</span>
+            <span className="text-micro" style={{ color: 'var(--on-surface-variant)' }}>{isAr ? 'لم يُحسب' : 'Not set'}</span>
           )}
         </div>
-        <div className="text-sm font-black text-[#17253B] line-clamp-1">
+        <div className="text-body-strong line-clamp-1" style={{ color: 'var(--on-surface)' }}>
           {targetRole}
         </div>
-        <p className="text-[11.5px] text-[#64748B] mt-1 line-clamp-2">
+        <p className="text-micro mt-1 line-clamp-2" style={{ color: 'var(--on-surface-variant)' }}>
           {isAr
             ? `مسار معتمد لتحقيق الجاهزية التامة والمنافسة في السوق.`
             : `Verified trajectory to maximize your market positioning and interview rate.`}
         </p>
 
         {/* Readiness track */}
-        <div className="w-full h-1.5 bg-[#E4EAF2] rounded-full overflow-hidden mt-3">
+        <div className="w-full h-1.5 rounded-full overflow-hidden mt-3" style={{ backgroundColor: 'var(--surface-container-high)' }}>
           <div
-            className="h-full rounded-full bg-[#2563EB] transition-all duration-500"
-            style={{ width: `${readiness ?? 0}%` }}
+            className="h-full rounded-full transition-all duration-500"
+            style={{ width: `${readiness ?? 0}%`, backgroundColor: 'var(--primary)' }}
           />
         </div>
       </div>
@@ -90,19 +91,21 @@ export const ContextualRightPanel: React.FC<ContextualRightPanelProps> = ({
       {currentTab === 'dashboard' && (
         <>
           {/* AI Guidance Box */}
-          <div className="bg-[#EEF4FF] border border-[#2563EB]/20 rounded-2xl p-4">
-            <div className="flex items-center gap-1.5 text-xs font-bold text-[#2563EB] mb-1.5">
+          <div className="rounded-2xl p-4 border-hairline" style={{ backgroundColor: 'rgba(184, 196, 255, 0.08)', borderColor: 'var(--primary)' }}>
+            <div className="flex items-center gap-1.5 text-body-strong mb-1.5" style={{ color: 'var(--primary)' }}>
               <Sparkles className="w-3.5 h-3.5" />
               <span>{isAr ? 'توجيه الذكاء الاصطناعي' : 'AI Career Guidance'}</span>
             </div>
-            <p className="text-xs text-[#17253B] leading-relaxed">
+            <p className="text-body-sm leading-relaxed" style={{ color: 'var(--on-surface)' }}>
               {isAr
                 ? `لديك ${opportunities.length} وظيفة متطابقة في السوق. تحسين السيرة لنسبة 90%+ سيرفع معدل استدعاء المقابلات فوراً.`
                 : `You have ${opportunities.length} matched roles. Tailoring your CV to 90%+ compatibility will immediately increase your interview callbacks.`}
             </p>
             <button
+              type="button"
               onClick={() => onNavigate('cv')}
-              className="mt-3 text-xs font-bold text-[#2563EB] hover:text-[#1D4ED8] flex items-center gap-1 transition-colors cursor-pointer"
+              className="mt-3 text-body-sm font-semibold flex items-center gap-1 transition-colors cursor-pointer"
+              style={{ color: 'var(--primary)' }}
             >
               <span>{isAr ? 'تخصيص السيرة الآن' : 'Tailor CV for Top Match'}</span>
               <ArrowRight className="w-3 h-3 rtl:rotate-180" />
@@ -111,23 +114,24 @@ export const ContextualRightPanel: React.FC<ContextualRightPanelProps> = ({
 
           {/* Key Skill Focus Gaps */}
           <div className="space-y-2">
-            <div className="text-xs font-bold text-[#17253B] flex items-center justify-between">
+            <div className="text-body-sm font-semibold flex items-center justify-between" style={{ color: 'var(--on-surface)' }}>
               <span>{isAr ? 'المهارات المطلوبة للمسار' : 'Required Role Skills'}</span>
-              <span className="text-[11px] text-[#2563EB] font-semibold">{isAr ? 'مهم' : 'In-demand'}</span>
+              <span className="text-label-caps" style={{ color: 'var(--primary)' }}>{isAr ? 'مهم' : 'In-demand'}</span>
             </div>
             <div className="space-y-1.5">
               {profile.skills && profile.skills.length > 0 ? (
                 profile.skills.slice(0, 3).map((skill, idx) => (
                   <div
                     key={idx}
-                    className="flex items-center justify-between p-2 rounded-xl bg-[#F7F9FC] border border-[#E4EAF2] text-xs"
+                    className="flex items-center justify-between p-2 rounded-xl border-hairline text-body-sm"
+                    style={{ backgroundColor: 'var(--surface-container-low)' }}
                   >
-                    <span className="font-medium text-[#17253B]">
+                    <span className="font-medium" style={{ color: 'var(--on-surface)' }}>
                       {typeof skill === 'string'
                         ? skill
                         : ((skill as any).canonicalName || (skill as any).name || 'Skill')}
                     </span>
-                    <span className="text-[10px] font-bold text-[#2563EB] bg-[#EEF4FF] px-1.5 py-0.5 rounded-full">
+                    <span className="badge-pill" style={{ backgroundColor: 'rgba(184, 196, 255, 0.12)', color: 'var(--primary)', border: '1px solid rgba(184, 196, 255, 0.25)' }}>
                       {typeof skill === 'object' && skill && 'level' in skill
                         ? (skill as any).level
                         : isAr
@@ -137,7 +141,7 @@ export const ContextualRightPanel: React.FC<ContextualRightPanelProps> = ({
                   </div>
                 ))
               ) : (
-                <div className="text-xs text-[#94A3B8] text-center py-2">
+                <div className="text-body-sm text-center py-2" style={{ color: 'var(--on-surface-variant)' }}>
                   {isAr ? 'أضف مهاراتك في ملفك الشخصي' : 'Add your skills in Career Profile'}
                 </div>
               )}
@@ -147,15 +151,15 @@ export const ContextualRightPanel: React.FC<ContextualRightPanelProps> = ({
       )}
 
       {currentTab === 'career' && (
-        <div className="bg-[#F7F9FC] border border-[#E4EAF2] rounded-2xl p-4 space-y-3">
-          <div className="flex items-center gap-2 text-xs font-bold text-[#17253B]">
-            <TrendingUp className="w-4 h-4 text-[#2563EB]" />
+        <div className="card-surface rounded-2xl p-4 space-y-3">
+          <div className="flex items-center gap-2 text-body-sm font-semibold" style={{ color: 'var(--on-surface)' }}>
+            <TrendingUp className="w-4 h-4" style={{ color: 'var(--primary)' }} />
             <span>{isAr ? 'النمط المهني (Career DNA)' : 'Career Archetype'}</span>
           </div>
-          <div className="text-xs text-[#64748B] leading-relaxed">
+          <div className="text-body-sm leading-relaxed" style={{ color: 'var(--on-surface-variant)' }}>
             {profile.dna?.primaryDirection || profile.dna?.currentLevel || (isAr ? 'مهندس برمجيات ذكي وتطبيقات متكاملة' : 'Full-Stack Systems Engineer')}
           </div>
-          <div className="pt-2 border-t border-[#E4EAF2] text-[11px] text-[#64748B]">
+          <div className="pt-2 border-t border-hairline text-micro" style={{ color: 'var(--on-surface-variant)' }}>
             {isAr
               ? 'يتم تحديث التحليل تلقائياً مع كل مشروع جديد تقدمه وتوثقه.'
               : 'DNA trajectory updates continuously as you build and submit evidence.'}
@@ -164,20 +168,20 @@ export const ContextualRightPanel: React.FC<ContextualRightPanelProps> = ({
       )}
 
       {currentTab === 'cv' && (
-        <div className="bg-[#EEF4FF] border border-[#2563EB]/20 rounded-2xl p-4 space-y-3">
-          <div className="flex items-center gap-2 text-xs font-bold text-[#2563EB]">
+        <div className="rounded-2xl p-4 space-y-3 border-hairline" style={{ backgroundColor: 'rgba(184, 196, 255, 0.08)', borderColor: 'var(--primary)' }}>
+          <div className="flex items-center gap-2 text-body-sm font-semibold" style={{ color: 'var(--primary)' }}>
             <FileCheck2 className="w-4 h-4" />
             <span>{isAr ? 'معايير فحص الـ ATS' : 'ATS Audit Checklist'}</span>
           </div>
-          <ul className="text-xs text-[#17253B] space-y-2">
+          <ul className="text-body-sm space-y-2" style={{ color: 'var(--on-surface)' }}>
             <li className="flex items-center gap-1.5">
-              <span className="text-[#15803D]">✓</span> {isAr ? 'تنسيق قياسي خالٍ من الجداول المعقدة' : 'Clean single-column ATS layout'}
+              <span style={{ color: 'var(--tertiary)' }}>✓</span> {isAr ? 'تنسيق قياسي خالٍ من الجداول المعقدة' : 'Clean single-column ATS layout'}
             </li>
             <li className="flex items-center gap-1.5">
-              <span className="text-[#15803D]">✓</span> {isAr ? 'كلمات مفتاحية مطابقة لمتطلبات السوق' : 'Keyword alignment with role'}
+              <span style={{ color: 'var(--tertiary)' }}>✓</span> {isAr ? 'كلمات مفتاحية مطابقة لمتطلبات السوق' : 'Keyword alignment with role'}
             </li>
             <li className="flex items-center gap-1.5">
-              <span className="text-[#2563EB]">ℹ</span>
+              <span style={{ color: 'var(--primary)' }}>ℹ</span>
               {bestATS !== null
                 ? (isAr ? `أفضل نتيجة ATS مسجلة: ${bestATS}%` : `Best ATS Score: ${bestATS}%`)
                 : (isAr ? 'لم يتم تحليل السيرة بعد' : 'Run ATS Audit to get score')}
@@ -187,12 +191,12 @@ export const ContextualRightPanel: React.FC<ContextualRightPanelProps> = ({
       )}
 
       {currentTab === 'opportunities' && (
-        <div className="bg-[#F7F9FC] border border-[#E4EAF2] rounded-2xl p-4 space-y-3">
-          <div className="flex items-center gap-2 text-xs font-bold text-[#17253B]">
-            <Briefcase className="w-4 h-4 text-[#2563EB]" />
+        <div className="card-surface rounded-2xl p-4 space-y-3">
+          <div className="flex items-center gap-2 text-body-sm font-semibold" style={{ color: 'var(--on-surface)' }}>
+            <Briefcase className="w-4 h-4" style={{ color: 'var(--primary)' }} />
             <span>{isAr ? 'تلميح التقديم الذكي' : 'Strategic Application Tip'}</span>
           </div>
-          <p className="text-xs text-[#64748B] leading-relaxed">
+          <p className="text-body-sm leading-relaxed" style={{ color: 'var(--on-surface-variant)' }}>
             {isAr
               ? 'التقديم على الوظائف التي يتجاوز تطابقها 85% مع إرفاق سيرة مخصصة يضاعف فرص استدعائك 3 مرات.'
               : 'Applying to jobs with >85% match using tailored CVs triples your callback probability.'}
@@ -201,33 +205,33 @@ export const ContextualRightPanel: React.FC<ContextualRightPanelProps> = ({
       )}
 
       {currentTab === 'applications' && (
-        <div className="bg-[#F7F9FC] border border-[#E4EAF2] rounded-2xl p-4 space-y-3">
-          <div className="flex items-center gap-2 text-xs font-bold text-[#17253B]">
-            <Layers className="w-4 h-4 text-[#2563EB]" />
+        <div className="card-surface rounded-2xl p-4 space-y-3">
+          <div className="flex items-center gap-2 text-body-sm font-semibold" style={{ color: 'var(--on-surface)' }}>
+            <Layers className="w-4 h-4" style={{ color: 'var(--primary)' }} />
             <span>{isAr ? 'ملخص مسار التقديم' : 'Pipeline Summary'}</span>
           </div>
-          <div className="grid grid-cols-2 gap-2 text-center text-xs">
-            <div className="p-2 bg-white rounded-xl border border-[#E4EAF2]">
-              <div className="font-black text-[#17253B]">{applications.length}</div>
-              <div className="text-[10px] text-[#64748B]">{isAr ? 'إجمالي الطلبات' : 'Total'}</div>
+          <div className="grid grid-cols-2 gap-2 text-center text-body-sm">
+            <div className="p-2 rounded-xl border-hairline" style={{ backgroundColor: 'var(--surface-container)' }}>
+              <div className="font-semibold" style={{ color: 'var(--on-surface)' }}>{applications.length}</div>
+              <div className="text-micro" style={{ color: 'var(--on-surface-variant)' }}>{isAr ? 'إجمالي الطلبات' : 'Total'}</div>
             </div>
-            <div className="p-2 bg-white rounded-xl border border-[#E4EAF2]">
-              <div className="font-black text-[#15803D]">
+            <div className="p-2 rounded-xl border-hairline" style={{ backgroundColor: 'var(--surface-container)' }}>
+              <div className="font-semibold" style={{ color: 'var(--tertiary)' }}>
                 {applications.filter((a) => a.status === 'Interview' || a.status === 'Offer').length}
               </div>
-              <div className="text-[10px] text-[#64748B]">{isAr ? 'مقابلات وعروض' : 'Interviews'}</div>
+              <div className="text-micro" style={{ color: 'var(--on-surface-variant)' }}>{isAr ? 'مقابلات وعروض' : 'Interviews'}</div>
             </div>
           </div>
         </div>
       )}
 
       {currentTab === 'interviews' && (
-        <div className="bg-[#F7F9FC] border border-[#E4EAF2] rounded-2xl p-4 space-y-3">
-          <div className="flex items-center gap-2 text-xs font-bold text-[#17253B]">
-            <Mic className="w-4 h-4 text-[#2563EB]" />
+        <div className="card-surface rounded-2xl p-4 space-y-3">
+          <div className="flex items-center gap-2 text-body-sm font-semibold" style={{ color: 'var(--on-surface)' }}>
+            <Mic className="w-4 h-4" style={{ color: 'var(--primary)' }} />
             <span>{isAr ? 'منهجية الإجابة (STAR)' : 'STAR Method Framework'}</span>
           </div>
-          <p className="text-xs text-[#64748B] leading-relaxed">
+          <p className="text-body-sm leading-relaxed" style={{ color: 'var(--on-surface-variant)' }}>
             {isAr
               ? 'ركز في كل إجابة على: الموقف (Situation)، المهمة (Task)، الإجراء المتخذ (Action)، والنتيجة بالأرقام (Result).'
               : 'Structure answers: Situation, Task, Action taken, and quantifiable Result.'}
@@ -236,13 +240,14 @@ export const ContextualRightPanel: React.FC<ContextualRightPanelProps> = ({
       )}
 
       {/* 3. Quick Action Shortcut */}
-      <div className="pt-2 border-t border-[#E4EAF2]">
+      <div className="pt-2 border-t border-hairline">
         <button
+          type="button"
           onClick={() => onNavigate('assistant')}
-          className="w-full flex items-center justify-between p-3 rounded-xl bg-[#0B1F3A] text-white hover:bg-[#17253B] transition-colors cursor-pointer text-xs font-bold shadow-xs"
+          className="btn-primary w-full flex items-center justify-between p-3 rounded-xl transition-colors cursor-pointer text-body-sm font-semibold"
         >
           <div className="flex items-center gap-2">
-            <Lightbulb className="w-4 h-4 text-[#22C7E8]" />
+            <Lightbulb className="w-4 h-4" style={{ color: 'var(--secondary)' }} />
             <span>{isAr ? 'استشر المساعد الذكي' : 'Ask Career Coach'}</span>
           </div>
           <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />

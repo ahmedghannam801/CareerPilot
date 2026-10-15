@@ -302,35 +302,35 @@ export const ATSResumeDocument: React.FC<ATSResumeDocumentProps> = ({
   return (
     <div className="space-y-4">
       {/* Action Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 p-4 bg-slate-900 text-white rounded-2xl shadow-sm">
+      <div className="card-surface flex flex-wrap items-center justify-between gap-3 p-4">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-blue-600/30 border border-blue-400/30 flex items-center justify-center text-blue-400">
+          <div className="w-9 h-9 rounded-lg bg-[var(--primary-container)] border border-[var(--outline-variant)] flex items-center justify-center text-[var(--primary)]">
             <FileCheck className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-blue-300">
+              <span className="text-label-caps text-[var(--primary)]">
                 {isAr ? 'معاينة الـ CV الاحترافي' : 'Professional CV Preview'}
               </span>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold">
+              <span className="badge-pill bg-[var(--success-container)] text-[var(--on-success-container)] border-[var(--outline-variant)]">
                 ATS: {resume.atsScore || 95}%
               </span>
             </div>
-            <span className="text-[11px] text-slate-400">
+            <span className="text-body-sm text-[var(--on-surface-variant)]">
               {isAr ? 'تنسيق متوافق مع Workday · Taleo · Greenhouse' : 'ATS-compliant · Workday · Taleo · Greenhouse'}
             </span>
           </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <div className="flex items-center bg-slate-800 p-1 rounded-xl border border-slate-700 text-xs">
+          <div className="flex items-center bg-[var(--surface-container)] p-1 rounded-lg border-hairline text-xs">
             {([
               { id: 'google_doc' as const, en: '📄 Google Doc', ar: 'قوقل دوك' },
               { id: 'classic'    as const, en: 'Classic ATS',   ar: 'كلاسيك' },
               { id: 'modern'     as const, en: 'Modern Tech',   ar: 'تيك عصري' },
             ]).map(t => (
               <button key={t.id} type="button" onClick={() => setTemplate(t.id)}
-                className={`px-2.5 py-1 rounded-lg font-semibold transition-colors cursor-pointer ${template === t.id ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}>
+                className={`px-2.5 py-1 rounded-lg font-semibold transition-colors cursor-pointer ${template === t.id ? 'btn-primary' : 'text-[var(--on-surface-variant)] hover:text-[var(--on-surface)]'}`}>
                 {isAr ? t.ar : t.en}
               </button>
             ))}
@@ -340,7 +340,7 @@ export const ATSResumeDocument: React.FC<ATSResumeDocumentProps> = ({
             href="https://docs.google.com/document/d/1jSVGtqNaoYSt2qSfCAsc39NBS-pxVAEu/edit?usp=sharing"
             target="_blank"
             rel="noopener noreferrer"
-            className="px-2.5 py-2 bg-slate-800 hover:bg-slate-700 text-blue-300 hover:text-white text-xs font-semibold rounded-xl transition-colors inline-flex items-center gap-1.5"
+            className="px-2.5 py-2 bg-[var(--surface-container)] hover:bg-[var(--surface-container-high)] text-[var(--primary)] hover:text-[var(--on-surface)] text-xs font-semibold rounded-lg transition-colors inline-flex items-center gap-1.5"
             title={isAr ? 'فتح القالب الأصلي في Google Docs' : 'Open template in Google Docs'}
           >
             <ExternalLink className="w-3.5 h-3.5" />
@@ -348,32 +348,32 @@ export const ATSResumeDocument: React.FC<ATSResumeDocumentProps> = ({
           </a>
 
           <button type="button" onClick={handleExportPDF}
-            className="px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl transition-all inline-flex items-center gap-1.5 shadow-sm cursor-pointer">
+            className="btn-primary px-3.5 py-2 text-xs font-bold inline-flex items-center gap-1.5 cursor-pointer">
             <Download className="w-3.5 h-3.5" />
             <span>{isAr ? 'تحميل PDF' : 'Download PDF'}</span>
           </button>
 
           <button type="button" onClick={() => exportResumeToWordDoc(resume, profile)}
-            className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-blue-300 hover:text-white text-xs font-bold rounded-xl transition-all inline-flex items-center gap-1.5 cursor-pointer">
+            className="px-3.5 py-2 bg-[var(--surface-container)] hover:bg-[var(--surface-container-high)] text-[var(--primary)] hover:text-[var(--on-surface)] text-xs font-bold rounded-lg transition-all inline-flex items-center gap-1.5 cursor-pointer">
             <Download className="w-3.5 h-3.5" />
             <span>{isAr ? 'تحميل Word (DOCX)' : 'Download Word'}</span>
           </button>
 
           <button type="button" onClick={() => window.print()}
-            className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl transition-colors inline-flex items-center gap-1.5 cursor-pointer">
+            className="px-3 py-2 bg-[var(--surface-container)] hover:bg-[var(--surface-container-high)] text-[var(--on-surface)] text-xs font-semibold rounded-lg transition-colors inline-flex items-center gap-1.5 cursor-pointer">
             <Printer className="w-3.5 h-3.5" />
             <span>{isAr ? 'طباعة' : 'Print'}</span>
           </button>
 
           <button type="button" onClick={handleCopyPlainText}
-            className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-xl transition-colors inline-flex items-center gap-1.5 cursor-pointer">
-            {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+            className="px-3 py-2 bg-[var(--surface-container)] hover:bg-[var(--surface-container-high)] text-[var(--on-surface)] text-xs font-semibold rounded-lg transition-colors inline-flex items-center gap-1.5 cursor-pointer">
+            {copied ? <Check className="w-3.5 h-3.5 text-[var(--success)]" /> : <Copy className="w-3.5 h-3.5" />}
             <span>{copied ? (isAr ? 'تم!' : 'Copied!') : isAr ? 'نسخ نص' : 'Copy Text'}</span>
           </button>
 
           {onSaveAsNewVersion && (
             <button type="button" onClick={handleSaveCopy}
-              className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition-colors inline-flex items-center gap-1.5 cursor-pointer">
+              className="px-3.5 py-2 bg-[var(--success-container)] hover:bg-[var(--success)] text-[var(--on-success-container)] hover:text-white text-xs font-bold rounded-lg transition-colors inline-flex items-center gap-1.5 cursor-pointer">
               {savedSuccess ? <Check className="w-3.5 h-3.5" /> : <ShieldCheck className="w-3.5 h-3.5" />}
               <span>{savedSuccess ? (isAr ? 'تم الحفظ!' : 'Saved!') : isAr ? 'حفظ نسخة' : 'Save Version'}</span>
             </button>
@@ -382,7 +382,7 @@ export const ATSResumeDocument: React.FC<ATSResumeDocumentProps> = ({
       </div>
 
       {/* A4 Document */}
-      <div className="flex justify-center bg-slate-100 dark:bg-slate-900/60 p-4 sm:p-8 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-x-auto">
+      <div className="flex justify-center bg-[var(--surface-container-lowest)] p-4 sm:p-8 rounded-lg border-hairline overflow-x-auto">
         <div id="ats-resume-print-document"
           data-ats-document="true"
           className="w-full max-w-[800px] bg-white text-slate-900 shadow-xl border border-slate-200/80 rounded-xl transition-all overflow-hidden"

@@ -295,7 +295,6 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
                     className="p-2.5 rounded-xl cursor-pointer flex items-center justify-between gap-3 transition-colors"
                     style={{
                       backgroundColor: 'transparent',
-                      '&:hover': { backgroundColor: 'var(--surface-container)' }
                     }}
                     onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--surface-container)'}
                     onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}

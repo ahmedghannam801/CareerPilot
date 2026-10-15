@@ -376,34 +376,37 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
 
           {/* Pillar 3: Target Job Match Score */}
-          <div className="p-4 rounded-xl border border-[#E4EAF2] bg-[#FAFBFC] flex flex-col justify-between">
+          <div className="surface-elevated p-4 flex flex-col justify-between">
             <div>
-              <div className="flex items-center justify-between text-xs font-bold text-[#64748B] mb-2">
+              <div className="flex items-center justify-between text-label-strong mb-2" style={{ color: 'var(--on-surface-variant)' }}>
                 <span className="flex items-center gap-1.5">
-                  <Target className="w-3.5 h-3.5 text-[#15803D]" />
+                  <Target className="w-3.5 h-3.5" style={{ color: 'var(--success)' }} />
                   {isAr ? 'تطابق الوظيفة المستهدفة' : 'Job Match Score'}
                 </span>
-                <span className="text-[10px] text-[#94A3B8]">Role-Specific</span>
+                <span className="text-label-xs" style={{ color: 'var(--on-surface-variant)', opacity: 0.7 }}>Role-Specific</span>
               </div>
 
               {matchOpportunity && matchOpportunity.matchScore != null ? (
                 <div>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-black text-[#15803D]">{matchOpportunity.matchScore}%</span>
-                    <span className="text-[10px] font-bold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full truncate max-w-[120px]">
+                    <span className="text-display-lg" style={{ color: 'var(--success)' }}>{matchOpportunity.matchScore}%</span>
+                    <span className="badge-pill truncate max-w-[120px]" style={{
+                      backgroundColor: 'var(--success-container)',
+                      color: 'var(--on-success-container)'
+                    }}>
                       {matchOpportunity.company}
                     </span>
                   </div>
-                  <p className="text-[11px] text-[#64748B] mt-1 truncate">
+                  <p className="text-body-xs truncate" style={{ color: 'var(--on-surface-variant)', marginTop: '0.25rem' }}>
                     {matchOpportunity.title}
                   </p>
                 </div>
               ) : (
                 <div>
-                  <div className="text-sm font-bold text-[#64748B]">
+                  <div className="text-title-sm" style={{ color: 'var(--on-surface-variant)' }}>
                     {isAr ? 'لم يُقارن بعد' : 'Not Compared Yet'}
                   </div>
-                  <p className="text-[11px] text-[#94A3B8] mt-1">
+                  <p className="text-body-xs" style={{ color: 'var(--on-surface-variant)', opacity: 0.7, marginTop: '0.25rem' }}>
                     {isAr
                       ? 'اختر فرصة وظيفية لمطابقتها مع سيرتك واستخراج الكلمات الناقصة.'
                       : 'Select a target job to calculate precise semantic match.'}
@@ -412,12 +415,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               )}
             </div>
 
-            <div className="mt-4 pt-3 border-t border-[#EDF2F7]">
+            <div className="border-hairline" style={{ marginTop: '1rem', paddingTop: '0.75rem', borderColor: 'var(--outline-variant)' }}>
               {matchOpportunity ? (
                 <button
                   type="button"
                   onClick={() => onSelectOpportunity(matchOpportunity)}
-                  className="w-full py-1.5 text-xs font-bold text-[#15803D] hover:bg-emerald-50 rounded-lg transition-colors cursor-pointer text-center"
+                  className="w-full py-1.5 text-label-strong rounded-lg transition-colors cursor-pointer text-center"
+                  style={{ color: 'var(--success)', backgroundColor: 'transparent' }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--success-container)'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                 >
                   {isAr ? 'تخصيص السيرة لهذه الوظيفة' : 'Tailor CV for this Job'}
                 </button>
@@ -425,7 +431,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 <button
                   type="button"
                   onClick={() => onNavigate('opportunities')}
-                  className="w-full py-1.5 text-xs font-bold text-[#2563EB] hover:bg-[#EEF4FF] rounded-lg transition-colors cursor-pointer text-center"
+                  className="w-full py-1.5 text-label-strong rounded-lg transition-colors cursor-pointer text-center"
+                  style={{ color: 'var(--primary)', backgroundColor: 'transparent' }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--primary-container)'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                 >
                   {isAr ? 'استكشف الوظائف المتاحة' : 'Discover Opportunities'}
                 </button>
@@ -437,41 +446,47 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
       {/* B. The Next Move (Single most prominent section) */}
       <div
-        className="relative bg-white border-2 border-[#2563EB] rounded-2xl p-5 sm:p-7 shadow-xs overflow-hidden"
+        className="relative card-surface overflow-hidden"
         style={{
-          boxShadow: '0 4px 20px -2px rgba(37,99,235,0.08)',
+          borderWidth: '2px',
+          borderColor: 'var(--primary)',
+          boxShadow: '0 4px 20px -2px var(--primary-shadow)',
         }}
       >
         {/* Subtle top indicator bar */}
-        <div className="absolute top-0 start-0 end-0 h-1.5 bg-gradient-to-r from-[#2563EB] via-[#1683F8] to-[#22C7E8]" />
+        <div className="absolute top-0 start-0 end-0 h-1.5" style={{ background: 'linear-gradient(90deg, var(--primary) 0%, var(--tertiary) 50%, var(--secondary) 100%)' }} />
 
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2.5 max-w-2xl">
             {/* Tag */}
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-[#2563EB] bg-[#EEF4FF] px-2.5 py-0.5 rounded-full border border-[#2563EB]/20">
-                <Sparkles className="w-3.5 h-3.5 text-[#2563EB]" />
+              <span className="inline-flex items-center gap-1.5 text-label-caps rounded-full px-2.5 py-0.5 border-hairline" style={{
+                color: 'var(--primary)',
+                backgroundColor: 'var(--primary-container)',
+                borderColor: 'var(--primary)'
+              }}>
+                <Sparkles className="w-3.5 h-3.5" />
                 {isAr ? 'خطوتك القادمة الأكثر قيمة (My Next Move)' : 'My Next Move'}
               </span>
-              <span className="text-[11px] font-bold text-[#64748B] flex items-center gap-1">
-                <Clock className="w-3 h-3 text-[#94A3B8]" />
+              <span className="text-label-strong flex items-center gap-1" style={{ color: 'var(--on-surface-variant)' }}>
+                <Clock className="w-3 h-3" style={{ color: 'var(--on-surface-variant)', opacity: 0.7 }} />
                 {isAr ? nextMove.effortAr : nextMove.effortEn}
               </span>
             </div>
 
             {/* Title */}
-            <h2 className="text-lg sm:text-xl font-black text-[#0B1F3A] leading-tight">
+            <h2 className="text-headline-lg leading-tight" style={{ color: 'var(--on-surface)' }}>
               {isAr ? nextMove.titleAr : nextMove.titleEn}
             </h2>
 
             {/* Why explanation */}
-            <p className="text-xs sm:text-sm text-[#475569] leading-relaxed">
+            <p className="text-body-base leading-relaxed" style={{ color: 'var(--on-surface-variant)' }}>
               {isAr ? nextMove.whyAr : nextMove.whyEn}
             </p>
 
             {/* Supports metadata */}
-            <div className="flex items-center gap-2 text-xs text-[#64748B] pt-1">
-              <span className="font-semibold text-[#17253B]">
+            <div className="flex items-center gap-2 text-body-sm pt-1" style={{ color: 'var(--on-surface-variant)' }}>
+              <span className="text-body-strong" style={{ color: 'var(--on-surface)' }}>
                 {isAr ? nextMove.supportsAr : nextMove.supportsEn}
               </span>
             </div>
@@ -480,15 +495,26 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           {/* Action Button */}
           <div className="flex sm:flex-col gap-2 shrink-0">
             <button
+              type="button"
               onClick={() => onNavigate(nextMove.actionTab)}
-              className="w-full sm:w-auto px-5 py-3 rounded-xl bg-[#2563EB] text-white hover:bg-[#1D4ED8] transition-all text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+              className="btn-primary w-full sm:w-auto flex items-center justify-center gap-2"
             >
               <span>{isAr ? nextMove.actionLabelAr : nextMove.actionLabelEn}</span>
               <ArrowRight className="w-4 h-4 rtl:rotate-180" />
             </button>
             <button
+              type="button"
               onClick={() => onNavigate('career')}
-              className="px-4 py-2 rounded-xl text-xs font-semibold text-[#64748B] hover:text-[#17253B] hover:bg-[#F7F9FC] transition-colors cursor-pointer text-center"
+              className="px-4 py-2 rounded-xl text-label-base transition-colors cursor-pointer text-center"
+              style={{ color: 'var(--on-surface-variant)', backgroundColor: 'transparent' }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = 'var(--on-surface)';
+                e.currentTarget.style.backgroundColor = 'var(--surface-container-high)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = 'var(--on-surface-variant)';
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
             >
               {isAr ? 'عرض خريطة المسار' : 'View Full Roadmap'}
             </button>
@@ -511,17 +537,17 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       />
 
       {/* D. Opportunities Worth Your Attention */}
-      <div className="bg-white border border-[#E4EAF2] rounded-2xl p-5 sm:p-6 shadow-xs space-y-4">
+      <div className="card-surface space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-[#EEF4FF] text-[#2563EB] flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'var(--primary-container)', color: 'var(--primary)' }}>
               <Briefcase className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-[#0B1F3A]">
+              <h3 className="text-title-sm" style={{ color: 'var(--on-surface)' }}>
                 {isAr ? 'فرص عمل تستحق اهتمامك' : 'Opportunities Worth Your Attention'}
               </h3>
-              <p className="text-[12px] text-[#64748B]">
+              <p className="text-body-xs" style={{ color: 'var(--on-surface-variant)' }}>
                 {isAr
                   ? 'وظائف منتقاة بعناية بناءً على مهاراتك ومعدل التطابق مع متطلباتك'
                   : 'Curated roles based on verified skill alignment and trajectory'}
@@ -530,8 +556,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
 
           <button
+            type="button"
             onClick={() => onNavigate('opportunities')}
-            className="text-xs font-semibold text-[#2563EB] hover:text-[#1D4ED8] flex items-center gap-1 cursor-pointer"
+            className="text-label-base flex items-center gap-1 cursor-pointer"
+            style={{ color: 'var(--primary)' }}
           >
             <span>{isAr ? `عرض الكل (${opportunities.length})` : `View all (${opportunities.length})`}</span>
             <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
@@ -539,31 +567,40 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
 
         {/* Vertical List of Opportunities */}
-        <div className="divide-y divide-[#EDF2F7]">
+        <div style={{ borderTop: '1px solid var(--outline-variant)' }}>
           {topMatches.map((opp) => (
             <div
               key={opp.id}
-              className="py-3.5 first:pt-1 last:pb-1 flex flex-col sm:flex-row sm:items-center justify-between gap-3 group hover:bg-[#F7F9FC] -mx-2 px-2 rounded-xl transition-colors"
+              className="py-3.5 first:pt-1 last:pb-1 flex flex-col sm:flex-row sm:items-center justify-between gap-3 group -mx-2 px-2 rounded-xl transition-colors"
+              style={{ cursor: 'pointer' }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--surface-container-highest)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
             >
               <div className="space-y-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <h4 className="text-sm font-bold text-[#17253B] truncate group-hover:text-[#2563EB] transition-colors">
+                  <h4 className="text-title-sm truncate transition-colors" style={{ color: 'var(--on-surface)' }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = 'var(--primary)'}
+                    onMouseLeave={(e) => e.currentTarget.style.color = 'var(--on-surface)'}
+                  >
                     {opp.title}
                   </h4>
-                  <span className="text-[10px] font-bold text-[#64748B] bg-slate-100 px-2 py-0.5 rounded-full">
+                  <span className="badge-pill" style={{
+                    backgroundColor: 'var(--surface-container-high)',
+                    color: 'var(--on-surface-variant)'
+                  }}>
                     {opp.workModel || 'Remote'}
                   </span>
                 </div>
-                <div className="text-xs text-[#64748B] flex items-center gap-2">
-                  <span className="font-medium text-[#17253B]">{opp.company}</span>
+                <div className="text-body-xs flex items-center gap-2" style={{ color: 'var(--on-surface-variant)' }}>
+                  <span className="text-body-strong" style={{ color: 'var(--on-surface)' }}>{opp.company}</span>
                   <span>•</span>
                   <span>{opp.location || 'Flexible'}</span>
                   <span>•</span>
-                  <span className="text-[#15803D] font-semibold">{opp.salary || 'Competitive'}</span>
+                  <span className="text-body-strong" style={{ color: 'var(--success)' }}>{opp.salary || 'Competitive'}</span>
                 </div>
                 {opp.requirements && opp.requirements.length > 0 && (
-                  <div className="flex items-center gap-1.5 text-[11px] text-[#64748B] pt-0.5">
-                    <span className="text-[#94A3B8]">{isAr ? 'المهارات المطلوبة:' : 'Key skills:'}</span>
+                  <div className="flex items-center gap-1.5 text-body-xs pt-0.5" style={{ color: 'var(--on-surface-variant)' }}>
+                    <span style={{ opacity: 0.7 }}>{isAr ? 'المهارات المطلوبة:' : 'Key skills:'}</span>
                     <span className="truncate">{opp.requirements.slice(0, 3).join(', ')}</span>
                   </div>
                 )}
@@ -574,19 +611,32 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 <div className="text-end">
                   {opp.matchScore != null ? (
                     <>
-                      <div className="text-sm font-black text-[#15803D]">{opp.matchScore}%</div>
-                      <div className="text-[10px] text-[#94A3B8]">{isAr ? 'تطابق' : 'Match'}</div>
+                      <div className="text-title-sm" style={{ color: 'var(--success)' }}>{opp.matchScore}%</div>
+                      <div className="text-label-xs" style={{ color: 'var(--on-surface-variant)', opacity: 0.7 }}>{isAr ? 'تطابق' : 'Match'}</div>
                     </>
                   ) : (
-                    <div className="text-[11px] text-[#94A3B8] text-end leading-tight">
+                    <div className="text-body-xs text-end leading-tight" style={{ color: 'var(--on-surface-variant)', opacity: 0.7 }}>
                       {isAr ? 'لم يُحلل' : 'Not analyzed'}
                     </div>
                   )}
                 </div>
 
                 <button
+                  type="button"
                   onClick={() => onSelectOpportunity(opp)}
-                  className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#EEF4FF] text-[#2563EB] hover:bg-[#2563EB] hover:text-white transition-all cursor-pointer flex items-center gap-1"
+                  className="px-3.5 py-1.5 rounded-xl text-label-strong transition-all cursor-pointer flex items-center gap-1"
+                  style={{
+                    backgroundColor: 'var(--primary-container)',
+                    color: 'var(--primary)'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'var(--primary)';
+                    e.currentTarget.style.color = 'var(--on-primary)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'var(--primary-container)';
+                    e.currentTarget.style.color = 'var(--primary)';
+                  }}
                 >
                   <span>{isAr ? 'تخصيص وتقديم' : 'Tailor & Apply'}</span>
                   <ChevronRight className="w-3.5 h-3.5 rtl:rotate-180" />
@@ -600,17 +650,19 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       {/* E. My Active Work (Compact ongoing tasks) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Active Applications */}
-        <div className="bg-white border border-[#E4EAF2] rounded-2xl p-5 shadow-xs space-y-3">
+        <div className="card-surface space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Layers className="w-4 h-4 text-[#2563EB]" />
-              <h3 className="text-sm font-bold text-[#0B1F3A]">
+              <Layers className="w-4 h-4" style={{ color: 'var(--primary)' }} />
+              <h3 className="text-title-sm" style={{ color: 'var(--on-surface)' }}>
                 {isAr ? 'طلبات التقديم النشطة' : 'Active Applications'}
               </h3>
             </div>
             <button
+              type="button"
               onClick={() => onNavigate('applications')}
-              className="text-xs font-semibold text-[#2563EB] hover:text-[#1D4ED8] cursor-pointer"
+              className="text-label-base cursor-pointer"
+              style={{ color: 'var(--primary)' }}
             >
               {isAr ? 'لوحة المتابعة' : 'Pipeline'}
             </button>
@@ -621,20 +673,30 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               {activeApplications.slice(0, 3).map((app) => (
                 <div
                   key={app.id}
-                  className="p-3 rounded-xl bg-[#F7F9FC] border border-[#E4EAF2] flex items-center justify-between text-xs"
+                  className="p-3 rounded-xl border-hairline flex items-center justify-between text-body-sm"
+                  style={{
+                    backgroundColor: 'var(--surface-container-highest)',
+                    borderColor: 'var(--outline-variant)'
+                  }}
                 >
                   <div>
-                    <div className="font-bold text-[#17253B]">{app.jobTitle}</div>
-                    <div className="text-[11px] text-[#64748B]">{app.company}</div>
+                    <div className="text-body-strong" style={{ color: 'var(--on-surface)' }}>{app.jobTitle}</div>
+                    <div className="text-body-xs" style={{ color: 'var(--on-surface-variant)' }}>{app.company}</div>
                   </div>
                   <span
-                    className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                      app.status === 'Interview'
-                        ? 'bg-purple-50 text-purple-700'
+                    className="badge-pill"
+                    style={{
+                      backgroundColor: app.status === 'Interview'
+                        ? 'var(--tertiary-container)'
                         : app.status === 'Applied'
-                        ? 'bg-blue-50 text-[#2563EB]'
-                        : 'bg-amber-50 text-amber-700'
-                    }`}
+                        ? 'var(--primary-container)'
+                        : 'var(--warning-container)',
+                      color: app.status === 'Interview'
+                        ? 'var(--on-tertiary-container)'
+                        : app.status === 'Applied'
+                        ? 'var(--on-primary-container)'
+                        : 'var(--on-warning-container)'
+                    }}
                   >
                     {app.status}
                   </span>
@@ -642,11 +704,17 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               ))}
             </div>
           ) : (
-            <div className="text-center py-6 text-xs text-[#64748B] bg-[#F7F9FC] rounded-xl border border-dashed border-[#E4EAF2]">
+            <div className="text-center py-6 text-body-sm rounded-xl border border-dashed" style={{
+              color: 'var(--on-surface-variant)',
+              backgroundColor: 'var(--surface-container-highest)',
+              borderColor: 'var(--outline-variant)'
+            }}>
               <p>{isAr ? 'لا توجد طلبات تقديم معلقة حالياً' : 'No active applications in pipeline'}</p>
               <button
+                type="button"
                 onClick={() => onNavigate('opportunities')}
-                className="mt-2 text-xs font-bold text-[#2563EB] hover:underline cursor-pointer"
+                className="text-label-strong hover:underline cursor-pointer"
+                style={{ marginTop: '0.5rem', color: 'var(--primary)' }}
               >
                 {isAr ? 'اختر وظيفة وابدأ التقديم' : 'Find a role and apply'}
               </button>
@@ -655,17 +723,19 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
 
         {/* Evidence & Learning Work */}
-        <div className="bg-white border border-[#E4EAF2] rounded-2xl p-5 shadow-xs space-y-3">
+        <div className="card-surface space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <FolderGit2 className="w-4 h-4 text-[#20C997]" />
-              <h3 className="text-sm font-bold text-[#0B1F3A]">
+              <FolderGit2 className="w-4 h-4" style={{ color: 'var(--secondary)' }} />
+              <h3 className="text-title-sm" style={{ color: 'var(--on-surface)' }}>
                 {isAr ? 'المشاريع وبناء الأدلة' : 'Practical Evidence & Projects'}
               </h3>
             </div>
             <button
+              type="button"
               onClick={() => onNavigate('projects')}
-              className="text-xs font-semibold text-[#2563EB] hover:text-[#1D4ED8] cursor-pointer"
+              className="text-label-base cursor-pointer"
+              style={{ color: 'var(--primary)' }}
             >
               {isAr ? 'كل المشاريع' : 'All Projects'}
             </button>
@@ -677,24 +747,36 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 <div
                   key={proj.id}
                   onClick={() => onSelectProject(proj)}
-                  className="p-3 rounded-xl bg-[#F7F9FC] border border-[#E4EAF2] flex items-center justify-between text-xs hover:border-[#2563EB]/40 transition-colors cursor-pointer"
+                  className="p-3 rounded-xl border-hairline flex items-center justify-between text-body-sm transition-colors cursor-pointer"
+                  style={{
+                    backgroundColor: 'var(--surface-container-highest)',
+                    borderColor: 'var(--outline-variant)'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--primary)'}
+                  onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--outline-variant)'}
                 >
                   <div className="min-w-0">
-                    <div className="font-bold text-[#17253B] truncate">{proj.title}</div>
-                    <div className="text-[11px] text-[#64748B] flex items-center gap-1.5 mt-0.5">
-                      <span className="text-[#20C997] font-semibold">{proj.targetSkill}</span>
+                    <div className="text-body-strong truncate" style={{ color: 'var(--on-surface)' }}>{proj.title}</div>
+                    <div className="flex items-center gap-1.5 text-body-xs" style={{ color: 'var(--on-surface-variant)', marginTop: '0.125rem' }}>
+                      <span className="text-body-strong" style={{ color: 'var(--secondary)' }}>{proj.targetSkill}</span>
                       <span>•</span>
                       <span>{proj.duration || '30m'}</span>
                     </div>
                   </div>
                   <span
-                    className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ${
-                      proj.status === 'evaluated'
-                        ? 'bg-emerald-50 text-[#15803D]'
+                    className="badge-pill shrink-0"
+                    style={{
+                      backgroundColor: proj.status === 'evaluated'
+                        ? 'var(--success-container)'
                         : proj.status === 'submitted'
-                        ? 'bg-blue-50 text-[#2563EB]'
-                        : 'bg-slate-100 text-[#64748B]'
-                    }`}
+                        ? 'var(--primary-container)'
+                        : 'var(--surface-container-high)',
+                      color: proj.status === 'evaluated'
+                        ? 'var(--on-success-container)'
+                        : proj.status === 'submitted'
+                        ? 'var(--on-primary-container)'
+                        : 'var(--on-surface-variant)'
+                    }}
                   >
                     {proj.status === 'evaluated'
                       ? isAr ? 'معتمد' : 'Verified'
@@ -706,11 +788,17 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               ))}
             </div>
           ) : (
-            <div className="text-center py-6 text-xs text-[#64748B] bg-[#F7F9FC] rounded-xl border border-dashed border-[#E4EAF2]">
+            <div className="text-center py-6 text-body-sm rounded-xl border border-dashed" style={{
+              color: 'var(--on-surface-variant)',
+              backgroundColor: 'var(--surface-container-highest)',
+              borderColor: 'var(--outline-variant)'
+            }}>
               <p>{isAr ? 'ابدأ مشروعاً عملياً لتوثيق مهاراتك' : 'Start a project to prove your competency'}</p>
               <button
+                type="button"
                 onClick={() => onNavigate('projects')}
-                className="mt-2 text-xs font-bold text-[#2563EB] hover:underline cursor-pointer"
+                className="text-label-strong hover:underline cursor-pointer"
+                style={{ marginTop: '0.5rem', color: 'var(--primary)' }}
               >
                 {isAr ? 'استعراض المشاريع' : 'Explore Projects'}
               </button>

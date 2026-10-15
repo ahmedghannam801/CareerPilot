@@ -167,26 +167,40 @@ export const TailoredCVModal: React.FC<TailoredCVModalProps> = ({
     opportunity.title.toLowerCase().includes('intern');
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 glass-surface animate-in fade-in duration-200" onClick={onClose}>
       <div
-        className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-4xl max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2.5rem)] flex flex-col overflow-hidden text-right"
+        className="card-surface rounded-2xl shadow-2xl border-hairline w-full max-w-4xl max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2.5rem)] flex flex-col overflow-hidden text-right"
         onClick={(e) => e.stopPropagation()}
         dir={isAr ? 'rtl' : 'ltr'}
       >
         {/* Header */}
-        <div className="p-5 sm:p-6 bg-slate-900 text-white flex items-start justify-between gap-4 shrink-0">
+        <div
+          className="p-5 sm:p-6 flex items-start justify-between gap-4 shrink-0"
+          style={{
+            backgroundColor: 'var(--surface-container)',
+            color: 'var(--on-surface)'
+          }}
+        >
           <div className="space-y-1.5 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-500/20 text-blue-300 border border-blue-400/30">
-                <Sparkles className="w-3 h-3 text-blue-300" />
+              <span
+                className="badge-pill text-label-caps inline-flex items-center gap-1.5"
+                style={{
+                  backgroundColor: 'var(--primary-container)',
+                  color: 'var(--on-primary-container)',
+                  borderColor: 'var(--primary)'
+                }}
+              >
+                <Sparkles className="w-3 h-3" style={{ color: 'var(--primary)' }} />
                 {isAr ? 'مولد السيرة الذاتية بالذكاء الاصطناعي' : 'AI Tailored CV Engine'}
               </span>
               <span
-                className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold ${
-                  isInternship
-                    ? 'bg-amber-500/20 text-amber-300 border border-amber-400/30'
-                    : 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/30'
-                }`}
+                className="badge-pill text-label-caps"
+                style={{
+                  backgroundColor: isInternship ? 'var(--warning-container)' : 'var(--success-container)',
+                  color: isInternship ? 'var(--on-warning-container)' : 'var(--on-success-container)',
+                  borderColor: isInternship ? 'var(--warning)' : 'var(--success)'
+                }}
               >
                 {isInternship
                   ? isAr
@@ -197,27 +211,48 @@ export const TailoredCVModal: React.FC<TailoredCVModalProps> = ({
                   : 'Full-time Opportunity'}
               </span>
               {opportunity.sourcePlatform && (
-                <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-white/10 text-slate-300">
+                <span
+                  className="px-2 py-0.5 rounded text-label-caps"
+                  style={{
+                    backgroundColor: 'var(--surface-variant)',
+                    color: 'var(--on-surface-variant)'
+                  }}
+                >
                   {opportunity.sourcePlatform}
                 </span>
               )}
             </div>
 
-            <h2 className="text-lg sm:text-xl font-black text-white truncate">
+            <h2 className="text-headline-lg font-black truncate" style={{ color: 'var(--on-surface)' }}>
               {opportunity.title}
             </h2>
-            <div className="text-xs text-slate-400 flex items-center gap-2">
-              <span className="text-slate-200 font-medium">{opportunity.company}</span>
+            <div className="text-body-xs flex items-center gap-2" style={{ color: 'var(--on-surface-variant)' }}>
+              <span className="font-medium" style={{ color: 'var(--on-surface)' }}>{opportunity.company}</span>
               <span>•</span>
               <span>{opportunity.location}</span>
               <span>•</span>
-              <span className="text-emerald-400 font-bold">{opportunity.matchScore || 85}% {isAr ? 'نسبة التوافق' : 'Fit'}</span>
+              <span className="font-bold" style={{ color: 'var(--success)' }}>
+                {opportunity.matchScore || 85}% {isAr ? 'نسبة التوافق' : 'Fit'}
+              </span>
             </div>
           </div>
 
           <button
+            type="button"
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+            className="p-1.5 rounded-lg transition-colors"
+            style={{
+              color: 'var(--on-surface-variant)',
+              backgroundColor: 'transparent'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--surface-variant)';
+              e.currentTarget.style.color = 'var(--on-surface)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.color = 'var(--on-surface-variant)';
+            }}
           >
             <X className="w-5 h-5" />
           </button>
@@ -227,16 +262,25 @@ export const TailoredCVModal: React.FC<TailoredCVModalProps> = ({
         <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6">
           {isLoading ? (
             <div className="py-16 text-center space-y-4">
-              <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center mx-auto animate-spin">
+              <div
+                className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto animate-spin"
+                style={{
+                  backgroundColor: 'var(--primary-container)',
+                  borderColor: 'var(--primary)',
+                  color: 'var(--primary)',
+                  borderWidth: '1px',
+                  borderStyle: 'solid'
+                }}
+              >
                 <RefreshCw className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-slate-800">
+                <h3 className="text-body-sm font-bold" style={{ color: 'var(--on-surface)' }}>
                   {isAr
                     ? `جاري تحليل متطلبات ${isInternship ? 'التدريب' : 'الوظيفة'} وتخصيص السيرة الذاتية...`
                     : 'Analyzing role requirements & tailoring your CV with ATS optimization...'}
                 </h3>
-                <p className="text-xs text-slate-500 mt-1 max-w-md mx-auto">
+                <p className="text-body-xs mt-1 max-w-md mx-auto" style={{ color: 'var(--on-surface-variant)' }}>
                   {isAr
                     ? 'يقوم النموذج بمطابقة خبراتك ومهاراتك الواقعية وصياغة إنجازاتك لتتصدر أنظمة فرز السير الذاتية (ATS).'
                     : 'Matching candidate experiences, rephrasing impact bullets and maximizing keyword relevance without hallucination.'}
@@ -245,10 +289,11 @@ export const TailoredCVModal: React.FC<TailoredCVModalProps> = ({
             </div>
           ) : error ? (
             <div className="py-12 text-center space-y-3">
-              <div className="text-rose-500 text-sm font-bold">{error}</div>
+              <div className="text-body-sm font-bold" style={{ color: 'var(--error)' }}>{error}</div>
               <button
+                type="button"
                 onClick={handleGenerate}
-                className="px-4 py-2 text-xs font-bold text-white bg-slate-900 rounded-lg hover:bg-slate-800 transition-colors inline-flex items-center gap-1.5"
+                className="btn-primary inline-flex items-center gap-1.5"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
                 <span>{isAr ? 'إعادة المحاولة' : 'Try Again'}</span>
@@ -257,17 +302,36 @@ export const TailoredCVModal: React.FC<TailoredCVModalProps> = ({
           ) : tailoredData ? (
             <div className="space-y-6">
               {/* Summary Card */}
-              <div className="p-4 sm:p-5 rounded-xl border border-blue-100 bg-blue-50/40 space-y-2.5">
+              <div
+                className="p-4 sm:p-5 rounded-xl border-hairline space-y-2.5"
+                style={{
+                  backgroundColor: 'var(--primary-container)',
+                  borderColor: 'var(--primary)'
+                }}
+              >
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-blue-900 flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+                  <span className="text-body-xs font-bold flex items-center gap-1.5" style={{ color: 'var(--on-primary-container)' }}>
+                    <Sparkles className="w-3.5 h-3.5" style={{ color: 'var(--primary)' }} />
                     {isAr ? 'الملخص المهني المستهدف (Professional Summary)' : 'Targeted Professional Summary'}
                   </span>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-700">
+                  <span
+                    className="text-label-caps px-2 py-0.5 rounded font-bold"
+                    style={{
+                      backgroundColor: 'var(--primary)',
+                      color: 'var(--on-primary)'
+                    }}
+                  >
                     ATS 98%
                   </span>
                 </div>
-                <p className="text-xs leading-relaxed text-slate-700 bg-white p-3.5 rounded-lg border border-blue-100/70">
+                <p
+                  className="text-body-xs leading-relaxed p-3.5 rounded-lg border-hairline"
+                  style={{
+                    backgroundColor: 'var(--surface)',
+                    color: 'var(--on-surface)',
+                    borderColor: 'var(--border-subtle)'
+                  }}
+                >
                   {tailoredData.summary}
                 </p>
               </div>
@@ -275,16 +339,21 @@ export const TailoredCVModal: React.FC<TailoredCVModalProps> = ({
               {/* Skills Grid */}
               {tailoredData.highlightedSkills?.length > 0 && (
                 <div className="space-y-2">
-                  <span className="text-xs font-bold text-slate-800 block">
+                  <span className="text-body-xs font-bold block" style={{ color: 'var(--on-surface)' }}>
                     {isAr ? 'المهارات الأساسية المطابقة المطلوب إبرازها:' : 'Highlighted Key Skills:'}
                   </span>
                   <div className="flex flex-wrap gap-1.5">
                     {tailoredData.highlightedSkills.map((skill: string, idx: number) => (
                       <span
                         key={idx}
-                        className="text-xs px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200 text-slate-800 font-medium inline-flex items-center gap-1"
+                        className="text-body-xs px-2.5 py-1 rounded-lg border-hairline font-medium inline-flex items-center gap-1"
+                        style={{
+                          backgroundColor: 'var(--surface-container)',
+                          borderColor: 'var(--border)',
+                          color: 'var(--on-surface)'
+                        }}
                       >
-                        <Check className="w-3 h-3 text-emerald-600" />
+                        <Check className="w-3 h-3" style={{ color: 'var(--success)' }} />
                         {skill}
                       </span>
                     ))}
@@ -295,7 +364,7 @@ export const TailoredCVModal: React.FC<TailoredCVModalProps> = ({
               {/* Optimized Experience Bullets */}
               {tailoredData.optimizedBulletPoints?.length > 0 && (
                 <div className="space-y-3">
-                  <span className="text-xs font-bold text-slate-800 block">
+                  <span className="text-body-xs font-bold block" style={{ color: 'var(--on-surface)' }}>
                     {isAr
                       ? 'صياغة نقاط الخبرة والإنجازات المتوافقة مع متطلبات الوظيفة:'
                       : 'Role-Optimized Experience & Achievements:'}
@@ -303,14 +372,21 @@ export const TailoredCVModal: React.FC<TailoredCVModalProps> = ({
 
                   <div className="space-y-3">
                     {tailoredData.optimizedBulletPoints.map((exp: any, i: number) => (
-                      <div key={i} className="p-4 rounded-xl border border-slate-200 bg-slate-50/50 space-y-2">
-                        <div className="text-xs font-bold text-slate-900">
-                          {exp.roleTitle} <span className="text-slate-400 font-normal">في</span> {exp.company}
+                      <div
+                        key={i}
+                        className="p-4 rounded-xl border-hairline space-y-2"
+                        style={{
+                          backgroundColor: 'var(--surface-container)',
+                          borderColor: 'var(--border)'
+                        }}
+                      >
+                        <div className="text-body-xs font-bold" style={{ color: 'var(--on-surface)' }}>
+                          {exp.roleTitle} <span className="font-normal" style={{ color: 'var(--on-surface-variant)' }}>في</span> {exp.company}
                         </div>
-                        <ul className="space-y-1.5 text-xs text-slate-700">
+                        <ul className="space-y-1.5 text-body-xs" style={{ color: 'var(--on-surface-variant)' }}>
                           {(exp.bullets || []).map((bullet: string, j: number) => (
                             <li key={j} className="flex items-start gap-2">
-                              <span className="text-blue-500 font-bold shrink-0 mt-0.5">•</span>
+                              <span className="font-bold shrink-0 mt-0.5" style={{ color: 'var(--primary)' }}>•</span>
                               <span className="leading-relaxed">{bullet}</span>
                             </li>
                           ))}
@@ -323,12 +399,18 @@ export const TailoredCVModal: React.FC<TailoredCVModalProps> = ({
 
               {/* ATS Keywords */}
               {tailoredData.atsKeywordMatches?.length > 0 && (
-                <div className="p-3.5 rounded-xl border border-slate-100 bg-slate-50 flex items-center justify-between gap-3 flex-wrap">
-                  <div className="text-xs text-slate-600">
-                    <span className="font-bold text-slate-800">
+                <div
+                  className="p-3.5 rounded-xl border-hairline flex items-center justify-between gap-3 flex-wrap"
+                  style={{
+                    backgroundColor: 'var(--surface-container)',
+                    borderColor: 'var(--border-subtle)'
+                  }}
+                >
+                  <div className="text-body-xs" style={{ color: 'var(--on-surface-variant)' }}>
+                    <span className="font-bold" style={{ color: 'var(--on-surface)' }}>
                       {isAr ? 'الكلمات المفتاحية المعتمدة للـ ATS:' : 'Matched ATS Keywords:'}{' '}
                     </span>
-                    <span className="text-slate-500">
+                    <span>
                       {tailoredData.atsKeywordMatches.join(' • ')}
                     </span>
                   </div>
@@ -339,7 +421,13 @@ export const TailoredCVModal: React.FC<TailoredCVModalProps> = ({
         </div>
 
         {/* Footer Actions */}
-        <div className="p-4 sm:p-5 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-3 flex-wrap shrink-0">
+        <div
+          className="p-4 sm:p-5 border-t border-hairline flex items-center justify-between gap-3 flex-wrap shrink-0"
+          style={{
+            backgroundColor: 'var(--surface-container)',
+            borderColor: 'var(--border)'
+          }}
+        >
           <div className="flex items-center gap-2">
             {/* Primary in-app application prep entry point */}
             <button
@@ -350,7 +438,7 @@ export const TailoredCVModal: React.FC<TailoredCVModalProps> = ({
                 }
                 onClose();
               }}
-              className="px-4 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all shadow-sm hover:shadow inline-flex items-center gap-2 cursor-pointer"
+              className="btn-primary inline-flex items-center gap-2 cursor-pointer"
             >
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>
@@ -370,18 +458,19 @@ export const TailoredCVModal: React.FC<TailoredCVModalProps> = ({
                 href={opportunity.sourceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-3.5 py-2.5 text-xs font-medium text-slate-700 bg-white border border-slate-200 hover:bg-slate-100 rounded-xl transition-colors inline-flex items-center gap-1.5"
+                className="btn-secondary inline-flex items-center gap-1.5"
                 title={isAr ? 'رابط الإعلان الخارجي' : 'External Job Posting'}
               >
-                <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
+                <ExternalLink className="w-3.5 h-3.5" />
                 <span>{isAr ? 'الرابط الخارجي' : 'External Link'}</span>
               </a>
             )}
 
             <button
+              type="button"
               onClick={handleGenerate}
               disabled={isLoading}
-              className="px-3.5 py-2.5 text-xs font-medium text-slate-700 bg-white border border-slate-200 hover:bg-slate-100 rounded-xl transition-colors inline-flex items-center gap-1.5 disabled:opacity-50"
+              className="btn-secondary inline-flex items-center gap-1.5 disabled:opacity-50"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
               <span>{isAr ? 'إعادة التوليد' : 'Regenerate'}</span>
@@ -390,14 +479,17 @@ export const TailoredCVModal: React.FC<TailoredCVModalProps> = ({
 
           <div className="flex items-center gap-2">
             <button
+              type="button"
               onClick={handleCopyText}
               disabled={!tailoredData}
-              className="px-3.5 py-2.5 text-xs font-medium text-slate-700 bg-white border border-slate-200 hover:bg-slate-100 rounded-xl transition-colors inline-flex items-center gap-1.5 disabled:opacity-50"
+              className="btn-secondary inline-flex items-center gap-1.5 disabled:opacity-50"
             >
               {isCopied ? (
                 <>
-                  <Check className="w-3.5 h-3.5 text-emerald-600" />
-                  <span className="text-emerald-700 font-bold">{isAr ? 'تم النسخ!' : 'Copied!'}</span>
+                  <Check className="w-3.5 h-3.5" style={{ color: 'var(--success)' }} />
+                  <span className="font-bold" style={{ color: 'var(--success)' }}>
+                    {isAr ? 'تم النسخ!' : 'Copied!'}
+                  </span>
                 </>
               ) : (
                 <>
@@ -409,13 +501,14 @@ export const TailoredCVModal: React.FC<TailoredCVModalProps> = ({
 
             {onSaveResume && (
               <button
+                type="button"
                 onClick={handleSaveToStudio}
                 disabled={!tailoredData || isSaved}
-                className="px-4 py-2.5 text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 rounded-xl transition-colors inline-flex items-center gap-1.5 disabled:opacity-50"
+                className="btn-primary inline-flex items-center gap-1.5 disabled:opacity-50"
               >
                 {isSaved ? (
                   <>
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                    <CheckCircle2 className="w-3.5 h-3.5" style={{ color: 'var(--success)' }} />
                     <span>{isAr ? 'تم الحفظ في استوديو الـ CV!' : 'Saved in CV Studio!'}</span>
                   </>
                 ) : (
@@ -429,11 +522,19 @@ export const TailoredCVModal: React.FC<TailoredCVModalProps> = ({
 
             {isSaved && onNavigateToCV && (
               <button
+                type="button"
                 onClick={() => {
                   onClose();
                   onNavigateToCV();
                 }}
-                className="px-3 py-2 text-xs font-medium text-blue-600 hover:text-blue-700 underline"
+                className="px-3 py-2 text-body-xs font-medium underline"
+                style={{ color: 'var(--primary)' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = 'var(--primary-dark)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = 'var(--primary)';
+                }}
               >
                 {isAr ? 'فتح الاستوديو ←' : 'Open CV Studio →'}
               </button>
