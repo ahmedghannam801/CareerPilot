@@ -283,7 +283,8 @@
         "PostgreSQL & Drizzle",
         "LLM Orchestration & Multi-Agent Architecture",
         "Docker & Cloud Deployment",
-        "System Architecture & API Design"
+        "System Architecture & API Design",
+        "Docker"
       ],
       "certifications": [
         "AWS Certified Developer Associate",
@@ -291,7 +292,7 @@
       ],
       "atsScore": 82,
       "createdAt": "2026-09-01T08:00:00Z",
-      "updatedAt": "2026-10-10T14:30:00Z"
+      "updatedAt": "2026-10-15T18:15:06.937Z"
     },
     {
       "id": "cv-tailored-1791840731855",
@@ -638,12 +639,16 @@
       "overallScore": 100,
       "strengths": [
         "Professional summary contains clear role focus and positioning.",
-        "Work experience includes quantifiable achievements.",
-        "Strong density of categorized hard skills.",
-        "Verified academic credentials and certifications clearly presented."
+        "Work experience includes multiple bulleted achievements.",
+        "Strong density of categorized technical skills.",
+        "Verified academic credentials clearly presented."
       ],
-      "weaknesses": [],
-      "recommendations": [],
+      "weaknesses": [
+        "No critical defects found."
+      ],
+      "recommendations": [
+        "Maintain current resume structure."
+      ],
       "missingKeywords": [],
       "formattingScore": 92,
       "relevanceScore": 95,

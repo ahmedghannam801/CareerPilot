@@ -107,44 +107,51 @@ export const NavigationRail: React.FC<NavigationRailProps> = ({
 
   return (
     <aside
-      className="hidden md:flex flex-col shrink-0 bg-white dark:bg-[#0B0F17] border-e border-[#E4EAF2] dark:border-slate-800 w-56 lg:w-60 sticky top-14 h-[calc(100vh-56px)] overflow-y-auto z-30 select-none"
+      className="hidden md:flex flex-col shrink-0 w-56 lg:w-60 sticky top-14 h-[calc(100vh-56px)] overflow-y-auto z-30 select-none border-hairline"
+      style={{
+        backgroundColor: 'var(--surface-container-low)',
+        borderInlineEndColor: 'var(--outline-variant)',
+      }}
     >
       {/* Sidebar Header: Brand on top, User identity below */}
-      <div className="border-b border-[#EDF2F7] dark:border-slate-800 bg-[#FAFBFC] dark:bg-slate-900/30">
+      <div className="border-hairline" style={{ borderBlockEndColor: 'var(--outline-variant)', backgroundColor: 'var(--surface-container)' }}>
         {/* Row 1: CareerPilot AI Brand */}
-        <div className="px-4 py-3 flex items-center justify-between border-b border-[#EDF2F7]/70 dark:border-slate-800/70">
+        <div className="px-4 py-3 flex items-center justify-between border-hairline" style={{ borderBlockEndColor: 'var(--outline-variant)' }}>
           <button
             type="button"
             onClick={() => onNavigate('dashboard')}
             className="flex items-center gap-2 cursor-pointer group"
           >
-            <div className="w-7 h-7 rounded-lg bg-[#0B1F3A] text-white flex items-center justify-center font-black text-[10px] shrink-0 shadow-xs group-hover:bg-[#1E3A5F] transition-colors">
+            <div className="w-7 h-7 rounded-lg flex items-center justify-center font-black text-[10px] shrink-0 shadow-xs group-hover:scale-105 transition-transform" style={{ backgroundColor: 'var(--primary-container)', color: 'var(--on-primary-container)' }}>
               CP
             </div>
             <div className="min-w-0">
-              <div className="text-xs font-black text-[#0B1F3A] dark:text-slate-100 tracking-tight group-hover:text-[#2563EB] transition-colors">
-                CareerPilot <span className="text-[#2563EB]">AI</span>
+              <div className="text-xs font-black tracking-tight group-hover:opacity-80 transition-opacity" style={{ color: 'var(--on-surface)' }}>
+                CareerPilot <span style={{ color: 'var(--primary)' }}>AI</span>
               </div>
             </div>
           </button>
-          <span className="bg-[#EEF4FF] text-[#2563EB] px-1.5 py-0.5 rounded-full font-bold text-[9px] uppercase">PRO</span>
+          <span className="badge-pill text-label-caps" style={{ backgroundColor: 'rgba(184, 196, 255, 0.12)', color: 'var(--primary)', border: '1px solid rgba(184, 196, 255, 0.3)' }}>PRO</span>
         </div>
 
         {/* Row 2: Authenticated User Identity */}
         <button
           type="button"
           onClick={() => onNavigate('career')}
-          className="w-full flex items-center gap-2.5 px-3.5 py-2.5 hover:bg-white dark:hover:bg-slate-800/50 transition-all text-start cursor-pointer group"
+          className="w-full flex items-center gap-2.5 px-3.5 py-2.5 transition-all text-start cursor-pointer group"
+          style={{ backgroundColor: 'transparent' }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--surface-container-high)'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
           title={isAr ? 'عرض الملف الشخصي والإعدادات' : 'View Profile & Settings'}
         >
-          <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs group-hover:scale-105 transition-transform">
+          <div className="w-7 h-7 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 shadow-xs group-hover:scale-105 transition-transform" style={{ background: 'linear-gradient(135deg, var(--primary-container) 0%, var(--primary) 100%)', color: 'var(--on-primary-container)' }}>
             {userInitials}
           </div>
           <div className="min-w-0 flex-1">
-            <div className="text-xs font-bold text-[#0B1F3A] truncate group-hover:text-[#2563EB] transition-colors">
+            <div className="text-xs font-bold truncate group-hover:opacity-80 transition-opacity" style={{ color: 'var(--on-surface)' }}>
               {displayName}
             </div>
-            <div className="text-[10px] text-[#64748B] truncate capitalize">
+            <div className="text-micro truncate capitalize" style={{ color: 'var(--on-surface-variant)' }}>
               {displayRole}
             </div>
           </div>
@@ -156,7 +163,7 @@ export const NavigationRail: React.FC<NavigationRailProps> = ({
       <div className="flex-1 px-3 py-3 space-y-4 overflow-y-auto">
         {/* Primary Destinations */}
         <div>
-          <div className="px-2.5 pb-1.5 text-[10px] font-bold uppercase tracking-wider text-[#94A3B8]">
+          <div className="px-2.5 pb-1.5 text-label-caps" style={{ color: 'var(--on-surface-variant)' }}>
             {isAr ? 'الوجهات الأساسية' : 'Core Journey'}
           </div>
           <div className="space-y-0.5">
@@ -173,17 +180,32 @@ export const NavigationRail: React.FC<NavigationRailProps> = ({
                   whileHover={{ x: isAr ? -3 : 3 }}
                   whileTap={{ scale: 0.98 }}
                   transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                  className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-colors cursor-pointer relative z-0 ${
-                    isActive
-                      ? 'text-[#2563EB] dark:text-blue-400 font-bold'
-                      : 'text-[#64748B] hover:text-[#17253B] dark:hover:text-slate-200 hover:bg-[#F7F9FC] dark:hover:bg-slate-800/40'
-                  }`}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-body-strong transition-colors cursor-pointer relative z-0"
+                  style={{
+                    color: isActive ? 'var(--primary)' : 'var(--on-surface-variant)',
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.backgroundColor = 'var(--surface-container-high)';
+                      e.currentTarget.style.color = 'var(--on-surface)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                      e.currentTarget.style.color = 'var(--on-surface-variant)';
+                    }
+                  }}
                 >
                   {/* Floating gliding active pill */}
                   {isActive && (
                     <motion.span
                       layoutId="activeRailPill"
-                      className="absolute inset-0 bg-[#EEF4FF] dark:bg-blue-950/50 rounded-xl -z-10 border border-[#2563EB]/15 dark:border-blue-500/25 shadow-2xs"
+                      className="absolute inset-0 rounded-xl -z-10 border-hairline surface-elevated"
+                      style={{
+                        backgroundColor: 'var(--surface-container-highest)',
+                        borderColor: 'var(--outline-variant)',
+                      }}
                       transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                     />
                   )}
@@ -191,21 +213,24 @@ export const NavigationRail: React.FC<NavigationRailProps> = ({
                   {isActive && (
                     <motion.span
                       layoutId="activeRailAccent"
-                      className="absolute start-0 top-2 bottom-2 w-1 bg-[#2563EB] rounded-e-full z-10"
+                      className="absolute start-0 top-2 bottom-2 w-1 rounded-e-full z-10"
+                      style={{ backgroundColor: 'var(--primary)' }}
                       transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                     />
                   )}
                   <Icon
-                    className={`w-4 h-4 shrink-0 transition-colors ${
-                      isActive ? 'text-[#2563EB] dark:text-blue-400' : 'text-[#94A3B8]'
-                    }`}
+                    className="w-4 h-4 shrink-0 transition-colors"
+                    style={{ color: isActive ? 'var(--primary)' : 'var(--on-surface-variant)' }}
                   />
                   <span className="flex-1 truncate text-start">{label}</span>
                   {item.count !== undefined && item.count > 0 && (
                     <span
-                      className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full transition-transform ${
-                        isActive ? 'bg-[#2563EB] text-white scale-105' : 'bg-slate-100 dark:bg-slate-800 text-[#64748B]'
-                      }`}
+                      className="badge-pill text-mono-metric"
+                      style={{
+                        backgroundColor: isActive ? 'var(--primary)' : 'var(--surface-container)',
+                        color: isActive ? 'var(--on-primary)' : 'var(--on-surface-variant)',
+                        border: `1px solid ${isActive ? 'var(--primary)' : 'var(--outline-variant)'}`,
+                      }}
                     >
                       {item.count}
                     </span>
@@ -221,7 +246,10 @@ export const NavigationRail: React.FC<NavigationRailProps> = ({
           <button
             type="button"
             onClick={() => setToolsExpanded(!toolsExpanded)}
-            className="w-full flex items-center justify-between px-2.5 pb-1.5 text-[10px] font-bold uppercase tracking-wider text-[#94A3B8] hover:text-[#64748B] transition-colors cursor-pointer"
+            className="w-full flex items-center justify-between px-2.5 pb-1.5 text-label-caps transition-colors cursor-pointer"
+            style={{ color: 'var(--on-surface-variant)' }}
+            onMouseEnter={(e) => e.currentTarget.style.color = 'var(--on-surface)'}
+            onMouseLeave={(e) => e.currentTarget.style.color = 'var(--on-surface-variant)'}
           >
             <span>{isAr ? 'أدوات الدعم والتطوير' : 'Career Toolkit'}</span>
             <motion.div
@@ -254,32 +282,46 @@ export const NavigationRail: React.FC<NavigationRailProps> = ({
                       whileHover={{ x: isAr ? -3 : 3 }}
                       whileTap={{ scale: 0.98 }}
                       transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                      className={`w-full flex items-center gap-2.5 px-3 py-1.5 rounded-xl text-[12px] font-medium transition-colors cursor-pointer relative z-0 ${
-                        isActive
-                          ? 'text-[#2563EB] dark:text-blue-400 font-bold'
-                          : 'text-[#64748B] hover:text-[#17253B] dark:hover:text-slate-200 hover:bg-[#F7F9FC] dark:hover:bg-slate-800/40'
-                      }`}
+                      className="w-full flex items-center gap-2.5 px-3 py-1.5 rounded-xl text-body-base transition-colors cursor-pointer relative z-0"
+                      style={{
+                        color: isActive ? 'var(--primary)' : 'var(--on-surface-variant)',
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isActive) {
+                          e.currentTarget.style.backgroundColor = 'var(--surface-container-high)';
+                          e.currentTarget.style.color = 'var(--on-surface)';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isActive) {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = 'var(--on-surface-variant)';
+                        }
+                      }}
                     >
                       {isActive && (
                         <motion.span
                           layoutId="activeRailToolkitPill"
-                          className="absolute inset-0 bg-[#EEF4FF] dark:bg-blue-950/40 rounded-xl -z-10 border border-[#2563EB]/15 dark:border-blue-500/20"
+                          className="absolute inset-0 rounded-xl -z-10 border-hairline surface-elevated"
+                          style={{
+                            backgroundColor: 'var(--surface-container-highest)',
+                            borderColor: 'var(--outline-variant)',
+                          }}
                           transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                         />
                       )}
                       <Icon
-                        className={`w-3.5 h-3.5 shrink-0 transition-colors ${
-                          isActive ? 'text-[#2563EB] dark:text-blue-400' : 'text-[#94A3B8]'
-                        }`}
+                        className="w-3.5 h-3.5 shrink-0 transition-colors"
+                        style={{ color: isActive ? 'var(--primary)' : 'var(--on-surface-variant)' }}
                       />
                       <span className="flex-1 truncate text-start">{label}</span>
                       {item.badge && (
-                        <span className="text-[9.5px] font-black text-[#2563EB] bg-[#EEF4FF] dark:bg-blue-950 px-1.5 py-0.2 rounded-full border border-[#2563EB]/20">
+                        <span className="badge-pill text-label-caps" style={{ backgroundColor: 'rgba(184, 196, 255, 0.12)', color: 'var(--primary)', border: '1px solid rgba(184, 196, 255, 0.3)' }}>
                           {item.badge}
                         </span>
                       )}
                       {item.count !== undefined && item.count > 0 && (
-                        <span className="text-[10px] font-medium px-1.5 py-0.2 rounded-full bg-slate-100 dark:bg-slate-800 text-[#64748B]">
+                        <span className="badge-pill text-mono-metric" style={{ backgroundColor: 'var(--surface-container)', color: 'var(--on-surface-variant)', border: '1px solid var(--outline-variant)' }}>
                           {item.count}
                         </span>
                       )}
@@ -293,22 +335,25 @@ export const NavigationRail: React.FC<NavigationRailProps> = ({
       </div>
 
       {/* Footer Navigation: Readiness & Settings */}
-      <div className="p-3 border-t border-[#EDF2F7] bg-[#F7F9FC] space-y-2">
+      <div className="p-3 border-hairline space-y-2" style={{ borderBlockStartColor: 'var(--outline-variant)', backgroundColor: 'var(--surface-container)' }}>
         {/* Readiness pill */}
         <div className="flex items-center justify-between text-xs px-2">
-          <span className="text-[11px] font-semibold text-[#64748B]">
+          <span className="text-body-sm" style={{ color: 'var(--on-surface-variant)' }}>
             {isAr ? 'جاهزيتك المهنية' : 'Career Readiness'}
           </span>
-          <span className="text-xs font-black text-[#2563EB]">
+          <span className="text-body-strong" style={{ color: 'var(--primary)' }}>
             {metrics?.readinessScore !== undefined && metrics?.readinessScore !== null
               ? `${metrics.readinessScore}%`
               : (isAr ? '—' : '—')}
           </span>
         </div>
-        <div className="w-full h-1 bg-[#E4EAF2] rounded-full overflow-hidden">
+        <div className="w-full h-1 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--surface-container-low)' }}>
           <div
-            className="h-full bg-gradient-to-r from-[#2563EB] to-[#20C997] rounded-full transition-all duration-700"
-            style={{ width: `${metrics?.readinessScore ?? 0}%` }}
+            className="h-full rounded-full transition-all duration-700"
+            style={{
+              width: `${metrics?.readinessScore ?? 0}%`,
+              background: 'linear-gradient(to right, var(--primary), var(--tertiary))',
+            }}
           />
         </div>
 
@@ -316,12 +361,23 @@ export const NavigationRail: React.FC<NavigationRailProps> = ({
         <div className="flex items-center justify-between pt-1">
           <div className="flex items-center gap-1">
             <button
+              type="button"
               onClick={() => onNavigate('settings')}
-              className={`flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
-                currentTab === 'settings'
-                  ? 'text-[#2563EB] font-bold bg-[#EEF4FF]'
-                  : 'text-[#64748B] hover:text-[#17253B]'
-              }`}
+              className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-body-base transition-colors cursor-pointer"
+              style={{
+                color: currentTab === 'settings' ? 'var(--primary)' : 'var(--on-surface-variant)',
+                backgroundColor: currentTab === 'settings' ? 'rgba(184, 196, 255, 0.12)' : 'transparent',
+              }}
+              onMouseEnter={(e) => {
+                if (currentTab !== 'settings') {
+                  e.currentTarget.style.color = 'var(--on-surface)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (currentTab !== 'settings') {
+                  e.currentTarget.style.color = 'var(--on-surface-variant)';
+                }
+              }}
             >
               <Settings className="w-3.5 h-3.5" />
               <span>{isAr ? 'الإعدادات' : 'Settings'}</span>
@@ -332,7 +388,14 @@ export const NavigationRail: React.FC<NavigationRailProps> = ({
                 type="button"
                 onClick={onLogout}
                 title={isAr ? 'تسجيل الخروج' : 'Log Out'}
-                className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                className="p-1.5 rounded-lg transition-colors cursor-pointer"
+                style={{ color: 'var(--error)' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 180, 171, 0.12)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
               >
                 <LogOut className="w-3.5 h-3.5" />
               </button>
@@ -341,10 +404,20 @@ export const NavigationRail: React.FC<NavigationRailProps> = ({
 
           {onToggleLang && (
             <button
+              type="button"
               onClick={onToggleLang}
-              className="flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-bold text-[#64748B] hover:text-[#17253B] hover:bg-slate-200/50 transition-colors cursor-pointer"
+              className="flex items-center gap-1 px-2 py-1 rounded-lg text-label-caps transition-colors cursor-pointer"
+              style={{ color: 'var(--on-surface-variant)' }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'var(--surface-container-high)';
+                e.currentTarget.style.color = 'var(--on-surface)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.color = 'var(--on-surface-variant)';
+              }}
             >
-              <Globe className="w-3 h-3 text-[#2563EB]" />
+              <Globe className="w-3 h-3" style={{ color: 'var(--primary)' }} />
               <span>{isAr ? 'EN' : 'عربي'}</span>
             </button>
           )}

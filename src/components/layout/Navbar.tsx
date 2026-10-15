@@ -72,8 +72,12 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <header
       dir={isAr ? 'rtl' : 'ltr'}
-      className="sticky top-0 z-40 flex items-center justify-between gap-3 px-3 sm:px-6 h-14 bg-white dark:bg-[#0B0F17] border-b border-slate-200/70 dark:border-slate-800"
-      style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}
+      className="sticky top-0 z-40 flex items-center justify-between gap-3 px-3 sm:px-6 h-14 border-hairline"
+      style={{
+        backgroundColor: 'var(--surface-container-low)',
+        borderBlockEndColor: 'var(--outline-variant)',
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.08)',
+      }}
     >
       {/* Upper-Left: CareerPilot Brand Logo only */}
       <div className="flex items-center gap-3 shrink-0">
@@ -98,14 +102,27 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Search Bar */}
       <button
+        type="button"
         onClick={onOpenSearch}
-        className="flex-1 max-w-sm hidden sm:flex items-center gap-2.5 px-3.5 py-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-xs text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
+        className="input-field flex-1 max-w-sm hidden sm:flex items-center gap-2.5 text-body-base cursor-pointer"
+        style={{
+          color: 'var(--on-surface-variant)',
+          backgroundColor: 'var(--surface-container)',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = 'var(--surface-container-high)';
+          e.currentTarget.style.color = 'var(--on-surface)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = 'var(--surface-container)';
+          e.currentTarget.style.color = 'var(--on-surface-variant)';
+        }}
       >
         <Search className="w-3.5 h-3.5 shrink-0" />
         <span className="flex-1 text-start">
           {isAr ? 'ابحث...' : 'Search...'}
         </span>
-        <kbd className="text-[10px] font-mono px-1.5 py-0.5 bg-white border border-slate-200 rounded text-slate-400 hidden md:block">
+        <kbd className="text-micro font-mono px-1.5 py-0.5 rounded border-hairline hidden md:block" style={{ backgroundColor: 'var(--surface-container-highest)', borderColor: 'var(--outline-variant)', color: 'var(--on-surface-variant)' }}>
           Ctrl K
         </kbd>
       </button>
@@ -115,12 +132,9 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Ask AI Button */}
         <button
+          type="button"
           onClick={() => onNavigate('assistant')}
-          className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white rounded-lg cursor-pointer transition-all"
-          style={{
-            background: 'linear-gradient(135deg, #4f6ef7 0%, #6c8aff 100%)',
-            boxShadow: '0 2px 8px rgba(79,110,247,0.25)',
-          }}
+          className="btn-ai hidden sm:flex items-center gap-1.5 text-body-strong cursor-pointer"
         >
           <Sparkles className="w-3 h-3" />
           <span>{isAr ? 'المساعد' : 'AI Chat'}</span>
@@ -128,10 +142,11 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Language Toggle */}
         <button
+          type="button"
           onClick={onToggleLang}
-          className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-slate-600 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg transition-colors cursor-pointer"
+          className="btn-secondary flex items-center gap-1 text-body-strong cursor-pointer"
         >
-          <Globe className="w-3.5 h-3.5 text-slate-400" />
+          <Globe className="w-3.5 h-3.5" style={{ color: 'var(--primary)' }} />
           <span>{lang === 'en' ? 'ع' : 'EN'}</span>
         </button>
 
@@ -141,12 +156,25 @@ export const Navbar: React.FC<NavbarProps> = ({
             type="button"
             onClick={onToggleTheme}
             title={theme === 'dark' ? (isAr ? 'الوضع النهاري' : 'Light Mode') : (isAr ? 'الوضع الليلي' : 'Dark Mode')}
-            className="w-8 h-8 flex items-center justify-center text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg border border-slate-200/80 transition-colors cursor-pointer"
+            className="w-8 h-8 flex items-center justify-center rounded-lg border-hairline transition-colors cursor-pointer"
+            style={{
+              backgroundColor: 'var(--surface-container)',
+              borderColor: 'var(--outline-variant)',
+              color: 'var(--on-surface-variant)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--surface-container-high)';
+              e.currentTarget.style.color = 'var(--on-surface)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--surface-container)';
+              e.currentTarget.style.color = 'var(--on-surface-variant)';
+            }}
           >
             {theme === 'dark' ? (
-              <Sun className="w-4 h-4 text-amber-400" />
+              <Sun className="w-4 h-4" style={{ color: 'var(--secondary)' }} />
             ) : (
-              <Moon className="w-4 h-4 text-slate-600" />
+              <Moon className="w-4 h-4" />
             )}
           </button>
         )}
@@ -154,38 +182,58 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Notifications */}
         <div className="relative">
           <button
+            type="button"
             onClick={() => setShowNotifications(!showNotifications)}
-            className="relative w-8 h-8 flex items-center justify-center text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+            className="relative w-8 h-8 flex items-center justify-center rounded-lg transition-colors cursor-pointer"
+            style={{
+              backgroundColor: 'var(--surface-container)',
+              color: 'var(--on-surface-variant)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--surface-container-high)';
+              e.currentTarget.style.color = 'var(--on-surface)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--surface-container)';
+              e.currentTarget.style.color = 'var(--on-surface-variant)';
+            }}
           >
             <Bell className="w-4 h-4" />
             {unreadCount > 0 && (
               <span
-                className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-blue-500 ring-2 ring-white"
+                className="status-dot-active absolute top-1.5 right-1.5"
+                style={{ boxShadow: '0 0 0 2px var(--surface-container-low)' }}
               />
             )}
           </button>
 
           {showNotifications && (
             <div
-              className="absolute top-full mt-2 w-80 bg-white border border-slate-200 rounded-2xl z-50 p-4 space-y-2 animate-fade-in-up"
+              className="absolute top-full mt-2 w-80 rounded-2xl z-50 p-4 space-y-2 animate-fade-in-up border-hairline"
               style={{
-                boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
+                backgroundColor: 'var(--surface-container)',
+                borderColor: 'var(--outline-variant)',
+                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.25)',
                 right: isAr ? 'auto' : 0,
                 left: isAr ? 0 : 'auto',
               }}
             >
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-bold text-slate-800">
+                <span className="text-title-base" style={{ color: 'var(--on-surface)' }}>
                   {isAr ? 'الإشعارات' : 'Notifications'}
                   {unreadCount > 0 && (
-                    <span className="ms-2 text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full">
+                    <span className="ms-2 badge-pill" style={{ backgroundColor: 'rgba(184, 196, 255, 0.12)', color: 'var(--primary)', border: '1px solid rgba(184, 196, 255, 0.3)' }}>
                       {unreadCount}
                     </span>
                   )}
                 </span>
                 <button
+                  type="button"
                   onClick={() => setShowNotifications(false)}
-                  className="text-slate-400 hover:text-slate-600 cursor-pointer"
+                  className="cursor-pointer transition-colors"
+                  style={{ color: 'var(--on-surface-variant)' }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = 'var(--on-surface)'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = 'var(--on-surface-variant)'}
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
@@ -193,7 +241,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
               <div className="max-h-64 overflow-y-auto space-y-1.5">
                 {notifications.length === 0 ? (
-                  <p className="text-xs text-slate-400 text-center py-6">
+                  <p className="text-body-base text-center py-6" style={{ color: 'var(--on-surface-variant)' }}>
                     {isAr ? 'لا توجد إشعارات' : 'No notifications yet'}
                   </p>
                 ) : (
@@ -201,21 +249,27 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <div
                       key={n.id}
                       onClick={() => onMarkNotificationRead(n.id)}
-                      className={`p-2.5 rounded-xl text-xs cursor-pointer transition-colors ${
-                        n.read
-                          ? 'text-slate-500 hover:bg-slate-50'
-                          : 'bg-blue-50 text-slate-800 font-medium hover:bg-blue-100'
-                      }`}
+                      className="p-2.5 rounded-xl text-body-base cursor-pointer transition-colors"
+                      style={{
+                        backgroundColor: n.read ? 'transparent' : 'rgba(184, 196, 255, 0.08)',
+                        color: n.read ? 'var(--on-surface-variant)' : 'var(--on-surface)',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = n.read ? 'var(--surface-container-high)' : 'rgba(184, 196, 255, 0.15)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = n.read ? 'transparent' : 'rgba(184, 196, 255, 0.08)';
+                      }}
                     >
                       <div className="flex items-start gap-2">
                         {n.type === 'HIGH' ? (
-                          <AlertCircle className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
+                          <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: 'var(--error)' }} />
                         ) : (
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                          <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: 'var(--tertiary)' }} />
                         )}
                         <div className="min-w-0">
-                          <div className="truncate font-semibold text-slate-800">{n.title}</div>
-                          <div className="text-[11px] text-slate-500 mt-0.5 leading-relaxed line-clamp-2">{n.message}</div>
+                          <div className="truncate text-body-strong" style={{ color: 'var(--on-surface)' }}>{n.title}</div>
+                          <div className="text-body-sm mt-0.5 leading-relaxed line-clamp-2" style={{ color: 'var(--on-surface-variant)' }}>{n.message}</div>
                         </div>
                       </div>
                     </div>
@@ -230,17 +284,29 @@ export const Navbar: React.FC<NavbarProps> = ({
         <button
           type="button"
           onClick={() => onNavigate('career')}
-          className="flex items-center gap-2 p-1 pe-2.5 hover:bg-slate-50 border border-transparent hover:border-slate-200 rounded-2xl transition-all cursor-pointer group text-start"
+          className="flex items-center gap-2 p-1 pe-2.5 border-hairline rounded-2xl transition-all cursor-pointer group text-start"
+          style={{
+            backgroundColor: 'transparent',
+            borderColor: 'transparent',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = 'var(--surface-container)';
+            e.currentTarget.style.borderColor = 'var(--outline-variant)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'transparent';
+            e.currentTarget.style.borderColor = 'transparent';
+          }}
           title={isAr ? 'عرض الملف الشخصي والإعدادات' : 'View Profile & Settings'}
         >
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white flex items-center justify-center font-bold text-xs shadow-xs group-hover:scale-105 transition-transform shrink-0">
+          <div className="w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs shadow-xs group-hover:scale-105 transition-transform shrink-0" style={{ background: 'linear-gradient(135deg, var(--primary-container) 0%, var(--primary) 100%)', color: 'var(--on-primary-container)' }}>
             {userInitials}
           </div>
           <div className="hidden sm:flex flex-col leading-tight max-w-[130px] md:max-w-[160px]">
-            <span className="text-xs font-bold text-slate-900 truncate group-hover:text-blue-600 transition-colors">
+            <span className="text-body-strong truncate group-hover:opacity-80 transition-opacity" style={{ color: 'var(--on-surface)' }}>
               {displayName}
             </span>
-            <span className="text-[10px] text-slate-500 truncate capitalize font-medium">
+            <span className="text-micro truncate capitalize" style={{ color: 'var(--on-surface-variant)' }}>
               {displayRole}
             </span>
           </div>
@@ -252,7 +318,18 @@ export const Navbar: React.FC<NavbarProps> = ({
             type="button"
             onClick={onLogout}
             title={isAr ? 'تسجيل الخروج' : 'Sign Out'}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200/80 rounded-lg transition-all cursor-pointer ms-1"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 text-body-strong border-hairline rounded-lg transition-all cursor-pointer ms-1"
+            style={{
+              color: 'var(--error)',
+              backgroundColor: 'rgba(255, 180, 171, 0.08)',
+              borderColor: 'rgba(255, 180, 171, 0.25)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(255, 180, 171, 0.15)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(255, 180, 171, 0.08)';
+            }}
           >
             <LogOut className="w-3.5 h-3.5" />
             <span className="hidden md:inline">{isAr ? 'تسجيل الخروج' : 'Logout'}</span>

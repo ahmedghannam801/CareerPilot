@@ -134,7 +134,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
   return (
     <>
       {/* Bottom Sticky Mobile Navigation Bar */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#0D1117]/95 backdrop-blur-md border-t border-neutral-200 dark:border-slate-800 px-3 py-1.5 flex items-center justify-around shadow-lg">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 glass-surface border-hairline px-3 py-1.5 flex items-center justify-around" style={{ borderBlockStartColor: 'var(--outline-variant)', boxShadow: '0 -2px 12px rgba(0, 0, 0, 0.15)' }}>
         {bottomItems.map((item) => {
           const Icon = item.icon;
           const isActive = currentTab === item.id;
