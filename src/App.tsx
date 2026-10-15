@@ -816,7 +816,11 @@ export default function App() {
   return (
     <div
       dir={lang === 'ar' ? 'rtl' : 'ltr'}
-      className="min-h-screen bg-[#f8fafc] dark:bg-[#0B0F17] text-slate-900 dark:text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white"
+      className="min-h-screen flex flex-col"
+      style={{
+        backgroundColor: 'var(--surface-container-lowest)',
+        color: 'var(--on-surface)',
+      }}
     >
       {/* Top Bar Contract (Brand - Nav Links - Primary Action) */}
       <Navbar
