@@ -912,7 +912,7 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                 </span>
               </div>
 
-              <div className="space-y-2 divide-y border rounded-lg p-2" style={{ backgroundColor: 'rgba(245, 245, 245, 0.5)', borderColor: 'var(--color-neutral-200)', divideColor: 'var(--color-neutral-100)' }}>
+              <div className="space-y-2 border rounded-lg p-2" style={{ backgroundColor: 'rgba(245, 245, 245, 0.5)', borderColor: 'var(--color-neutral-200)', borderTop: '1px solid var(--color-neutral-100)' }}>
                 {activeCourseDrawer.modules.map((mod, idx) => (
                   <div
                     key={mod.id || idx}
