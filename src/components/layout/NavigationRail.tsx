@@ -107,12 +107,12 @@ export const NavigationRail: React.FC<NavigationRailProps> = ({
 
   return (
     <aside
-      className="hidden md:flex flex-col shrink-0 bg-white border-e border-[#E4EAF2] w-56 lg:w-60 sticky top-14 h-[calc(100vh-56px)] overflow-y-auto z-30 select-none"
+      className="hidden md:flex flex-col shrink-0 bg-white dark:bg-[#0B0F17] border-e border-[#E4EAF2] dark:border-slate-800 w-56 lg:w-60 sticky top-14 h-[calc(100vh-56px)] overflow-y-auto z-30 select-none"
     >
       {/* Sidebar Header: Brand on top, User identity below */}
-      <div className="border-b border-[#EDF2F7] bg-[#FAFBFC]">
+      <div className="border-b border-[#EDF2F7] dark:border-slate-800 bg-[#FAFBFC] dark:bg-slate-900/30">
         {/* Row 1: CareerPilot AI Brand */}
-        <div className="px-4 py-3 flex items-center justify-between border-b border-[#EDF2F7]/70">
+        <div className="px-4 py-3 flex items-center justify-between border-b border-[#EDF2F7]/70 dark:border-slate-800/70">
           <button
             type="button"
             onClick={() => onNavigate('dashboard')}
@@ -122,7 +122,7 @@ export const NavigationRail: React.FC<NavigationRailProps> = ({
               CP
             </div>
             <div className="min-w-0">
-              <div className="text-xs font-black text-[#0B1F3A] tracking-tight group-hover:text-[#2563EB] transition-colors">
+              <div className="text-xs font-black text-[#0B1F3A] dark:text-slate-100 tracking-tight group-hover:text-[#2563EB] transition-colors">
                 CareerPilot <span className="text-[#2563EB]">AI</span>
               </div>
             </div>
@@ -134,7 +134,7 @@ export const NavigationRail: React.FC<NavigationRailProps> = ({
         <button
           type="button"
           onClick={() => onNavigate('career')}
-          className="w-full flex items-center gap-2.5 px-3.5 py-2.5 hover:bg-white transition-all text-start cursor-pointer group"
+          className="w-full flex items-center gap-2.5 px-3.5 py-2.5 hover:bg-white dark:hover:bg-slate-800/50 transition-all text-start cursor-pointer group"
           title={isAr ? 'عرض الملف الشخصي والإعدادات' : 'View Profile & Settings'}
         >
           <div className="w-7 h-7 rounded-xl bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs group-hover:scale-105 transition-transform">

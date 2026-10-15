@@ -71,6 +71,10 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
   const [showPlatformsModal, setShowPlatformsModal] = useState(false);
   const [platformsStatusList, setPlatformsStatusList] = useState<any[]>([]);
 
+  // Pagination state for job list
+  const [visibleCount, setVisibleCount] = useState(10);
+  const ITEMS_PER_PAGE = 10;
+
   // Initial load match calculation
   const handleSelectOpp = async (opp: Opportunity) => {
     setSelectedOpp(opp);
@@ -140,6 +144,7 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
     setFilterMatchScore('ALL');
     setFilterEmploymentType('ALL');
     setSortBy('match');
+    setVisibleCount(ITEMS_PER_PAGE);
   };
 
   const handleOpenTailorModal = (opp: Opportunity) => {
@@ -233,6 +238,11 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [effectiveSelectedOpp]);
+
+  // Reset visible count when filters change
+  useEffect(() => {
+    setVisibleCount(ITEMS_PER_PAGE);
+  }, [searchQuery, filterWorkModel, filterPlatform, filterMatchScore, filterEmploymentType, sortBy]);
 
   const isAr = lang === 'ar';
 
@@ -447,7 +457,8 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
               </button>
             </div>
           ) : (
-            filteredOpps.map((opp) => {
+            <>
+              {filteredOpps.slice(0, visibleCount).map((opp) => {
               const isSelected = effectiveSelectedOpp?.id === opp.id;
               const matchScore = opp.matchScore ?? null;
               const platform = opp.sourcePlatform || 'Direct';
@@ -573,7 +584,27 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
                   </div>
                 </div>
               );
-            })
+            })}
+
+            {/* View More Button */}
+            {visibleCount < filteredOpps.length && (
+              <div className="flex justify-center pt-4">
+                <button
+                  type="button"
+                  onClick={() => setVisibleCount(prev => prev + ITEMS_PER_PAGE)}
+                  className="px-6 py-2.5 text-xs font-bold text-neutral-700 bg-white hover:bg-neutral-50 border border-neutral-300 rounded-xl transition-all shadow-sm inline-flex items-center gap-2 cursor-pointer"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                  <span>
+                    {lang === 'ar'
+                      ? `عرض المزيد (${Math.min(ITEMS_PER_PAGE, filteredOpps.length - visibleCount)} من ${filteredOpps.length})`
+                      : `View More (${Math.min(ITEMS_PER_PAGE, filteredOpps.length - visibleCount)} of ${filteredOpps.length})`
+                    }
+                  </span>
+                </button>
+              </div>
+            )}
+          </>
           )}
         </div>
 

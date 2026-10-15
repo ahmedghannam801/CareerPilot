@@ -122,6 +122,16 @@ export default function App() {
   };
 
   const [currentTab, setCurrentTab] = useState<string>(() => {
+    // Restore last tab from sessionStorage if available
+    const savedTab = sessionStorage.getItem('lastActiveTab');
+    if (savedTab) {
+      // Update URL to match saved tab
+      const targetPath = savedTab === 'dashboard' ? '/' : `/${savedTab}`;
+      if (window.location.pathname !== targetPath) {
+        window.history.replaceState({ tab: savedTab }, '', targetPath);
+      }
+      return savedTab;
+    }
     return getTabFromPathname(window.location.pathname).tab;
   });
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -246,21 +256,55 @@ export default function App() {
 
   // Navigation that syncs URL history and respects browser back/forward
   const handleNavigate = (tab: string) => {
+    // Save current scroll position before navigating
+    const scrollKey = `scroll_${currentTab}`;
+    sessionStorage.setItem(scrollKey, window.scrollY.toString());
+
+    // Save the active tab for route restoration
+    sessionStorage.setItem('lastActiveTab', tab);
+
     setCurrentTab(tab);
     const targetPath = tab === 'dashboard' ? '/' : `/${tab}`;
     if (window.location.pathname !== targetPath) {
       window.history.pushState({ tab }, '', targetPath);
     }
+
+    // Restore scroll position for the new tab
+    requestAnimationFrame(() => {
+      const savedScrollKey = `scroll_${tab}`;
+      const savedScroll = sessionStorage.getItem(savedScrollKey);
+      if (savedScroll) {
+        window.scrollTo(0, parseInt(savedScroll, 10));
+      } else {
+        window.scrollTo(0, 0);
+      }
+    });
   };
 
   useEffect(() => {
     const handlePopState = () => {
       const { tab } = getTabFromPathname(window.location.pathname);
+
+      // Save current scroll before back/forward navigation
+      const scrollKey = `scroll_${currentTab}`;
+      sessionStorage.setItem(scrollKey, window.scrollY.toString());
+
       setCurrentTab(tab);
+
+      // Restore scroll for the back/forward tab
+      requestAnimationFrame(() => {
+        const savedScrollKey = `scroll_${tab}`;
+        const savedScroll = sessionStorage.getItem(savedScrollKey);
+        if (savedScroll) {
+          window.scrollTo(0, parseInt(savedScroll, 10));
+        } else {
+          window.scrollTo(0, 0);
+        }
+      });
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
-  }, []);
+  }, [currentTab]);
 
   // Fetch initial state with resilient Promise.allSettled
   const loadAllData = async () => {
@@ -538,7 +582,15 @@ export default function App() {
 
   const handleGenerateProject = async (skillGap: string) => {
     const res = await api.generateProject(skillGap, profile?.targetRole);
-    setProjects((prev) => [res.project, ...prev]);
+    setProjects((prev) => {
+      // Check if project already exists by ID to prevent duplicates
+      const exists = prev.some((p) => p.id === res.project.id);
+      if (exists) {
+        // Update existing project instead of adding duplicate
+        return prev.map((p) => (p.id === res.project.id ? res.project : p));
+      }
+      return [res.project, ...prev];
+    });
     return res.project;
   };
 
@@ -772,7 +824,7 @@ export default function App() {
         onNavigate={handleNavigate}
         lang={lang}
         onToggleLang={handleToggleLang}
-        theme={theme}
+        theme={resolvedTheme}
         onToggleTheme={handleToggleTheme}
         notifications={notifications}
         onMarkNotificationRead={handleMarkNotificationRead}
@@ -1115,7 +1167,7 @@ export default function App() {
         onNavigate={handleNavigate}
         lang={lang}
         onToggleLang={handleToggleLang}
-        theme={theme}
+        theme={resolvedTheme}
         onToggleTheme={handleToggleTheme}
         onStartOnboarding={() => setShowOnboarding(true)}
         onOpenLinkedInSync={() => setShowLinkedInSync(true)}

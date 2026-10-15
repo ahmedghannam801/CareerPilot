@@ -58,11 +58,16 @@ export const MicroProjectsView: React.FC<MicroProjectsViewProps> = ({
   const isAr = lang === 'ar';
 
   const handleGenerate = async () => {
+    if (isGenerating) return; // Prevent duplicate calls
     setIsGenerating(true);
     try {
       const newProj = await onGenerateProject(skillGapInput);
       setActiveProject(newProj);
       setShowGenerateModal(false);
+      setSkillGapInput(''); // Reset input after successful generation
+    } catch (error) {
+      console.error('Failed to generate project:', error);
+      // Keep modal open on error so user can retry
     } finally {
       setIsGenerating(false);
     }

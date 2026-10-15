@@ -72,7 +72,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <header
       dir={isAr ? 'rtl' : 'ltr'}
-      className="sticky top-0 z-40 flex items-center justify-between gap-3 px-3 sm:px-6 h-14 bg-white border-b border-slate-200/70"
+      className="sticky top-0 z-40 flex items-center justify-between gap-3 px-3 sm:px-6 h-14 bg-white dark:bg-[#0B0F17] border-b border-slate-200/70 dark:border-slate-800"
       style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}
     >
       {/* Upper-Left: CareerPilot Brand Logo only */}

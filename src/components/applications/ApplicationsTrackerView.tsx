@@ -53,6 +53,40 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
 
   const isAr = lang === 'ar';
 
+  // Restore new application draft from localStorage
+  useEffect(() => {
+    const draftKey = 'app_new_application_draft';
+    const savedDraft = localStorage.getItem(draftKey);
+
+    if (savedDraft) {
+      try {
+        const parsed = JSON.parse(savedDraft);
+        if (parsed.title) setNewTitle(parsed.title);
+        if (parsed.company) setNewCompany(parsed.company);
+        if (parsed.status) setNewStatus(parsed.status);
+      } catch (e) {
+        console.warn('Failed to parse new application draft:', e);
+      }
+    }
+  }, []);
+
+  // Autosave new application draft with debounce
+  useEffect(() => {
+    if (!showAddModal) return;
+
+    const timer = setTimeout(() => {
+      const draftKey = 'app_new_application_draft';
+      localStorage.setItem(draftKey, JSON.stringify({
+        title: newTitle,
+        company: newCompany,
+        status: newStatus,
+        lastSaved: new Date().toISOString()
+      }));
+    }, 1000); // 1 second debounce
+
+    return () => clearTimeout(timer);
+  }, [newTitle, newCompany, newStatus, showAddModal]);
+
   const totalApps = applications.length;
   const interviewsCount = applications.filter((a) => a.status === 'Interview').length;
   const offersCount = applications.filter((a) => a.status === 'Offer').length;
@@ -133,6 +167,9 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
     setShowAddModal(false);
     setNewTitle('');
     setNewCompany('');
+
+    // Clear the draft from localStorage after successful save
+    localStorage.removeItem('app_new_application_draft');
   };
 
   const filteredApps: Application[] = useMemo(() => {
@@ -376,17 +413,6 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
                   <span className="text-xs text-slate-500 font-medium">{effectiveSelectedApp.company}</span>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={handleGenerateCoverLetter}
-                    disabled={isGeneratingLetter}
-                    className="px-3.5 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all shadow-sm inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
-                  >
-                    <Sparkles className={`w-3.5 h-3.5 ${isGeneratingLetter ? 'animate-spin' : ''}`} />
-                    <span>{isGeneratingLetter ? (isAr ? 'جاري التوليد...' : 'Writing...') : isAr ? 'توليد خطاب التقديم' : 'AI Cover Letter'}</span>
-                  </button>
-                </div>
               </div>
 
               {/* Attached CV Section */}

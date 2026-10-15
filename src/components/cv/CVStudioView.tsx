@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   FileText,
   Sparkles,
@@ -106,10 +106,73 @@ export const CVStudioView: React.FC<CVStudioViewProps> = ({
 
   const [copied, setCopied] = useState(false);
   const [isEditingSummary, setIsEditingSummary] = useState(false);
+  const [isEditingSkills, setIsEditingSkills] = useState(false);
+  const [newSkillInput, setNewSkillInput] = useState('');
 
   const isAr = lang === 'ar';
   const currentResume = resumes.find((r) => r.id === selectedResumeId) || masterCV;
   const [summaryDraft, setSummaryDraft] = useState(currentResume?.summary || '');
+  const [skillsDraft, setSkillsDraft] = useState<string[]>(currentResume?.skills || []);
+
+  // Restore drafts from localStorage on mount or when currentResume changes
+  useEffect(() => {
+    if (!currentResume?.id) return;
+
+    const draftKey = `cv_draft_${currentResume.id}`;
+    const savedDraft = localStorage.getItem(draftKey);
+
+    if (savedDraft) {
+      try {
+        const parsed = JSON.parse(savedDraft);
+        if (parsed.summary !== undefined) setSummaryDraft(parsed.summary);
+        if (parsed.skills !== undefined) setSkillsDraft(parsed.skills);
+      } catch (e) {
+        console.warn('Failed to parse saved draft:', e);
+      }
+    } else {
+      // No draft exists, reset to current resume values
+      setSummaryDraft(currentResume.summary || '');
+      setSkillsDraft(currentResume.skills || []);
+    }
+  }, [currentResume?.id]);
+
+  // Autosave summary draft with debounce
+  useEffect(() => {
+    if (!currentResume?.id || !isEditingSummary) return;
+
+    const timer = setTimeout(() => {
+      const draftKey = `cv_draft_${currentResume.id}`;
+      const existingDraft = localStorage.getItem(draftKey);
+      const existing = existingDraft ? JSON.parse(existingDraft) : {};
+
+      localStorage.setItem(draftKey, JSON.stringify({
+        ...existing,
+        summary: summaryDraft,
+        lastSaved: new Date().toISOString()
+      }));
+    }, 1000); // 1 second debounce
+
+    return () => clearTimeout(timer);
+  }, [summaryDraft, isEditingSummary, currentResume?.id]);
+
+  // Autosave skills draft with debounce
+  useEffect(() => {
+    if (!currentResume?.id || !isEditingSkills) return;
+
+    const timer = setTimeout(() => {
+      const draftKey = `cv_draft_${currentResume.id}`;
+      const existingDraft = localStorage.getItem(draftKey);
+      const existing = existingDraft ? JSON.parse(existingDraft) : {};
+
+      localStorage.setItem(draftKey, JSON.stringify({
+        ...existing,
+        skills: skillsDraft,
+        lastSaved: new Date().toISOString()
+      }));
+    }, 1000); // 1 second debounce
+
+    return () => clearTimeout(timer);
+  }, [skillsDraft, isEditingSkills, currentResume?.id]);
 
   const handleExecuteGeneration = async () => {
     setGenerationStep('validating');
@@ -206,6 +269,56 @@ export const CVStudioView: React.FC<CVStudioViewProps> = ({
     };
     await onSaveResume(updated);
     setIsEditingSummary(false);
+
+    // Clear the draft from localStorage after successful save
+    const draftKey = `cv_draft_${currentResume.id}`;
+    const existingDraft = localStorage.getItem(draftKey);
+    if (existingDraft) {
+      const existing = JSON.parse(existingDraft);
+      delete existing.summary;
+      if (Object.keys(existing).length <= 1) { // Only lastSaved remains
+        localStorage.removeItem(draftKey);
+      } else {
+        localStorage.setItem(draftKey, JSON.stringify(existing));
+      }
+    }
+  };
+
+  const handleSaveSkills = async () => {
+    if (!currentResume) return;
+    const updated = {
+      ...currentResume,
+      skills: skillsDraft,
+      updatedAt: new Date().toISOString(),
+    };
+    await onSaveResume(updated);
+    setIsEditingSkills(false);
+    setNewSkillInput('');
+
+    // Clear the draft from localStorage after successful save
+    const draftKey = `cv_draft_${currentResume.id}`;
+    const existingDraft = localStorage.getItem(draftKey);
+    if (existingDraft) {
+      const existing = JSON.parse(existingDraft);
+      delete existing.skills;
+      if (Object.keys(existing).length <= 1) { // Only lastSaved remains
+        localStorage.removeItem(draftKey);
+      } else {
+        localStorage.setItem(draftKey, JSON.stringify(existing));
+      }
+    }
+  };
+
+  const handleAddSkill = () => {
+    const trimmed = newSkillInput.trim();
+    if (trimmed && !skillsDraft.includes(trimmed)) {
+      setSkillsDraft([...skillsDraft, trimmed]);
+      setNewSkillInput('');
+    }
+  };
+
+  const handleRemoveSkill = (index: number) => {
+    setSkillsDraft(skillsDraft.filter((_, i) => i !== index));
   };
 
   const handleSaveTailoredAsNew = async (tailoredResume: ResumeVersion) => {
@@ -819,19 +932,96 @@ ${currentResume.skills.join(' • ')}
 
               {/* Skills Section */}
               <div className="space-y-2.5">
-                <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-                  {isAr ? 'المهارات والكلمات المفتاحية (Technical Skills & ATS Keywords)' : 'Skills & Keywords'} ({currentResume.skills.length})
-                </h3>
-                <div className="flex flex-wrap gap-1.5">
-                  {currentResume.skills.map((skill, i) => (
-                    <span
-                      key={i}
-                      className="text-xs font-semibold px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg border border-slate-200/80 transition-colors"
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                    {isAr ? 'المهارات والكلمات المفتاحية (Technical Skills & ATS Keywords)' : 'Skills & Keywords'} ({isEditingSkills ? skillsDraft.length : currentResume.skills.length})
+                  </h3>
+                  {isEditingSkills ? (
+                    <button
+                      onClick={handleSaveSkills}
+                      className="text-xs font-bold text-blue-600 hover:underline cursor-pointer"
                     >
-                      {skill}
-                    </span>
-                  ))}
+                      {isAr ? 'حفظ المهارات' : 'Save Skills'}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        setIsEditingSkills(true);
+                        setSkillsDraft([...currentResume.skills]);
+                      }}
+                      className="text-xs font-bold text-slate-500 hover:text-blue-600 inline-flex items-center gap-1 cursor-pointer"
+                    >
+                      <Edit3 className="w-3 h-3" />
+                      <span>{isAr ? 'تعديل وإضافة' : 'Edit'}</span>
+                    </button>
+                  )}
                 </div>
+
+                {isEditingSkills ? (
+                  <div className="space-y-3">
+                    {/* Add New Skill Input */}
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={newSkillInput}
+                        onChange={(e) => setNewSkillInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleAddSkill();
+                          }
+                        }}
+                        placeholder={isAr ? 'أضف مهارة جديدة (مثلاً: React, Python, AWS)' : 'Add new skill (e.g., React, Python, AWS)'}
+                        className="flex-1 text-xs p-2.5 border border-blue-300 rounded-xl focus:ring-2 focus:ring-blue-100 outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddSkill}
+                        disabled={!newSkillInput.trim()}
+                        className="px-4 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>{isAr ? 'إضافة' : 'Add'}</span>
+                      </button>
+                    </div>
+
+                    {/* Editable Skills List */}
+                    <div className="flex flex-wrap gap-1.5">
+                      {skillsDraft.map((skill, i) => (
+                        <span
+                          key={i}
+                          className="text-xs font-semibold px-2.5 py-1 bg-slate-100 text-slate-800 rounded-lg border border-slate-200 transition-colors inline-flex items-center gap-1.5 group"
+                        >
+                          {skill}
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveSkill(i)}
+                            className="text-slate-400 hover:text-red-600 cursor-pointer"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+
+                    {skillsDraft.length === 0 && (
+                      <p className="text-xs text-slate-400 text-center py-4 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                        {isAr ? 'لا توجد مهارات بعد. أضف مهاراتك أعلاه.' : 'No skills yet. Add your skills above.'}
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex flex-wrap gap-1.5">
+                    {currentResume.skills.map((skill, i) => (
+                      <span
+                        key={i}
+                        className="text-xs font-semibold px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg border border-slate-200/80 transition-colors"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           )}

@@ -43,14 +43,20 @@ export const TailoredCVModal: React.FC<TailoredCVModalProps> = ({
   const [isCopied, setIsCopied] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [activeTab, setActiveTab] = useState<'summary' | 'skills' | 'experience' | 'full'>('full');
+  const [lastGeneratedOppId, setLastGeneratedOppId] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen && opportunity) {
-      handleGenerate();
+      // Only auto-generate if we haven't generated for this opportunity yet
+      if (lastGeneratedOppId !== opportunity.id) {
+        handleGenerate();
+      }
     } else {
+      // Reset state when modal closes
       setTailoredData(null);
       setError(null);
       setIsSaved(false);
+      setLastGeneratedOppId(null);
     }
   }, [isOpen, opportunity?.id]);
 
@@ -64,6 +70,7 @@ export const TailoredCVModal: React.FC<TailoredCVModalProps> = ({
       const res = await onTailorCV(opportunity.id);
       if (res && res.tailoredData) {
         setTailoredData(res.tailoredData);
+        setLastGeneratedOppId(opportunity.id);
       } else {
         throw new Error(isAr ? 'لم يتم استلام بيانات السيرة الذاتية' : 'No CV data returned');
       }
