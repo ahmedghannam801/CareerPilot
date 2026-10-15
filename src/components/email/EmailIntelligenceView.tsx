@@ -139,23 +139,69 @@ export const EmailIntelligenceView: React.FC<EmailIntelligenceViewProps> = ({
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 bg-white border border-neutral-200 rounded-xl">
-        <div>
-          <div className="text-xs text-neutral-500 mb-1">
-            {lang === 'ar' ? 'ذكاء ومراقبة البريد المهني' : 'Career Inbox Intelligence'}
+      <div
+        className="surface-elevated border-hairline rounded-xl"
+        style={{
+          padding: 'var(--spacing-6)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'var(--spacing-4)',
+        }}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-3)' }}>
+          <div>
+            <div
+              className="text-overline"
+              style={{
+                color: 'var(--text-secondary)',
+                marginBottom: 'var(--spacing-1)',
+              }}
+            >
+              {lang === 'ar' ? 'ذكاء ومراقبة البريد المهني' : 'Career Inbox Intelligence'}
+            </div>
+            <h1
+              className="text-display-sm"
+              style={{
+                color: 'var(--text-primary)',
+                fontWeight: 600,
+              }}
+            >
+              {lang === 'ar' ? 'ذكاء البريد وتحديث الطلبات' : 'Email Intelligence Agent'}
+            </h1>
+            <p
+              className="text-caption"
+              style={{
+                color: 'var(--text-secondary)',
+                marginTop: 'var(--spacing-1)',
+              }}
+            >
+              Privacy-first monitoring: only processes career communications with human-in-the-loop validation
+            </p>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-neutral-900">
-            {lang === 'ar' ? 'ذكاء البريد وتحديث الطلبات' : 'Email Intelligence Agent'}
-          </h1>
-          <p className="text-xs text-neutral-600 mt-1">
-            Privacy-first monitoring: only processes career communications with human-in-the-loop validation
-          </p>
-        </div>
 
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 text-xs text-neutral-600 bg-neutral-100 px-3 py-1.5 rounded-lg">
-            <span className="w-2 h-2 rounded-full bg-neutral-900" />
-            <span>AI Classifier Active</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-3)' }}>
+            <div
+              className="text-caption"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 'var(--spacing-2)',
+                color: 'var(--text-secondary)',
+                backgroundColor: 'var(--surface-secondary)',
+                padding: '6px var(--spacing-3)',
+                borderRadius: 'var(--radius-md)',
+              }}
+            >
+              <span
+                style={{
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '50%',
+                  backgroundColor: 'var(--text-primary)',
+                }}
+              />
+              <span>AI Classifier Active</span>
+            </div>
           </div>
         </div>
       </div>
@@ -165,19 +211,45 @@ export const EmailIntelligenceView: React.FC<EmailIntelligenceViewProps> = ({
         <button
           type="button"
           onClick={() => setSelectedCategory('all')}
-          className={`p-4 rounded-xl text-start transition-all cursor-pointer border ${
-            selectedCategory === 'all'
-              ? 'bg-blue-50/70 border-blue-500 ring-2 ring-blue-500/20 shadow-xs'
-              : 'bg-white border-neutral-200 hover:border-neutral-300'
-          }`}
+          className="border-hairline rounded-xl text-start transition-all cursor-pointer"
+          style={{
+            padding: 'var(--spacing-4)',
+            backgroundColor: selectedCategory === 'all' ? 'var(--primary-50)' : 'var(--surface-primary)',
+            borderColor: selectedCategory === 'all' ? 'var(--primary-500)' : 'var(--border-primary)',
+            boxShadow: selectedCategory === 'all' ? '0 0 0 2px var(--primary-100)' : 'none',
+          }}
           role="button"
           aria-pressed={selectedCategory === 'all'}
         >
-          <span className="text-[11px] text-neutral-500 block">Total Career Emails</span>
-          <span className="text-2xl font-bold font-mono tabular-nums text-neutral-900 mt-1 block">
+          <span
+            className="text-overline"
+            style={{
+              color: 'var(--text-secondary)',
+              display: 'block',
+            }}
+          >
+            Total Career Emails
+          </span>
+          <span
+            className="text-display-sm font-mono tabular-nums"
+            style={{
+              color: 'var(--text-primary)',
+              marginTop: 'var(--spacing-1)',
+              display: 'block',
+              fontWeight: 700,
+            }}
+          >
             {emailEvents.length}
           </span>
-          <span className="text-[10px] text-blue-600 mt-1 font-medium block">
+          <span
+            className="text-caption"
+            style={{
+              color: 'var(--primary-600)',
+              marginTop: 'var(--spacing-1)',
+              fontWeight: 500,
+              display: 'block',
+            }}
+          >
             {selectedCategory === 'all' ? '● Filtering active' : 'Click to show all'}
           </span>
         </button>
@@ -187,19 +259,45 @@ export const EmailIntelligenceView: React.FC<EmailIntelligenceViewProps> = ({
           onClick={() =>
             setSelectedCategory(selectedCategory === 'interview_invitation' ? 'all' : 'interview_invitation')
           }
-          className={`p-4 rounded-xl text-start transition-all cursor-pointer border ${
-            selectedCategory === 'interview_invitation'
-              ? 'bg-blue-50/70 border-blue-500 ring-2 ring-blue-500/20 shadow-xs'
-              : 'bg-white border-neutral-200 hover:border-neutral-300'
-          }`}
+          className="border-hairline rounded-xl text-start transition-all cursor-pointer"
+          style={{
+            padding: 'var(--spacing-4)',
+            backgroundColor: selectedCategory === 'interview_invitation' ? 'var(--primary-50)' : 'var(--surface-primary)',
+            borderColor: selectedCategory === 'interview_invitation' ? 'var(--primary-500)' : 'var(--border-primary)',
+            boxShadow: selectedCategory === 'interview_invitation' ? '0 0 0 2px var(--primary-100)' : 'none',
+          }}
           role="button"
           aria-pressed={selectedCategory === 'interview_invitation'}
         >
-          <span className="text-[11px] text-neutral-500 block">Interview Invitations</span>
-          <span className="text-2xl font-bold font-mono tabular-nums text-neutral-900 mt-1 block">
+          <span
+            className="text-overline"
+            style={{
+              color: 'var(--text-secondary)',
+              display: 'block',
+            }}
+          >
+            Interview Invitations
+          </span>
+          <span
+            className="text-display-sm font-mono tabular-nums"
+            style={{
+              color: 'var(--text-primary)',
+              marginTop: 'var(--spacing-1)',
+              display: 'block',
+              fontWeight: 700,
+            }}
+          >
             {interviewInvites}
           </span>
-          <span className="text-[10px] text-blue-600 mt-1 font-medium block">
+          <span
+            className="text-caption"
+            style={{
+              color: 'var(--primary-600)',
+              marginTop: 'var(--spacing-1)',
+              fontWeight: 500,
+              display: 'block',
+            }}
+          >
             {selectedCategory === 'interview_invitation' ? '● Filtering active' : 'Click to filter'}
           </span>
         </button>
@@ -211,19 +309,45 @@ export const EmailIntelligenceView: React.FC<EmailIntelligenceViewProps> = ({
               selectedCategory === 'application_confirmation' ? 'all' : 'application_confirmation'
             )
           }
-          className={`p-4 rounded-xl text-start transition-all cursor-pointer border ${
-            selectedCategory === 'application_confirmation'
-              ? 'bg-blue-50/70 border-blue-500 ring-2 ring-blue-500/20 shadow-xs'
-              : 'bg-white border-neutral-200 hover:border-neutral-300'
-          }`}
+          className="border-hairline rounded-xl text-start transition-all cursor-pointer"
+          style={{
+            padding: 'var(--spacing-4)',
+            backgroundColor: selectedCategory === 'application_confirmation' ? 'var(--primary-50)' : 'var(--surface-primary)',
+            borderColor: selectedCategory === 'application_confirmation' ? 'var(--primary-500)' : 'var(--border-primary)',
+            boxShadow: selectedCategory === 'application_confirmation' ? '0 0 0 2px var(--primary-100)' : 'none',
+          }}
           role="button"
           aria-pressed={selectedCategory === 'application_confirmation'}
         >
-          <span className="text-[11px] text-neutral-500 block">Receipt Confirmations</span>
-          <span className="text-2xl font-bold font-mono tabular-nums text-neutral-900 mt-1 block">
+          <span
+            className="text-overline"
+            style={{
+              color: 'var(--text-secondary)',
+              display: 'block',
+            }}
+          >
+            Receipt Confirmations
+          </span>
+          <span
+            className="text-display-sm font-mono tabular-nums"
+            style={{
+              color: 'var(--text-primary)',
+              marginTop: 'var(--spacing-1)',
+              display: 'block',
+              fontWeight: 700,
+            }}
+          >
             {confirmations}
           </span>
-          <span className="text-[10px] text-blue-600 mt-1 font-medium block">
+          <span
+            className="text-caption"
+            style={{
+              color: 'var(--primary-600)',
+              marginTop: 'var(--spacing-1)',
+              fontWeight: 500,
+              display: 'block',
+            }}
+          >
             {selectedCategory === 'application_confirmation' ? '● Filtering active' : 'Click to filter'}
           </span>
         </button>
@@ -233,19 +357,45 @@ export const EmailIntelligenceView: React.FC<EmailIntelligenceViewProps> = ({
           onClick={() =>
             setSelectedCategory(selectedCategory === 'assessment' ? 'all' : 'assessment')
           }
-          className={`p-4 rounded-xl text-start transition-all cursor-pointer border ${
-            selectedCategory === 'assessment'
-              ? 'bg-blue-50/70 border-blue-500 ring-2 ring-blue-500/20 shadow-xs'
-              : 'bg-white border-neutral-200 hover:border-neutral-300'
-          }`}
+          className="border-hairline rounded-xl text-start transition-all cursor-pointer"
+          style={{
+            padding: 'var(--spacing-4)',
+            backgroundColor: selectedCategory === 'assessment' ? 'var(--primary-50)' : 'var(--surface-primary)',
+            borderColor: selectedCategory === 'assessment' ? 'var(--primary-500)' : 'var(--border-primary)',
+            boxShadow: selectedCategory === 'assessment' ? '0 0 0 2px var(--primary-100)' : 'none',
+          }}
           role="button"
           aria-pressed={selectedCategory === 'assessment'}
         >
-          <span className="text-[11px] text-neutral-500 block">Assessments Detected</span>
-          <span className="text-2xl font-bold font-mono tabular-nums text-neutral-900 mt-1 block">
+          <span
+            className="text-overline"
+            style={{
+              color: 'var(--text-secondary)',
+              display: 'block',
+            }}
+          >
+            Assessments Detected
+          </span>
+          <span
+            className="text-display-sm font-mono tabular-nums"
+            style={{
+              color: 'var(--text-primary)',
+              marginTop: 'var(--spacing-1)',
+              display: 'block',
+              fontWeight: 700,
+            }}
+          >
             {assessments}
           </span>
-          <span className="text-[10px] text-blue-600 mt-1 font-medium block">
+          <span
+            className="text-caption"
+            style={{
+              color: 'var(--primary-600)',
+              marginTop: 'var(--spacing-1)',
+              fontWeight: 500,
+              display: 'block',
+            }}
+          >
             {selectedCategory === 'assessment' ? '● Filtering active' : 'Click to filter'}
           </span>
         </button>
@@ -253,42 +403,81 @@ export const EmailIntelligenceView: React.FC<EmailIntelligenceViewProps> = ({
 
       {/* MISSING REQUIREMENT CARD */}
       {!emailStatus.hasOAuthCredentials && emailStatus.missingRequirement && (
-        <div className="p-6 bg-neutral-900 text-white rounded-xl space-y-4">
-          <div className="flex items-center gap-2">
-            <span className="text-[11px] font-mono tracking-wider uppercase text-neutral-400">
-              NON-NEGOTIABLE RULE 1 & 6 COMPLIANCE REPORT
-            </span>
+        <div
+          className="rounded-xl"
+          style={{
+            padding: 'var(--spacing-6)',
+            backgroundColor: 'var(--text-primary)',
+            color: 'var(--surface-primary)',
+          }}
+        >
+          <div style={{ marginBottom: 'var(--spacing-4)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-2)' }}>
+              <span
+                className="text-overline font-mono"
+                style={{
+                  color: 'var(--neutral-400)',
+                  letterSpacing: '0.1em',
+                }}
+              >
+                NON-NEGOTIABLE RULE 1 & 6 COMPLIANCE REPORT
+              </span>
+            </div>
           </div>
 
-          <div className="border border-neutral-800 p-4 rounded-lg bg-neutral-950 font-mono text-xs space-y-2 text-neutral-300">
-            <div className="text-white font-bold text-sm">MISSING REQUIREMENT</div>
-            <div>
-              <span className="text-neutral-500">Service: </span>
+          <div
+            className="border-hairline rounded-lg font-mono text-caption"
+            style={{
+              padding: 'var(--spacing-4)',
+              backgroundColor: 'var(--neutral-950)',
+              borderColor: 'var(--neutral-800)',
+              color: 'var(--neutral-300)',
+            }}
+          >
+            <div
+              className="text-body-sm"
+              style={{
+                color: 'var(--surface-primary)',
+                fontWeight: 700,
+                marginBottom: 'var(--spacing-2)',
+              }}
+            >
+              MISSING REQUIREMENT
+            </div>
+            <div style={{ marginBottom: 'var(--spacing-2)' }}>
+              <span style={{ color: 'var(--neutral-500)' }}>Service: </span>
               {emailStatus.missingRequirement.service}
             </div>
-            <div>
-              <span className="text-neutral-500">Why it is required: </span>
+            <div style={{ marginBottom: 'var(--spacing-2)' }}>
+              <span style={{ color: 'var(--neutral-500)' }}>Why it is required: </span>
               {emailStatus.missingRequirement.reason}
             </div>
-            <div>
-              <span className="text-neutral-500">Required account: </span>
+            <div style={{ marginBottom: 'var(--spacing-2)' }}>
+              <span style={{ color: 'var(--neutral-500)' }}>Required account: </span>
               {emailStatus.missingRequirement.requiredAccount}
             </div>
-            <div>
-              <span className="text-neutral-500">Environment variables: </span>
+            <div style={{ marginBottom: 'var(--spacing-2)' }}>
+              <span style={{ color: 'var(--neutral-500)' }}>Environment variables: </span>
               {emailStatus.missingRequirement.environmentVariables.join(', ')}
             </div>
-            <div>
-              <span className="text-neutral-500">OAuth scopes: </span>
+            <div style={{ marginBottom: 'var(--spacing-2)' }}>
+              <span style={{ color: 'var(--neutral-500)' }}>OAuth scopes: </span>
               {emailStatus.missingRequirement.oauthScopes.join(', ')}
             </div>
-            <div className="text-neutral-200 pt-1">
-              <span className="text-neutral-500">Developer action required: </span>
+            <div style={{ color: 'var(--neutral-200)', paddingTop: 'var(--spacing-1)' }}>
+              <span style={{ color: 'var(--neutral-500)' }}>Developer action required: </span>
               {emailStatus.missingRequirement.developerAction}
             </div>
           </div>
 
-          <p className="text-xs text-neutral-400 leading-relaxed">
+          <p
+            className="text-caption"
+            style={{
+              color: 'var(--neutral-400)',
+              marginTop: 'var(--spacing-4)',
+              lineHeight: 1.6,
+            }}
+          >
             CareerPilot operates transparently. While external OAuth credentials are not attached, the multi-agent classification engine below is fully operational in live simulation mode.
           </p>
         </div>
@@ -298,11 +487,34 @@ export const EmailIntelligenceView: React.FC<EmailIntelligenceViewProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left: Email Events Feed with Category Chips Filter */}
         <div className="lg:col-span-7 space-y-4">
-          <div className="p-6 bg-white border border-neutral-200 rounded-xl space-y-4">
-            <div className="flex items-center justify-between flex-wrap gap-2">
+          <div
+            className="surface-elevated border-hairline rounded-xl"
+            style={{ padding: 'var(--spacing-6)' }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: 'var(--spacing-2)',
+                marginBottom: 'var(--spacing-4)',
+              }}
+            >
               <div>
-                <h2 className="text-sm font-semibold text-neutral-900">Career Email Event Stream</h2>
-                <span className="text-xs text-neutral-500 font-mono tabular-nums">
+                <h2
+                  className="text-body-sm"
+                  style={{
+                    fontWeight: 600,
+                    color: 'var(--text-primary)',
+                  }}
+                >
+                  Career Email Event Stream
+                </h2>
+                <span
+                  className="text-caption font-mono tabular-nums"
+                  style={{ color: 'var(--text-secondary)' }}
+                >
                   Showing {filteredEvents.length} of {emailEvents.length} events
                 </span>
               </div>
@@ -311,7 +523,12 @@ export const EmailIntelligenceView: React.FC<EmailIntelligenceViewProps> = ({
                 <button
                   type="button"
                   onClick={() => setSelectedCategory('all')}
-                  className="text-xs text-blue-600 hover:text-blue-800 font-medium underline cursor-pointer"
+                  className="text-caption cursor-pointer"
+                  style={{
+                    color: 'var(--primary-600)',
+                    fontWeight: 500,
+                    textDecoration: 'underline',
+                  }}
                 >
                   {lang === 'ar' ? 'عرض الكل' : 'Clear Category Filter'}
                 </button>
@@ -319,8 +536,31 @@ export const EmailIntelligenceView: React.FC<EmailIntelligenceViewProps> = ({
             </div>
 
             {/* Interactive Category Filter Chips */}
-            <div className="flex items-center gap-1.5 flex-wrap pt-1 pb-2 border-b border-neutral-100">
-              <span className="text-[11px] text-neutral-400 flex items-center gap-1 mr-1">
+            <div
+              className="border-hairline"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                flexWrap: 'wrap',
+                paddingTop: 'var(--spacing-1)',
+                paddingBottom: 'var(--spacing-2)',
+                borderTop: 'none',
+                borderLeft: 'none',
+                borderRight: 'none',
+                marginBottom: 'var(--spacing-4)',
+              }}
+            >
+              <span
+                className="text-caption"
+                style={{
+                  color: 'var(--neutral-400)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 'var(--spacing-1)',
+                  marginRight: 'var(--spacing-1)',
+                }}
+              >
                 <Filter className="w-3 h-3" />
                 <span>{lang === 'ar' ? 'الفلترة:' : 'Filter:'}</span>
               </span>
@@ -332,17 +572,26 @@ export const EmailIntelligenceView: React.FC<EmailIntelligenceViewProps> = ({
                     key={cat.id}
                     type="button"
                     onClick={() => setSelectedCategory(cat.id)}
-                    className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
-                      isActive
-                        ? 'bg-neutral-900 text-white font-bold shadow-xs'
-                        : 'bg-neutral-100 hover:bg-neutral-200 text-neutral-700'
-                    }`}
+                    className="text-caption rounded-lg transition-all cursor-pointer"
+                    style={{
+                      padding: '4px 10px',
+                      fontWeight: isActive ? 700 : 500,
+                      backgroundColor: isActive ? 'var(--text-primary)' : 'var(--surface-secondary)',
+                      color: isActive ? 'var(--surface-primary)' : 'var(--text-secondary)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                    }}
                   >
                     <span>{label}</span>
                     <span
-                      className={`text-[10px] px-1 py-0.2 rounded-full ${
-                        isActive ? 'bg-white/20 text-white' : 'bg-neutral-200 text-neutral-600'
-                      }`}
+                      className="text-caption"
+                      style={{
+                        padding: '0 4px',
+                        borderRadius: '9999px',
+                        backgroundColor: isActive ? 'rgba(255, 255, 255, 0.2)' : 'var(--neutral-200)',
+                        color: isActive ? 'var(--surface-primary)' : 'var(--text-secondary)',
+                      }}
                     >
                       {cat.count}
                     </span>
@@ -354,8 +603,15 @@ export const EmailIntelligenceView: React.FC<EmailIntelligenceViewProps> = ({
             {/* Events List */}
             <div className="space-y-3">
               {filteredEvents.length === 0 ? (
-                <div className="p-8 text-center text-xs text-neutral-500 bg-neutral-50 rounded-xl space-y-2">
-                  <p>
+                <div
+                  className="text-caption rounded-xl text-center"
+                  style={{
+                    padding: 'var(--spacing-8)',
+                    color: 'var(--text-secondary)',
+                    backgroundColor: 'var(--surface-secondary)',
+                  }}
+                >
+                  <p style={{ marginBottom: 'var(--spacing-2)' }}>
                     {lang === 'ar'
                       ? 'لا توجد رسائل مسجلة تحت هذا التصنيف حالياً.'
                       : 'No email events found under this category filter.'}
@@ -363,7 +619,12 @@ export const EmailIntelligenceView: React.FC<EmailIntelligenceViewProps> = ({
                   <button
                     type="button"
                     onClick={() => setSelectedCategory('all')}
-                    className="text-neutral-900 font-semibold underline text-xs cursor-pointer"
+                    className="text-caption cursor-pointer"
+                    style={{
+                      color: 'var(--text-primary)',
+                      fontWeight: 600,
+                      textDecoration: 'underline',
+                    }}
                   >
                     {lang === 'ar' ? 'عرض جميع الرسائل' : 'Show all updates'}
                   </button>
@@ -377,39 +638,116 @@ export const EmailIntelligenceView: React.FC<EmailIntelligenceViewProps> = ({
                     <div
                       key={evt.id}
                       onClick={() => handleSelectEvent(evt)}
-                      className={`p-4 border rounded-xl transition-all bg-white space-y-2 cursor-pointer ${
-                        isSelected
-                          ? 'border-neutral-900 ring-2 ring-neutral-900/10 shadow-xs'
-                          : 'border-neutral-200 hover:border-neutral-300'
-                      }`}
+                      className="border-hairline rounded-xl transition-all cursor-pointer"
+                      style={{
+                        padding: 'var(--spacing-4)',
+                        backgroundColor: 'var(--surface-primary)',
+                        borderColor: isSelected ? 'var(--text-primary)' : 'var(--border-primary)',
+                        boxShadow: isSelected ? '0 0 0 2px var(--neutral-100)' : 'none',
+                      }}
                     >
-                      <div className="flex items-center justify-between text-xs gap-2">
-                        <div className="flex items-center gap-2 truncate">
+                      <div
+                        className="text-caption"
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: 'var(--spacing-2)',
+                          marginBottom: 'var(--spacing-2)',
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 'var(--spacing-2)',
+                            overflow: 'hidden',
+                          }}
+                        >
                           {/* Read / Unread Indicator Badge */}
                           {isRead ? (
-                            <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 inline-flex items-center gap-1 shrink-0">
-                              <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                            <span
+                              className="text-caption border-hairline"
+                              style={{
+                                fontWeight: 600,
+                                color: 'var(--success-700)',
+                                backgroundColor: 'var(--success-50)',
+                                borderColor: 'var(--success-200)',
+                                padding: '2px 8px',
+                                borderRadius: '9999px',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 'var(--spacing-1)',
+                                flexShrink: 0,
+                              }}
+                            >
+                              <CheckCircle2 className="w-3 h-3" style={{ color: 'var(--success-600)' }} />
                               <span>{lang === 'ar' ? 'مقروء' : 'Read'}</span>
                             </span>
                           ) : (
-                            <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200 inline-flex items-center gap-1 shrink-0">
-                              <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" />
+                            <span
+                              className="text-caption border-hairline"
+                              style={{
+                                fontWeight: 700,
+                                color: 'var(--primary-700)',
+                                backgroundColor: 'var(--primary-50)',
+                                borderColor: 'var(--primary-200)',
+                                padding: '2px 8px',
+                                borderRadius: '9999px',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 'var(--spacing-1)',
+                                flexShrink: 0,
+                              }}
+                            >
+                              <span
+                                className="animate-pulse"
+                                style={{
+                                  width: '6px',
+                                  height: '6px',
+                                  borderRadius: '50%',
+                                  backgroundColor: 'var(--primary-600)',
+                                }}
+                              />
                               <span>{lang === 'ar' ? 'جديد وغير مقروء' : 'Unread'}</span>
                             </span>
                           )}
-                          <span className="font-semibold text-neutral-900 truncate">
+                          <span
+                            style={{
+                              fontWeight: 600,
+                              color: 'var(--text-primary)',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                            }}
+                          >
                             {evt.sender}
                           </span>
                         </div>
 
-                        <div className="flex items-center gap-2 shrink-0">
-                          <span className="text-neutral-500 font-mono tabular-nums text-[11px]">
+                        <div
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 'var(--spacing-2)',
+                            flexShrink: 0,
+                          }}
+                        >
+                          <span
+                            className="text-caption font-mono tabular-nums"
+                            style={{ color: 'var(--text-secondary)' }}
+                          >
                             {formatDate(evt.date)}
                           </span>
                           <button
                             type="button"
                             onClick={(e) => handleToggleRead(evt, e)}
-                            className="text-[10px] text-blue-600 hover:text-blue-800 font-medium underline cursor-pointer"
+                            className="text-caption cursor-pointer"
+                            style={{
+                              color: 'var(--primary-600)',
+                              fontWeight: 500,
+                              textDecoration: 'underline',
+                            }}
                             title={isRead ? 'Mark as Unread' : 'Mark as Read'}
                           >
                             {isRead
@@ -423,15 +761,63 @@ export const EmailIntelligenceView: React.FC<EmailIntelligenceViewProps> = ({
                         </div>
                       </div>
 
-                      <h3 className="text-xs font-bold text-neutral-900">{evt.subject}</h3>
-                      <p className="text-xs text-neutral-600 leading-relaxed">{evt.snippet}</p>
+                      <h3
+                        className="text-caption"
+                        style={{
+                          fontWeight: 700,
+                          color: 'var(--text-primary)',
+                          marginBottom: 'var(--spacing-2)',
+                        }}
+                      >
+                        {evt.subject}
+                      </h3>
+                      <p
+                        className="text-caption"
+                        style={{
+                          color: 'var(--text-secondary)',
+                          lineHeight: 1.6,
+                          marginBottom: 'var(--spacing-2)',
+                        }}
+                      >
+                        {evt.snippet}
+                      </p>
 
-                      <div className="pt-2 border-t border-neutral-100 flex items-center justify-between text-[11px] gap-2">
-                        <span className="font-mono text-neutral-700 bg-neutral-100 px-2 py-0.5 rounded">
+                      <div
+                        className="text-caption border-hairline"
+                        style={{
+                          paddingTop: 'var(--spacing-2)',
+                          borderTop: '1px solid var(--border-secondary)',
+                          borderLeft: 'none',
+                          borderRight: 'none',
+                          borderBottom: 'none',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: 'var(--spacing-2)',
+                        }}
+                      >
+                        <span
+                          className="font-mono"
+                          style={{
+                            color: 'var(--text-secondary)',
+                            backgroundColor: 'var(--surface-secondary)',
+                            padding: '2px 8px',
+                            borderRadius: 'var(--radius-sm)',
+                          }}
+                        >
                           {evt.category.replace('_', ' ')}
                         </span>
                         {evt.detectedAction && (
-                          <span className="text-neutral-900 font-medium truncate max-w-[260px]">
+                          <span
+                            style={{
+                              color: 'var(--text-primary)',
+                              fontWeight: 500,
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                              maxWidth: '260px',
+                            }}
+                          >
                             Action: {evt.detectedAction}
                           </span>
                         )}
@@ -446,36 +832,91 @@ export const EmailIntelligenceView: React.FC<EmailIntelligenceViewProps> = ({
 
         {/* Right: Live Email Classification Agent Detail / Simulator */}
         <div className="lg:col-span-5 space-y-6">
-          <div className="p-6 bg-white border border-neutral-200 rounded-xl space-y-4">
-            <div>
-              <div className="flex items-center justify-between">
-                <h2 className="text-sm font-semibold text-neutral-900">
+          <div
+            className="surface-elevated border-hairline rounded-xl"
+            style={{ padding: 'var(--spacing-6)' }}
+          >
+            <div style={{ marginBottom: 'var(--spacing-4)' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: 'var(--spacing-1)',
+                }}
+              >
+                <h2
+                  className="text-body-sm"
+                  style={{
+                    fontWeight: 600,
+                    color: 'var(--text-primary)',
+                  }}
+                >
                   Live Email Classifier & Pipeline Updater
                 </h2>
                 {isSelectedProcessedOrRead && (
-                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 inline-flex items-center gap-1">
-                    <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                  <span
+                    className="text-caption border-hairline"
+                    style={{
+                      fontWeight: 700,
+                      color: 'var(--success-700)',
+                      backgroundColor: 'var(--success-50)',
+                      borderColor: 'var(--success-200)',
+                      padding: '2px 8px',
+                      borderRadius: '9999px',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 'var(--spacing-1)',
+                    }}
+                  >
+                    <CheckCircle2 className="w-3 h-3" style={{ color: 'var(--success-600)' }} />
                     <span>Read & Processed</span>
                   </span>
                 )}
               </div>
-              <p className="text-xs text-neutral-500 mt-0.5">
+              <p
+                className="text-caption"
+                style={{ color: 'var(--text-secondary)' }}
+              >
                 Inspect and process career updates with AI. Processing automatically correlates opportunities, marks items read, and decrements unread counts.
               </p>
             </div>
 
             {/* Prominent Read/Processed Banner */}
             {isSelectedProcessedOrRead && (
-              <div className="p-3 bg-emerald-50/80 border border-emerald-200 text-emerald-800 rounded-lg text-xs space-y-1">
-                <div className="flex items-center gap-1.5 font-bold">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <div
+                className="text-caption border-hairline rounded-lg"
+                style={{
+                  padding: 'var(--spacing-3)',
+                  backgroundColor: 'var(--success-50)',
+                  borderColor: 'var(--success-200)',
+                  color: 'var(--success-800)',
+                  marginBottom: 'var(--spacing-4)',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    fontWeight: 700,
+                    marginBottom: 'var(--spacing-1)',
+                  }}
+                >
+                  <CheckCircle2 className="w-4 h-4" style={{ color: 'var(--success-600)', flexShrink: 0 }} />
                   <span>
                     {lang === 'ar'
                       ? 'تمت معالجة الرسالة وتصنيفها كمقروءة بنجاح'
                       : 'Processed with AI Agent & Marked as Read'}
                   </span>
                 </div>
-                <p className="text-[11px] text-emerald-700 leading-tight">
+                <p
+                  className="text-caption"
+                  style={{
+                    color: 'var(--success-700)',
+                    lineHeight: 1.5,
+                  }}
+                >
                   {lang === 'ar'
                     ? 'تم تسجيل الحدث بنجاح وتحديث خط مسار التقديمات الخاص بك.'
                     : 'The event has been processed and your application timeline is up to date.'}
@@ -485,32 +926,83 @@ export const EmailIntelligenceView: React.FC<EmailIntelligenceViewProps> = ({
 
             <div className="space-y-3">
               <div>
-                <label className="block text-xs font-medium text-neutral-700 mb-1">Sender</label>
+                <label
+                  className="text-caption"
+                  style={{
+                    display: 'block',
+                    fontWeight: 500,
+                    color: 'var(--text-secondary)',
+                    marginBottom: 'var(--spacing-1)',
+                  }}
+                >
+                  Sender
+                </label>
                 <input
                   type="text"
                   value={testSender}
                   onChange={(e) => setTestSender(e.target.value)}
-                  className="w-full text-xs p-2 border border-neutral-300 rounded-lg outline-none"
+                  className="text-caption border-hairline rounded-lg"
+                  style={{
+                    width: '100%',
+                    padding: 'var(--spacing-2)',
+                    outline: 'none',
+                    backgroundColor: 'var(--surface-primary)',
+                    color: 'var(--text-primary)',
+                  }}
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-neutral-700 mb-1">Subject</label>
+                <label
+                  className="text-caption"
+                  style={{
+                    display: 'block',
+                    fontWeight: 500,
+                    color: 'var(--text-secondary)',
+                    marginBottom: 'var(--spacing-1)',
+                  }}
+                >
+                  Subject
+                </label>
                 <input
                   type="text"
                   value={testSubject}
                   onChange={(e) => setTestSubject(e.target.value)}
-                  className="w-full text-xs p-2 border border-neutral-300 rounded-lg outline-none"
+                  className="text-caption border-hairline rounded-lg"
+                  style={{
+                    width: '100%',
+                    padding: 'var(--spacing-2)',
+                    outline: 'none',
+                    backgroundColor: 'var(--surface-primary)',
+                    color: 'var(--text-primary)',
+                  }}
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-neutral-700 mb-1">Snippet / Body</label>
+                <label
+                  className="text-caption"
+                  style={{
+                    display: 'block',
+                    fontWeight: 500,
+                    color: 'var(--text-secondary)',
+                    marginBottom: 'var(--spacing-1)',
+                  }}
+                >
+                  Snippet / Body
+                </label>
                 <textarea
                   rows={4}
                   value={testSnippet}
                   onChange={(e) => setTestSnippet(e.target.value)}
-                  className="w-full text-xs p-2.5 border border-neutral-300 rounded-lg outline-none"
+                  className="text-caption border-hairline rounded-lg"
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    outline: 'none',
+                    backgroundColor: 'var(--surface-primary)',
+                    color: 'var(--text-primary)',
+                  }}
                 />
               </div>
 
@@ -520,9 +1012,22 @@ export const EmailIntelligenceView: React.FC<EmailIntelligenceViewProps> = ({
                   <button
                     type="button"
                     disabled
-                    className="w-full py-2.5 text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-300 rounded-lg inline-flex items-center justify-center gap-2 opacity-90 cursor-default"
+                    className="text-caption border-hairline rounded-lg cursor-default"
+                    style={{
+                      width: '100%',
+                      padding: '10px',
+                      fontWeight: 700,
+                      color: 'var(--success-700)',
+                      backgroundColor: 'var(--success-50)',
+                      borderColor: 'var(--success-300)',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 'var(--spacing-2)',
+                      opacity: 0.9,
+                    }}
                   >
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                    <CheckCircle2 className="w-4 h-4" style={{ color: 'var(--success-600)' }} />
                     <span>
                       {lang === 'ar'
                         ? 'تمت المعالجة بالذكاء الاصطناعي (مقروء)'
@@ -534,7 +1039,18 @@ export const EmailIntelligenceView: React.FC<EmailIntelligenceViewProps> = ({
                     type="button"
                     onClick={handleTestClassify}
                     disabled={isClassifying}
-                    className="w-full py-1.5 text-xs font-medium text-neutral-600 hover:text-neutral-900 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors inline-flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="text-caption rounded-lg transition-colors cursor-pointer"
+                    style={{
+                      width: '100%',
+                      padding: '6px',
+                      fontWeight: 500,
+                      color: 'var(--text-secondary)',
+                      backgroundColor: 'var(--surface-secondary)',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px',
+                    }}
                   >
                     <RefreshCw className={`w-3 h-3 ${isClassifying ? 'animate-spin' : ''}`} />
                     <span>{isClassifying ? 'Re-classifying...' : 'Re-process with AI Agent'}</span>
@@ -545,7 +1061,20 @@ export const EmailIntelligenceView: React.FC<EmailIntelligenceViewProps> = ({
                   type="button"
                   onClick={handleTestClassify}
                   disabled={isClassifying}
-                  className="w-full py-2.5 text-xs font-semibold text-white bg-neutral-900 hover:bg-neutral-800 rounded-lg transition-colors inline-flex items-center justify-center gap-2 cursor-pointer shadow-xs disabled:opacity-50"
+                  className="text-caption rounded-lg transition-colors cursor-pointer"
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    fontWeight: 600,
+                    color: 'var(--surface-primary)',
+                    backgroundColor: 'var(--text-primary)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 'var(--spacing-2)',
+                    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
+                    opacity: isClassifying ? 0.5 : 1,
+                  }}
                 >
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>{isClassifying ? 'Classifying Email...' : 'Process with AI Agent'}</span>
@@ -554,23 +1083,40 @@ export const EmailIntelligenceView: React.FC<EmailIntelligenceViewProps> = ({
             </div>
 
             {classificationResult && (
-              <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-lg text-xs space-y-2 mt-4">
-                <span className="font-semibold text-neutral-900 block">Classification Output</span>
-                <div className="space-y-1 text-neutral-700">
-                  <div>
-                    <span className="font-medium text-neutral-900">Category: </span>
+              <div
+                className="text-caption border-hairline rounded-lg"
+                style={{
+                  padding: 'var(--spacing-4)',
+                  backgroundColor: 'var(--surface-secondary)',
+                  borderColor: 'var(--border-primary)',
+                  marginTop: 'var(--spacing-4)',
+                }}
+              >
+                <span
+                  style={{
+                    fontWeight: 600,
+                    color: 'var(--text-primary)',
+                    display: 'block',
+                    marginBottom: 'var(--spacing-2)',
+                  }}
+                >
+                  Classification Output
+                </span>
+                <div style={{ color: 'var(--text-secondary)' }}>
+                  <div style={{ marginBottom: 'var(--spacing-1)' }}>
+                    <span style={{ fontWeight: 500, color: 'var(--text-primary)' }}>Category: </span>
                     {classificationResult.classification.category}
                   </div>
-                  <div>
-                    <span className="font-medium text-neutral-900">Priority: </span>
+                  <div style={{ marginBottom: 'var(--spacing-1)' }}>
+                    <span style={{ fontWeight: 500, color: 'var(--text-primary)' }}>Priority: </span>
                     {classificationResult.classification.priority}
                   </div>
-                  <div>
-                    <span className="font-medium text-neutral-900">Detected Action: </span>
+                  <div style={{ marginBottom: 'var(--spacing-1)' }}>
+                    <span style={{ fontWeight: 500, color: 'var(--text-primary)' }}>Detected Action: </span>
                     {classificationResult.classification.detectedAction}
                   </div>
                   <div>
-                    <span className="font-medium text-neutral-900">Associated Company: </span>
+                    <span style={{ fontWeight: 500, color: 'var(--text-primary)' }}>Associated Company: </span>
                     {classificationResult.classification.relatedCompany || 'N/A'}
                   </div>
                 </div>

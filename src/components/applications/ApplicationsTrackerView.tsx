@@ -198,15 +198,26 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 bg-white border border-slate-200/80 rounded-2xl shadow-2xs">
+      <div
+        className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-2xl shadow-2xs border-hairline surface-elevated"
+      >
         <div>
-          <div className="text-xs font-semibold text-blue-600 mb-1">
+          <div
+            className="text-xs font-semibold mb-1"
+            style={{ color: 'var(--color-primary)' }}
+          >
             {isAr ? 'متابعة مسار التوظيف والفرص' : 'End-to-End Pipeline'}
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+          <h1
+            className="text-2xl font-bold tracking-tight"
+            style={{ color: 'var(--color-text-primary)' }}
+          >
             {isAr ? 'متابعة وتجهيز طلبات التوظيف' : 'Applications Tracker & Preparation'}
           </h1>
-          <p className="text-xs text-slate-500 mt-1">
+          <p
+            className="text-xs mt-1"
+            style={{ color: 'var(--color-text-tertiary)' }}
+          >
             {isAr
               ? 'تتبع طلباتك، مواعيد المقابلات، وتوليد خطابات التقديم المخصصة بضغطة زر'
               : 'Track applications from submission to offer with AI cover letters and interview prep'}
@@ -216,7 +227,13 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
         <button
           type="button"
           onClick={() => setShowAddModal(true)}
-          className="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all shadow-sm inline-flex items-center gap-1.5 cursor-pointer"
+          className="px-4 py-2 text-xs font-bold rounded-xl transition-all shadow-sm inline-flex items-center gap-1.5 cursor-pointer"
+          style={{
+            color: 'var(--color-text-inverse)',
+            backgroundColor: 'var(--color-primary)',
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--color-primary-hover)'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--color-primary)'}
         >
           <Plus className="w-3.5 h-3.5" />
           <span>{isAr ? 'إضافة طلب جديد' : 'Add Application'}</span>
@@ -228,16 +245,24 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
         <button
           type="button"
           onClick={() => setFilterStage('ALL')}
-          className={`p-4 bg-white border text-left rtl:text-right rounded-2xl shadow-2xs transition-all cursor-pointer ${
-            filterStage === 'ALL'
-              ? 'border-blue-600 ring-2 ring-blue-500/20'
-              : 'border-slate-200/80 hover:border-slate-300'
-          }`}
+          className="p-4 text-left rtl:text-right rounded-2xl shadow-2xs transition-all cursor-pointer border-hairline surface-elevated"
+          style={{
+            ...(filterStage === 'ALL' && {
+              borderColor: 'var(--color-primary)',
+              boxShadow: '0 0 0 2px var(--color-primary-alpha-20)',
+            }),
+          }}
         >
-          <span className="text-[11px] font-bold text-slate-500 block uppercase">
+          <span
+            className="text-[11px] font-bold block uppercase"
+            style={{ color: 'var(--color-text-tertiary)' }}
+          >
             {isAr ? 'إجمالي الطلبات' : 'Total Applications'}
           </span>
-          <span className="text-2xl font-black font-mono text-slate-900 mt-1 block">
+          <span
+            className="text-2xl font-black font-mono mt-1 block"
+            style={{ color: 'var(--color-text-primary)' }}
+          >
             {totalApps}
           </span>
         </button>
@@ -245,16 +270,24 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
         <button
           type="button"
           onClick={() => setFilterStage('Applied')}
-          className={`p-4 bg-white border text-left rtl:text-right rounded-2xl shadow-2xs transition-all cursor-pointer ${
-            filterStage === 'Applied'
-              ? 'border-blue-600 ring-2 ring-blue-500/20'
-              : 'border-slate-200/80 hover:border-slate-300'
-          }`}
+          className="p-4 text-left rtl:text-right rounded-2xl shadow-2xs transition-all cursor-pointer border-hairline surface-elevated"
+          style={{
+            ...(filterStage === 'Applied' && {
+              borderColor: 'var(--color-primary)',
+              boxShadow: '0 0 0 2px var(--color-primary-alpha-20)',
+            }),
+          }}
         >
-          <span className="text-[11px] font-bold text-blue-600 block uppercase">
+          <span
+            className="text-[11px] font-bold block uppercase"
+            style={{ color: 'var(--color-primary)' }}
+          >
             {isAr ? 'تم التقديم' : 'Applied'}
           </span>
-          <span className="text-2xl font-black font-mono text-blue-600 mt-1 block">
+          <span
+            className="text-2xl font-black font-mono mt-1 block"
+            style={{ color: 'var(--color-primary)' }}
+          >
             {appliedCount}
           </span>
         </button>
@@ -262,16 +295,24 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
         <button
           type="button"
           onClick={() => setFilterStage('Interview')}
-          className={`p-4 bg-white border text-left rtl:text-right rounded-2xl shadow-2xs transition-all cursor-pointer ${
-            filterStage === 'Interview'
-              ? 'border-indigo-600 ring-2 ring-indigo-500/20'
-              : 'border-slate-200/80 hover:border-slate-300'
-          }`}
+          className="p-4 text-left rtl:text-right rounded-2xl shadow-2xs transition-all cursor-pointer border-hairline surface-elevated"
+          style={{
+            ...(filterStage === 'Interview' && {
+              borderColor: 'var(--color-accent)',
+              boxShadow: '0 0 0 2px var(--color-accent-alpha-20)',
+            }),
+          }}
         >
-          <span className="text-[11px] font-bold text-indigo-600 block uppercase">
+          <span
+            className="text-[11px] font-bold block uppercase"
+            style={{ color: 'var(--color-accent)' }}
+          >
             {isAr ? 'مرحلة المقابلة' : 'Interviews'}
           </span>
-          <span className="text-2xl font-black font-mono text-indigo-600 mt-1 block">
+          <span
+            className="text-2xl font-black font-mono mt-1 block"
+            style={{ color: 'var(--color-accent)' }}
+          >
             {interviewsCount}
           </span>
         </button>
@@ -279,23 +320,34 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
         <button
           type="button"
           onClick={() => setFilterStage('Offer')}
-          className={`p-4 bg-white border text-left rtl:text-right rounded-2xl shadow-2xs transition-all cursor-pointer ${
-            filterStage === 'Offer'
-              ? 'border-emerald-600 ring-2 ring-emerald-500/20'
-              : 'border-slate-200/80 hover:border-slate-300'
-          }`}
+          className="p-4 text-left rtl:text-right rounded-2xl shadow-2xs transition-all cursor-pointer border-hairline surface-elevated"
+          style={{
+            ...(filterStage === 'Offer' && {
+              borderColor: 'var(--color-success)',
+              boxShadow: '0 0 0 2px var(--color-success-alpha-20)',
+            }),
+          }}
         >
-          <span className="text-[11px] font-bold text-emerald-600 block uppercase">
+          <span
+            className="text-[11px] font-bold block uppercase"
+            style={{ color: 'var(--color-success)' }}
+          >
             {isAr ? 'عروض العمل' : 'Offers Received'}
           </span>
-          <span className="text-2xl font-black font-mono text-emerald-600 mt-1 block">
+          <span
+            className="text-2xl font-black font-mono mt-1 block"
+            style={{ color: 'var(--color-success)' }}
+          >
             {offersCount}
           </span>
         </button>
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 pb-2">
+      <div
+        className="flex flex-wrap items-center gap-2 pb-2"
+        style={{ borderBottom: '1px solid var(--color-border)' }}
+      >
         {(['ALL', 'Saved', 'Preparing', 'Applied', 'Interview', 'Offer'] as (ApplicationStatus | 'ALL')[]).map(
           (stage) => {
             const count = stage === 'ALL'
@@ -306,11 +358,31 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
               <button
                 key={stage}
                 onClick={() => setFilterStage(stage)}
-                className={`px-3 py-1.5 text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
-                  filterStage === stage
-                    ? 'bg-blue-600 text-white shadow-2xs'
-                    : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
-                }`}
+                className="px-3 py-1.5 text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center gap-1.5 border-hairline"
+                style={{
+                  ...(filterStage === stage
+                    ? {
+                        backgroundColor: 'var(--color-primary)',
+                        color: 'var(--color-text-inverse)',
+                        boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
+                        borderColor: 'transparent',
+                      }
+                    : {
+                        backgroundColor: 'var(--color-surface)',
+                        color: 'var(--color-text-secondary)',
+                        borderColor: 'var(--color-border)',
+                      }),
+                }}
+                onMouseEnter={(e) => {
+                  if (filterStage !== stage) {
+                    e.currentTarget.style.backgroundColor = 'var(--color-surface-hover)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (filterStage !== stage) {
+                    e.currentTarget.style.backgroundColor = 'var(--color-surface)';
+                  }
+                }}
               >
                 <span>
                   {stage === 'ALL'
@@ -325,7 +397,14 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
                     ? isAr ? 'مقابلة' : 'Interview'
                     : isAr ? 'عرض عمل' : 'Offer'}
                 </span>
-                <span className={`text-[10px] font-mono px-1.5 rounded-full ${filterStage === stage ? 'bg-white/20' : 'bg-slate-100 text-slate-700'}`}>
+                <span
+                  className="text-[10px] font-mono px-1.5 rounded-full"
+                  style={{
+                    ...(filterStage === stage
+                      ? { backgroundColor: 'rgba(255, 255, 255, 0.2)' }
+                      : { backgroundColor: 'var(--color-surface-secondary)', color: 'var(--color-text-secondary)' }),
+                  }}
+                >
                   {count}
                 </span>
               </button>
@@ -339,7 +418,10 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
         {/* Left Column: List of Applications */}
         <div className="lg:col-span-5 space-y-3">
           {filteredApps.length === 0 ? (
-            <div className="p-8 text-center text-xs text-slate-400 bg-white border border-slate-200 rounded-2xl">
+            <div
+              className="p-8 text-center text-xs rounded-2xl border-hairline surface-elevated"
+              style={{ color: 'var(--color-text-tertiary)' }}
+            >
               {isAr ? 'لا توجد طلبات في هذه المرحلة.' : 'No applications in this stage.'}
             </div>
           ) : (
@@ -351,16 +433,44 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
                 <div
                   key={app.id}
                   onClick={() => setSelectedApp(app)}
-                  className={`p-4 rounded-2xl border transition-all cursor-pointer space-y-2.5 ${
-                    isSelected
-                      ? 'border-blue-600 bg-blue-50/40 shadow-xs'
-                      : 'border-slate-200/80 bg-white hover:border-slate-300'
-                  }`}
+                  className="p-4 rounded-2xl transition-all cursor-pointer space-y-2.5 border-hairline"
+                  style={{
+                    ...(isSelected
+                      ? {
+                          borderColor: 'var(--color-primary)',
+                          backgroundColor: 'var(--color-primary-alpha-5)',
+                          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+                        }
+                      : {
+                          backgroundColor: 'var(--color-surface)',
+                          borderColor: 'var(--color-border)',
+                        }),
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isSelected) {
+                      e.currentTarget.style.borderColor = 'var(--color-border-hover)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isSelected) {
+                      e.currentTarget.style.borderColor = 'var(--color-border)';
+                    }
+                  }}
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <h3 className="text-xs font-bold text-slate-900 truncate">{app.jobTitle}</h3>
-                      <div className="text-[11px] text-slate-500 font-medium">{app.company}</div>
+                      <h3
+                        className="text-xs font-bold truncate"
+                        style={{ color: 'var(--color-text-primary)' }}
+                      >
+                        {app.jobTitle}
+                      </h3>
+                      <div
+                        className="text-[11px] font-medium"
+                        style={{ color: 'var(--color-text-tertiary)' }}
+                      >
+                        {app.company}
+                      </div>
                     </div>
 
                     {/* Status Changer Dropdown */}
@@ -368,7 +478,12 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
                       value={app.status}
                       onClick={(e) => e.stopPropagation()}
                       onChange={(e) => handleStatusChange(app, e.target.value as ApplicationStatus)}
-                      className="text-[11px] py-1 px-2 rounded-lg font-bold border border-slate-200 bg-white text-slate-800 outline-none cursor-pointer"
+                      className="text-[11px] py-1 px-2 rounded-lg font-bold outline-none cursor-pointer border-hairline"
+                      style={{
+                        backgroundColor: 'var(--color-surface)',
+                        color: 'var(--color-text-primary)',
+                        borderColor: 'var(--color-border)',
+                      }}
                     >
                       <option value="Saved">{isAr ? '📌 محفوظة' : 'Saved'}</option>
                       <option value="Preparing">{isAr ? '⚙️ قيد التجهيز' : 'Preparing'}</option>
@@ -379,7 +494,13 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
                     </select>
                   </div>
 
-                  <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1 border-t border-slate-100">
+                  <div
+                    className="flex items-center justify-between text-[11px] pt-1"
+                    style={{
+                      borderTop: '1px solid var(--color-border-subtle)',
+                      color: 'var(--color-text-tertiary)',
+                    }}
+                  >
                     <span>{app.appliedDate || formatDate(new Date().toISOString())}</span>
                     {matchedOpp?.sourceUrl && (
                       <a
@@ -387,7 +508,8 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
-                        className="text-blue-600 font-semibold hover:underline inline-flex items-center gap-1"
+                        className="font-semibold hover:underline inline-flex items-center gap-1"
+                        style={{ color: 'var(--color-primary)' }}
                       >
                         <span>{isAr ? 'رابط الوظيفة' : 'Job Link'}</span>
                         <ExternalLink className="w-3 h-3" />
@@ -403,24 +525,46 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
         {/* Right Column: Application Preparation Console */}
         <div className="lg:col-span-7 space-y-6">
           {effectiveSelectedApp ? (
-            <div className="p-6 bg-white border border-slate-200/80 rounded-2xl space-y-6 shadow-2xs">
-              <div className="border-b border-slate-100 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="p-6 rounded-2xl space-y-6 shadow-2xs border-hairline surface-elevated">
+              <div
+                className="pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                style={{ borderBottom: '1px solid var(--color-border-subtle)' }}
+              >
                 <div>
-                  <span className="text-[11px] font-bold text-blue-600 block uppercase">
+                  <span
+                    className="text-[11px] font-bold block uppercase"
+                    style={{ color: 'var(--color-primary)' }}
+                  >
                     {effectiveSelectedApp.status}
                   </span>
-                  <h2 className="text-base font-bold text-slate-900">{effectiveSelectedApp.jobTitle}</h2>
-                  <span className="text-xs text-slate-500 font-medium">{effectiveSelectedApp.company}</span>
+                  <h2
+                    className="text-base font-bold"
+                    style={{ color: 'var(--color-text-primary)' }}
+                  >
+                    {effectiveSelectedApp.jobTitle}
+                  </h2>
+                  <span
+                    className="text-xs font-medium"
+                    style={{ color: 'var(--color-text-tertiary)' }}
+                  >
+                    {effectiveSelectedApp.company}
+                  </span>
                 </div>
 
               </div>
 
               {/* Attached CV Section */}
-              <div className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl space-y-2">
+              <div
+                className="p-3.5 rounded-xl space-y-2 border-hairline"
+                style={{ backgroundColor: 'var(--color-surface-secondary)' }}
+              >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <FileText className="w-4 h-4 text-blue-600" />
-                    <span className="text-xs font-bold text-slate-800">
+                    <FileText className="w-4 h-4" style={{ color: 'var(--color-primary)' }} />
+                    <span
+                      className="text-xs font-bold"
+                      style={{ color: 'var(--color-text-primary)' }}
+                    >
                       {isAr ? 'نسخة السيرة الذاتية المرفقة بالطلب:' : 'Attached CV Version:'}
                     </span>
                   </div>
@@ -428,7 +572,8 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
                     <button
                       type="button"
                       onClick={onNavigateToCV}
-                      className="text-[11px] font-bold text-blue-600 hover:underline inline-flex items-center gap-1 cursor-pointer"
+                      className="text-[11px] font-bold hover:underline inline-flex items-center gap-1 cursor-pointer"
+                      style={{ color: 'var(--color-primary)' }}
                     >
                       <span>{isAr ? 'فتح في استوديو السيرة' : 'Open in CV Studio'}</span>
                       <ArrowRight className="w-3 h-3 rtl:rotate-180" />
@@ -445,7 +590,12 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
                       await onSaveApplication(updated);
                       setSelectedApp(updated);
                     }}
-                    className="w-full sm:flex-1 text-xs py-2 px-3 border border-slate-300 rounded-lg bg-white text-slate-800 font-semibold outline-none cursor-pointer"
+                    className="w-full sm:flex-1 text-xs py-2 px-3 rounded-lg font-semibold outline-none cursor-pointer border-hairline"
+                    style={{
+                      backgroundColor: 'var(--color-surface)',
+                      color: 'var(--color-text-primary)',
+                      borderColor: 'var(--color-border)',
+                    }}
                   >
                     {resumes.map((r) => (
                       <option key={r.id} value={r.id}>
@@ -456,13 +606,26 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
                 </div>
 
                 {/* Supporting Materials File Upload */}
-                <div className="mt-2 pt-2 border-t border-slate-200/60 space-y-1.5">
-                  <span className="text-[11px] font-semibold text-slate-600 block">
+                <div
+                  className="mt-2 pt-2 space-y-1.5"
+                  style={{ borderTop: '1px solid var(--color-border-subtle)' }}
+                >
+                  <span
+                    className="text-[11px] font-semibold block"
+                    style={{ color: 'var(--color-text-secondary)' }}
+                  >
                     {isAr ? 'مرفقات ومواد داعمة:' : 'Supporting Materials:'}
                   </span>
                   <label
                     htmlFor={`app-file-upload-${effectiveSelectedApp.id}`}
-                    className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg cursor-pointer transition-colors w-fit"
+                    className="flex items-center gap-2 px-3 py-2 text-xs font-semibold rounded-lg cursor-pointer transition-colors w-fit border-hairline"
+                    style={{
+                      color: 'var(--color-primary)',
+                      backgroundColor: 'var(--color-primary-alpha-5)',
+                      borderColor: 'var(--color-primary-alpha-20)',
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--color-primary-alpha-10)'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--color-primary-alpha-5)'}
                   >
                     <FileText className="w-3.5 h-3.5" />
                     <span>{isAr ? 'رفع ملف مرفق (PDF، DOCX، TXT)' : 'Attach File (PDF, DOCX, TXT)'}</span>
@@ -508,16 +671,21 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
                         return (
                           <div
                             key={isObj ? att.id : idx}
-                            className="text-[11px] px-2 py-1 bg-white border border-slate-200 rounded-lg font-mono text-slate-700 inline-flex items-center gap-1.5 shadow-2xs"
+                            className="text-[11px] px-2 py-1 rounded-lg font-mono inline-flex items-center gap-1.5 shadow-2xs border-hairline"
+                            style={{
+                              backgroundColor: 'var(--color-surface)',
+                              color: 'var(--color-text-secondary)',
+                            }}
                           >
-                            <FileText className="w-3 h-3 text-blue-500 shrink-0" />
+                            <FileText className="w-3 h-3 shrink-0" style={{ color: 'var(--color-primary)' }} />
                             {dataUrl ? (
                               <a
                                 href={dataUrl}
                                 download={fileName}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-blue-600 hover:underline max-w-[150px] truncate font-medium"
+                                className="hover:underline max-w-[150px] truncate font-medium"
+                                style={{ color: 'var(--color-primary)' }}
                                 title={isAr ? 'فتح أو تحميل الملف المرفق' : 'Reopen / Download file'}
                               >
                                 {fileName}
@@ -533,7 +701,10 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
                                 await onSaveApplication(updated);
                                 setSelectedApp(updated);
                               }}
-                              className="text-slate-400 hover:text-red-500 ml-0.5 text-xs font-bold cursor-pointer"
+                              className="ml-0.5 text-xs font-bold cursor-pointer"
+                              style={{ color: 'var(--color-text-tertiary)' }}
+                              onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-error)'}
+                              onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-text-tertiary)'}
                               title={isAr ? 'حذف المرفق' : 'Remove attachment'}
                             >
                               ×
@@ -549,22 +720,40 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
               {/* Cover Letter Section */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                  <h3
+                    className="text-xs font-bold uppercase tracking-wider"
+                    style={{ color: 'var(--color-text-primary)' }}
+                  >
                     {isAr ? 'خطاب التقديم (Cover Letter):' : 'Cover Letter:'}
                   </h3>
                 </div>
 
                 {effectiveSelectedApp.coverLetter ? (
-                  <div className="p-4 bg-slate-50/70 border border-slate-200/80 rounded-xl text-xs text-slate-700 leading-relaxed font-sans whitespace-pre-wrap">
+                  <div
+                    className="p-4 rounded-xl text-xs leading-relaxed font-sans whitespace-pre-wrap border-hairline"
+                    style={{
+                      backgroundColor: 'var(--color-surface-secondary)',
+                      color: 'var(--color-text-secondary)',
+                    }}
+                  >
                     {effectiveSelectedApp.coverLetter}
                   </div>
                 ) : (
-                  <div className="p-6 text-center text-xs text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200 space-y-2">
+                  <div
+                    className="p-6 text-center text-xs rounded-xl border space-y-2"
+                    style={{
+                      backgroundColor: 'var(--color-surface-secondary)',
+                      borderColor: 'var(--color-border)',
+                      borderStyle: 'dashed',
+                      color: 'var(--color-text-tertiary)',
+                    }}
+                  >
                     <p>{isAr ? 'لم يتم توليد خطاب تقديم بعد لهذا الطلب.' : 'No cover letter generated yet.'}</p>
                     <button
                       type="button"
                       onClick={handleGenerateCoverLetter}
-                      className="text-xs font-bold text-blue-600 hover:underline cursor-pointer"
+                      className="text-xs font-bold hover:underline cursor-pointer"
+                      style={{ color: 'var(--color-primary)' }}
                     >
                       {isAr ? 'توليد خطاب تقديم مخصص بالذكاء الاصطناعي الآن' : 'Generate with AI'}
                     </button>
@@ -574,16 +763,33 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
 
               {/* Application Timeline Events */}
               <div className="space-y-3 pt-2">
-                <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                <h3
+                  className="text-xs font-bold uppercase tracking-wider"
+                  style={{ color: 'var(--color-text-primary)' }}
+                >
                   {isAr ? 'سجل أحداث وتحديثات الطلب:' : 'Application Timeline:'}
                 </h3>
                 <div className="space-y-2">
                   {effectiveSelectedApp.events.map((evt) => (
-                    <div key={evt.id} className="p-3 bg-slate-50 rounded-xl text-xs border border-slate-200/60 flex items-start gap-2.5">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0 mt-0.5" />
+                    <div
+                      key={evt.id}
+                      className="p-3 rounded-xl text-xs flex items-start gap-2.5 border-hairline"
+                      style={{ backgroundColor: 'var(--color-surface-secondary)' }}
+                    >
+                      <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: 'var(--color-primary)' }} />
                       <div>
-                        <span className="font-bold text-slate-800">{evt.description}</span>
-                        <span className="text-[10px] text-slate-400 block mt-0.5">{evt.date}</span>
+                        <span
+                          className="font-bold"
+                          style={{ color: 'var(--color-text-primary)' }}
+                        >
+                          {evt.description}
+                        </span>
+                        <span
+                          className="text-[10px] block mt-0.5"
+                          style={{ color: 'var(--color-text-tertiary)' }}
+                        >
+                          {evt.date}
+                        </span>
                       </div>
                     </div>
                   ))}
@@ -591,7 +797,10 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
               </div>
             </div>
           ) : (
-            <div className="p-12 text-center text-xs text-slate-400 bg-white border border-slate-200 rounded-2xl">
+            <div
+              className="p-12 text-center text-xs rounded-2xl border-hairline surface-elevated"
+              style={{ color: 'var(--color-text-tertiary)' }}
+            >
               {isAr ? 'اختر طلباً من القائمة لعرض تفاصيله' : 'Select an application from the list.'}
             </div>
           )}
@@ -600,11 +809,28 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
 
       {/* Add Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4" onClick={() => setShowAddModal(false)}>
-          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl flex flex-col max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2.5rem)] overflow-hidden" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4"
+          style={{
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            backdropFilter: 'blur(4px)',
+          }}
+          onClick={() => setShowAddModal(false)}
+        >
+          <div
+            className="rounded-2xl max-w-md w-full shadow-2xl flex flex-col max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2.5rem)] overflow-hidden"
+            style={{ backgroundColor: 'var(--color-surface)' }}
+            onClick={(e) => e.stopPropagation()}
+          >
             {/* Header */}
-            <div className="p-5 border-b border-slate-100 shrink-0">
-              <h3 className="text-base font-bold text-slate-900">
+            <div
+              className="p-5 shrink-0"
+              style={{ borderBottom: '1px solid var(--color-border-subtle)' }}
+            >
+              <h3
+                className="text-base font-bold"
+                style={{ color: 'var(--color-text-primary)' }}
+              >
                 {isAr ? 'إضافة طلب توظيف للمتابعة' : 'Add New Application'}
               </h3>
             </div>
@@ -612,7 +838,10 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
             {/* Scrollable body */}
             <div className="flex-1 overflow-y-auto p-5 space-y-3">
               <div>
-                <label className="text-xs font-bold text-slate-700 block mb-1">
+                <label
+                  className="text-xs font-bold block mb-1"
+                  style={{ color: 'var(--color-text-secondary)' }}
+                >
                   {isAr ? 'المسمى الوظيفي:' : 'Job Title:'}
                 </label>
                 <input
@@ -620,12 +849,19 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
                   placeholder="e.g. Senior Frontend Engineer"
-                  className="w-full text-xs p-2.5 border border-slate-300 rounded-xl outline-none"
+                  className="w-full text-xs p-2.5 rounded-xl outline-none border-hairline"
+                  style={{
+                    borderColor: 'var(--color-border)',
+                    backgroundColor: 'var(--color-surface)',
+                  }}
                 />
               </div>
 
               <div>
-                <label className="text-xs font-bold text-slate-700 block mb-1">
+                <label
+                  className="text-xs font-bold block mb-1"
+                  style={{ color: 'var(--color-text-secondary)' }}
+                >
                   {isAr ? 'اسم الشركة:' : 'Company Name:'}
                 </label>
                 <input
@@ -633,18 +869,29 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
                   value={newCompany}
                   onChange={(e) => setNewCompany(e.target.value)}
                   placeholder="e.g. Microsoft / Remote Startup"
-                  className="w-full text-xs p-2.5 border border-slate-300 rounded-xl outline-none"
+                  className="w-full text-xs p-2.5 rounded-xl outline-none border-hairline"
+                  style={{
+                    borderColor: 'var(--color-border)',
+                    backgroundColor: 'var(--color-surface)',
+                  }}
                 />
               </div>
 
               <div>
-                <label className="text-xs font-bold text-slate-700 block mb-1">
+                <label
+                  className="text-xs font-bold block mb-1"
+                  style={{ color: 'var(--color-text-secondary)' }}
+                >
                   {isAr ? 'حالة الطلب الحالية:' : 'Current Status:'}
                 </label>
                 <select
                   value={newStatus}
                   onChange={(e) => setNewStatus(e.target.value as ApplicationStatus)}
-                  className="w-full text-xs p-2.5 border border-slate-300 rounded-xl outline-none bg-white cursor-pointer font-bold"
+                  className="w-full text-xs p-2.5 rounded-xl outline-none cursor-pointer font-bold border-hairline"
+                  style={{
+                    backgroundColor: 'var(--color-surface)',
+                    borderColor: 'var(--color-border)',
+                  }}
                 >
                   <option value="Applied">{isAr ? 'تم التقديم (Applied)' : 'Applied'}</option>
                   <option value="Interview">{isAr ? 'مقابلة (Interview)' : 'Interview'}</option>
@@ -655,11 +902,20 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
             </div>
 
             {/* Sticky footer */}
-            <div className="shrink-0 p-4 border-t border-slate-100 bg-slate-50/70 flex justify-end gap-2">
+            <div
+              className="shrink-0 p-4 flex justify-end gap-2"
+              style={{
+                borderTop: '1px solid var(--color-border-subtle)',
+                backgroundColor: 'var(--color-surface-secondary)',
+              }}
+            >
               <button
                 type="button"
                 onClick={() => setShowAddModal(false)}
-                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 cursor-pointer"
+                className="px-4 py-2 text-xs font-semibold cursor-pointer"
+                style={{ color: 'var(--color-text-secondary)' }}
+                onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-text-primary)'}
+                onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-text-secondary)'}
               >
                 {isAr ? 'إلغاء' : 'Cancel'}
               </button>
@@ -667,7 +923,17 @@ export const ApplicationsTrackerView: React.FC<ApplicationsTrackerViewProps> = (
                 type="button"
                 onClick={handleAddNewApp}
                 disabled={!newTitle.trim() || !newCompany.trim()}
-                className="px-5 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all shadow-sm cursor-pointer disabled:opacity-40"
+                className="px-5 py-2 text-xs font-bold rounded-xl transition-all shadow-sm cursor-pointer disabled:opacity-40"
+                style={{
+                  color: 'var(--color-text-inverse)',
+                  backgroundColor: 'var(--color-primary)',
+                }}
+                onMouseEnter={(e) => {
+                  if (newTitle.trim() && newCompany.trim()) {
+                    e.currentTarget.style.backgroundColor = 'var(--color-primary-hover)';
+                  }
+                }}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--color-primary)'}
               >
                 {isAr ? 'حفظ الطلب' : 'Save Application'}
               </button>

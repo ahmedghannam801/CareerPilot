@@ -402,60 +402,63 @@ ${currentResume.skills.join(' • ')}
 
       {/* Extraction Preview Drawer (shown after file upload) */}
       {extractedInfo && (
-        <div className="bg-white border border-blue-200 rounded-2xl p-6 shadow-sm space-y-4">
+        <div className="card-surface rounded-2xl p-6 space-y-4" style={{ borderColor: 'var(--primary-muted)' }}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-emerald-500" />
-              <h3 className="text-sm font-bold text-slate-900">
+              <CheckCircle2 className="w-5 h-5" style={{ color: 'var(--success)' }} />
+              <h3 className="text-label-caps" style={{ color: 'var(--on-surface)' }}>
                 {isAr ? 'تم استخراج المعلومات من الملف' : 'Information Extracted From File'}
               </h3>
             </div>
             <button
               type="button"
               onClick={() => { setExtractedInfo(null); setUploadedFileName(null); }}
-              className="text-xs text-slate-400 hover:text-slate-700 cursor-pointer"
+              className="text-body-sm cursor-pointer transition-colors"
+              style={{ color: 'var(--on-surface-muted)' }}
+              onMouseEnter={(e) => e.currentTarget.style.color = 'var(--on-surface)'}
+              onMouseLeave={(e) => e.currentTarget.style.color = 'var(--on-surface-muted)'}
             >
               <X className="w-4 h-4" />
             </button>
           </div>
 
-          <div className="text-xs text-slate-500">
+          <div className="text-body-sm" style={{ color: 'var(--on-surface-muted)' }}>
             {isAr ? 'الملف: ' : 'File: '}
-            <span className="font-semibold text-slate-700">{uploadedFileName}</span>
+            <span className="font-semibold" style={{ color: 'var(--on-surface)' }}>{uploadedFileName}</span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-body-sm">
             {extractedInfo.fullName && (
-              <div className="bg-slate-50 rounded-lg p-2.5 border border-slate-200">
-                <div className="text-[10px] text-slate-400 uppercase font-bold mb-1">{isAr ? 'الاسم' : 'Name'}</div>
-                <div className="font-semibold text-slate-800">{extractedInfo.fullName}</div>
+              <div className="rounded-lg p-2.5 border-hairline" style={{ background: 'var(--surface-elevated)', borderColor: 'var(--border)' }}>
+                <div className="text-label-caps mb-1" style={{ color: 'var(--on-surface-muted)' }}>{isAr ? 'الاسم' : 'Name'}</div>
+                <div className="font-semibold" style={{ color: 'var(--on-surface)' }}>{extractedInfo.fullName}</div>
               </div>
             )}
             {extractedInfo.email && (
-              <div className="bg-slate-50 rounded-lg p-2.5 border border-slate-200">
-                <div className="text-[10px] text-slate-400 uppercase font-bold mb-1">{isAr ? 'البريد الإلكتروني' : 'Email'}</div>
-                <div className="font-semibold text-slate-800">{extractedInfo.email}</div>
+              <div className="rounded-lg p-2.5 border-hairline" style={{ background: 'var(--surface-elevated)', borderColor: 'var(--border)' }}>
+                <div className="text-label-caps mb-1" style={{ color: 'var(--on-surface-muted)' }}>{isAr ? 'البريد الإلكتروني' : 'Email'}</div>
+                <div className="font-semibold" style={{ color: 'var(--on-surface)' }}>{extractedInfo.email}</div>
               </div>
             )}
             {extractedInfo.phone && (
-              <div className="bg-slate-50 rounded-lg p-2.5 border border-slate-200">
-                <div className="text-[10px] text-slate-400 uppercase font-bold mb-1">{isAr ? 'الهاتف' : 'Phone'}</div>
-                <div className="font-semibold text-slate-800">{extractedInfo.phone}</div>
+              <div className="rounded-lg p-2.5 border-hairline" style={{ background: 'var(--surface-elevated)', borderColor: 'var(--border)' }}>
+                <div className="text-label-caps mb-1" style={{ color: 'var(--on-surface-muted)' }}>{isAr ? 'الهاتف' : 'Phone'}</div>
+                <div className="font-semibold" style={{ color: 'var(--on-surface)' }}>{extractedInfo.phone}</div>
               </div>
             )}
             {extractedInfo.skills.length > 0 && (
-              <div className="bg-slate-50 rounded-lg p-2.5 border border-slate-200 sm:col-span-2">
-                <div className="text-[10px] text-slate-400 uppercase font-bold mb-1.5">{isAr ? 'المهارات المكتشفة' : 'Detected Skills'}</div>
+              <div className="rounded-lg p-2.5 border-hairline sm:col-span-2" style={{ background: 'var(--surface-elevated)', borderColor: 'var(--border)' }}>
+                <div className="text-label-caps mb-1.5" style={{ color: 'var(--on-surface-muted)' }}>{isAr ? 'المهارات المكتشفة' : 'Detected Skills'}</div>
                 <div className="flex flex-wrap gap-1">
                   {extractedInfo.skills.map((s, i) => (
-                    <span key={i} className="bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-semibold px-2 py-0.5 rounded-full">{s}</span>
+                    <span key={i} className="badge-pill text-label-sm" style={{ background: 'var(--primary-muted)', color: 'var(--primary)', borderColor: 'var(--primary-muted)' }}>{s}</span>
                   ))}
                 </div>
               </div>
             )}
           </div>
 
-          <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3">
+          <p className="text-body-sm rounded-lg p-3 border-hairline" style={{ color: 'var(--warning)', background: 'var(--warning-muted)', borderColor: 'var(--warning-muted)' }}>
             <span className="font-bold">{isAr ? 'ملاحظة: ' : 'Note: '}</span>
             {isAr
               ? 'لاستخراج كامل من PDF/DOCX، استخدم زر "إنشاء بالذكاء الاصطناعي" وأدخل وصف الوظيفة. التحليل الكامل يتم على الخادم.'
@@ -466,7 +469,7 @@ ${currentResume.skills.join(' • ')}
             <button
               type="button"
               onClick={() => setShowGenerateModal(true)}
-              className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-bold rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all"
+              className="btn-primary flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 text-label-sm rounded-xl transition-all"
             >
               <Sparkles className="w-3.5 h-3.5" />
               {isAr ? 'توليد سيرة محسّنة بالذكاء الاصطناعي' : 'Generate Enhanced CV with AI'}
@@ -480,7 +483,7 @@ ${currentResume.skills.join(' • ')}
         <div className="space-y-4">
           {/* Upload error */}
           {uploadError && (
-            <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-700">
+            <div className="flex items-center gap-2 p-3 rounded-xl text-body-sm border-hairline" style={{ background: 'var(--error-muted)', borderColor: 'var(--error-muted)', color: 'var(--error)' }}>
               <AlertTriangle className="w-4 h-4 shrink-0" />
               <span>{uploadError}</span>
               <button type="button" onClick={() => setUploadError(null)} className="ml-auto"><X className="w-3.5 h-3.5" /></button>
@@ -490,9 +493,11 @@ ${currentResume.skills.join(' • ')}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Path A: Upload existing CV */}
             <div
-              className={`relative bg-white border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer group ${
-                isDragOver ? 'border-blue-500 bg-blue-50/40' : 'border-slate-300 hover:border-blue-400 hover:bg-slate-50'
-              }`}
+              className="relative border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer group"
+              style={{
+                background: isDragOver ? 'var(--primary-muted)' : 'var(--surface)',
+                borderColor: isDragOver ? 'var(--primary)' : 'var(--border)',
+              }}
               onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
               onDragLeave={() => setIsDragOver(false)}
               onDrop={handleDrop}
@@ -505,36 +510,36 @@ ${currentResume.skills.join(' • ')}
                 className="hidden"
                 onChange={handleFileInput}
               />
-              <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:bg-blue-100 transition-colors">
+              <div className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3 transition-colors" style={{ background: 'var(--primary-muted)' }}>
                 {isExtracting ? (
-                  <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
+                  <Loader2 className="w-6 h-6 animate-spin" style={{ color: 'var(--primary)' }} />
                 ) : (
-                  <Download className="w-6 h-6 text-blue-600" />
+                  <Download className="w-6 h-6" style={{ color: 'var(--primary)' }} />
                 )}
               </div>
-              <h3 className="text-sm font-bold text-slate-900 mb-1">
+              <h3 className="text-headline-sm mb-1" style={{ color: 'var(--on-surface)' }}>
                 {isAr ? '📤 رفع سيرة ذاتية موجودة' : '📤 Upload Existing CV'}
               </h3>
-              <p className="text-xs text-slate-500 mb-3">
+              <p className="text-body-sm mb-3" style={{ color: 'var(--on-surface-muted)' }}>
                 {isAr
                   ? 'اسحب وأفلت ملفك هنا أو انقر للاختيار. يدعم PDF وDOCX وTXT.'
                   : 'Drag & drop your file here or click to browse. PDF, DOCX, TXT supported.'}
               </p>
-              <span className="text-[10px] font-semibold text-blue-600 bg-blue-50 border border-blue-200 rounded-full px-3 py-1">
+              <span className="badge-pill text-label-sm" style={{ color: 'var(--primary)', background: 'var(--primary-muted)', borderColor: 'var(--primary-muted)' }}>
                 {isAr ? 'حد 10MB' : 'Max 10MB'}
               </span>
             </div>
 
             {/* Path B: Create from Profile */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-8 text-center space-y-4 hover:border-blue-300 transition-colors">
-              <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center mx-auto">
-                <Sparkles className="w-6 h-6 text-indigo-600" />
+            <div className="card-surface rounded-2xl p-8 text-center space-y-4 transition-colors" style={{ borderColor: 'var(--border)' }}>
+              <div className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto" style={{ background: 'var(--primary-muted)' }}>
+                <Sparkles className="w-6 h-6" style={{ color: 'var(--primary)' }} />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-slate-900 mb-1">
+                <h3 className="text-headline-sm mb-1" style={{ color: 'var(--on-surface)' }}>
                   {isAr ? '✨ إنشاء بالذكاء الاصطناعي' : '✨ Create with AI'}
                 </h3>
-                <p className="text-xs text-slate-500">
+                <p className="text-body-sm" style={{ color: 'var(--on-surface-muted)' }}>
                   {isAr
                     ? 'نولّد لك سيرة ذاتية متوافقة مع ATS بناءً على بياناتك المهنية.'
                     : 'We generate an ATS-optimized resume from your career profile data.'}
@@ -543,13 +548,13 @@ ${currentResume.skills.join(' • ')}
               <button
                 type="button"
                 onClick={() => setShowGenerateModal(true)}
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-bold rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-sm"
+                className="btn-primary inline-flex items-center gap-2 px-5 py-2.5 text-label-sm rounded-xl transition-all"
               >
                 <Sparkles className="w-3.5 h-3.5" />
                 {isAr ? 'إنشاء السيرة الذاتية' : 'Create My First CV'}
               </button>
               {!profile?.targetRole && (
-                <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                <p className="text-body-sm rounded-lg px-3 py-2 border-hairline" style={{ color: 'var(--warning)', background: 'var(--warning-muted)', borderColor: 'var(--warning-muted)' }}>
                   {isAr ? '💡 أكمل ملفك الشخصي أولاً.' : '💡 Complete your career profile first.'}
                 </p>
               )}

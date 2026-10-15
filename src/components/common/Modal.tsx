@@ -69,7 +69,8 @@ export const Modal: React.FC<ModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-150">
       <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        className="glass-surface absolute inset-0"
+        style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
         onClick={preventBackdropClose ? undefined : onClose}
         aria-hidden="true"
       />
@@ -78,7 +79,7 @@ export const Modal: React.FC<ModalProps> = ({
         dir={dir}
         onClick={(e) => e.stopPropagation()}
         className={[
-          'relative bg-white dark:bg-[#111827] rounded-2xl shadow-2xl border border-slate-200 dark:border-[#374151]',
+          'card-surface relative rounded-2xl shadow-2xl',
           'w-full',
           SIZE_MAP[size] ?? SIZE_MAP.lg,
           'max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2.5rem)]',
@@ -86,15 +87,16 @@ export const Modal: React.FC<ModalProps> = ({
           'animate-in zoom-in-95 duration-150',
           panelClass,
         ].join(' ')}
+        style={{ backgroundColor: 'var(--surface)', borderWidth: '1px', borderStyle: 'solid', borderColor: 'var(--border)' }}
         role="dialog"
         aria-modal="true"
       >
         {(title || showCloseButton) && (
-          <div className="flex items-start justify-between gap-4 p-4 sm:p-5 border-b border-slate-100 dark:border-[#1F2937] shrink-0">
+          <div className="flex items-start justify-between gap-4 p-4 sm:p-5 border-hairline shrink-0" style={{ borderBottomColor: 'var(--border-subtle)' }}>
             {title && (
               <div className="min-w-0 flex-1">
                 {typeof title === 'string' ? (
-                  <h2 className="text-sm font-bold text-slate-900 dark:text-[#F1F5F9] truncate">{title}</h2>
+                  <h2 className="text-headline-lg truncate" style={{ color: 'var(--on-surface)' }}>{title}</h2>
                 ) : (
                   title
                 )}
@@ -104,7 +106,8 @@ export const Modal: React.FC<ModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="p-1.5 rounded-lg text-slate-400 dark:text-[#94A3B8] hover:text-slate-700 dark:hover:text-[#F1F5F9] hover:bg-slate-100 dark:hover:bg-[#1E293B] transition-colors shrink-0 cursor-pointer"
+                className="btn-secondary p-1.5 rounded-lg shrink-0 cursor-pointer"
+                style={{ color: 'var(--on-surface-variant)' }}
                 aria-label="Close"
               >
                 <X className="w-4 h-4" />
@@ -116,7 +119,7 @@ export const Modal: React.FC<ModalProps> = ({
           {children}
         </div>
         {footer && (
-          <div className="shrink-0 border-t border-slate-100 dark:border-[#1F2937] p-4 sm:p-5 bg-slate-50/70 dark:bg-[#1E293B]/70">
+          <div className="shrink-0 border-hairline p-4 sm:p-5" style={{ borderTopColor: 'var(--border-subtle)', backgroundColor: 'var(--surface-container)' }}>
             {footer}
           </div>
         )}
@@ -160,25 +163,30 @@ export const Drawer: React.FC<DrawerProps> = ({
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex ${side === 'right' ? 'justify-end' : 'justify-start'} bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200`}
+      className="glass-surface fixed inset-0 z-50 flex animate-in fade-in duration-200"
+      style={{
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        justifyContent: side === 'right' ? 'flex-end' : 'flex-start'
+      }}
       onClick={preventBackdropClose ? undefined : onClose}
     >
       <div
         dir={dir}
         onClick={(e) => e.stopPropagation()}
         className={[
-          'bg-white dark:bg-[#111827] shadow-2xl flex flex-col h-full w-full max-w-[calc(100vw-1rem)] overflow-hidden',
+          'shadow-2xl flex flex-col h-full w-full max-w-[calc(100vw-1rem)] overflow-hidden',
           width,
           slideClass,
         ].join(' ')}
+        style={{ backgroundColor: 'var(--surface)' }}
         role="dialog"
         aria-modal="true"
       >
         {title !== undefined && (
-          <div className="flex items-center justify-between p-4 sm:p-5 border-b border-slate-100 dark:border-[#1F2937] shrink-0 sticky top-0 bg-white/95 dark:bg-[#111827]/95 backdrop-blur-xs z-10">
+          <div className="flex items-center justify-between p-4 sm:p-5 border-hairline shrink-0 sticky top-0 z-10" style={{ borderBottomColor: 'var(--border-subtle)', backgroundColor: 'var(--surface)' }}>
             <div className="min-w-0 flex-1">
               {typeof title === 'string' ? (
-                <h2 className="text-sm font-bold text-slate-900 dark:text-[#F1F5F9]">{title}</h2>
+                <h2 className="text-headline-lg" style={{ color: 'var(--on-surface)' }}>{title}</h2>
               ) : (
                 title
               )}
@@ -186,7 +194,8 @@ export const Drawer: React.FC<DrawerProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="p-1.5 ml-2 rounded-lg text-slate-400 dark:text-[#94A3B8] hover:text-slate-700 dark:hover:text-[#F1F5F9] hover:bg-slate-100 dark:hover:bg-[#1E293B] transition-colors shrink-0 cursor-pointer"
+              className="btn-secondary p-1.5 ml-2 rounded-lg shrink-0 cursor-pointer"
+              style={{ color: 'var(--on-surface-variant)' }}
               aria-label="Close"
             >
               <X className="w-5 h-5" />
@@ -197,7 +206,7 @@ export const Drawer: React.FC<DrawerProps> = ({
           {children}
         </div>
         {footer && (
-          <div className="shrink-0 border-t border-slate-200 dark:border-[#1F2937] p-4 bg-slate-50 dark:bg-[#1E293B] sticky bottom-0">
+          <div className="shrink-0 border-hairline p-4 sticky bottom-0" style={{ borderTopColor: 'var(--border)', backgroundColor: 'var(--surface-container)' }}>
             {footer}
           </div>
         )}

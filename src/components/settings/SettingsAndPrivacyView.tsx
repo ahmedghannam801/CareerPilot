@@ -94,26 +94,53 @@ export const SettingsAndPrivacyView: React.FC<SettingsAndPrivacyViewProps> = ({
   return (
     <div className="space-y-6 max-w-5xl mx-auto pb-12">
       {/* Header */}
-      <div className="p-6 bg-white border border-neutral-200 rounded-xl">
-        <div className="text-xs text-neutral-500 mb-1">
+      <div
+        className="p-6 surface-elevated border-hairline rounded-xl"
+        style={{
+          backgroundColor: 'var(--surface-elevated)',
+          borderColor: 'var(--border-hairline)',
+        }}
+      >
+        <div
+          className="text-xs mb-1"
+          style={{ color: 'var(--text-secondary)' }}
+        >
           {lang === 'ar' ? 'التحكم بالبيانات والخصوصية' : 'Data Governance & Observability'}
         </div>
-        <h1 className="text-2xl font-bold tracking-tight text-neutral-900">
+        <h1
+          className="text-2xl font-bold tracking-tight"
+          style={{ color: 'var(--text-primary)' }}
+        >
           {lang === 'ar' ? 'مركز الخصوصية وذاكرة الذكاء الاصطناعي' : 'Privacy Center & AI Memory'}
         </h1>
-        <p className="text-xs text-neutral-600 mt-1">
+        <p
+          className="text-xs mt-1"
+          style={{ color: 'var(--text-secondary)' }}
+        >
           Complete transparency and user sovereignty over AI memory facts and data exports
         </p>
       </div>
 
       {/* Theme & Visual Appearance */}
-      <div className="p-6 bg-white border border-neutral-200 rounded-xl space-y-3">
+      <div
+        className="p-6 surface-elevated border-hairline rounded-xl space-y-3"
+        style={{
+          backgroundColor: 'var(--surface-elevated)',
+          borderColor: 'var(--border-hairline)',
+        }}
+      >
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-sm font-semibold text-neutral-900">
+            <h2
+              className="text-sm font-semibold"
+              style={{ color: 'var(--text-primary)' }}
+            >
               {lang === 'ar' ? 'المظهر والسمة (Appearance)' : 'Appearance & Visual Theme'}
             </h2>
-            <p className="text-xs text-neutral-500 mt-0.5">
+            <p
+              className="text-xs mt-0.5"
+              style={{ color: 'var(--text-secondary)' }}
+            >
               {lang === 'ar'
                 ? 'اختر وضع العرض المفضل للواجهة (الوضع الداكن الليلي أو الوضع الفاتح النهاري)'
                 : 'Choose your preferred visual theme across all workspaces and dashboards'}
@@ -123,37 +150,67 @@ export const SettingsAndPrivacyView: React.FC<SettingsAndPrivacyViewProps> = ({
             <button
               type="button"
               onClick={() => onSetTheme?.('light')}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
+              className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold border transition-all cursor-pointer"
+              style={
                 theme === 'light'
-                  ? 'bg-blue-50 border-blue-400 text-blue-700 shadow-xs'
-                  : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-600'
-              }`}
+                  ? {
+                      backgroundColor: 'var(--accent-blue-50)',
+                      borderColor: 'var(--accent-blue-400)',
+                      color: 'var(--accent-blue-700)',
+                      boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                    }
+                  : {
+                      backgroundColor: 'var(--surface-muted)',
+                      borderColor: 'var(--border-hairline)',
+                      color: 'var(--text-secondary)',
+                    }
+              }
             >
-              <Sun className="w-4 h-4 text-amber-500" />
+              <Sun className="w-4 h-4" style={{ color: 'var(--accent-amber-500)' }} />
               <span>{lang === 'ar' ? 'نهاري (Light)' : 'Light Mode'}</span>
             </button>
             <button
               type="button"
               onClick={() => onSetTheme?.('dark')}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
+              className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold border transition-all cursor-pointer"
+              style={
                 theme === 'dark'
-                  ? 'bg-blue-600 border-blue-500 text-white shadow-xs'
-                  : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-600'
-              }`}
+                  ? {
+                      backgroundColor: 'var(--accent-blue-600)',
+                      borderColor: 'var(--accent-blue-500)',
+                      color: '#ffffff',
+                      boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                    }
+                  : {
+                      backgroundColor: 'var(--surface-muted)',
+                      borderColor: 'var(--border-hairline)',
+                      color: 'var(--text-secondary)',
+                    }
+              }
             >
-              <Moon className="w-4 h-4 text-blue-200" />
+              <Moon className="w-4 h-4" style={{ color: 'var(--accent-blue-200)' }} />
               <span>{lang === 'ar' ? 'ليلي (Dark)' : 'Dark Mode'}</span>
             </button>
             <button
               type="button"
               onClick={() => onSetTheme?.('system')}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
+              className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold border transition-all cursor-pointer"
+              style={
                 theme === 'system'
-                  ? 'bg-purple-50 border-purple-400 text-purple-700 shadow-xs'
-                  : 'bg-neutral-50 hover:bg-neutral-100 border-neutral-200 text-neutral-600'
-              }`}
+                  ? {
+                      backgroundColor: 'var(--accent-purple-50)',
+                      borderColor: 'var(--accent-purple-400)',
+                      color: 'var(--accent-purple-700)',
+                      boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                    }
+                  : {
+                      backgroundColor: 'var(--surface-muted)',
+                      borderColor: 'var(--border-hairline)',
+                      color: 'var(--text-secondary)',
+                    }
+              }
             >
-              <Activity className="w-4 h-4 text-purple-500" />
+              <Activity className="w-4 h-4" style={{ color: 'var(--accent-purple-500)' }} />
               <span>{lang === 'ar' ? 'تلقائي (System)' : 'System'}</span>
             </button>
           </div>
@@ -161,22 +218,56 @@ export const SettingsAndPrivacyView: React.FC<SettingsAndPrivacyViewProps> = ({
       </div>
 
       {/* Career Memory Manager */}
-      <div className="p-6 bg-white border border-neutral-200 rounded-xl space-y-6">
+      <div
+        className="p-6 surface-elevated border-hairline rounded-xl space-y-6"
+        style={{
+          backgroundColor: 'var(--surface-elevated)',
+          borderColor: 'var(--border-hairline)',
+        }}
+      >
         <div>
-          <h2 className="text-sm font-semibold text-neutral-900">Career Memory Store</h2>
-          <p className="text-xs text-neutral-500 mt-0.5">
+          <h2
+            className="text-sm font-semibold"
+            style={{ color: 'var(--text-primary)' }}
+          >
+            Career Memory Store
+          </h2>
+          <p
+            className="text-xs mt-0.5"
+            style={{ color: 'var(--text-secondary)' }}
+          >
             Explicit, user-controlled factual memory injected into agents. No implicit dark tracking.
           </p>
         </div>
 
         {/* Add Memory Fact */}
-        <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-lg space-y-3">
-          <span className="text-xs font-semibold text-neutral-900 block">Add Explicit Memory Fact</span>
+        <div
+          className="p-4 border-hairline rounded-lg space-y-3"
+          style={{
+            backgroundColor: 'var(--surface-muted)',
+            borderWidth: '1px',
+            borderStyle: 'solid',
+            borderColor: 'var(--border-hairline)',
+          }}
+        >
+          <span
+            className="text-xs font-semibold block"
+            style={{ color: 'var(--text-primary)' }}
+          >
+            Add Explicit Memory Fact
+          </span>
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
             <select
               value={newFactCategory}
               onChange={(e) => setNewFactCategory(e.target.value as any)}
-              className="text-xs p-2 border border-neutral-300 rounded-lg outline-none bg-white"
+              className="text-xs p-2 border-hairline rounded-lg outline-none"
+              style={{
+                borderWidth: '1px',
+                borderStyle: 'solid',
+                borderColor: 'var(--border-default)',
+                backgroundColor: 'var(--surface-elevated)',
+                color: 'var(--text-primary)',
+              }}
             >
               <option value="Goals">Goals</option>
               <option value="Skills">Skills</option>
@@ -190,12 +281,24 @@ export const SettingsAndPrivacyView: React.FC<SettingsAndPrivacyViewProps> = ({
               placeholder="e.g. Target salary range is $140k-$160k with flexible hours..."
               value={newFactText}
               onChange={(e) => setNewFactText(e.target.value)}
-              className="sm:col-span-2 text-xs p-2 border border-neutral-300 rounded-lg outline-none"
+              className="sm:col-span-2 text-xs p-2 border-hairline rounded-lg outline-none"
+              style={{
+                borderWidth: '1px',
+                borderStyle: 'solid',
+                borderColor: 'var(--border-default)',
+                backgroundColor: 'var(--surface-elevated)',
+                color: 'var(--text-primary)',
+              }}
             />
             <button
+              type="button"
               onClick={handleAdd}
               disabled={isAdding || !newFactText.trim()}
-              className="px-3 py-2 text-xs font-semibold text-white bg-neutral-900 hover:bg-neutral-800 rounded-lg transition-colors inline-flex items-center justify-center gap-1.5"
+              className="px-3 py-2 text-xs font-semibold rounded-lg transition-colors inline-flex items-center justify-center gap-1.5"
+              style={{
+                color: '#ffffff',
+                backgroundColor: 'var(--text-primary)',
+              }}
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Add Fact</span>
@@ -208,22 +311,44 @@ export const SettingsAndPrivacyView: React.FC<SettingsAndPrivacyViewProps> = ({
           {memoryFacts.map((fact) => (
             <div
               key={fact.id}
-              className="p-3 bg-white border border-neutral-200 rounded-lg flex items-center justify-between text-xs hover:border-neutral-300 transition-colors"
+              className="p-3 border-hairline rounded-lg flex items-center justify-between text-xs transition-colors"
+              style={{
+                backgroundColor: 'var(--surface-elevated)',
+                borderWidth: '1px',
+                borderStyle: 'solid',
+                borderColor: 'var(--border-hairline)',
+              }}
             >
               <div className="flex items-center gap-3">
-                <span className="font-mono text-[11px] text-neutral-700 bg-neutral-100 px-2 py-0.5 rounded">
+                <span
+                  className="font-mono text-[11px] px-2 py-0.5 rounded"
+                  style={{
+                    color: 'var(--text-primary)',
+                    backgroundColor: 'var(--surface-muted)',
+                  }}
+                >
                   {fact.category}
                 </span>
-                <span className="text-neutral-900 font-medium">{fact.fact}</span>
+                <span
+                  className="font-medium"
+                  style={{ color: 'var(--text-primary)' }}
+                >
+                  {fact.fact}
+                </span>
               </div>
-              <div className="flex items-center gap-3 text-neutral-400">
+              <div
+                className="flex items-center gap-3"
+                style={{ color: 'var(--text-tertiary)' }}
+              >
                 <span className="text-[11px] font-mono tabular-nums">
                   Updated: {formatDate(fact.updatedAt)}
                 </span>
                 <button
+                  type="button"
                   onClick={() => onDeleteMemory(fact.id)}
                   title="Delete memory fact"
-                  className="hover:text-neutral-900 transition-colors"
+                  className="transition-colors"
+                  style={{ color: 'var(--text-tertiary)' }}
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
@@ -234,11 +359,23 @@ export const SettingsAndPrivacyView: React.FC<SettingsAndPrivacyViewProps> = ({
       </div>
 
       {/* Data Export & System Reset */}
-      <div className="p-6 bg-white border border-neutral-200 rounded-xl space-y-4">
-        <h2 className="text-sm font-semibold text-neutral-900">
+      <div
+        className="p-6 surface-elevated border-hairline rounded-xl space-y-4"
+        style={{
+          backgroundColor: 'var(--surface-elevated)',
+          borderColor: 'var(--border-hairline)',
+        }}
+      >
+        <h2
+          className="text-sm font-semibold"
+          style={{ color: 'var(--text-primary)' }}
+        >
           {lang === 'ar' ? 'تصدير البيانات وحذف الحساب (GDPR / سيادة البيانات)' : 'Data Portability & Account Lifecycle (GDPR)'}
         </h2>
-        <p className="text-xs text-neutral-500">
+        <p
+          className="text-xs"
+          style={{ color: 'var(--text-secondary)' }}
+        >
           {lang === 'ar'
             ? 'يمكنك تنزيل أرشيف كامل لكافة بياناتك وسيرك الذاتية بصيغة JSON، أو طلب حذف حسابك نهائياً وحذف جميع سجلاتك.'
             : 'Download your complete profile, applications, and micro-projects as structured JSON or permanently purge your account and records.'}
@@ -248,7 +385,11 @@ export const SettingsAndPrivacyView: React.FC<SettingsAndPrivacyViewProps> = ({
           <button
             type="button"
             onClick={handleExport}
-            className="px-4 py-2 text-xs font-medium text-neutral-800 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+            className="px-4 py-2 text-xs font-medium rounded-lg transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+            style={{
+              color: 'var(--text-primary)',
+              backgroundColor: 'var(--surface-muted)',
+            }}
           >
             <Download className="w-3.5 h-3.5" />
             <span>{lang === 'ar' ? 'تصدير أرشيف البيانات الكامل (JSON)' : 'Export Complete JSON Archive'}</span>
@@ -257,7 +398,14 @@ export const SettingsAndPrivacyView: React.FC<SettingsAndPrivacyViewProps> = ({
             type="button"
             onClick={handleReset}
             disabled={isResetting}
-            className="px-4 py-2 text-xs font-medium text-neutral-600 hover:text-neutral-900 bg-white border border-neutral-300 rounded-lg transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+            className="px-4 py-2 text-xs font-medium border-hairline rounded-lg transition-colors inline-flex items-center gap-1.5 cursor-pointer"
+            style={{
+              color: 'var(--text-secondary)',
+              backgroundColor: 'var(--surface-elevated)',
+              borderWidth: '1px',
+              borderStyle: 'solid',
+              borderColor: 'var(--border-default)',
+            }}
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>{isResetting ? (lang === 'ar' ? 'جاري الاستعادة...' : 'Restoring Seed...') : (lang === 'ar' ? 'استعادة البيانات التجريبية' : 'Restore Default Seed Data')}</span>
@@ -265,24 +413,55 @@ export const SettingsAndPrivacyView: React.FC<SettingsAndPrivacyViewProps> = ({
         </div>
 
         {resetSuccess && (
-          <div className="text-xs text-neutral-800 bg-neutral-50 p-2.5 rounded border border-neutral-200">
+          <div
+            className="text-xs p-2.5 rounded border-hairline"
+            style={{
+              color: 'var(--text-primary)',
+              backgroundColor: 'var(--surface-muted)',
+              borderWidth: '1px',
+              borderStyle: 'solid',
+              borderColor: 'var(--border-hairline)',
+            }}
+          >
             {lang === 'ar' ? 'تمت إعادة ضبط البيانات بنجاح.' : 'Database state reset to default production seed.'}
           </div>
         )}
       </div>
 
       {/* AI Telemetry & Budget Protection Status */}
-      <div className="p-6 bg-white border border-neutral-200 rounded-xl space-y-3">
+      <div
+        className="p-6 surface-elevated border-hairline rounded-xl space-y-3"
+        style={{
+          backgroundColor: 'var(--surface-elevated)',
+          borderColor: 'var(--border-hairline)',
+        }}
+      >
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-neutral-900">
+          <h2
+            className="text-sm font-semibold"
+            style={{ color: 'var(--text-primary)' }}
+          >
             {lang === 'ar' ? 'مراقبة الذكاء الاصطناعي وحدود الاستهلاك' : 'AI Gateway Observability & Circuit Breaker'}
           </h2>
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <span
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border"
+            style={{
+              backgroundColor: 'var(--accent-emerald-50)',
+              color: 'var(--accent-emerald-700)',
+              borderColor: 'var(--accent-emerald-200)',
+            }}
+          >
+            <span
+              className="w-1.5 h-1.5 rounded-full animate-pulse"
+              style={{ backgroundColor: 'var(--accent-emerald-500)' }}
+            />
             {lang === 'ar' ? 'محمي بواسطة Circuit Breaker' : 'Protected by Circuit Breaker'}
           </span>
         </div>
-        <p className="text-xs text-neutral-500">
+        <p
+          className="text-xs"
+          style={{ color: 'var(--text-secondary)' }}
+        >
           {lang === 'ar'
             ? 'النظام مزود بنظام حماية تلقائي ضد تجاوز الميزانية، ومراقبة زمن الاستجابة، وحد أقصى لحجم المستندات (35,000 حرف).'
             : 'Multi-model fallback active with bounded retries, maximum 35,000 document character limits, and 25-second query timeouts.'}
@@ -290,18 +469,39 @@ export const SettingsAndPrivacyView: React.FC<SettingsAndPrivacyViewProps> = ({
       </div>
 
       {/* Developer Contact */}
-      <div className="p-6 bg-gradient-to-br from-slate-900 to-slate-800 border border-slate-700/60 rounded-xl space-y-4 relative overflow-hidden">
+      <div
+        className="p-6 border rounded-xl space-y-4 relative overflow-hidden"
+        style={{
+          background: 'linear-gradient(to bottom right, var(--surface-slate-900), var(--surface-slate-800))',
+          borderColor: 'var(--border-slate-700-60)',
+        }}
+      >
         {/* Decorative glow */}
-        <div className="absolute top-0 right-0 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div
+          className="absolute top-0 right-0 w-40 h-40 rounded-full blur-3xl pointer-events-none"
+          style={{ backgroundColor: 'rgba(59, 130, 246, 0.1)' }}
+        />
         <div className="flex items-center gap-2.5 relative">
-          <div className="w-9 h-9 rounded-xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center">
-            <Code2 className="w-4.5 h-4.5 text-blue-400" />
+          <div
+            className="w-9 h-9 rounded-xl border flex items-center justify-center"
+            style={{
+              backgroundColor: 'rgba(37, 99, 235, 0.2)',
+              borderColor: 'rgba(59, 130, 246, 0.3)',
+            }}
+          >
+            <Code2 className="w-4.5 h-4.5" style={{ color: 'var(--accent-blue-400)' }} />
           </div>
           <div>
-            <h2 className="text-sm font-bold text-white">
+            <h2
+              className="text-sm font-bold"
+              style={{ color: '#ffffff' }}
+            >
               {lang === 'ar' ? 'تواصل مع مطور التطبيق' : 'Contact the Developer'}
             </h2>
-            <p className="text-[11px] text-slate-400">
+            <p
+              className="text-[11px]"
+              style={{ color: 'var(--surface-slate-400)' }}
+            >
               {lang === 'ar' ? 'أحمد إبراهيم — مطور CareerPilot AI' : 'Ahmed Ebrahim — CareerPilot AI Developer'}
             </p>
           </div>
@@ -313,11 +513,18 @@ export const SettingsAndPrivacyView: React.FC<SettingsAndPrivacyViewProps> = ({
             href="https://wa.me/201027053876"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#25D366]/15 hover:bg-[#25D366]/25 border border-[#25D366]/30 rounded-xl text-xs font-semibold text-[#25D366] transition-all group"
+            className="inline-flex items-center gap-2 px-4 py-2.5 border rounded-xl text-xs font-semibold transition-all group"
+            style={{
+              backgroundColor: 'rgba(37, 211, 102, 0.15)',
+              borderColor: 'rgba(37, 211, 102, 0.3)',
+              color: '#25D366',
+            }}
           >
             <MessageCircle className="w-4 h-4 group-hover:scale-110 transition-transform" />
             <div className="text-start">
-              <div className="text-[10px] text-white/50 leading-tight">{lang === 'ar' ? 'واتساب' : 'WhatsApp'}</div>
+              <div className="text-[10px] leading-tight" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
+                {lang === 'ar' ? 'واتساب' : 'WhatsApp'}
+              </div>
               <div>01027053876</div>
             </div>
             <ExternalLink className="w-3 h-3 opacity-50" />
@@ -328,18 +535,28 @@ export const SettingsAndPrivacyView: React.FC<SettingsAndPrivacyViewProps> = ({
             href="https://www.linkedin.com/in/ahmed-ebrahim2"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#0A66C2]/15 hover:bg-[#0A66C2]/25 border border-[#0A66C2]/30 rounded-xl text-xs font-semibold text-[#60A5FA] transition-all group"
+            className="inline-flex items-center gap-2 px-4 py-2.5 border rounded-xl text-xs font-semibold transition-all group"
+            style={{
+              backgroundColor: 'rgba(10, 102, 194, 0.15)',
+              borderColor: 'rgba(10, 102, 194, 0.3)',
+              color: '#60A5FA',
+            }}
           >
             <Linkedin className="w-4 h-4 group-hover:scale-110 transition-transform" />
             <div className="text-start">
-              <div className="text-[10px] text-white/50 leading-tight">LinkedIn</div>
+              <div className="text-[10px] leading-tight" style={{ color: 'rgba(255, 255, 255, 0.5)' }}>
+                LinkedIn
+              </div>
               <div>ahmed-ebrahim2</div>
             </div>
             <ExternalLink className="w-3 h-3 opacity-50" />
           </a>
         </div>
 
-        <p className="text-[11px] text-slate-500 relative">
+        <p
+          className="text-[11px] relative"
+          style={{ color: 'var(--surface-slate-500)' }}
+        >
           {lang === 'ar'
             ? 'للإبلاغ عن مشاكل، اقتراح ميزات جديدة، أو أي استفسارات تقنية.'
             : 'For bug reports, feature suggestions, or any technical inquiries.'}

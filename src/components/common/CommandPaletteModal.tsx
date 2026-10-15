@@ -170,14 +170,15 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-start justify-center p-3 pt-6 sm:p-4 sm:pt-20 animate-in fade-in duration-150" onClick={onClose}>
+    <div className="glass-surface fixed inset-0 z-50 flex items-start justify-center p-3 pt-6 sm:p-4 sm:pt-20 animate-in fade-in duration-150" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }} onClick={onClose}>
       <div
-        className="bg-white rounded-2xl shadow-2xl border border-neutral-200 max-w-2xl w-full overflow-hidden flex flex-col max-h-[calc(100dvh-3rem)] sm:max-h-[80vh]"
+        className="card-surface rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden flex flex-col max-h-[calc(100dvh-3rem)] sm:max-h-[80vh]"
+        style={{ backgroundColor: 'var(--surface)', borderWidth: '1px', borderStyle: 'solid', borderColor: 'var(--border)' }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search Input Bar */}
-        <div className="flex items-center gap-3 p-4 border-b border-neutral-200 bg-neutral-50/50 shrink-0">
-          <Search className="w-5 h-5 text-neutral-400 shrink-0" />
+        <div className="flex items-center gap-3 p-4 border-hairline shrink-0" style={{ borderBottomColor: 'var(--border)', backgroundColor: 'var(--surface-container)' }}>
+          <Search className="w-5 h-5 shrink-0" style={{ color: 'var(--on-surface-variant)' }} />
           <input
             type="text"
             autoFocus
@@ -188,28 +189,30 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
                 ? 'ابحث عن أي قسم، وظيفة، مهارة، أو أداة... (اكتب ما تبحث عنه)'
                 : 'Search any page, job role, skill, or tool...'
             }
-            className="flex-1 text-sm bg-transparent outline-none text-neutral-900 placeholder:text-neutral-400 font-medium"
+            className="input-field flex-1 text-body-base bg-transparent outline-none font-medium"
+            style={{ color: 'var(--on-surface)', border: 'none', padding: 0 }}
           />
           {query ? (
             <button
               onClick={() => setQuery('')}
-              className="p-1 hover:bg-neutral-200 rounded-md text-neutral-400 hover:text-neutral-700 transition-colors"
+              className="btn-secondary p-1 rounded-md"
+              style={{ color: 'var(--on-surface-variant)' }}
             >
               <X className="w-4 h-4" />
             </button>
           ) : (
-            <kbd className="hidden sm:inline-block text-[10px] font-mono px-2 py-0.5 bg-white border border-neutral-200 rounded text-neutral-500 shadow-2xs">
+            <kbd className="hidden sm:inline-block text-label-caps px-2 py-0.5 rounded" style={{ backgroundColor: 'var(--surface)', borderWidth: '1px', borderStyle: 'solid', borderColor: 'var(--border)', color: 'var(--on-surface-variant)' }}>
               ESC
             </kbd>
           )}
         </div>
 
         {/* Results List */}
-        <div className="flex-1 overflow-y-auto p-3 space-y-4 text-xs">
+        <div className="flex-1 overflow-y-auto p-3 space-y-4 text-body-sm">
           {/* Quick Actions Shortcuts */}
           {!query && (
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 px-3 block mb-2">
+              <span className="text-label-caps px-3 block mb-2" style={{ color: 'var(--on-surface-variant)' }}>
                 {isAr ? 'إجراءات سريعة فورية' : 'Quick Actions'}
               </span>
               <div className="grid grid-cols-2 gap-2 px-1">
@@ -218,10 +221,11 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
                     onNavigate('cv');
                     onClose();
                   }}
-                  className="p-2.5 bg-neutral-50 hover:bg-neutral-100 rounded-xl border border-neutral-100 flex items-center gap-2.5 text-neutral-800 transition-colors text-right"
+                  className="btn-secondary p-2.5 rounded-xl flex items-center gap-2.5 text-right"
+                  style={{ borderWidth: '1px', borderStyle: 'solid', borderColor: 'var(--border)' }}
                 >
-                  <FileText className="w-4 h-4 text-indigo-600 shrink-0" />
-                  <span className="truncate font-medium">
+                  <FileText className="w-4 h-4 shrink-0" style={{ color: 'var(--primary)' }} />
+                  <span className="truncate font-medium text-body-sm">
                     {isAr ? 'فحص السيرة الذاتية (ATS)' : 'Audit Resume ATS'}
                   </span>
                 </button>
@@ -230,10 +234,11 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
                     onNavigate('interviews');
                     onClose();
                   }}
-                  className="p-2.5 bg-neutral-50 hover:bg-neutral-100 rounded-xl border border-neutral-100 flex items-center gap-2.5 text-neutral-800 transition-colors text-right"
+                  className="btn-secondary p-2.5 rounded-xl flex items-center gap-2.5 text-right"
+                  style={{ borderWidth: '1px', borderStyle: 'solid', borderColor: 'var(--border)' }}
                 >
-                  <Mic className="w-4 h-4 text-violet-600 shrink-0" />
-                  <span className="truncate font-medium">
+                  <Mic className="w-4 h-4 shrink-0" style={{ color: 'var(--accent)' }} />
+                  <span className="truncate font-medium text-body-sm">
                     {isAr ? 'بدء مقابلة تجريبية' : 'Start Mock Interview'}
                   </span>
                 </button>
@@ -243,12 +248,13 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
                       onOpenLinkedInSync();
                       onClose();
                     }}
-                    className="p-2.5 bg-neutral-50 hover:bg-neutral-100 rounded-xl border border-neutral-100 flex items-center gap-2.5 text-neutral-800 transition-colors text-right"
+                    className="btn-secondary p-2.5 rounded-xl flex items-center gap-2.5 text-right"
+                    style={{ borderWidth: '1px', borderStyle: 'solid', borderColor: 'var(--border)' }}
                   >
-                    <span className="w-4 h-4 rounded bg-[#0077B5] text-white text-[9px] font-bold flex items-center justify-center shrink-0">
+                    <span className="w-4 h-4 rounded text-[9px] font-bold flex items-center justify-center shrink-0" style={{ backgroundColor: '#0077B5', color: 'white' }}>
                       in
                     </span>
-                    <span className="truncate font-medium">
+                    <span className="truncate font-medium text-body-sm">
                       {isAr ? 'مزامنة مع LinkedIn' : 'Sync with LinkedIn'}
                     </span>
                   </button>
@@ -259,10 +265,11 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
                       onStartOnboarding();
                       onClose();
                     }}
-                    className="p-2.5 bg-neutral-50 hover:bg-neutral-100 rounded-xl border border-neutral-100 flex items-center gap-2.5 text-neutral-800 transition-colors text-right"
+                    className="btn-secondary p-2.5 rounded-xl flex items-center gap-2.5 text-right"
+                    style={{ borderWidth: '1px', borderStyle: 'solid', borderColor: 'var(--border)' }}
                   >
-                    <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
-                    <span className="truncate font-medium">
+                    <Sparkles className="w-4 h-4 shrink-0" style={{ color: 'var(--warning)' }} />
+                    <span className="truncate font-medium text-body-sm">
                       {isAr ? 'إعادة التهيئة الذكية' : 'AI Onboarding'}
                     </span>
                   </button>
@@ -274,7 +281,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
           {/* Matched Opportunities (if query provided) */}
           {matchedJobs.length > 0 && (
             <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 px-3 block mb-1.5">
+              <span className="text-label-caps px-3 block mb-1.5" style={{ color: 'var(--on-surface-variant)' }}>
                 {isAr ? 'وظائف متطابقة مع بحثك' : 'Matched Opportunities'}
               </span>
               <div className="space-y-1">
@@ -285,20 +292,26 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
                       onNavigate('opportunities');
                       onClose();
                     }}
-                    className="p-2.5 hover:bg-neutral-100/80 rounded-xl cursor-pointer flex items-center justify-between gap-3 transition-colors"
+                    className="p-2.5 rounded-xl cursor-pointer flex items-center justify-between gap-3 transition-colors"
+                    style={{
+                      backgroundColor: 'transparent',
+                      '&:hover': { backgroundColor: 'var(--surface-container)' }
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--surface-container)'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <Briefcase className="w-4 h-4 text-neutral-500 shrink-0" />
+                      <Briefcase className="w-4 h-4 shrink-0" style={{ color: 'var(--on-surface-variant)' }} />
                       <div className="truncate">
-                        <span className="font-semibold text-neutral-900 block truncate">
+                        <span className="font-semibold block truncate text-body-sm" style={{ color: 'var(--on-surface)' }}>
                           {job.title}
                         </span>
-                        <span className="text-[11px] text-neutral-500">
+                        <span className="text-body-xs" style={{ color: 'var(--on-surface-variant)' }}>
                           {job.company} · {job.workModel} · {job.matchScore != null ? `${job.matchScore}% ${isAr ? 'توافق' : 'fit'}` : (isAr ? 'غير محلل' : 'Not analyzed')}
                         </span>
                       </div>
                     </div>
-                    <ArrowRight className="w-3.5 h-3.5 text-neutral-400 rtl:rotate-180 shrink-0" />
+                    <ArrowRight className="w-3.5 h-3.5 shrink-0 rtl:rotate-180" style={{ color: 'var(--on-surface-variant)' }} />
                   </div>
                 ))}
               </div>
@@ -307,7 +320,7 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
 
           {/* Navigation Items */}
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 px-3 block mb-1.5">
+            <span className="text-label-caps px-3 block mb-1.5" style={{ color: 'var(--on-surface-variant)' }}>
               {isAr ? 'الأقسام والصفحات' : 'Navigation & Views'}
             </span>
             <div className="space-y-1">
@@ -320,22 +333,25 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
                       onNavigate(item.id);
                       onClose();
                     }}
-                    className="p-2.5 hover:bg-neutral-100 rounded-xl cursor-pointer flex items-center justify-between gap-3 transition-colors group"
+                    className="p-2.5 rounded-xl cursor-pointer flex items-center justify-between gap-3 transition-colors group"
+                    style={{ backgroundColor: 'transparent' }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--surface-container)'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-7 h-7 rounded-lg bg-neutral-100 group-hover:bg-neutral-900 group-hover:text-white flex items-center justify-center transition-colors text-neutral-600 shrink-0">
+                      <div className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors shrink-0" style={{ backgroundColor: 'var(--surface-container)', color: 'var(--on-surface-variant)' }}>
                         <Icon className="w-3.5 h-3.5" />
                       </div>
                       <div>
-                        <span className="font-semibold text-neutral-900 group-hover:text-indigo-600 transition-colors block">
+                        <span className="font-semibold transition-colors block text-body-sm" style={{ color: 'var(--on-surface)' }}>
                           {item.title}
                         </span>
-                        <span className="text-[10px] text-neutral-400">{item.category}</span>
+                        <span className="text-label-caps" style={{ color: 'var(--on-surface-variant)' }}>{item.category}</span>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <ArrowRight className="w-3.5 h-3.5 text-neutral-300 group-hover:text-neutral-900 rtl:rotate-180 transition-colors" />
+                      <ArrowRight className="w-3.5 h-3.5 transition-colors rtl:rotate-180" style={{ color: 'var(--on-surface-variant)' }} />
                     </div>
                   </div>
                 );
@@ -345,9 +361,9 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
         </div>
 
         {/* Footer Hint */}
-        <div className="shrink-0 p-3 border-t border-neutral-100 bg-neutral-50/70 flex items-center justify-between text-[11px] text-neutral-500">
+        <div className="shrink-0 p-3 border-hairline flex items-center justify-between text-body-xs" style={{ borderTopColor: 'var(--border-subtle)', backgroundColor: 'var(--surface-container)', color: 'var(--on-surface-variant)' }}>
           <span>{isAr ? 'استخدم الأسهم أو الفأرة للتنقل' : 'Use arrow keys or click to navigate'}</span>
-          <span className="font-mono text-[10px]">CareerPilot AI Command Hub</span>
+          <span className="font-mono text-label-caps">CareerPilot AI Command Hub</span>
         </div>
       </div>
     </div>

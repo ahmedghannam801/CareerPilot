@@ -232,16 +232,16 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-16">
       {/* Top Header Card */}
-      <div className="p-6 bg-white border border-slate-200/80 rounded-2xl shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="p-6 surface-elevated border-hairline rounded-2xl shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="text-xs font-semibold text-blue-600 mb-1 flex items-center gap-1.5">
-            <Compass className="w-4 h-4 text-blue-600" />
+          <div className="text-xs font-semibold mb-1 flex items-center gap-1.5" style={{ color: 'var(--color-primary)' }}>
+            <Compass className="w-4 h-4" style={{ color: 'var(--color-primary)' }} />
             <span>{isAr ? 'مسارات التعلم التفاعلية ومصادر الدورات' : 'Interactive Learning Roadmaps & Resource Discovery'}</span>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+          <h1 className="heading-2xl" style={{ color: 'var(--color-text-primary)' }}>
             {isAr ? 'مسارات التعلم المهني (Learning Roadmaps)' : 'Career Learning Roadmaps'}
           </h1>
-          <p className="text-xs text-slate-500 mt-1 max-w-2xl leading-relaxed">
+          <p className="text-xs mt-1 max-w-2xl leading-relaxed" style={{ color: 'var(--color-text-tertiary)' }}>
             {isAr
               ? 'خرائط تعلم تفاعلية منظمة على مراحل متعاقبة، مع مصادر تعليمية حقيقية ومجانية من YouTube ودورات معتمدة من Coursera وتطبيقات عملية متصلة بملفك المهني.'
               : 'Interactive step-by-step career roadmaps connected with verified free YouTube tutorials, Coursera specializations, and portfolio micro-projects.'}
@@ -253,7 +253,7 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
           <button
             type="button"
             onClick={() => setShowGenerateModal(true)}
-            className="px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold rounded-xl shadow-xs transition-all inline-flex items-center gap-1.5 cursor-pointer"
+            className="button-primary inline-flex items-center gap-1.5"
           >
             <Sparkles className="w-3.5 h-3.5" />
             <span>{isAr ? 'توليد مسار مخصص بالذكاء الاصطناعي' : 'Generate Custom AI Roadmap'}</span>
@@ -262,20 +262,42 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
       </div>
 
       {/* Sub-Navigation Tabs */}
-      <div className="flex items-center gap-1 overflow-x-auto pb-1 border-b border-slate-200/80 text-xs font-bold text-slate-600">
+      <div className="flex items-center gap-1 overflow-x-auto pb-1 border-b text-xs font-bold" style={{ borderColor: 'var(--color-border-primary)', color: 'var(--color-text-secondary)' }}>
         <button
           type="button"
           onClick={() => setActiveTab('workspace')}
           className={`px-4 py-2.5 rounded-xl transition-all cursor-pointer inline-flex items-center gap-2 whitespace-nowrap ${
             activeTab === 'workspace'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'hover:bg-slate-100 text-slate-700'
+              ? 'shadow-xs'
+              : ''
           }`}
+          style={activeTab === 'workspace' ? {
+            backgroundColor: 'var(--color-primary)',
+            color: 'var(--color-text-inverse)'
+          } : {
+            color: 'var(--color-text-primary)'
+          }}
+          onMouseEnter={(e) => {
+            if (activeTab !== 'workspace') {
+              e.currentTarget.style.backgroundColor = 'var(--color-surface-secondary)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (activeTab !== 'workspace') {
+              e.currentTarget.style.backgroundColor = 'transparent';
+            }
+          }}
         >
           <Layers className="w-3.5 h-3.5" />
           <span>{isAr ? 'مساحة المسار التفاعلي' : 'Roadmap Workspace'}</span>
           {currentEnrollment && (
-            <span className={`px-1.5 py-0.2 rounded-full text-[10px] ${activeTab === 'workspace' ? 'bg-blue-700 text-blue-100' : 'bg-slate-200 text-slate-700'}`}>
+            <span className="px-1.5 py-0.2 rounded-full text-[10px]" style={activeTab === 'workspace' ? {
+              backgroundColor: 'rgba(var(--color-primary-rgb), 0.3)',
+              color: 'var(--color-text-inverse)'
+            } : {
+              backgroundColor: 'var(--color-surface-secondary)',
+              color: 'var(--color-text-primary)'
+            }}>
               {progressPercent}%
             </span>
           )}
@@ -285,14 +307,34 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
           type="button"
           onClick={() => setActiveTab('discovery')}
           className={`px-4 py-2.5 rounded-xl transition-all cursor-pointer inline-flex items-center gap-2 whitespace-nowrap ${
-            activeTab === 'discovery'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'hover:bg-slate-100 text-slate-700'
+            activeTab === 'discovery' ? 'shadow-xs' : ''
           }`}
+          style={activeTab === 'discovery' ? {
+            backgroundColor: 'var(--color-primary)',
+            color: 'var(--color-text-inverse)'
+          } : {
+            color: 'var(--color-text-primary)'
+          }}
+          onMouseEnter={(e) => {
+            if (activeTab !== 'discovery') {
+              e.currentTarget.style.backgroundColor = 'var(--color-surface-secondary)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (activeTab !== 'discovery') {
+              e.currentTarget.style.backgroundColor = 'transparent';
+            }
+          }}
         >
           <Compass className="w-3.5 h-3.5" />
           <span>{isAr ? 'اكتشاف المسارات' : 'Roadmap Discovery'}</span>
-          <span className={`px-1.5 py-0.2 rounded-full text-[10px] ${activeTab === 'discovery' ? 'bg-blue-700 text-blue-100' : 'bg-slate-200 text-slate-700'}`}>
+          <span className="px-1.5 py-0.2 rounded-full text-[10px]" style={activeTab === 'discovery' ? {
+            backgroundColor: 'rgba(var(--color-primary-rgb), 0.3)',
+            color: 'var(--color-text-inverse)'
+          } : {
+            backgroundColor: 'var(--color-surface-secondary)',
+            color: 'var(--color-text-primary)'
+          }}>
             {roadmaps.length}
           </span>
         </button>
@@ -301,14 +343,34 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
           type="button"
           onClick={() => setActiveTab('my_roadmaps')}
           className={`px-4 py-2.5 rounded-xl transition-all cursor-pointer inline-flex items-center gap-2 whitespace-nowrap ${
-            activeTab === 'my_roadmaps'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'hover:bg-slate-100 text-slate-700'
+            activeTab === 'my_roadmaps' ? 'shadow-xs' : ''
           }`}
+          style={activeTab === 'my_roadmaps' ? {
+            backgroundColor: 'var(--color-primary)',
+            color: 'var(--color-text-inverse)'
+          } : {
+            color: 'var(--color-text-primary)'
+          }}
+          onMouseEnter={(e) => {
+            if (activeTab !== 'my_roadmaps') {
+              e.currentTarget.style.backgroundColor = 'var(--color-surface-secondary)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (activeTab !== 'my_roadmaps') {
+              e.currentTarget.style.backgroundColor = 'transparent';
+            }
+          }}
         >
           <BookOpen className="w-3.5 h-3.5" />
           <span>{isAr ? 'مساراتي المسجلة' : 'My Roadmaps'}</span>
-          <span className={`px-1.5 py-0.2 rounded-full text-[10px] ${activeTab === 'my_roadmaps' ? 'bg-blue-700 text-blue-100' : 'bg-slate-200 text-slate-700'}`}>
+          <span className="px-1.5 py-0.2 rounded-full text-[10px]" style={activeTab === 'my_roadmaps' ? {
+            backgroundColor: 'rgba(var(--color-primary-rgb), 0.3)',
+            color: 'var(--color-text-inverse)'
+          } : {
+            backgroundColor: 'var(--color-surface-secondary)',
+            color: 'var(--color-text-primary)'
+          }}>
             {enrollments.length}
           </span>
         </button>
@@ -317,10 +379,24 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
           type="button"
           onClick={() => setActiveTab('weekly_plan')}
           className={`px-4 py-2.5 rounded-xl transition-all cursor-pointer inline-flex items-center gap-2 whitespace-nowrap ${
-            activeTab === 'weekly_plan'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'hover:bg-slate-100 text-slate-700'
+            activeTab === 'weekly_plan' ? 'shadow-xs' : ''
           }`}
+          style={activeTab === 'weekly_plan' ? {
+            backgroundColor: 'var(--color-primary)',
+            color: 'var(--color-text-inverse)'
+          } : {
+            color: 'var(--color-text-primary)'
+          }}
+          onMouseEnter={(e) => {
+            if (activeTab !== 'weekly_plan') {
+              e.currentTarget.style.backgroundColor = 'var(--color-surface-secondary)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (activeTab !== 'weekly_plan') {
+              e.currentTarget.style.backgroundColor = 'transparent';
+            }
+          }}
         >
           <Calendar className="w-3.5 h-3.5" />
           <span>{isAr ? 'الخطة الأسبوعية' : 'Weekly Plan'}</span>
@@ -330,10 +406,24 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
           type="button"
           onClick={() => setActiveTab('progress')}
           className={`px-4 py-2.5 rounded-xl transition-all cursor-pointer inline-flex items-center gap-2 whitespace-nowrap ${
-            activeTab === 'progress'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'hover:bg-slate-100 text-slate-700'
+            activeTab === 'progress' ? 'shadow-xs' : ''
           }`}
+          style={activeTab === 'progress' ? {
+            backgroundColor: 'var(--color-primary)',
+            color: 'var(--color-text-inverse)'
+          } : {
+            color: 'var(--color-text-primary)'
+          }}
+          onMouseEnter={(e) => {
+            if (activeTab !== 'progress') {
+              e.currentTarget.style.backgroundColor = 'var(--color-surface-secondary)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (activeTab !== 'progress') {
+              e.currentTarget.style.backgroundColor = 'transparent';
+            }
+          }}
         >
           <TrendingUp className="w-3.5 h-3.5" />
           <span>{isAr ? 'مؤشرات التقدم والجاهزية' : 'Progress & Readiness'}</span>
@@ -343,10 +433,24 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
           type="button"
           onClick={() => setActiveTab('settings')}
           className={`px-4 py-2.5 rounded-xl transition-all cursor-pointer inline-flex items-center gap-2 whitespace-nowrap ${
-            activeTab === 'settings'
-              ? 'bg-blue-600 text-white shadow-xs'
-              : 'hover:bg-slate-100 text-slate-700'
+            activeTab === 'settings' ? 'shadow-xs' : ''
           }`}
+          style={activeTab === 'settings' ? {
+            backgroundColor: 'var(--color-primary)',
+            color: 'var(--color-text-inverse)'
+          } : {
+            color: 'var(--color-text-primary)'
+          }}
+          onMouseEnter={(e) => {
+            if (activeTab !== 'settings') {
+              e.currentTarget.style.backgroundColor = 'var(--color-surface-secondary)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (activeTab !== 'settings') {
+              e.currentTarget.style.backgroundColor = 'transparent';
+            }
+          }}
         >
           <Settings className="w-3.5 h-3.5" />
           <span>{isAr ? 'الإعدادات والتفضيلات' : 'Learning Settings'}</span>
@@ -359,15 +463,15 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
       {activeTab === 'discovery' && (
         <div className="space-y-6">
           {/* Search & Category Filter Bar */}
-          <div className="p-4 bg-white border border-slate-200/80 rounded-2xl shadow-2xs flex flex-col md:flex-row items-center gap-3">
+          <div className="p-4 surface-elevated border-hairline rounded-2xl shadow-2xs flex flex-col md:flex-row items-center gap-3">
             <div className="relative flex-1 w-full">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 rtl:right-3 rtl:left-auto top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 absolute left-3 rtl:right-3 rtl:left-auto top-1/2 -translate-y-1/2" style={{ color: 'var(--color-text-tertiary)' }} />
               <input
                 type="text"
                 placeholder={isAr ? 'ابحث عن مسار مهني أو مهارة (مثال: AI, Python, React, Data)...' : 'Search roadmaps or skills (e.g. AI, Python, React, Data)...'}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full text-xs pl-9 pr-4 rtl:pr-9 rtl:pl-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                className="input-text w-full pl-9 pr-4 rtl:pr-9 rtl:pl-4"
               />
             </div>
 
@@ -375,7 +479,7 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-700 outline-none"
+                className="input-select"
               >
                 <option value="all">{isAr ? 'جميع المجالات' : 'All Categories'}</option>
                 <option value="Data & AI">{isAr ? 'البيانات والذكاء الاصطناعي' : 'Data & AI'}</option>
@@ -385,7 +489,7 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
               <select
                 value={selectedDifficulty}
                 onChange={(e) => setSelectedDifficulty(e.target.value)}
-                className="text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-700 outline-none"
+                className="input-select"
               >
                 <option value="all">{isAr ? 'جميع المستويات' : 'All Levels'}</option>
                 <option value="Beginner">{isAr ? 'مبتدئ' : 'Beginner'}</option>
@@ -404,37 +508,37 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
               return (
                 <div
                   key={roadmap.id}
-                  className="bg-white border border-slate-200/80 hover:border-blue-300 rounded-2xl p-5 shadow-2xs hover:shadow-md transition-all flex flex-col justify-between space-y-4"
+                  className="card-interactive p-5 space-y-4"
                 >
                   <div className="space-y-3">
                     <div className="flex items-start justify-between gap-2">
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200/50">
+                      <span className="badge-primary">
                         {roadmap.category}
                       </span>
-                      <span className="text-[11px] font-semibold text-slate-500 flex items-center gap-1">
+                      <span className="text-[11px] font-semibold flex items-center gap-1" style={{ color: 'var(--color-text-tertiary)' }}>
                         <Clock className="w-3 h-3" />
                         <span>~{roadmap.estimatedTotalHours} {isAr ? 'ساعة' : 'hrs'}</span>
                       </span>
                     </div>
 
                     <div>
-                      <h3 className="text-base font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+                      <h3 className="heading-base group-hover:text-primary transition-colors">
                         {isAr ? roadmap.titleAr : roadmap.title}
                       </h3>
-                      <p className="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">
+                      <p className="text-xs mt-1 line-clamp-2 leading-relaxed" style={{ color: 'var(--color-text-tertiary)' }}>
                         {isAr ? roadmap.descriptionAr : roadmap.description}
                       </p>
                     </div>
 
                     {/* Stages breakdown */}
-                    <div className="p-3 bg-slate-50 rounded-xl space-y-1 text-xs">
-                      <div className="text-[11px] font-bold text-slate-700">
+                    <div className="p-3 rounded-xl space-y-1 text-xs" style={{ backgroundColor: 'var(--color-surface-secondary)' }}>
+                      <div className="text-[11px] font-bold" style={{ color: 'var(--color-text-primary)' }}>
                         {isAr ? `يتضمن ${roadmap.stages.length} مراحل تعليمية:` : `Includes ${roadmap.stages.length} Structured Stages:`}
                       </div>
-                      <div className="space-y-0.5 text-[11px] text-slate-600">
+                      <div className="space-y-0.5 text-[11px]" style={{ color: 'var(--color-text-secondary)' }}>
                         {roadmap.stages.slice(0, 3).map((stg, i) => (
                           <div key={stg.id} className="truncate flex items-center gap-1.5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                            <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: 'var(--color-primary)' }} />
                             <span>{isAr ? stg.titleAr || stg.title : stg.title}</span>
                           </div>
                         ))}
@@ -446,7 +550,7 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
                       {roadmap.tags.slice(0, 4).map((tag, i) => (
                         <span
                           key={i}
-                          className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-medium"
+                          className="badge-secondary"
                         >
                           {tag}
                         </span>
@@ -455,10 +559,10 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
                   </div>
 
                   {/* Actions */}
-                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
+                  <div className="pt-2 border-t flex items-center justify-between" style={{ borderColor: 'var(--color-border-tertiary)' }}>
                     {isEnrolled ? (
                       <div className="flex items-center justify-between w-full">
-                        <span className="text-xs font-bold text-emerald-600 flex items-center gap-1">
+                        <span className="text-xs font-bold flex items-center gap-1" style={{ color: 'var(--color-success)' }}>
                           <CheckCircle2 className="w-3.5 h-3.5" />
                           <span>{isAr ? `مسجل (${enr?.progressPercentage}%)` : `Enrolled (${enr?.progressPercentage}%)`}</span>
                         </span>
@@ -468,20 +572,20 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
                             setSelectedRoadmapId(roadmap.id);
                             setActiveTab('workspace');
                           }}
-                          className="px-3.5 py-1.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all cursor-pointer"
+                          className="button-primary-sm"
                         >
                           {isAr ? 'فتح المسار' : 'Open Workspace'}
                         </button>
                       </div>
                     ) : (
                       <div className="flex items-center justify-between w-full">
-                        <span className="text-[11px] text-slate-500">
+                        <span className="text-[11px]" style={{ color: 'var(--color-text-tertiary)' }}>
                           {isAr ? 'متاح للتسجيل الفوري' : 'Open enrollment'}
                         </span>
                         <button
                           type="button"
                           onClick={() => handleEnroll(roadmap.id, 5)}
-                          className="px-4 py-1.5 text-xs font-bold text-blue-600 hover:text-white bg-blue-50 hover:bg-blue-600 rounded-xl transition-all cursor-pointer border border-blue-200/60"
+                          className="button-secondary-sm"
                         >
                           {isAr ? 'ابدأ المسار الآن' : 'Start Roadmap'}
                         </button>
@@ -501,14 +605,14 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
       {activeTab === 'my_roadmaps' && (
         <div className="space-y-6">
           {enrollments.length === 0 ? (
-            <div className="p-12 bg-white border border-slate-200/80 rounded-2xl text-center space-y-4">
-              <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto">
+            <div className="p-12 surface-elevated border-hairline rounded-2xl text-center space-y-4">
+              <div className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto" style={{ backgroundColor: 'var(--color-surface-primary-subtle)', color: 'var(--color-primary)' }}>
                 <Compass className="w-6 h-6" />
               </div>
-              <h3 className="text-base font-bold text-slate-900">
+              <h3 className="heading-base">
                 {isAr ? 'لم تسجل في أي مسار بعد' : 'No Enrolled Roadmaps Yet'}
               </h3>
-              <p className="text-xs text-slate-500 max-w-sm mx-auto">
+              <p className="text-xs max-w-sm mx-auto" style={{ color: 'var(--color-text-tertiary)' }}>
                 {isAr
                   ? 'اختر مساراً مهنياً يناسب هدفك وانطلق في رحلة التعلم بخطة أسبوعية منظمة.'
                   : 'Select a career path that aligns with your goal and start your guided learning plan.'}
@@ -516,7 +620,7 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
               <button
                 type="button"
                 onClick={() => setActiveTab('discovery')}
-                className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-xs transition-all cursor-pointer"
+                className="button-primary"
               >
                 {isAr ? 'استكشف المسارات المتاحة' : 'Browse Roadmaps Catalog'}
               </button>
@@ -533,22 +637,22 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
                 return (
                   <div
                     key={enr.id}
-                    className="p-6 bg-white border border-slate-200/80 rounded-2xl shadow-2xs space-y-5"
+                    className="p-6 surface-elevated border-hairline rounded-2xl shadow-2xs space-y-5"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div>
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200/50">
+                        <span className="badge-primary">
                           {rdm.category}
                         </span>
-                        <h3 className="text-lg font-bold text-slate-900 mt-1.5">
+                        <h3 className="heading-lg mt-1.5">
                           {isAr ? rdm.titleAr : rdm.title}
                         </h3>
-                        <p className="text-xs text-slate-500 mt-0.5">
+                        <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-tertiary)' }}>
                           {isAr ? `تستهدف دور: ${rdm.targetRole}` : `Targeting: ${rdm.targetRole}`}
                         </p>
                       </div>
 
-                      <span className="px-2.5 py-1 rounded-xl text-xs font-bold bg-slate-100 text-slate-700">
+                      <span className="px-2.5 py-1 rounded-xl text-xs font-bold" style={{ backgroundColor: 'var(--color-surface-secondary)', color: 'var(--color-text-primary)' }}>
                         {enr.weeklyHoursCommitted || 5} {isAr ? 'س/أسبوع' : 'hrs/wk'}
                       </span>
                     </div>
@@ -556,22 +660,22 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
                     {/* Progress Bar */}
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between text-xs font-semibold">
-                        <span className="text-slate-600">
+                        <span style={{ color: 'var(--color-text-secondary)' }}>
                           {isAr ? `تم إنجاز ${completedCount} من ${totalNodes} مهارة` : `${completedCount} of ${totalNodes} skills completed`}
                         </span>
-                        <span className="text-blue-600 font-bold">{enr.progressPercentage}%</span>
+                        <span className="font-bold" style={{ color: 'var(--color-primary)' }}>{enr.progressPercentage}%</span>
                       </div>
-                      <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                      <div className="w-full rounded-full h-2 overflow-hidden" style={{ backgroundColor: 'var(--color-surface-secondary)' }}>
                         <div
-                          className="bg-blue-600 h-full rounded-full transition-all duration-500"
-                          style={{ width: `${enr.progressPercentage}%` }}
+                          className="h-full rounded-full transition-all duration-500"
+                          style={{ width: `${enr.progressPercentage}%`, backgroundColor: 'var(--color-primary)' }}
                         />
                       </div>
                     </div>
 
                     {/* Action buttons */}
-                    <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
-                      <span className="text-[11px] text-slate-400">
+                    <div className="pt-2 border-t flex items-center justify-between" style={{ borderColor: 'var(--color-border-tertiary)' }}>
+                      <span className="text-[11px]" style={{ color: 'var(--color-text-tertiary)' }}>
                         {isAr ? `تاريخ البدء: ${enr.startDate}` : `Started: ${enr.startDate}`}
                       </span>
                       <button
@@ -580,7 +684,7 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
                           setSelectedRoadmapId(rdm.id);
                           setActiveTab('workspace');
                         }}
-                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer inline-flex items-center gap-1.5"
+                        className="button-primary-sm inline-flex items-center gap-1.5"
                       >
                         <span>{isAr ? 'متابعة التعلم' : 'Resume Learning'}</span>
                         <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
@@ -600,20 +704,20 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
       {activeTab === 'workspace' && currentRoadmap && (
         <div className="space-y-6">
           {/* Active Roadmap Banner & Switcher */}
-          <div className="p-5 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="p-5 rounded-2xl shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4" style={{ background: 'linear-gradient(to right, var(--color-surface-inverse), var(--color-primary-dark), var(--color-surface-inverse))', color: 'var(--color-text-inverse)' }}>
             <div className="space-y-1.5">
               <div className="flex items-center gap-2">
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/30 text-blue-200 border border-blue-400/30">
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold" style={{ backgroundColor: 'rgba(var(--color-primary-rgb), 0.3)', color: 'var(--color-text-inverse)', borderWidth: '1px', borderColor: 'rgba(var(--color-primary-rgb), 0.5)' }}>
                   {currentRoadmap.category}
                 </span>
-                <span className="text-xs text-slate-300">
+                <span className="text-xs" style={{ color: 'rgba(var(--color-text-inverse-rgb), 0.7)' }}>
                   ~{currentRoadmap.estimatedTotalHours} {isAr ? 'ساعة تدريبية' : 'total hours'}
                 </span>
               </div>
-              <h2 className="text-xl font-bold">
+              <h2 className="heading-xl">
                 {isAr ? currentRoadmap.titleAr : currentRoadmap.title}
               </h2>
-              <p className="text-xs text-slate-300 max-w-xl leading-relaxed">
+              <p className="text-xs max-w-xl leading-relaxed" style={{ color: 'rgba(var(--color-text-inverse-rgb), 0.7)' }}>
                 {isAr ? currentRoadmap.descriptionAr : currentRoadmap.description}
               </p>
             </div>
@@ -623,7 +727,7 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
               <select
                 value={selectedRoadmapId}
                 onChange={(e) => setSelectedRoadmapId(e.target.value)}
-                className="text-xs p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white font-medium outline-none cursor-pointer"
+                className="text-xs p-2.5 rounded-xl font-medium outline-none cursor-pointer" style={{ backgroundColor: 'rgba(0,0,0,0.3)', borderWidth: '1px', borderColor: 'rgba(255,255,255,0.2)', color: 'var(--color-text-inverse)' }}
               >
                 {roadmaps.map((r) => (
                   <option key={r.id} value={r.id}>
@@ -632,10 +736,10 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
                 ))}
               </select>
 
-              <div className="text-xs text-slate-300 flex items-center gap-2 font-medium">
+              <div className="text-xs flex items-center gap-2 font-medium" style={{ color: 'rgba(var(--color-text-inverse-rgb), 0.7)' }}>
                 <span>{isAr ? 'نسبة الإنجاز:' : 'Completion:'}</span>
-                <span className="text-emerald-400 font-bold">{progressPercent}%</span>
-                <span className="text-slate-400">
+                <span className="font-bold" style={{ color: 'var(--color-success-light)' }}>{progressPercent}%</span>
+                <span style={{ color: 'rgba(var(--color-text-inverse-rgb), 0.5)' }}>
                   ({completedNodesCount}/{totalNodesInCurrentRoadmap})
                 </span>
               </div>
@@ -648,22 +752,22 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
               <div key={stage.id} className="space-y-4">
                 {/* Stage Header */}
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-blue-600 text-white font-bold text-xs flex items-center justify-center shadow-xs">
+                  <div className="w-8 h-8 rounded-xl font-bold text-xs flex items-center justify-center shadow-xs" style={{ backgroundColor: 'var(--color-primary)', color: 'var(--color-text-inverse)' }}>
                     {stageIndex + 1}
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-slate-900">
+                    <h3 className="heading-sm">
                       {isAr ? stage.titleAr || stage.title : stage.title}
                     </h3>
-                    <p className="text-[11px] text-slate-500">
+                    <p className="text-[11px]" style={{ color: 'var(--color-text-tertiary)' }}>
                       {isAr ? stage.descriptionAr || stage.description : stage.description} •{' '}
-                      <span className="font-medium text-blue-600">{stage.estimatedEffort}</span>
+                      <span className="font-medium" style={{ color: 'var(--color-primary)' }}>{stage.estimatedEffort}</span>
                     </p>
                   </div>
                 </div>
 
                 {/* Nodes Grid in Stage */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pl-4 rtl:pr-4 rtl:pl-0 border-l-2 rtl:border-r-2 rtl:border-l-0 border-blue-200/60 ml-4 rtl:mr-4 rtl:ml-0">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pl-4 rtl:pr-4 rtl:pl-0 border-l-2 rtl:border-r-2 rtl:border-l-0 ml-4 rtl:mr-4 rtl:ml-0" style={{ borderColor: 'rgba(var(--color-primary-rgb), 0.3)' }}>
                   {stage.nodes.map((node) => {
                     const nodeProgress = currentEnrollment?.nodeProgress[node.id];
                     const status: NodeProgressStatus = nodeProgress?.status || 'available';
@@ -681,42 +785,58 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
                         onClick={() => setSelectedNode(node)}
                         className={`p-4 rounded-2xl border transition-all cursor-pointer space-y-3 relative group ${
                           effectiveStatus === 'completed'
-                            ? 'bg-emerald-50/50 border-emerald-300 hover:border-emerald-500 shadow-2xs'
+                            ? 'shadow-2xs'
                             : effectiveStatus === 'in_progress'
-                            ? 'bg-blue-50/50 border-blue-400 hover:border-blue-600 shadow-xs ring-2 ring-blue-500/10'
+                            ? 'shadow-xs'
                             : effectiveStatus === 'locked'
-                            ? 'bg-slate-50 border-slate-200 opacity-60 hover:opacity-80'
-                            : 'bg-white border-slate-200 hover:border-blue-300 shadow-2xs hover:shadow-xs'
+                            ? 'opacity-60 hover:opacity-80'
+                            : 'shadow-2xs hover:shadow-xs'
                         }`}
+                        style={
+                          effectiveStatus === 'completed' ? {
+                            backgroundColor: 'var(--color-success-bg)',
+                            borderColor: 'var(--color-success-border)'
+                          } : effectiveStatus === 'in_progress' ? {
+                            backgroundColor: 'var(--color-primary-bg)',
+                            borderColor: 'var(--color-primary)',
+                            boxShadow: '0 0 0 2px rgba(var(--color-primary-rgb), 0.1)'
+                          } : effectiveStatus === 'locked' ? {
+                            backgroundColor: 'var(--color-surface-secondary)',
+                            borderColor: 'var(--color-border-primary)'
+                          } : {
+                            backgroundColor: 'var(--color-surface-primary)',
+                            borderColor: 'var(--color-border-primary)'
+                          }
+                        }
                       >
                         {/* Status Badge */}
                         <div className="flex items-center justify-between">
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider bg-slate-100 text-slate-600">
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider" style={{ backgroundColor: 'var(--color-surface-secondary)', color: 'var(--color-text-secondary)' }}>
                             {node.category}
                           </span>
 
                           <span className="flex items-center gap-1 text-[11px] font-bold">
                             {effectiveStatus === 'completed' && (
-                              <span className="text-emerald-700 flex items-center gap-1">
-                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                              <span className="flex items-center gap-1" style={{ color: 'var(--color-success-text)' }}>
+                                <CheckCircle2 className="w-3.5 h-3.5" style={{ color: 'var(--color-success)' }} />
                                 {isAr ? 'مكتمل' : 'Completed'}
                               </span>
                             )}
                             {effectiveStatus === 'in_progress' && (
-                              <span className="text-blue-700 flex items-center gap-1 animate-pulse">
-                                <PlayCircle className="w-3.5 h-3.5 text-blue-600" />
+                              <span className="flex items-center gap-1 animate-pulse" style={{ color: 'var(--color-primary-text)' }}>
+                                <PlayCircle className="w-3.5 h-3.5" style={{ color: 'var(--color-primary)' }} />
                                 {isAr ? 'قيد التعلم' : 'In Progress'}
                               </span>
                             )}
                             {effectiveStatus === 'available' && (
-                              <span className="text-slate-500 flex items-center gap-1">
-                                <span className="w-2 h-2 rounded-full bg-blue-500" />
+                              <span className="flex items-center gap-1" style={{ color: 'var(--color-text-tertiary)' }}>
+                                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--color-primary)' }} />
                                 {isAr ? 'متاح للبدء' : 'Available'}
                               </span>
                             )}
                             {effectiveStatus === 'locked' && (
-                              <span className="text-slate-400 flex items-center gap-1">
-                                <Lock className="w-3 h-3 text-slate-400" />
+                              <span className="flex items-center gap-1" style={{ color: 'var(--color-text-tertiary)' }}>
+                                <Lock className="w-3 h-3" />
                                 {isAr ? 'مغلق بمتطلبات' : 'Locked'}
                               </span>
                             )}
@@ -725,22 +845,22 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
 
                         {/* Node Content */}
                         <div>
-                          <h4 className="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+                          <h4 className="text-xs font-bold group-hover:text-primary transition-colors" style={{ color: 'var(--color-text-primary)' }}>
                             {isAr ? node.titleAr || node.title : node.title}
                           </h4>
-                          <p className="text-[11px] text-slate-500 mt-1 line-clamp-2 leading-relaxed">
+                          <p className="text-[11px] mt-1 line-clamp-2 leading-relaxed" style={{ color: 'var(--color-text-tertiary)' }}>
                             {isAr ? node.descriptionAr || node.description : node.description}
                           </p>
                         </div>
 
                         {/* Footer Details */}
-                        <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+                        <div className="pt-2 border-t flex items-center justify-between text-[11px]" style={{ borderColor: 'var(--color-border-tertiary)', color: 'var(--color-text-tertiary)' }}>
                           <span className="flex items-center gap-1">
-                            <Clock className="w-3 h-3 text-slate-400" />
+                            <Clock className="w-3 h-3" />
                             <span>{node.estimatedEffort}</span>
                           </span>
 
-                          <span className="text-blue-600 font-semibold group-hover:underline flex items-center gap-0.5">
+                          <span className="font-semibold group-hover:underline flex items-center gap-0.5" style={{ color: 'var(--color-primary)' }}>
                             <span>{isAr ? 'عرض المصادر' : 'View Resources'}</span>
                             <ChevronRight className="w-3 h-3 rtl:rotate-180" />
                           </span>
@@ -760,13 +880,13 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
           ==================================================================== */}
       {activeTab === 'weekly_plan' && (
         <div className="space-y-6">
-          <div className="p-6 bg-white border border-slate-200/80 rounded-2xl shadow-2xs space-y-5">
+          <div className="p-6 surface-elevated border-hairline rounded-2xl shadow-2xs space-y-5">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
-                <h3 className="text-lg font-bold text-slate-900">
+                <h3 className="heading-lg">
                   {isAr ? 'الخطة والجدول الأسبوعي المخصص' : 'Personalized Weekly Learning Schedule'}
                 </h3>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs mt-1" style={{ color: 'var(--color-text-tertiary)' }}>
                   {isAr
                     ? 'جدول مذاكرة مقسم على أيام الأسبوع بناءً على ساعات فراغك الملتزم بها للوصول إلى هدفك المهني.'
                     : 'Structured activities balanced across your available days to ensure consistent career momentum.'}
@@ -775,7 +895,7 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
 
               {/* Hours commitment selector */}
               <div className="flex items-center gap-2">
-                <span className="text-xs font-medium text-slate-600">
+                <span className="text-xs font-medium" style={{ color: 'var(--color-text-secondary)' }}>
                   {isAr ? 'الالتزام الأسبوعي:' : 'Weekly Commitment:'}
                 </span>
                 <select
@@ -788,7 +908,8 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
                       setEnrollments([...clientDb.getUserEnrollments()]);
                     }
                   }}
-                  className="text-xs p-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-blue-600 outline-none"
+                  className="input-select font-bold"
+                  style={{ color: 'var(--color-primary)' }}
                 >
                   <option value={3}>3 {isAr ? 'ساعات / أسبوع' : 'hours / week'}</option>
                   <option value={5}>5 {isAr ? 'ساعات / أسبوع' : 'hours / week'}</option>
@@ -806,9 +927,16 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
                     key={act.id}
                     className={`p-4 rounded-xl border transition-all flex items-start justify-between gap-3 ${
                       act.completed
-                        ? 'bg-slate-50 border-slate-200 opacity-60'
-                        : 'bg-white border-slate-200 hover:border-blue-300'
+                        ? 'opacity-60'
+                        : ''
                     }`}
+                    style={act.completed ? {
+                      backgroundColor: 'var(--color-surface-secondary)',
+                      borderColor: 'var(--color-border-primary)'
+                    } : {
+                      backgroundColor: 'var(--color-surface-primary)',
+                      borderColor: 'var(--color-border-primary)'
+                    }}
                   >
                     <div className="flex items-start gap-3">
                       <button
@@ -817,21 +945,27 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
                           act.completed = !act.completed;
                           setEnrollments([...clientDb.getUserEnrollments()]);
                         }}
-                        className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors cursor-pointer mt-0.5 ${
-                          act.completed ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-slate-300 bg-white'
-                        }`}
+                        className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors cursor-pointer mt-0.5`}
+                        style={act.completed ? {
+                          backgroundColor: 'var(--color-success)',
+                          borderColor: 'var(--color-success)',
+                          color: 'var(--color-text-inverse)'
+                        } : {
+                          borderColor: 'var(--color-border-secondary)',
+                          backgroundColor: 'var(--color-surface-primary)'
+                        }}
                       >
                         {act.completed && <Check className="w-3.5 h-3.5" />}
                       </button>
 
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-blue-700">
+                          <span className="badge-primary">
                             {act.dayOfWeek || 'Scheduled'}
                           </span>
-                          <span className="text-xs font-bold text-slate-800">{act.activityTitle}</span>
+                          <span className="text-xs font-bold" style={{ color: 'var(--color-text-primary)' }}>{act.activityTitle}</span>
                         </div>
-                        <p className="text-[11px] text-slate-500 mt-1">
+                        <p className="text-[11px] mt-1" style={{ color: 'var(--color-text-tertiary)' }}>
                           {isAr ? 'المهارة المرتبطة:' : 'Skill Node:'} {act.nodeTitle}
                         </p>
                         {act.resourceUrl && (
@@ -839,7 +973,8 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
                             href={act.resourceUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-[11px] text-blue-600 hover:underline mt-1 font-medium"
+                            className="inline-flex items-center gap-1 text-[11px] hover:underline mt-1 font-medium"
+                            style={{ color: 'var(--color-primary)' }}
                           >
                             <span>{act.resourceTitle || act.resourceUrl}</span>
                             <ExternalLink className="w-3 h-3" />
@@ -848,7 +983,7 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
                       </div>
                     </div>
 
-                    <span className="text-[11px] font-mono text-slate-500 shrink-0">
+                    <span className="text-[11px] font-mono shrink-0" style={{ color: 'var(--color-text-tertiary)' }}>
                       ~{act.estimatedMinutes} {isAr ? 'دقيقة' : 'mins'}
                     </span>
                   </div>
@@ -865,46 +1000,46 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
       {activeTab === 'progress' && (
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div className="p-6 bg-white border border-slate-200/80 rounded-2xl shadow-2xs space-y-2">
-              <span className="text-xs text-slate-500 font-semibold">{isAr ? 'إجمالي المهارات المنجزة' : 'Skills Mastered'}</span>
-              <div className="text-3xl font-black text-slate-900">{completedNodesCount}</div>
-              <p className="text-[11px] text-emerald-600 font-medium">
+            <div className="p-6 surface-elevated border-hairline rounded-2xl shadow-2xs space-y-2">
+              <span className="text-xs font-semibold" style={{ color: 'var(--color-text-tertiary)' }}>{isAr ? 'إجمالي المهارات المنجزة' : 'Skills Mastered'}</span>
+              <div className="text-3xl font-black" style={{ color: 'var(--color-text-primary)' }}>{completedNodesCount}</div>
+              <p className="text-[11px] font-medium" style={{ color: 'var(--color-success)' }}>
                 {isAr ? 'تم توثيقها كأدلة رسمية في ملفك المهني' : 'Recorded as verified skill evidence in Career DNA'}
               </p>
             </div>
 
-            <div className="p-6 bg-white border border-slate-200/80 rounded-2xl shadow-2xs space-y-2">
-              <span className="text-xs text-slate-500 font-semibold">{isAr ? 'ساعات الاستثمار التدريبي' : 'Training Hours Invested'}</span>
-              <div className="text-3xl font-black text-blue-600">
+            <div className="p-6 surface-elevated border-hairline rounded-2xl shadow-2xs space-y-2">
+              <span className="text-xs font-semibold" style={{ color: 'var(--color-text-tertiary)' }}>{isAr ? 'ساعات الاستثمار التدريبي' : 'Training Hours Invested'}</span>
+              <div className="text-3xl font-black" style={{ color: 'var(--color-primary)' }}>
                 {completedNodesCount * 8} {isAr ? 'ساعة' : 'hrs'}
               </div>
-              <p className="text-[11px] text-slate-500 font-medium">
+              <p className="text-[11px] font-medium" style={{ color: 'var(--color-text-tertiary)' }}>
                 {isAr ? 'مبنية على التقدير المعياري للمسار' : 'Based on roadmap standard effort metrics'}
               </p>
             </div>
 
-            <div className="p-6 bg-white border border-slate-200/80 rounded-2xl shadow-2xs space-y-2">
-              <span className="text-xs text-slate-500 font-semibold">{isAr ? 'تأثير جاهزية التوظيف' : 'Career Readiness Boost'}</span>
-              <div className="text-3xl font-black text-emerald-600">+{Math.min(30, completedNodesCount * 6)}%</div>
-              <p className="text-[11px] text-slate-500 font-medium">
+            <div className="p-6 surface-elevated border-hairline rounded-2xl shadow-2xs space-y-2">
+              <span className="text-xs font-semibold" style={{ color: 'var(--color-text-tertiary)' }}>{isAr ? 'تأثير جاهزية التوظيف' : 'Career Readiness Boost'}</span>
+              <div className="text-3xl font-black" style={{ color: 'var(--color-success)' }}>+{Math.min(30, completedNodesCount * 6)}%</div>
+              <p className="text-[11px] font-medium" style={{ color: 'var(--color-text-tertiary)' }}>
                 {isAr ? 'يرفع مطابقة سيرتك الذاتية في أنظمة الـ ATS' : 'Elevates ATS resume matching & opportunity fit'}
               </p>
             </div>
           </div>
 
           {/* Saved Resources List */}
-          <div className="p-6 bg-white border border-slate-200/80 rounded-2xl shadow-2xs space-y-4">
+          <div className="p-6 surface-elevated border-hairline rounded-2xl shadow-2xs space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-bold text-slate-900">
+              <h3 className="heading-base">
                 {isAr ? 'المصادر والدورات المحفوظة' : 'Saved Learning Resources'}
               </h3>
-              <span className="text-xs font-semibold text-slate-500">
+              <span className="text-xs font-semibold" style={{ color: 'var(--color-text-tertiary)' }}>
                 {savedResources.length} {isAr ? 'مصادر' : 'items'}
               </span>
             </div>
 
             {savedResources.length === 0 ? (
-              <p className="text-xs text-slate-500 py-6 text-center">
+              <p className="text-xs py-6 text-center" style={{ color: 'var(--color-text-tertiary)' }}>
                 {isAr
                   ? 'لم تحفظ أي مصادر بعد. انقر على أيقونة الإشارة المرجعية داخل تفاصيل أي مهارة لحفظها هنا.'
                   : 'No saved resources yet. Click the bookmark icon inside any skill drawer to save courses here.'}
@@ -914,24 +1049,32 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
                 {savedResources.map((res) => (
                   <div
                     key={res.id}
-                    className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex items-start justify-between gap-3"
+                    className="p-3.5 border rounded-xl flex items-start justify-between gap-3"
+                    style={{ backgroundColor: 'var(--color-surface-secondary)', borderColor: 'var(--color-border-primary)' }}
                   >
                     <div className="space-y-1">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-100 text-blue-800">
+                        <span className="badge-primary">
                           {res.provider}
                         </span>
-                        <span className="text-[10px] font-semibold text-slate-500">{res.priceCategory}</span>
+                        <span className="text-[10px] font-semibold" style={{ color: 'var(--color-text-tertiary)' }}>{res.priceCategory}</span>
                       </div>
-                      <h4 className="text-xs font-bold text-slate-900">{res.title}</h4>
-                      {res.instructor && <p className="text-[11px] text-slate-500">{res.instructor}</p>}
+                      <h4 className="text-xs font-bold" style={{ color: 'var(--color-text-primary)' }}>{res.title}</h4>
+                      {res.instructor && <p className="text-[11px]" style={{ color: 'var(--color-text-tertiary)' }}>{res.instructor}</p>}
                     </div>
 
                     <a
                       href={res.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors cursor-pointer shrink-0"
+                      className="p-2 rounded-lg transition-colors cursor-pointer shrink-0"
+                      style={{ color: 'var(--color-primary)' }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = 'var(--color-primary-bg)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                      }}
                     >
                       <ExternalLink className="w-4 h-4" />
                     </a>
@@ -947,12 +1090,12 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
           VIEW 6: LEARNING SETTINGS
           ==================================================================== */}
       {activeTab === 'settings' && (
-        <div className="p-6 bg-white border border-slate-200/80 rounded-2xl shadow-2xs space-y-6 max-w-2xl">
+        <div className="p-6 surface-elevated border-hairline rounded-2xl shadow-2xs space-y-6 max-w-2xl">
           <div>
-            <h3 className="text-base font-bold text-slate-900">
+            <h3 className="heading-base">
               {isAr ? 'تفضيلات وأهداف التعلم' : 'Learning Preferences & Goals'}
             </h3>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-xs mt-1" style={{ color: 'var(--color-text-tertiary)' }}>
               {isAr
                 ? 'تخصيص نمط التعلم المفضل واللغة والميزانية لتوجيه توصيات الذكاء الاصطناعي بدقة.'
                 : 'Configure your preferred study format, language, and budget to refine AI roadmap recommendations.'}
@@ -961,25 +1104,26 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
 
           <div className="space-y-4 text-xs">
             <div className="space-y-1.5">
-              <label className="font-bold text-slate-700 block">
+              <label className="font-bold block" style={{ color: 'var(--color-text-primary)' }}>
                 {isAr ? 'المسمى المهني المستهدف بالمسارات:' : 'Target Career Trajectory:'}
               </label>
               <input
                 type="text"
                 value={profile?.targetRole || 'Software Engineer'}
                 disabled
-                className="w-full p-2.5 bg-slate-100 border border-slate-200 rounded-xl font-medium text-slate-600"
+                className="input-text font-medium"
+                style={{ color: 'var(--color-text-secondary)' }}
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="font-bold text-slate-700 block">
+              <label className="font-bold block" style={{ color: 'var(--color-text-primary)' }}>
                 {isAr ? 'لغة المحتوى المفضلة:' : 'Preferred Content Language:'}
               </label>
               <select
                 value={learningSettings.preferredLanguage}
                 onChange={(e) => setLearningSettings({ ...learningSettings, preferredLanguage: e.target.value })}
-                className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-800 outline-none"
+                className="input-select"
               >
                 <option value="Both">{isAr ? 'العربية والإنجليزية (Both)' : 'Both Arabic & English'}</option>
                 <option value="English">{isAr ? 'الإنجليزية فقط' : 'English Only'}</option>
@@ -988,13 +1132,13 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
             </div>
 
             <div className="space-y-1.5">
-              <label className="font-bold text-slate-700 block">
+              <label className="font-bold block" style={{ color: 'var(--color-text-primary)' }}>
                 {isAr ? 'تفضيل التكلفة والميزانية:' : 'Budget Preference:'}
               </label>
               <select
                 value={learningSettings.budgetPreference}
                 onChange={(e) => setLearningSettings({ ...learningSettings, budgetPreference: e.target.value })}
-                className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-800 outline-none"
+                className="input-select"
               >
                 <option value="Free">{isAr ? 'المصادر المجانية و YouTube فقط (Free)' : 'Free YouTube & Open Resources Only'}</option>
                 <option value="Audit Free">{isAr ? 'مجانية مع إمكانية تدقيق كورسيرا (Audit Free)' : 'Free Audit Coursera Courses'}</option>
@@ -1009,52 +1153,64 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
           SKILL DETAILS & CURATED RESOURCES DRAWER
           ==================================================================== */}
       {selectedNode && (
-        <div className="fixed inset-0 z-50 flex items-center justify-end bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200" onClick={() => setSelectedNode(null)}>
+        <div className="fixed inset-0 z-50 flex items-center justify-end animate-in fade-in duration-200" style={{ backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }} onClick={() => setSelectedNode(null)}>
           <div
-            className="bg-white w-full max-w-xl h-full shadow-2xl flex flex-col overflow-hidden"
+            className="w-full max-w-xl h-full shadow-2xl flex flex-col overflow-hidden"
+            style={{ backgroundColor: 'var(--color-surface-primary)' }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Drawer Header */}
-            <div className="p-5 border-b border-slate-100 flex items-center justify-between shrink-0 bg-white/95 backdrop-blur-xs z-10">
-              <div className="space-y-0.5">
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase bg-blue-50 text-blue-700">
-                  {selectedNode.category}
-                </span>
-                <h3 className="text-base font-bold text-slate-900">
-                  {isAr ? selectedNode.titleAr || selectedNode.title : selectedNode.title}
-                </h3>
-              </div>
+            <div className="p-5 border-b shrink-0 z-10" style={{ backgroundColor: 'rgba(var(--color-surface-primary-rgb), 0.95)', backdropFilter: 'blur(4px)', borderColor: 'var(--color-border-tertiary)' }}>
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <span className="badge-primary">
+                    {selectedNode.category}
+                  </span>
+                  <h3 className="heading-base">
+                    {isAr ? selectedNode.titleAr || selectedNode.title : selectedNode.title}
+                  </h3>
+                </div>
 
-              <button
-                type="button"
-                onClick={() => setSelectedNode(null)}
-                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedNode(null)}
+                  className="p-1.5 rounded-lg transition-colors cursor-pointer"
+                  style={{ color: 'var(--color-text-tertiary)' }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'var(--color-surface-secondary)';
+                    e.currentTarget.style.color = 'var(--color-text-secondary)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = 'var(--color-text-tertiary)';
+                  }}
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
             {/* Drawer Body Content */}
             <div className="p-5 space-y-6 flex-1 overflow-y-auto overscroll-contain">
               {/* Overview & Why it Matters */}
               <div className="space-y-2">
-                <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+                <h4 className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-primary)' }}>
                   {isAr ? 'أهمية المهارة في مسارك المهني:' : 'Why This Skill Matters:'}
                 </h4>
-                <p className="text-xs text-slate-600 leading-relaxed">
+                <p className="text-xs leading-relaxed" style={{ color: 'var(--color-text-secondary)' }}>
                   {isAr ? selectedNode.descriptionAr || selectedNode.description : selectedNode.description}
                 </p>
               </div>
 
               {/* Learning Objectives */}
-              <div className="space-y-2 p-3.5 bg-slate-50 rounded-xl border border-slate-200/60">
-                <h4 className="text-xs font-bold text-slate-900">
+              <div className="space-y-2 p-3.5 rounded-xl border" style={{ backgroundColor: 'var(--color-surface-secondary)', borderColor: 'var(--color-border-secondary)' }}>
+                <h4 className="text-xs font-bold" style={{ color: 'var(--color-text-primary)' }}>
                   {isAr ? 'الأهداف التعليمية للمهارة:' : 'Learning Objectives:'}
                 </h4>
-                <ul className="space-y-1.5 text-xs text-slate-600">
+                <ul className="space-y-1.5 text-xs" style={{ color: 'var(--color-text-secondary)' }}>
                   {(isAr && selectedNode.learningObjectivesAr ? selectedNode.learningObjectivesAr : selectedNode.learningObjectives).map((obj, i) => (
                     <li key={i} className="flex items-start gap-2">
-                      <Check className="w-3.5 h-3.5 text-blue-600 shrink-0 mt-0.5" />
+                      <Check className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color: 'var(--color-primary)' }} />
                       <span>{obj}</span>
                     </li>
                   ))}
@@ -1062,14 +1218,14 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
               </div>
 
               {/* Completion Criteria & Practical Exercise */}
-              <div className="p-3.5 bg-blue-50/60 border border-blue-200/60 rounded-xl space-y-2 text-xs">
-                <div className="font-bold text-blue-900 flex items-center gap-1.5">
-                  <Award className="w-4 h-4 text-blue-600" />
+              <div className="p-3.5 border rounded-xl space-y-2 text-xs" style={{ backgroundColor: 'var(--color-primary-bg)', borderColor: 'var(--color-primary-border)' }}>
+                <div className="font-bold flex items-center gap-1.5" style={{ color: 'var(--color-primary-text)' }}>
+                  <Award className="w-4 h-4" style={{ color: 'var(--color-primary)' }} />
                   <span>{isAr ? 'معيار إتقان المهارة (Completion Criteria):' : 'Completion Criteria:'}</span>
                 </div>
-                <p className="text-blue-800 leading-relaxed">{selectedNode.completionCriteria}</p>
+                <p className="leading-relaxed" style={{ color: 'var(--color-primary-text)' }}>{selectedNode.completionCriteria}</p>
                 {selectedNode.practicalExercise && (
-                  <div className="pt-2 border-t border-blue-200/60 text-[11px] text-blue-700">
+                  <div className="pt-2 border-t text-[11px]" style={{ borderColor: 'var(--color-primary-border)', color: 'var(--color-primary-text)' }}>
                     <strong>{isAr ? 'تمرين عملي مقترح:' : 'Practical Exercise:'}</strong> {selectedNode.practicalExercise}
                   </div>
                 )}
@@ -1078,53 +1234,36 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
               {/* Resources Header & Filters */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-                    <Video className="w-4 h-4 text-blue-600" />
+                  <h4 className="text-xs font-bold uppercase tracking-wider flex items-center gap-1.5" style={{ color: 'var(--color-text-primary)' }}>
+                    <Video className="w-4 h-4" style={{ color: 'var(--color-primary)' }} />
                     <span>{isAr ? 'المصادر والدورات المعتمدة:' : 'Curated Verified Resources:'}</span>
                   </h4>
-                  <span className="text-[11px] text-slate-400">
+                  <span className="text-[11px]" style={{ color: 'var(--color-text-tertiary)' }}>
                     {selectedNode.resources.length} {isAr ? 'مصادر موثقة' : 'sources'}
                   </span>
                 </div>
 
                 {/* Resource Category filter pills */}
                 <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
-                  <button
-                    type="button"
-                    onClick={() => setResourceFilter('all')}
-                    className={`px-2.5 py-1 rounded-lg font-bold transition-colors cursor-pointer ${
-                      resourceFilter === 'all' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'
-                    }`}
-                  >
-                    {isAr ? 'الكل' : 'All'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setResourceFilter('free')}
-                    className={`px-2.5 py-1 rounded-lg font-bold transition-colors cursor-pointer ${
-                      resourceFilter === 'free' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'
-                    }`}
-                  >
-                    {isAr ? 'مجاني (Free)' : 'Free'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setResourceFilter('youtube')}
-                    className={`px-2.5 py-1 rounded-lg font-bold transition-colors cursor-pointer ${
-                      resourceFilter === 'youtube' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'
-                    }`}
-                  >
-                    YouTube
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setResourceFilter('coursera')}
-                    className={`px-2.5 py-1 rounded-lg font-bold transition-colors cursor-pointer ${
-                      resourceFilter === 'coursera' ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'
-                    }`}
-                  >
-                    Coursera
-                  </button>
+                  {['all', 'free', 'youtube', 'coursera'].map((filter) => (
+                    <button
+                      key={filter}
+                      type="button"
+                      onClick={() => setResourceFilter(filter as any)}
+                      className="px-2.5 py-1 rounded-lg font-bold transition-colors cursor-pointer"
+                      style={resourceFilter === filter ? {
+                        backgroundColor: 'var(--color-primary)',
+                        color: 'var(--color-text-inverse)'
+                      } : {
+                        backgroundColor: 'var(--color-surface-secondary)',
+                        color: 'var(--color-text-secondary)'
+                      }}
+                    >
+                      {filter === 'all' ? (isAr ? 'الكل' : 'All') :
+                       filter === 'free' ? (isAr ? 'مجاني (Free)' : 'Free') :
+                       filter === 'youtube' ? 'YouTube' : 'Coursera'}
+                    </button>
+                  ))}
                 </div>
 
                 {/* Resources List */}
@@ -1143,35 +1282,51 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
                       return (
                         <div
                           key={resource.id}
-                          className="p-3.5 bg-white border border-slate-200 hover:border-blue-300 rounded-xl shadow-2xs space-y-2 transition-all"
+                          className="p-3.5 border rounded-xl shadow-2xs space-y-2 transition-all"
+                          style={{ backgroundColor: 'var(--color-surface-primary)', borderColor: 'var(--color-border-primary)' }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.borderColor = 'var(--color-primary)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.borderColor = 'var(--color-border-primary)';
+                          }}
                         >
                           <div className="flex items-start justify-between gap-2">
                             <div className="space-y-0.5">
                               <div className="flex items-center gap-1.5">
-                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-50 text-blue-700">
+                                <span className="badge-primary">
                                   {resource.provider}
                                 </span>
-                                <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">
+                                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md" style={{ color: 'var(--color-success-text)', backgroundColor: 'var(--color-success-bg)' }}>
                                   {resource.priceCategory}
                                 </span>
                                 {resource.verificationStatus === 'Verified' && (
-                                  <span className="text-[10px] font-bold text-emerald-600">✓ {isAr ? 'موثق' : 'Verified'}</span>
+                                  <span className="text-[10px] font-bold" style={{ color: 'var(--color-success)' }}>✓ {isAr ? 'موثق' : 'Verified'}</span>
                                 )}
                               </div>
-                              <h5 className="text-xs font-bold text-slate-900 mt-1">{resource.title}</h5>
+                              <h5 className="text-xs font-bold mt-1" style={{ color: 'var(--color-text-primary)' }}>{resource.title}</h5>
                               {resource.instructor && (
-                                <p className="text-[11px] text-slate-500">{resource.instructor}</p>
+                                <p className="text-[11px]" style={{ color: 'var(--color-text-tertiary)' }}>{resource.instructor}</p>
                               )}
                             </div>
 
                             <button
                               type="button"
                               onClick={() => handleToggleSaveResource(resource)}
-                              className="p-1.5 text-slate-400 hover:text-blue-600 transition-colors cursor-pointer"
+                              className="p-1.5 transition-colors cursor-pointer"
                               title={isSaved ? 'Unsave' : 'Save resource'}
+                              style={{ color: isSaved ? 'var(--color-primary)' : 'var(--color-text-tertiary)' }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.color = 'var(--color-primary)';
+                              }}
+                              onMouseLeave={(e) => {
+                                if (!isSaved) {
+                                  e.currentTarget.style.color = 'var(--color-text-tertiary)';
+                                }
+                              }}
                             >
                               {isSaved ? (
-                                <BookmarkCheck className="w-4 h-4 text-blue-600" />
+                                <BookmarkCheck className="w-4 h-4" />
                               ) : (
                                 <Bookmark className="w-4 h-4" />
                               )}
@@ -1179,14 +1334,14 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
                           </div>
 
                           {resource.description && (
-                            <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed">
+                            <p className="text-[11px] line-clamp-2 leading-relaxed" style={{ color: 'var(--color-text-tertiary)' }}>
                               {resource.description}
                             </p>
                           )}
 
-                          <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                          <div className="pt-2 border-t flex items-center justify-between text-[11px]" style={{ borderColor: 'var(--color-border-tertiary)' }}>
                             {resource.estimatedDuration && (
-                              <span className="text-slate-400 flex items-center gap-1">
+                              <span className="flex items-center gap-1" style={{ color: 'var(--color-text-tertiary)' }}>
                                 <Clock className="w-3 h-3" />
                                 <span>{resource.estimatedDuration}</span>
                               </span>
@@ -1196,7 +1351,7 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
                               href={resource.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold transition-all inline-flex items-center gap-1 shadow-2xs"
+                              className="button-primary-sm inline-flex items-center gap-1"
                             >
                               <span>{isAr ? 'فتح الدورة' : 'Open Course'}</span>
                               <ExternalLink className="w-3 h-3" />
@@ -1210,7 +1365,7 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
             </div>
 
             {/* Drawer Footer Actions */}
-            <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-3 shrink-0">
+            <div className="p-4 border-t flex items-center justify-between gap-3 shrink-0" style={{ backgroundColor: 'var(--color-surface-secondary)', borderColor: 'var(--color-border-primary)' }}>
               <div className="flex items-center gap-2">
                 <button
                   type="button"
@@ -1218,7 +1373,7 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
                     handleUpdateNodeStatus(selectedNode.id, 'in_progress');
                     setSelectedNode(null);
                   }}
-                  className="px-4 py-2 text-xs font-bold text-slate-700 hover:text-blue-600 bg-white border border-slate-300 rounded-xl transition-all shadow-2xs cursor-pointer"
+                  className="button-secondary-sm"
                 >
                   {isAr ? 'تحديد كـ قيد التعلم' : 'Mark In Progress'}
                 </button>
@@ -1230,7 +1385,14 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
                   handleUpdateNodeStatus(selectedNode.id, 'completed');
                   setSelectedNode(null);
                 }}
-                className="px-5 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-xs transition-all inline-flex items-center gap-1.5 cursor-pointer"
+                className="px-5 py-2 text-xs font-bold rounded-xl shadow-xs transition-all inline-flex items-center gap-1.5 cursor-pointer"
+                style={{ color: 'var(--color-text-inverse)', backgroundColor: 'var(--color-success)' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--color-success-hover)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--color-success)';
+                }}
               >
                 <CheckCircle2 className="w-4 h-4" />
                 <span>{isAr ? 'إتمام المهارة واعتمادها' : 'Mark as Completed'}</span>
@@ -1244,21 +1406,22 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
           MODAL: AI CUSTOM ROADMAP GENERATOR
           ==================================================================== */}
       {showGenerateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setShowGenerateModal(false)}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200" style={{ backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(2px)' }} onClick={() => setShowGenerateModal(false)}>
           <div
-            className="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-lg w-full flex flex-col max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2.5rem)] overflow-hidden"
+            className="rounded-2xl shadow-2xl border max-w-lg w-full flex flex-col max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2.5rem)] overflow-hidden"
+            style={{ backgroundColor: 'var(--color-surface-primary)', borderColor: 'var(--color-border-primary)' }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-slate-100 p-5 shrink-0 bg-white">
+            <div className="flex items-center justify-between border-b p-5 shrink-0" style={{ backgroundColor: 'var(--color-surface-primary)', borderColor: 'var(--color-border-tertiary)' }}>
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-xs">
+                <div className="w-8 h-8 rounded-xl flex items-center justify-center shadow-xs" style={{ backgroundColor: 'var(--color-primary)', color: 'var(--color-text-inverse)' }}>
                   <Sparkles className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900">
+                  <h3 className="heading-sm">
                     {isAr ? 'توليد مسار تعلم مخصص بالذكاء الاصطناعي' : 'Generate Custom Learning Roadmap'}
                   </h3>
-                  <p className="text-[11px] text-slate-500">
+                  <p className="text-[11px]" style={{ color: 'var(--color-text-tertiary)' }}>
                     {isAr ? 'يتم البناء اعتماداً على مهاراتك الحالية وثغرات ملفك المهني' : 'Tailored to your current skills and target role trajectory'}
                   </p>
                 </div>
@@ -1266,7 +1429,16 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
               <button
                 type="button"
                 onClick={() => setShowGenerateModal(false)}
-                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 cursor-pointer"
+                className="p-1.5 rounded-lg cursor-pointer"
+                style={{ color: 'var(--color-text-tertiary)' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--color-surface-secondary)';
+                  e.currentTarget.style.color = 'var(--color-text-secondary)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.color = 'var(--color-text-tertiary)';
+                }}
               >
                 <X className="w-4 h-4" />
               </button>
@@ -1274,14 +1446,14 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
 
             <div className="flex-1 overflow-y-auto p-5 space-y-4 overscroll-contain text-xs">
               {generationError && (
-                <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 flex items-start gap-2">
-                  <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                <div className="p-3 border rounded-xl text-xs flex items-start gap-2" style={{ backgroundColor: 'var(--color-error-bg)', borderColor: 'var(--color-error-border)', color: 'var(--color-error-text)' }}>
+                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" style={{ color: 'var(--color-error)' }} />
                   <span>{generationError}</span>
                 </div>
               )}
 
               <div className="space-y-1.5">
-                <label className="font-bold text-slate-700 block">
+                <label className="font-bold block" style={{ color: 'var(--color-text-primary)' }}>
                   {isAr ? 'المسمى الوظيفي المستهدف:' : 'Target Job Role / Career Goal:'}
                 </label>
                 <input
@@ -1289,12 +1461,12 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
                   placeholder={isAr ? 'مثال: AI Systems Engineer, Cloud Architect...' : 'e.g. AI Systems Engineer, Cloud Architect...'}
                   value={customTargetRole}
                   onChange={(e) => setCustomTargetRole(e.target.value)}
-                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500/20"
+                  className="input-text"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="font-bold text-slate-700 block">
+                <label className="font-bold block" style={{ color: 'var(--color-text-primary)' }}>
                   {isAr ? 'ساعات المذاكرة الأسبوعية المتوقعة:' : 'Available Weekly Hours:'}
                 </label>
                 <div className="grid grid-cols-4 gap-2">
@@ -1303,11 +1475,26 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
                       key={hrs}
                       type="button"
                       onClick={() => setCustomWeeklyHours(hrs)}
-                      className={`py-2 rounded-xl border text-center font-bold transition-all cursor-pointer ${
-                        customWeeklyHours === hrs
-                          ? 'bg-blue-50 border-blue-600 text-blue-700'
-                          : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
-                      }`}
+                      className={`py-2 rounded-xl border text-center font-bold transition-all cursor-pointer`}
+                      style={customWeeklyHours === hrs ? {
+                        backgroundColor: 'var(--color-primary-bg)',
+                        borderColor: 'var(--color-primary)',
+                        color: 'var(--color-primary-text)'
+                      } : {
+                        borderColor: 'var(--color-border-primary)',
+                        backgroundColor: 'var(--color-surface-primary)',
+                        color: 'var(--color-text-secondary)'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (customWeeklyHours !== hrs) {
+                          e.currentTarget.style.backgroundColor = 'var(--color-surface-secondary)';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (customWeeklyHours !== hrs) {
+                          e.currentTarget.style.backgroundColor = 'var(--color-surface-primary)';
+                        }
+                      }}
                     >
                       {hrs} {isAr ? 'ساعات' : 'hrs'}
                     </button>
@@ -1316,11 +1503,18 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
               </div>
             </div>
 
-            <div className="shrink-0 p-4 border-t border-slate-100 bg-slate-50/70 flex items-center justify-end gap-2">
+            <div className="shrink-0 p-4 border-t flex items-center justify-end gap-2" style={{ backgroundColor: 'rgba(var(--color-surface-secondary-rgb), 0.7)', borderColor: 'var(--color-border-tertiary)' }}>
               <button
                 type="button"
                 onClick={() => setShowGenerateModal(false)}
-                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer"
+                className="px-4 py-2 text-xs font-semibold rounded-xl transition-colors cursor-pointer"
+                style={{ color: 'var(--color-text-secondary)' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--color-surface-secondary)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
               >
                 {isAr ? 'إلغاء' : 'Cancel'}
               </button>
@@ -1328,11 +1522,11 @@ export const LearningRoadmapsView: React.FC<LearningRoadmapsViewProps> = ({
                 type="button"
                 onClick={handleExecuteAIGeneration}
                 disabled={isGeneratingRoadmap || !customTargetRole.trim()}
-                className="px-5 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all shadow-xs disabled:opacity-50 cursor-pointer inline-flex items-center gap-1.5"
+                className="button-primary inline-flex items-center gap-1.5 disabled:opacity-50"
               >
                 {isGeneratingRoadmap ? (
                   <>
-                    <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span className="w-3.5 h-3.5 border-2 rounded-full animate-spin" style={{ borderColor: 'rgba(255,255,255,0.3)', borderTopColor: 'white' }} />
                     <span>{isAr ? 'جاري بناء المسار...' : 'Generating Roadmap...'}</span>
                   </>
                 ) : (

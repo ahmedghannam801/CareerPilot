@@ -239,31 +239,31 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
   return (
     <div className="space-y-6">
       {/* Hero Header */}
-      <div className="bg-white border border-neutral-200 rounded-xl p-6 shadow-xs">
+      <div className="surface-elevated border-hairline rounded-xl p-6 shadow-xs">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="space-y-1.5 max-w-2xl">
             <div className="flex items-center gap-2">
-              <span className="p-1.5 bg-neutral-900 text-white rounded-lg inline-block">
+              <span className="p-1.5 rounded-lg inline-block" style={{ backgroundColor: 'var(--color-neutral-900)', color: 'var(--color-neutral-50)' }}>
                 <GraduationCap className="w-5 h-5" />
               </span>
-              <h1 className="text-xl font-bold tracking-tight text-neutral-900">
+              <h1 className="heading-lg">
                 {lang === 'ar' ? 'مركز التطوير المهني والكورسات' : 'Professional Skill Development & Courses'}
               </h1>
             </div>
-            <p className="text-xs text-neutral-600 leading-relaxed">
+            <p className="body-sm" style={{ color: 'var(--color-neutral-600)' }}>
               {lang === 'ar'
                 ? 'كورسات تدريبية ومسارات تخصصية متزامنة مع مجالك المستهدف وثغرات مهاراتك المكتشفة بالذكاء الاصطناعي. إكمال الكورسات يضيف أدلة موثقة فورياً لملفك المهني ويرفع نقاط جاهزيتك للوظائف.'
                 : 'Curated and AI-recommended skill development tracks aligned with your target domain and identified skill gaps. Completing courses immediately awards verified evidence to your Career DNA and boosts your Career Readiness.'}
             </p>
-            <div className="flex flex-wrap items-center gap-2 pt-1 text-xs text-neutral-500">
-              <span className="font-medium text-neutral-700">
+            <div className="flex flex-wrap items-center gap-2 pt-1 caption" style={{ color: 'var(--color-neutral-500)' }}>
+              <span className="font-medium" style={{ color: 'var(--color-neutral-700)' }}>
                 {lang === 'ar' ? 'المجال المستهدف:' : 'Target Field:'}
               </span>
-              <span className="bg-neutral-100 text-neutral-800 px-2 py-0.5 rounded text-[11px] font-mono">
+              <span className="px-2 py-0.5 rounded font-mono" style={{ backgroundColor: 'var(--color-neutral-100)', color: 'var(--color-neutral-800)', fontSize: '11px' }}>
                 {profile.targetRole || 'Full-Stack Software Engineer'}
               </span>
-              <span className="text-neutral-300">•</span>
-              <span className="text-[11px] text-neutral-500">
+              <span style={{ color: 'var(--color-neutral-300)' }}>•</span>
+              <span style={{ fontSize: '11px', color: 'var(--color-neutral-500)' }}>
                 {profile.targetIndustries.join(' / ') || 'AI & Machine Learning'}
               </span>
             </div>
@@ -273,7 +273,7 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
           <div className="flex flex-wrap items-center gap-2.5 shrink-0">
             <button
               onClick={() => setShowAIModal(true)}
-              className="flex items-center gap-2 px-3.5 py-2 bg-neutral-900 text-white hover:bg-neutral-800 rounded-lg text-xs font-semibold shadow-xs transition-colors"
+              className="btn-primary flex items-center gap-2"
             >
               <Sparkles className="w-3.5 h-3.5" />
               <span>
@@ -282,7 +282,7 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
             </button>
             <button
               onClick={() => setShowAddModal(true)}
-              className="flex items-center gap-1.5 px-3 py-2 bg-white border border-neutral-300 hover:bg-neutral-50 text-neutral-700 rounded-lg text-xs font-medium transition-colors"
+              className="btn-secondary flex items-center gap-1.5"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>{lang === 'ar' ? 'إضافة كورس يدوي' : 'Add Custom Course'}</span>
@@ -291,36 +291,36 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
         </div>
 
         {/* Quick Stat Metric Badges */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-5 border-t border-neutral-100 text-xs">
-          <div className="bg-neutral-50 p-3 rounded-lg border border-neutral-200/60">
-            <span className="text-[11px] text-neutral-500 block">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-5 border-t caption" style={{ borderColor: 'var(--color-neutral-100)' }}>
+          <div className="p-3 rounded-lg border" style={{ backgroundColor: 'var(--color-neutral-50)', borderColor: 'var(--color-neutral-200)' }}>
+            <span className="block" style={{ fontSize: '11px', color: 'var(--color-neutral-500)' }}>
               {lang === 'ar' ? 'إجمالي الكورسات المتاحة' : 'Total Available'}
             </span>
-            <span className="text-lg font-bold text-neutral-900 font-mono tabular-nums">
+            <span className="font-bold font-mono tabular-nums" style={{ fontSize: '18px', color: 'var(--color-neutral-900)' }}>
               {courses.length}
             </span>
           </div>
-          <div className="bg-neutral-50 p-3 rounded-lg border border-neutral-200/60">
-            <span className="text-[11px] text-neutral-500 block">
+          <div className="p-3 rounded-lg border" style={{ backgroundColor: 'var(--color-neutral-50)', borderColor: 'var(--color-neutral-200)' }}>
+            <span className="block" style={{ fontSize: '11px', color: 'var(--color-neutral-500)' }}>
               {lang === 'ar' ? 'قيد التعلم والمتابعة' : 'In Progress'}
             </span>
-            <span className="text-lg font-bold text-amber-700 font-mono tabular-nums">
+            <span className="font-bold font-mono tabular-nums" style={{ fontSize: '18px', color: 'var(--color-amber-700)' }}>
               {enrolledCount}
             </span>
           </div>
-          <div className="bg-neutral-50 p-3 rounded-lg border border-neutral-200/60">
-            <span className="text-[11px] text-neutral-500 block">
+          <div className="p-3 rounded-lg border" style={{ backgroundColor: 'var(--color-neutral-50)', borderColor: 'var(--color-neutral-200)' }}>
+            <span className="block" style={{ fontSize: '11px', color: 'var(--color-neutral-500)' }}>
               {lang === 'ar' ? 'كورسات مكتملة' : 'Completed'}
             </span>
-            <span className="text-lg font-bold text-emerald-700 font-mono tabular-nums">
+            <span className="font-bold font-mono tabular-nums" style={{ fontSize: '18px', color: 'var(--color-emerald-700)' }}>
               {completedCount}
             </span>
           </div>
-          <div className="bg-neutral-50 p-3 rounded-lg border border-neutral-200/60">
-            <span className="text-[11px] text-neutral-500 block">
+          <div className="p-3 rounded-lg border" style={{ backgroundColor: 'var(--color-neutral-50)', borderColor: 'var(--color-neutral-200)' }}>
+            <span className="block" style={{ fontSize: '11px', color: 'var(--color-neutral-500)' }}>
               {lang === 'ar' ? 'أدلة كفاءة موثقة' : 'Verified Evidence'}
             </span>
-            <span className="text-lg font-bold text-blue-700 font-mono tabular-nums">
+            <span className="font-bold font-mono tabular-nums" style={{ fontSize: '18px', color: 'var(--color-blue-700)' }}>
               {verifiedEvidenceCount}
             </span>
           </div>
@@ -328,19 +328,19 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
       </div>
 
       {/* AI Recommendation Alert / Domain Focus Insight */}
-      <div className="bg-linear-to-r from-neutral-900 via-neutral-800 to-neutral-900 text-white rounded-xl p-5 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="rounded-xl p-5 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4" style={{ background: 'linear-gradient(to right, var(--color-neutral-900), var(--color-neutral-800), var(--color-neutral-900))', color: 'var(--color-neutral-50)' }}>
         <div className="flex items-start gap-3">
-          <div className="p-2 bg-white/10 rounded-lg shrink-0 mt-0.5">
-            <TrendingUp className="w-4 h-4 text-emerald-400" />
+          <div className="p-2 rounded-lg shrink-0 mt-0.5" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}>
+            <TrendingUp className="w-4 h-4" style={{ color: 'var(--color-emerald-400)' }} />
           </div>
           <div className="space-y-1">
-            <h3 className="text-xs font-bold tracking-tight text-white flex items-center gap-1.5">
+            <h3 className="caption font-bold tracking-tight flex items-center gap-1.5" style={{ color: 'var(--color-neutral-50)' }}>
               <span>{lang === 'ar' ? 'توصية المسار الذكي لمجالك المستهدف' : 'Smart Domain Learning Track Recommendation'}</span>
-              <span className="bg-emerald-500/20 text-emerald-300 text-[10px] px-1.5 py-0.2 rounded font-normal">
+              <span className="px-1.5 py-0.2 rounded font-normal" style={{ backgroundColor: 'rgba(16, 185, 129, 0.2)', color: 'var(--color-emerald-300)', fontSize: '10px' }}>
                 {lang === 'ar' ? 'مطابقة عالية' : 'High Impact'}
               </span>
             </h3>
-            <p className="text-[11px] text-neutral-300 max-w-2xl leading-relaxed">
+            <p className="max-w-2xl leading-relaxed" style={{ fontSize: '11px', color: 'var(--color-neutral-300)' }}>
               {lang === 'ar'
                 ? `بناءً على هدفك (${profile.targetRole}) وثغراتك الحالية، نوصي بإكمال مسار الأنظمة الموزعة وهندسة النماذج التوليدية لرفع نسبة التنافسية في المقابلات التقنية إلى أكثر من 90%.`
                 : `Based on your trajectory as "${profile.targetRole}" and current skill gaps, prioritizing Distributed Systems & Generative AI Agent workflows will bridge remaining weaknesses and push your readiness over 90%.`}
@@ -352,7 +352,9 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
             setSelectedDomain('my_target');
             setSelectedStatus('all');
           }}
-          className="self-start md:self-center shrink-0 px-3 py-1.5 bg-white text-neutral-900 hover:bg-neutral-100 rounded-md text-xs font-semibold transition-colors"
+          className="self-start md:self-center shrink-0 px-3 py-1.5 rounded-md caption font-semibold transition-colors" style={{ backgroundColor: 'var(--color-neutral-50)', color: 'var(--color-neutral-900)' }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--color-neutral-100)'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--color-neutral-50)'}
         >
           {lang === 'ar' ? 'عرض الكورسات الموصى بها لمجالي' : 'Filter by My Target Field'}
         </button>
@@ -360,14 +362,16 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
 
       {/* Notification Toast if AI generated */}
       {aiResultNotice && (
-        <div className="bg-emerald-50 border border-emerald-200 text-emerald-900 p-3.5 rounded-lg text-xs flex items-center justify-between gap-3 animate-in fade-in duration-200">
+        <div className="p-3.5 rounded-lg caption flex items-center justify-between gap-3 animate-in fade-in duration-200" style={{ backgroundColor: 'var(--color-emerald-50)', borderWidth: '1px', borderStyle: 'solid', borderColor: 'var(--color-emerald-200)', color: 'var(--color-emerald-900)' }}>
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <CheckCircle2 className="w-4 h-4 shrink-0" style={{ color: 'var(--color-emerald-600)' }} />
             <span>{aiResultNotice}</span>
           </div>
           <button
             onClick={() => setAiResultNotice(null)}
-            className="text-emerald-700 hover:text-emerald-900"
+            style={{ color: 'var(--color-emerald-700)' }}
+            onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-emerald-900)'}
+            onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-emerald-700)'}
           >
             <X className="w-3.5 h-3.5" />
           </button>
@@ -375,11 +379,11 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
       )}
 
       {/* Filter and Search Bar */}
-      <div className="bg-white border border-neutral-200 rounded-xl p-4 shadow-xs space-y-3">
+      <div className="surface-elevated border-hairline rounded-xl p-4 shadow-xs space-y-3">
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
           {/* Search */}
           <div className="relative flex-1">
-            <Search className="w-4 h-4 text-neutral-400 absolute left-3 rtl:left-auto rtl:right-3 top-2.5" />
+            <Search className="w-4 h-4 absolute left-3 rtl:left-auto rtl:right-3 top-2.5" style={{ color: 'var(--color-neutral-400)' }} />
             <input
               type="text"
               value={searchQuery}
@@ -389,7 +393,7 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                   ? 'ابحث باسم الكورس، المهارة (مثل PostgreSQL، Kubernetes)، أو المنصة...'
                   : 'Search courses by title, skill (e.g. PostgreSQL, Docker, RAG), or provider...'
               }
-              className="w-full text-xs pl-9 pr-3 rtl:pl-3 rtl:pr-9 py-2 bg-neutral-50 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-900 focus:bg-white"
+              className="input-base caption w-full pl-9 pr-3 rtl:pl-3 rtl:pr-9 py-2"
             />
           </div>
 
@@ -399,7 +403,7 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
             <select
               value={selectedLevel}
               onChange={(e) => setSelectedLevel(e.target.value)}
-              className="text-xs bg-neutral-50 border border-neutral-200 rounded-lg px-2.5 py-2 text-neutral-700 focus:outline-none"
+              className="input-base caption px-2.5 py-2"
             >
               <option value="all">{lang === 'ar' ? 'جميع المستويات' : 'All Levels'}</option>
               <option value="Beginner">{lang === 'ar' ? 'مبتدئ' : 'Beginner'}</option>
@@ -411,7 +415,7 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
             <select
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
-              className="text-xs bg-neutral-50 border border-neutral-200 rounded-lg px-2.5 py-2 text-neutral-700 focus:outline-none"
+              className="input-base caption px-2.5 py-2"
             >
               <option value="all">{lang === 'ar' ? 'جميع الحالات' : 'All Statuses'}</option>
               <option value="in_progress">{lang === 'ar' ? 'قيد التعلم' : 'In Progress'}</option>
@@ -423,7 +427,7 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
             <select
               value={selectedCost}
               onChange={(e) => setSelectedCost(e.target.value)}
-              className="text-xs bg-neutral-50 border border-neutral-200 rounded-lg px-2.5 py-2 text-neutral-700 focus:outline-none"
+              className="input-base caption px-2.5 py-2"
             >
               <option value="all">{lang === 'ar' ? 'التكلفة: الكل' : 'Cost: All'}</option>
               <option value="free">{lang === 'ar' ? 'مجاني / مع شهادة' : 'Free / Audit'}</option>
@@ -439,7 +443,9 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                   setSelectedStatus('all');
                   setSelectedCost('all');
                 }}
-                className="text-xs text-neutral-500 hover:text-neutral-900 underline whitespace-nowrap px-1"
+                className="caption underline whitespace-nowrap px-1" style={{ color: 'var(--color-neutral-500)' }}
+                onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-neutral-900)'}
+                onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-neutral-500)'}
               >
                 {lang === 'ar' ? 'إعادة ضبط' : 'Reset'}
               </button>
@@ -448,40 +454,49 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
         </div>
 
         {/* Domain Category Filter Tabs */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pt-2 border-t border-neutral-100 no-scrollbar">
-          <span className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider shrink-0 mr-1 rtl:mr-0 rtl:ml-1">
+        <div className="flex items-center gap-1.5 overflow-x-auto pt-2 border-t no-scrollbar" style={{ borderColor: 'var(--color-neutral-100)' }}>
+          <span className="font-semibold uppercase tracking-wider shrink-0 mr-1 rtl:mr-0 rtl:ml-1" style={{ fontSize: '11px', color: 'var(--color-neutral-400)' }}>
             {lang === 'ar' ? 'المجال:' : 'Field:'}
           </span>
           <button
             onClick={() => setSelectedDomain('all')}
-            className={`px-2.5 py-1 text-xs rounded-md whitespace-nowrap transition-colors ${
-              selectedDomain === 'all'
-                ? 'bg-neutral-900 text-white font-medium'
-                : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
-            }`}
+            className="px-2.5 py-1 caption rounded-md whitespace-nowrap transition-colors"
+            style={selectedDomain === 'all' ? { backgroundColor: 'var(--color-neutral-900)', color: 'var(--color-neutral-50)', fontWeight: 500 } : { backgroundColor: 'var(--color-neutral-100)', color: 'var(--color-neutral-600)' }}
+            onMouseEnter={(e) => {
+              if (selectedDomain !== 'all') e.currentTarget.style.backgroundColor = 'var(--color-neutral-200)';
+            }}
+            onMouseLeave={(e) => {
+              if (selectedDomain !== 'all') e.currentTarget.style.backgroundColor = 'var(--color-neutral-100)';
+            }}
           >
             {lang === 'ar' ? 'جميع التخصصات' : 'All Domains'}
           </button>
           <button
             onClick={() => setSelectedDomain('my_target')}
-            className={`px-2.5 py-1 text-xs rounded-md whitespace-nowrap transition-colors flex items-center gap-1 ${
-              selectedDomain === 'my_target'
-                ? 'bg-neutral-900 text-white font-medium'
-                : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
-            }`}
+            className="px-2.5 py-1 caption rounded-md whitespace-nowrap transition-colors flex items-center gap-1"
+            style={selectedDomain === 'my_target' ? { backgroundColor: 'var(--color-neutral-900)', color: 'var(--color-neutral-50)', fontWeight: 500 } : { backgroundColor: 'var(--color-neutral-100)', color: 'var(--color-neutral-600)' }}
+            onMouseEnter={(e) => {
+              if (selectedDomain !== 'my_target') e.currentTarget.style.backgroundColor = 'var(--color-neutral-200)';
+            }}
+            onMouseLeave={(e) => {
+              if (selectedDomain !== 'my_target') e.currentTarget.style.backgroundColor = 'var(--color-neutral-100)';
+            }}
           >
-            <Sparkles className="w-3 h-3 text-amber-400" />
+            <Sparkles className="w-3 h-3" style={{ color: 'var(--color-amber-400)' }} />
             <span>{lang === 'ar' ? 'مجالي المستهدف (AI & Tech)' : 'My Target Field'}</span>
           </button>
           {availableDomains.map((domain) => (
             <button
               key={domain}
               onClick={() => setSelectedDomain(domain)}
-              className={`px-2.5 py-1 text-xs rounded-md whitespace-nowrap transition-colors ${
-                selectedDomain === domain
-                  ? 'bg-neutral-900 text-white font-medium'
-                  : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
-              }`}
+              className="px-2.5 py-1 caption rounded-md whitespace-nowrap transition-colors"
+              style={selectedDomain === domain ? { backgroundColor: 'var(--color-neutral-900)', color: 'var(--color-neutral-50)', fontWeight: 500 } : { backgroundColor: 'var(--color-neutral-100)', color: 'var(--color-neutral-600)' }}
+              onMouseEnter={(e) => {
+                if (selectedDomain !== domain) e.currentTarget.style.backgroundColor = 'var(--color-neutral-200)';
+              }}
+              onMouseLeave={(e) => {
+                if (selectedDomain !== domain) e.currentTarget.style.backgroundColor = 'var(--color-neutral-100)';
+              }}
             >
               {domain}
             </button>
@@ -491,19 +506,19 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
 
       {/* Courses Grid */}
       {filteredCourses.length === 0 ? (
-        <div className="bg-white border border-neutral-200 rounded-xl p-12 text-center space-y-3">
-          <BookOpen className="w-8 h-8 text-neutral-400 mx-auto" />
-          <h3 className="text-sm font-bold text-neutral-900">
+        <div className="surface-elevated border-hairline rounded-xl p-12 text-center space-y-3">
+          <BookOpen className="w-8 h-8 mx-auto" style={{ color: 'var(--color-neutral-400)' }} />
+          <h3 className="body-sm font-bold" style={{ color: 'var(--color-neutral-900)' }}>
             {lang === 'ar' ? 'لم يتم العثور على كورسات مطابقة' : 'No matching courses found'}
           </h3>
-          <p className="text-xs text-neutral-500 max-w-sm mx-auto">
+          <p className="caption max-w-sm mx-auto" style={{ color: 'var(--color-neutral-500)' }}>
             {lang === 'ar'
               ? 'جرّب تعديل الفلاتر أو استخدام زر توليد الكورسات بالذكاء الاصطناعي لاقتراح كورسات مخصصة فوراً.'
               : 'Try clearing your search filters or use AI Course Recommendations to generate tailored courses.'}
           </p>
           <button
             onClick={() => setShowAIModal(true)}
-            className="px-4 py-2 bg-neutral-900 text-white text-xs font-semibold rounded-lg inline-flex items-center gap-1.5"
+            className="px-4 py-2 caption font-semibold rounded-lg inline-flex items-center gap-1.5" style={{ backgroundColor: 'var(--color-neutral-900)', color: 'var(--color-neutral-50)' }}
           >
             <Sparkles className="w-3.5 h-3.5" />
             <span>{lang === 'ar' ? 'توليد كورسات بالذكاء الاصطناعي' : 'Generate with AI'}</span>
@@ -518,38 +533,52 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
             return (
               <div
                 key={course.id}
-                className={`bg-white border rounded-xl p-5 flex flex-col justify-between transition-all hover:border-neutral-400/70 shadow-xs relative ${
-                  isCompleted
-                    ? 'border-emerald-200/80 bg-emerald-50/20'
+                className="surface-elevated rounded-xl p-5 flex flex-col justify-between transition-all shadow-xs relative"
+                style={{
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                  borderColor: isCompleted
+                    ? 'rgba(16, 185, 129, 0.3)'
                     : isInProgress
-                    ? 'border-neutral-300'
-                    : 'border-neutral-200'
-                }`}
+                    ? 'var(--color-neutral-300)'
+                    : 'var(--color-neutral-200)',
+                  backgroundColor: isCompleted ? 'rgba(236, 253, 245, 0.2)' : 'var(--color-surface)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(115, 115, 115, 0.7)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = isCompleted
+                    ? 'rgba(16, 185, 129, 0.3)'
+                    : isInProgress
+                    ? 'var(--color-neutral-300)'
+                    : 'var(--color-neutral-200)';
+                }}
               >
                 {/* Card Top: Provider & Status Badge */}
                 <div className="space-y-3">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex flex-wrap items-center gap-1.5">
-                      <span className="px-2 py-0.5 bg-neutral-900 text-white text-[10px] font-semibold rounded">
+                      <span className="px-2 py-0.5 rounded font-semibold" style={{ backgroundColor: 'var(--color-neutral-900)', color: 'var(--color-neutral-50)', fontSize: '10px' }}>
                         {course.provider}
                       </span>
-                      <span className="px-2 py-0.5 bg-neutral-100 text-neutral-600 text-[10px] rounded font-medium">
+                      <span className="px-2 py-0.5 rounded font-medium" style={{ backgroundColor: 'var(--color-neutral-100)', color: 'var(--color-neutral-600)', fontSize: '10px' }}>
                         {course.domain}
                       </span>
                       {course.cost === 'Free' && (
-                        <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] rounded font-medium">
+                        <span className="px-1.5 py-0.5 rounded font-medium" style={{ backgroundColor: 'var(--color-emerald-100)', color: 'var(--color-emerald-800)', fontSize: '10px' }}>
                           {lang === 'ar' ? 'مجاني' : 'Free'}
                         </span>
                       )}
                     </div>
 
                     {isCompleted ? (
-                      <span className="flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full shrink-0">
+                      <span className="flex items-center gap-1 font-semibold px-2 py-0.5 rounded-full shrink-0" style={{ fontSize: '11px', color: 'var(--color-emerald-700)', backgroundColor: 'rgba(16, 185, 129, 0.15)' }}>
                         <CheckCircle2 className="w-3.5 h-3.5" />
                         <span>{lang === 'ar' ? 'مكتمل وموثق' : 'Verified'}</span>
                       </span>
                     ) : isInProgress ? (
-                      <span className="flex items-center gap-1 text-[11px] font-semibold text-amber-700 bg-amber-100/80 px-2 py-0.5 rounded-full shrink-0">
+                      <span className="flex items-center gap-1 font-semibold px-2 py-0.5 rounded-full shrink-0" style={{ fontSize: '11px', color: 'var(--color-amber-700)', backgroundColor: 'rgba(245, 158, 11, 0.15)' }}>
                         <Clock className="w-3.5 h-3.5" />
                         <span>{lang === 'ar' ? 'قيد التعلم' : 'In Progress'}</span>
                       </span>
@@ -558,23 +587,23 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
 
                   {/* Title & Instructor */}
                   <div>
-                    <h3 className="text-sm font-bold text-neutral-900 line-clamp-2 leading-snug">
+                    <h3 className="body-sm font-bold line-clamp-2 leading-snug" style={{ color: 'var(--color-neutral-900)' }}>
                       {course.title}
                     </h3>
                     {course.instructor && (
-                      <p className="text-[11px] text-neutral-500 mt-0.5">
+                      <p className="mt-0.5" style={{ fontSize: '11px', color: 'var(--color-neutral-500)' }}>
                         {lang === 'ar' ? 'المحاضر:' : 'By:'} {course.instructor}
                       </p>
                     )}
                   </div>
 
                   {/* Ratings, Duration, Level */}
-                  <div className="flex items-center gap-3 text-[11px] text-neutral-500 font-mono">
-                    <span className="flex items-center gap-1 text-neutral-800 font-semibold">
-                      <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                  <div className="flex items-center gap-3 font-mono" style={{ fontSize: '11px', color: 'var(--color-neutral-500)' }}>
+                    <span className="flex items-center gap-1 font-semibold" style={{ color: 'var(--color-neutral-800)' }}>
+                      <Star className="w-3 h-3" style={{ fill: 'var(--color-amber-400)', color: 'var(--color-amber-400)' }} />
                       <span>{course.rating.toFixed(1)}</span>
                       {course.reviewsCount && (
-                        <span className="text-neutral-400 text-[10px] font-normal">
+                        <span className="font-normal" style={{ color: 'var(--color-neutral-400)', fontSize: '10px' }}>
                           ({course.reviewsCount.toLocaleString()})
                         </span>
                       )}
@@ -583,39 +612,41 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                     <span>{course.duration}</span>
                     <span>•</span>
                     <span
-                      className={`${
-                        course.level === 'Advanced'
-                          ? 'text-purple-700 font-semibold'
+                      style={{
+                        color: course.level === 'Advanced'
+                          ? 'var(--color-purple-700)'
                           : course.level === 'Intermediate'
-                          ? 'text-blue-700'
-                          : 'text-neutral-700'
-                      }`}
+                          ? 'var(--color-blue-700)'
+                          : 'var(--color-neutral-700)',
+                        fontWeight: course.level === 'Advanced' ? 600 : 400,
+                      }}
                     >
                       {course.level}
                     </span>
                   </div>
 
                   {/* Description */}
-                  <p className="text-xs text-neutral-600 line-clamp-2 leading-relaxed">
+                  <p className="caption line-clamp-2 leading-relaxed" style={{ color: 'var(--color-neutral-600)' }}>
                     {course.description}
                   </p>
 
                   {/* Skills Gained Tags */}
                   <div className="space-y-1.5 pt-1">
-                    <span className="text-[10px] font-semibold text-neutral-400 uppercase tracking-wider block">
+                    <span className="font-semibold uppercase tracking-wider block" style={{ fontSize: '10px', color: 'var(--color-neutral-400)' }}>
                       {lang === 'ar' ? 'المهارات المكتسبة:' : 'Skills Gained:'}
                     </span>
                     <div className="flex flex-wrap gap-1">
                       {course.skillsGained.slice(0, 4).map((skill, idx) => (
                         <span
                           key={idx}
-                          className="bg-neutral-100 text-neutral-700 px-1.5 py-0.5 rounded text-[10px] font-mono"
+                          className="px-1.5 py-0.5 rounded font-mono"
+                          style={{ backgroundColor: 'var(--color-neutral-100)', color: 'var(--color-neutral-700)', fontSize: '10px' }}
                         >
                           {skill}
                         </span>
                       ))}
                       {course.skillsGained.length > 4 && (
-                        <span className="text-[10px] text-neutral-400 self-center">
+                        <span className="self-center" style={{ fontSize: '10px', color: 'var(--color-neutral-400)' }}>
                           +{course.skillsGained.length - 4}
                         </span>
                       )}
@@ -624,12 +655,12 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
 
                   {/* AI Match Rationale */}
                   {course.relevanceReason && (
-                    <div className="p-2.5 bg-neutral-50 rounded-lg border border-neutral-150 text-[11px] text-neutral-700 space-y-1">
-                      <div className="flex items-center gap-1 text-neutral-900 font-semibold text-[10px] uppercase tracking-wider">
-                        <Sparkles className="w-3 h-3 text-amber-500" />
+                    <div className="p-2.5 rounded-lg border space-y-1" style={{ backgroundColor: 'var(--color-neutral-50)', borderColor: 'var(--color-neutral-150)', fontSize: '11px', color: 'var(--color-neutral-700)' }}>
+                      <div className="flex items-center gap-1 font-semibold uppercase tracking-wider" style={{ color: 'var(--color-neutral-900)', fontSize: '10px' }}>
+                        <Sparkles className="w-3 h-3" style={{ color: 'var(--color-amber-500)' }} />
                         <span>{lang === 'ar' ? 'لماذا يناسب مسارك المهني؟' : 'Why this fits your path:'}</span>
                       </div>
-                      <p className="text-neutral-600 leading-snug line-clamp-2">
+                      <p className="leading-snug line-clamp-2" style={{ color: 'var(--color-neutral-600)' }}>
                         {course.relevanceReason}
                       </p>
                     </div>
@@ -638,20 +669,21 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                   {/* Progress Bar (if enrolled) */}
                   {(isInProgress || isCompleted) && (
                     <div className="space-y-1 pt-1">
-                      <div className="flex items-center justify-between text-[11px] font-mono">
-                        <span className="text-neutral-500">
+                      <div className="flex items-center justify-between font-mono" style={{ fontSize: '11px' }}>
+                        <span style={{ color: 'var(--color-neutral-500)' }}>
                           {lang === 'ar' ? 'نسبة الإنجاز:' : 'Progress:'}
                         </span>
-                        <span className="font-bold text-neutral-900">
+                        <span className="font-bold" style={{ color: 'var(--color-neutral-900)' }}>
                           {course.progressPercentage}%
                         </span>
                       </div>
-                      <div className="w-full h-1.5 bg-neutral-100 rounded-full overflow-hidden">
+                      <div className="w-full rounded-full overflow-hidden" style={{ height: '6px', backgroundColor: 'var(--color-neutral-100)' }}>
                         <div
-                          className={`h-full transition-all duration-300 ${
-                            isCompleted ? 'bg-emerald-600' : 'bg-neutral-900'
-                          }`}
-                          style={{ width: `${course.progressPercentage}%` }}
+                          className="h-full transition-all duration-300"
+                          style={{
+                            width: `${course.progressPercentage}%`,
+                            backgroundColor: isCompleted ? 'var(--color-emerald-600)' : 'var(--color-neutral-900)',
+                          }}
                         />
                       </div>
                     </div>
@@ -659,14 +691,23 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                 </div>
 
                 {/* Card Actions Bottom */}
-                <div className="pt-4 mt-3 border-t border-neutral-100 flex items-center justify-between gap-2">
+                <div className="pt-4 mt-3 border-t flex items-center justify-between gap-2" style={{ borderColor: 'var(--color-neutral-100)' }}>
                   <div className="flex items-center gap-2">
                     {course.url && (
                       <a
                         href={course.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="p-1.5 text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 rounded transition-colors"
+                        className="p-1.5 rounded transition-colors"
+                        style={{ color: 'var(--color-neutral-500)' }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.color = 'var(--color-neutral-900)';
+                          e.currentTarget.style.backgroundColor = 'var(--color-neutral-100)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.color = 'var(--color-neutral-500)';
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                        }}
                         title={lang === 'ar' ? 'فتح رابط الكورس' : 'Open Course Link'}
                       >
                         <ExternalLink className="w-3.5 h-3.5" />
@@ -674,7 +715,16 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                     )}
                     <button
                       onClick={() => setActiveCourseDrawer(course)}
-                      className="text-xs font-medium text-neutral-700 hover:text-neutral-900 hover:underline flex items-center gap-1"
+                      className="caption font-medium flex items-center gap-1"
+                      style={{ color: 'var(--color-neutral-700)' }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.color = 'var(--color-neutral-900)';
+                        e.currentTarget.style.textDecoration = 'underline';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.color = 'var(--color-neutral-700)';
+                        e.currentTarget.style.textDecoration = 'none';
+                      }}
                     >
                       <span>{lang === 'ar' ? 'المحتوى والمحاضرات' : 'Syllabus & Modules'}</span>
                       <ChevronRight className="w-3 h-3 rtl:rotate-180" />
@@ -685,7 +735,10 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                   {isCompleted ? (
                     <button
                       onClick={() => setActiveCourseDrawer(course)}
-                      className="px-2.5 py-1.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 rounded-md text-xs font-semibold flex items-center gap-1 transition-colors"
+                      className="px-2.5 py-1.5 rounded-md caption font-semibold flex items-center gap-1 transition-colors"
+                      style={{ backgroundColor: 'var(--color-emerald-100)', color: 'var(--color-emerald-800)' }}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--color-emerald-200)'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--color-emerald-100)'}
                     >
                       <Award className="w-3.5 h-3.5" />
                       <span>{lang === 'ar' ? 'عرض التوثيق' : 'Credential'}</span>
@@ -694,7 +747,10 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                     <div className="flex items-center gap-1.5">
                       <button
                         onClick={() => setShowCompleteModal(course)}
-                        className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md text-xs font-semibold flex items-center gap-1 transition-colors"
+                        className="px-2.5 py-1.5 rounded-md caption font-semibold flex items-center gap-1 transition-colors"
+                        style={{ backgroundColor: 'var(--color-emerald-600)', color: 'var(--color-neutral-50)' }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--color-emerald-700)'}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--color-emerald-600)'}
                         title={lang === 'ar' ? 'توثيق الإنجاز كدليل في الملف المهني' : 'Complete and generate verified evidence'}
                       >
                         <Check className="w-3.5 h-3.5" />
@@ -702,16 +758,16 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                       </button>
                       <button
                         onClick={() => setActiveCourseDrawer(course)}
-                        className="px-2.5 py-1.5 bg-neutral-900 hover:bg-neutral-800 text-white rounded-md text-xs font-semibold flex items-center gap-1 transition-colors"
+                        className="btn-primary px-2.5 py-1.5 caption font-semibold flex items-center gap-1"
                       >
-                        <Play className="w-3 h-3 fill-white" />
+                        <Play className="w-3 h-3" style={{ fill: 'var(--color-neutral-50)' }} />
                         <span>{lang === 'ar' ? 'متابعة' : 'Resume'}</span>
                       </button>
                     </div>
                   ) : (
                     <button
                       onClick={() => onEnrollCourse(course.id)}
-                      className="px-3 py-1.5 bg-neutral-900 hover:bg-neutral-800 text-white rounded-md text-xs font-semibold flex items-center gap-1 transition-colors"
+                      className="btn-primary px-3 py-1.5 caption font-semibold flex items-center gap-1"
                     >
                       <span>{lang === 'ar' ? 'بدء التعلم' : 'Enroll & Start'}</span>
                       <ArrowRight className="w-3 h-3 rtl:rotate-180" />
@@ -726,23 +782,23 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
 
       {/* Course Detail Drawer / Modal */}
       {activeCourseDrawer && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4" onClick={() => setActiveCourseDrawer(null)}>
-          <div className="bg-white border border-neutral-200 rounded-2xl max-w-2xl w-full flex flex-col max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2.5rem)] shadow-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-start justify-between gap-4 p-5 sm:p-6 border-b border-neutral-100 shrink-0 bg-white">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', backdropFilter: 'blur(4px)' }} onClick={() => setActiveCourseDrawer(null)}>
+          <div className="surface-elevated border-hairline rounded-2xl max-w-2xl w-full flex flex-col max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2.5rem)] shadow-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-start justify-between gap-4 p-5 sm:p-6 border-b shrink-0" style={{ borderColor: 'var(--color-neutral-100)', backgroundColor: 'var(--color-surface)' }}>
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 bg-neutral-900 text-white text-[10px] font-semibold rounded">
+                  <span className="px-2 py-0.5 rounded font-semibold" style={{ backgroundColor: 'var(--color-neutral-900)', color: 'var(--color-neutral-50)', fontSize: '10px' }}>
                     {activeCourseDrawer.provider}
                   </span>
-                  <span className="text-xs text-neutral-500 font-mono">
+                  <span className="caption font-mono" style={{ color: 'var(--color-neutral-500)' }}>
                     {activeCourseDrawer.domain}
                   </span>
                 </div>
-                <h2 className="text-lg font-bold text-neutral-900">
+                <h2 className="heading-lg">
                   {activeCourseDrawer.title}
                 </h2>
                 {activeCourseDrawer.instructor && (
-                  <p className="text-xs text-neutral-600">
+                  <p className="caption" style={{ color: 'var(--color-neutral-600)' }}>
                     {lang === 'ar' ? 'المحاضر:' : 'Instructor:'} {activeCourseDrawer.instructor}
                   </p>
                 )}
@@ -750,7 +806,16 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
               <button
                 type="button"
                 onClick={() => setActiveCourseDrawer(null)}
-                className="p-1.5 text-neutral-400 hover:text-neutral-900 rounded-lg hover:bg-neutral-100 cursor-pointer"
+                className="p-1.5 rounded-lg cursor-pointer"
+                style={{ color: 'var(--color-neutral-400)' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = 'var(--color-neutral-900)';
+                  e.currentTarget.style.backgroundColor = 'var(--color-neutral-100)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = 'var(--color-neutral-400)';
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
               >
                 <X className="w-5 h-5" />
               </button>
@@ -759,12 +824,12 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
             {/* Scrollable Body */}
             <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6 overscroll-contain">
               {/* Progress overview */}
-              <div className="p-4 bg-neutral-50 rounded-xl border border-neutral-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4" style={{ backgroundColor: 'var(--color-neutral-50)', borderColor: 'var(--color-neutral-200)' }}>
                 <div>
-                <span className="text-xs text-neutral-500 block">
+                <span className="caption block" style={{ color: 'var(--color-neutral-500)' }}>
                   {lang === 'ar' ? 'الحالة الحالية:' : 'Current Status:'}
                 </span>
-                <span className="text-sm font-bold text-neutral-900">
+                <span className="body-sm font-bold" style={{ color: 'var(--color-neutral-900)' }}>
                   {activeCourseDrawer.enrollmentStatus === 'completed'
                     ? lang === 'ar'
                       ? 'مكتمل وموثق في ملفك المهني'
@@ -789,20 +854,23 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                       progressPercentage: 10,
                     });
                   }}
-                  className="px-3.5 py-2 bg-neutral-900 text-white rounded-lg text-xs font-semibold"
+                  className="btn-primary px-3.5 py-2 caption font-semibold"
                 >
                   {lang === 'ar' ? 'بدء التعلم الآن' : 'Start Course Now'}
                 </button>
               ) : activeCourseDrawer.enrollmentStatus === 'in_progress' ? (
                 <button
                   onClick={() => setShowCompleteModal(activeCourseDrawer)}
-                  className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5"
+                  className="px-3.5 py-2 rounded-lg caption font-semibold flex items-center gap-1.5 transition-colors"
+                  style={{ backgroundColor: 'var(--color-emerald-600)', color: 'var(--color-neutral-50)' }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--color-emerald-700)'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--color-emerald-600)'}
                 >
                   <Award className="w-3.5 h-3.5" />
                   <span>{lang === 'ar' ? 'إكمال وتوثيق كدليل' : 'Mark Completed & Verify'}</span>
                 </button>
               ) : (
-                <span className="text-xs font-medium text-emerald-700 flex items-center gap-1">
+                <span className="caption font-medium flex items-center gap-1" style={{ color: 'var(--color-emerald-700)' }}>
                   <CheckCircle2 className="w-4 h-4" />
                   <span>{lang === 'ar' ? 'شهادة مسجلة في ملف المهارات' : 'Evidence Verified'}</span>
                 </span>
@@ -811,20 +879,21 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
 
             {/* Skills & Domain Impact */}
             <div className="space-y-2">
-              <h4 className="text-xs font-bold text-neutral-900 uppercase tracking-wider">
+              <h4 className="caption font-bold uppercase tracking-wider" style={{ color: 'var(--color-neutral-900)' }}>
                 {lang === 'ar' ? 'المهارات المكتسبة وتأثيرها على الجاهزية:' : 'Skills Gained & Impact:'}
               </h4>
               <div className="flex flex-wrap gap-1.5">
                 {activeCourseDrawer.skillsGained.map((skill, idx) => (
                   <span
                     key={idx}
-                    className="bg-neutral-100 border border-neutral-200 text-neutral-800 px-2.5 py-1 rounded text-xs font-mono"
+                    className="border px-2.5 py-1 rounded caption font-mono"
+                    style={{ backgroundColor: 'var(--color-neutral-100)', borderColor: 'var(--color-neutral-200)', color: 'var(--color-neutral-800)' }}
                   >
                     + {skill}
                   </span>
                 ))}
               </div>
-              <p className="text-[11px] text-neutral-500 pt-1">
+              <p className="pt-1" style={{ fontSize: '11px', color: 'var(--color-neutral-500)' }}>
                 {lang === 'ar'
                   ? 'عند إكمال هذا الكورس، سيتم تحديث رصيد أدلتك المهنية وإعادة احتساب نسبة الجاهزية تلقائياً.'
                   : 'Completing this course immediately issues verified Skill Evidence and recalculates your 8-pillar readiness.'}
@@ -834,20 +903,22 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
             {/* Interactive Modules Checklist */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <h4 className="text-xs font-bold text-neutral-900 uppercase tracking-wider">
+                <h4 className="caption font-bold uppercase tracking-wider" style={{ color: 'var(--color-neutral-900)' }}>
                   {lang === 'ar' ? 'محاضرات وفصول الكورس:' : 'Course Modules & Chapters:'}
                 </h4>
-                <span className="text-xs text-neutral-500 font-mono">
+                <span className="caption font-mono" style={{ color: 'var(--color-neutral-500)' }}>
                   {activeCourseDrawer.modules.filter((m) => m.completed).length} /{' '}
                   {activeCourseDrawer.modules.length} {lang === 'ar' ? 'مكتمل' : 'completed'}
                 </span>
               </div>
 
-              <div className="space-y-2 divide-y divide-neutral-100 border border-neutral-200 rounded-lg p-2 bg-neutral-50/50">
+              <div className="space-y-2 divide-y border rounded-lg p-2" style={{ backgroundColor: 'rgba(245, 245, 245, 0.5)', borderColor: 'var(--color-neutral-200)', divideColor: 'var(--color-neutral-100)' }}>
                 {activeCourseDrawer.modules.map((mod, idx) => (
                   <div
                     key={mod.id || idx}
-                    className="pt-2 first:pt-0 flex items-start gap-3 p-1.5 rounded hover:bg-white transition-colors"
+                    className="pt-2 first:pt-0 flex items-start gap-3 p-1.5 rounded transition-colors"
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--color-surface)'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                   >
                     <button
                       onClick={() => {
@@ -873,26 +944,26 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                           ),
                         });
                       }}
-                      className={`mt-0.5 w-4 h-4 rounded border flex items-center justify-center shrink-0 transition-colors ${
-                        mod.completed
-                          ? 'bg-neutral-900 border-neutral-900 text-white'
-                          : 'border-neutral-300 hover:border-neutral-500 bg-white'
-                      }`}
+                      className="mt-0.5 w-4 h-4 rounded border flex items-center justify-center shrink-0 transition-colors"
+                      style={mod.completed ? { backgroundColor: 'var(--color-neutral-900)', borderColor: 'var(--color-neutral-900)', color: 'var(--color-neutral-50)' } : { borderColor: 'var(--color-neutral-300)', backgroundColor: 'var(--color-surface)' }}
+                      onMouseEnter={(e) => {
+                        if (!mod.completed) e.currentTarget.style.borderColor = 'var(--color-neutral-500)';
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!mod.completed) e.currentTarget.style.borderColor = 'var(--color-neutral-300)';
+                      }}
                     >
                       {mod.completed && <Check className="w-3 h-3" />}
                     </button>
                     <div className="flex-1">
                       <p
-                        className={`text-xs ${
-                          mod.completed
-                            ? 'text-neutral-500 line-through'
-                            : 'text-neutral-900 font-medium'
-                        }`}
+                        className="caption"
+                        style={mod.completed ? { color: 'var(--color-neutral-500)', textDecoration: 'line-through' } : { color: 'var(--color-neutral-900)', fontWeight: 500 }}
                       >
                         {mod.title}
                       </p>
                       {mod.duration && (
-                        <span className="text-[10px] text-neutral-400 font-mono">
+                        <span className="font-mono" style={{ fontSize: '10px', color: 'var(--color-neutral-400)' }}>
                           {mod.duration}
                         </span>
                       )}
@@ -905,13 +976,16 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
             </div>
 
             {/* External link & Close Footer */}
-            <div className="shrink-0 flex items-center justify-between p-4 sm:p-5 border-t border-neutral-100 bg-slate-50/70">
+            <div className="shrink-0 flex items-center justify-between p-4 sm:p-5 border-t" style={{ borderColor: 'var(--color-neutral-100)', backgroundColor: 'rgba(241, 245, 249, 0.7)' }}>
               {activeCourseDrawer.url ? (
                 <a
                   href={activeCourseDrawer.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs font-semibold text-neutral-900 flex items-center gap-1.5 hover:underline"
+                  className="caption font-semibold flex items-center gap-1.5"
+                  style={{ color: 'var(--color-neutral-900)', textDecoration: 'none' }}
+                  onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
+                  onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
                 >
                   <span>{lang === 'ar' ? 'الانتقال لصفحة الكورس الرسمية' : 'Open Official Course Page'}</span>
                   <ExternalLink className="w-3.5 h-3.5" />
@@ -920,7 +994,7 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
               <button
                 type="button"
                 onClick={() => setActiveCourseDrawer(null)}
-                className="px-4 py-2 bg-neutral-900 hover:bg-neutral-800 text-white rounded-lg text-xs font-medium cursor-pointer"
+                className="btn-primary px-4 py-2 caption font-medium cursor-pointer"
               >
                 {lang === 'ar' ? 'إغلاق' : 'Close'}
               </button>
@@ -931,21 +1005,30 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
 
       {/* Complete Course Modal (Verify to Evidence) */}
       {showCompleteModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4" onClick={() => setShowCompleteModal(null)}>
-          <div className="bg-white border border-neutral-200 rounded-2xl max-w-md w-full shadow-2xl flex flex-col max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2.5rem)] overflow-hidden" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-start justify-between p-5 border-b border-neutral-100 shrink-0 bg-white">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', backdropFilter: 'blur(4px)' }} onClick={() => setShowCompleteModal(null)}>
+          <div className="surface-elevated border-hairline rounded-2xl max-w-md w-full shadow-2xl flex flex-col max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2.5rem)] overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-start justify-between p-5 border-b shrink-0" style={{ borderColor: 'var(--color-neutral-100)', backgroundColor: 'var(--color-surface)' }}>
               <div className="space-y-1">
-                <span className="p-1.5 bg-emerald-100 text-emerald-800 rounded-lg inline-block">
+                <span className="p-1.5 rounded-lg inline-block" style={{ backgroundColor: 'var(--color-emerald-100)', color: 'var(--color-emerald-800)' }}>
                   <Award className="w-4 h-4" />
                 </span>
-                <h3 className="text-sm font-bold text-neutral-900">
+                <h3 className="body-sm font-bold" style={{ color: 'var(--color-neutral-900)' }}>
                   {lang === 'ar' ? 'توثيق إكمال الكورس كدليل مهني' : 'Verify Course Completion as Evidence'}
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setShowCompleteModal(null)}
-                className="p-1.5 text-neutral-400 hover:text-neutral-900 rounded-lg hover:bg-neutral-100 cursor-pointer"
+                className="p-1.5 rounded-lg cursor-pointer"
+                style={{ color: 'var(--color-neutral-400)' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = 'var(--color-neutral-900)';
+                  e.currentTarget.style.backgroundColor = 'var(--color-neutral-100)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = 'var(--color-neutral-400)';
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
               >
                 <X className="w-4 h-4" />
               </button>
@@ -953,7 +1036,7 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
 
             <div className="flex-1 overflow-y-auto p-5 space-y-4 overscroll-contain">
 
-            <p className="text-xs text-neutral-600 leading-relaxed">
+            <p className="caption leading-relaxed" style={{ color: 'var(--color-neutral-600)' }}>
               {lang === 'ar'
                 ? `تهانينا على إكمال "${showCompleteModal.title}"! سيتم توثيق شهادتك واحتساب أدلة المهارات (${showCompleteModal.skillsGained.join(', ')}) لرفع نقاط جاهزيتك المهنية.`
                 : `Congratulations on completing "${showCompleteModal.title}"! This will automatically register verified Skill Evidence for (${showCompleteModal.skillsGained.join(', ')}) in your profile.`}
@@ -961,7 +1044,7 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
 
             <div className="space-y-3">
               <div>
-                <label className="text-xs font-semibold text-neutral-700 block mb-1">
+                <label className="caption font-semibold block mb-1" style={{ color: 'var(--color-neutral-700)' }}>
                   {lang === 'ar' ? 'رابط الشهادة أو الملف (اختياري):' : 'Certificate URL (optional):'}
                 </label>
                 <input
@@ -969,12 +1052,12 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                   value={certificateUrl}
                   onChange={(e) => setCertificateUrl(e.target.value)}
                   placeholder="https://coursera.org/verify/..."
-                  className="w-full text-xs px-3 py-2 bg-neutral-50 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-900 focus:bg-white font-mono"
+                  className="input-base caption w-full px-3 py-2 font-mono"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-neutral-700 block mb-1">
+                <label className="caption font-semibold block mb-1" style={{ color: 'var(--color-neutral-700)' }}>
                   {lang === 'ar' ? 'ملاحظات أو ملخص التعلم (اختياري):' : 'Key Takeaways & Notes (optional):'}
                 </label>
                 <textarea
@@ -986,18 +1069,21 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                       ? 'ما أهم ما أنجزته أو طبقته عملياً في هذا الكورس؟'
                       : 'Key practical projects, lab benchmarks, or skills mastered...'
                   }
-                  className="w-full text-xs p-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-900 focus:bg-white resize-none"
+                  className="input-base caption w-full p-3 resize-none"
                 />
               </div>
             </div>
 
             </div>
 
-            <div className="shrink-0 flex items-center justify-end gap-2 p-4 border-t border-neutral-100 bg-slate-50/70">
+            <div className="shrink-0 flex items-center justify-end gap-2 p-4 border-t" style={{ borderColor: 'var(--color-neutral-100)', backgroundColor: 'rgba(241, 245, 249, 0.7)' }}>
               <button
                 type="button"
                 onClick={() => setShowCompleteModal(null)}
-                className="px-3 py-1.5 text-xs text-neutral-600 hover:text-neutral-900 cursor-pointer"
+                className="px-3 py-1.5 caption cursor-pointer"
+                style={{ color: 'var(--color-neutral-600)' }}
+                onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-neutral-900)'}
+                onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-neutral-600)'}
               >
                 {lang === 'ar' ? 'إلغاء' : 'Cancel'}
               </button>
@@ -1005,10 +1091,17 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                 type="button"
                 onClick={handleConfirmCompletion}
                 disabled={isSubmittingCompletion}
-                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-colors disabled:opacity-50 cursor-pointer"
+                className="px-4 py-2 rounded-lg caption font-semibold flex items-center gap-1.5 transition-colors disabled:opacity-50 cursor-pointer"
+                style={{ backgroundColor: 'var(--color-emerald-600)', color: 'var(--color-neutral-50)' }}
+                onMouseEnter={(e) => {
+                  if (!isSubmittingCompletion) e.currentTarget.style.backgroundColor = 'var(--color-emerald-700)';
+                }}
+                onMouseLeave={(e) => {
+                  if (!isSubmittingCompletion) e.currentTarget.style.backgroundColor = 'var(--color-emerald-600)';
+                }}
               >
                 {isSubmittingCompletion && (
-                  <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <div className="w-3 h-3 rounded-full animate-spin" style={{ borderWidth: '2px', borderStyle: 'solid', borderColor: 'var(--color-neutral-50)', borderTopColor: 'transparent' }} />
                 )}
                 <span>
                   {lang === 'ar' ? 'تأكيد التوثيق ورفع الجاهزية' : 'Confirm & Update Readiness'}
@@ -1021,21 +1114,21 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
 
       {/* AI Course Recommendations Modal */}
       {showAIModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4" onClick={() => setShowAIModal(false)}>
-          <div className="bg-white border border-neutral-200 rounded-2xl max-w-lg w-full shadow-2xl flex flex-col max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2.5rem)] overflow-hidden" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-start justify-between p-5 border-b border-neutral-100 shrink-0 bg-white">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', backdropFilter: 'blur(4px)' }} onClick={() => setShowAIModal(false)}>
+          <div className="surface-elevated border-hairline rounded-2xl max-w-lg w-full shadow-2xl flex flex-col max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2.5rem)] overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-start justify-between p-5 border-b shrink-0" style={{ borderColor: 'var(--color-neutral-100)', backgroundColor: 'var(--color-surface)' }}>
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="p-1.5 bg-neutral-900 text-white rounded-lg">
-                    <Sparkles className="w-4 h-4 text-amber-400" />
+                  <span className="p-1.5 rounded-lg" style={{ backgroundColor: 'var(--color-neutral-900)', color: 'var(--color-neutral-50)' }}>
+                    <Sparkles className="w-4 h-4" style={{ color: 'var(--color-amber-400)' }} />
                   </span>
-                  <h3 className="text-sm font-bold text-neutral-900">
+                  <h3 className="body-sm font-bold" style={{ color: 'var(--color-neutral-900)' }}>
                     {lang === 'ar'
                       ? 'اقتراح مسارات وكورسات مخصصة بالذكاء الاصطناعي'
                       : 'AI Personalized Course & Skill Recommendations'}
                   </h3>
                 </div>
-                <p className="text-xs text-neutral-500">
+                <p className="caption" style={{ color: 'var(--color-neutral-500)' }}>
                   {lang === 'ar'
                     ? 'يقوم النموذج بتحليل هويتك المهنية (Career DNA)، وثغرات مهاراتك، وهدفك الوظيفي لاقتراح أفضل الكورسات الواقعية.'
                     : 'Gemini analyzes your Career DNA, target role, and identified skill gaps to suggest high-impact courses.'}
@@ -1044,28 +1137,37 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
               <button
                 type="button"
                 onClick={() => setShowAIModal(false)}
-                className="p-1.5 text-neutral-400 hover:text-neutral-900 rounded-lg hover:bg-neutral-100 cursor-pointer"
+                className="p-1.5 rounded-lg cursor-pointer"
+                style={{ color: 'var(--color-neutral-400)' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = 'var(--color-neutral-900)';
+                  e.currentTarget.style.backgroundColor = 'var(--color-neutral-100)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = 'var(--color-neutral-400)';
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             <div className="flex-1 overflow-y-auto p-5 space-y-4 overscroll-contain">
-              <div className="p-3 bg-neutral-50 rounded-lg border border-neutral-200 space-y-1 text-xs">
-                <span className="font-semibold text-neutral-700 block">
+              <div className="p-3 rounded-lg border space-y-1 caption" style={{ backgroundColor: 'var(--color-neutral-50)', borderColor: 'var(--color-neutral-200)' }}>
+                <span className="font-semibold block" style={{ color: 'var(--color-neutral-700)' }}>
                   {lang === 'ar' ? 'الملف الجاري تحليله:' : 'Current Trajectory:'}
                 </span>
-                <p className="text-neutral-600 font-mono text-[11px]">
+                <p className="font-mono" style={{ color: 'var(--color-neutral-600)', fontSize: '11px' }}>
                   {profile.targetRole || 'Software Engineer'} • {profile.dna?.currentLevel || 'Mid-Level'}
                 </p>
-                <p className="text-neutral-500 text-[11px]">
+                <p style={{ color: 'var(--color-neutral-500)', fontSize: '11px' }}>
                   {lang === 'ar' ? 'الثغرات المستهدفة للردم:' : 'Identified gaps to bridge:'}{' '}
                   {profile.dna?.weaknesses?.join(', ') || 'Systems Architecture, Database Pooling'}
                 </p>
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-neutral-700 block mb-1">
+                <label className="caption font-semibold block mb-1" style={{ color: 'var(--color-neutral-700)' }}>
                   {lang === 'ar'
                     ? 'مجال أو مهارة محددة ترغب في التركيز عليها (اختياري):'
                     : 'Specific focus area or skill to target (optional):'}
@@ -1079,16 +1181,19 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                       ? 'مثال: Large Language Models, System Design, Kubernetes DevOps'
                       : 'e.g. Distributed Consensus, LLM Agents, Next.js 15 Server Actions'
                   }
-                  className="w-full text-xs px-3 py-2 bg-neutral-50 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-900 focus:bg-white"
+                  className="input-base caption w-full px-3 py-2"
                 />
               </div>
             </div>
 
-            <div className="shrink-0 flex items-center justify-end gap-2 p-4 border-t border-neutral-100 bg-slate-50/70">
+            <div className="shrink-0 flex items-center justify-end gap-2 p-4 border-t" style={{ borderColor: 'var(--color-neutral-100)', backgroundColor: 'rgba(241, 245, 249, 0.7)' }}>
               <button
                 type="button"
                 onClick={() => setShowAIModal(false)}
-                className="px-3 py-1.5 text-xs text-neutral-600 hover:text-neutral-900 cursor-pointer"
+                className="px-3 py-1.5 caption cursor-pointer"
+                style={{ color: 'var(--color-neutral-600)' }}
+                onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-neutral-900)'}
+                onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-neutral-600)'}
               >
                 {lang === 'ar' ? 'إلغاء' : 'Cancel'}
               </button>
@@ -1096,10 +1201,10 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                 type="button"
                 onClick={handleRunAIGenerate}
                 disabled={isGeneratingAI}
-                className="px-4 py-2 bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-semibold rounded-lg flex items-center gap-1.5 shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
+                className="btn-primary px-4 py-2 caption font-semibold flex items-center gap-1.5 shadow-xs disabled:opacity-50 cursor-pointer"
               >
                 {isGeneratingAI && (
-                  <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <div className="w-3.5 h-3.5 rounded-full animate-spin" style={{ borderWidth: '2px', borderStyle: 'solid', borderColor: 'var(--color-neutral-50)', borderTopColor: 'transparent' }} />
                 )}
                 <span>
                   {isGeneratingAI
@@ -1118,18 +1223,18 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
 
       {/* Add Custom Course Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4" onClick={() => setShowAddModal(false)}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', backdropFilter: 'blur(4px)' }} onClick={() => setShowAddModal(false)}>
           <form
             onSubmit={handleCreateCustomCourse}
-            className="bg-white border border-neutral-200 rounded-2xl max-w-lg w-full shadow-2xl flex flex-col max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2.5rem)] overflow-hidden"
+            className="surface-elevated border-hairline rounded-2xl max-w-lg w-full shadow-2xl flex flex-col max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2.5rem)] overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-start justify-between p-5 border-b border-neutral-100 shrink-0 bg-white">
+            <div className="flex items-start justify-between p-5 border-b shrink-0" style={{ borderColor: 'var(--color-neutral-100)', backgroundColor: 'var(--color-surface)' }}>
               <div>
-                <h3 className="text-sm font-bold text-neutral-900">
+                <h3 className="body-sm font-bold" style={{ color: 'var(--color-neutral-900)' }}>
                   {lang === 'ar' ? 'إضافة كورس تدريبي جديد' : 'Add Custom Course'}
                 </h3>
-                <p className="text-xs text-neutral-500">
+                <p className="caption" style={{ color: 'var(--color-neutral-500)' }}>
                   {lang === 'ar'
                     ? 'أضف كورس قمت بالتسجيل فيه على أي منصة لتتبع مسارك واحتساب نقاطه.'
                     : 'Track any course you are taking externally on Coursera, Udemy, YouTube, etc.'}
@@ -1138,7 +1243,16 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
               <button
                 type="button"
                 onClick={() => setShowAddModal(false)}
-                className="p-1.5 text-neutral-400 hover:text-neutral-900 rounded-lg hover:bg-neutral-100 cursor-pointer"
+                className="p-1.5 rounded-lg cursor-pointer"
+                style={{ color: 'var(--color-neutral-400)' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = 'var(--color-neutral-900)';
+                  e.currentTarget.style.backgroundColor = 'var(--color-neutral-100)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = 'var(--color-neutral-400)';
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
               >
                 <X className="w-4 h-4" />
               </button>
@@ -1146,7 +1260,7 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
 
             <div className="flex-1 overflow-y-auto p-5 space-y-3 overscroll-contain">
               <div>
-                <label className="text-xs font-semibold text-neutral-700 block mb-1">
+                <label className="caption font-semibold block mb-1" style={{ color: 'var(--color-neutral-700)' }}>
                   {lang === 'ar' ? 'عنوان الكورس *' : 'Course Title *'}
                 </label>
                 <input
@@ -1155,13 +1269,13 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                   value={newCourse.title}
                   onChange={(e) => setNewCourse({ ...newCourse, title: e.target.value })}
                   placeholder="e.g. Complete System Design Interview Bootcamp"
-                  className="w-full text-xs px-3 py-2 bg-neutral-50 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-900 focus:bg-white"
+                  className="input-base caption w-full px-3 py-2"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-semibold text-neutral-700 block mb-1">
+                  <label className="caption font-semibold block mb-1" style={{ color: 'var(--color-neutral-700)' }}>
                     {lang === 'ar' ? 'المنصة / المزود *' : 'Platform / Provider *'}
                   </label>
                   <input
@@ -1170,17 +1284,17 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                     value={newCourse.provider}
                     onChange={(e) => setNewCourse({ ...newCourse, provider: e.target.value })}
                     placeholder="Coursera, Udemy, YouTube, MIT..."
-                    className="w-full text-xs px-3 py-2 bg-neutral-50 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-900 focus:bg-white"
+                    className="input-base caption w-full px-3 py-2"
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-neutral-700 block mb-1">
+                  <label className="caption font-semibold block mb-1" style={{ color: 'var(--color-neutral-700)' }}>
                     {lang === 'ar' ? 'المجال / التخصص' : 'Domain / Field'}
                   </label>
                   <select
                     value={newCourse.domain}
                     onChange={(e) => setNewCourse({ ...newCourse, domain: e.target.value })}
-                    className="w-full text-xs px-3 py-2 bg-neutral-50 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-900 focus:bg-white"
+                    className="input-base caption w-full px-3 py-2"
                   >
                     <option value="AI & Machine Learning">AI & Machine Learning</option>
                     <option value="Full-Stack Software Engineering">Full-Stack Software Engineering</option>
@@ -1194,13 +1308,13 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-semibold text-neutral-700 block mb-1">
+                  <label className="caption font-semibold block mb-1" style={{ color: 'var(--color-neutral-700)' }}>
                     {lang === 'ar' ? 'المستوى' : 'Level'}
                   </label>
                   <select
                     value={newCourse.level}
                     onChange={(e) => setNewCourse({ ...newCourse, level: e.target.value as any })}
-                    className="w-full text-xs px-3 py-2 bg-neutral-50 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-900 focus:bg-white"
+                    className="input-base caption w-full px-3 py-2"
                   >
                     <option value="Beginner">Beginner</option>
                     <option value="Intermediate">Intermediate</option>
@@ -1208,7 +1322,7 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-neutral-700 block mb-1">
+                  <label className="caption font-semibold block mb-1" style={{ color: 'var(--color-neutral-700)' }}>
                     {lang === 'ar' ? 'المدة التقديرية' : 'Duration'}
                   </label>
                   <input
@@ -1216,13 +1330,13 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                     value={newCourse.duration}
                     onChange={(e) => setNewCourse({ ...newCourse, duration: e.target.value })}
                     placeholder="12 hours / 3 weeks"
-                    className="w-full text-xs px-3 py-2 bg-neutral-50 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-900 focus:bg-white"
+                    className="input-base caption w-full px-3 py-2"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-neutral-700 block mb-1">
+                <label className="caption font-semibold block mb-1" style={{ color: 'var(--color-neutral-700)' }}>
                   {lang === 'ar' ? 'المهارات المكتسبة (مفصولة بفواصل)' : 'Skills Gained (comma-separated)'}
                 </label>
                 <input
@@ -1230,12 +1344,12 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                   value={newSkillsInput}
                   onChange={(e) => setNewSkillsInput(e.target.value)}
                   placeholder="e.g. Distributed Systems, Kafka, Go, Concurrency"
-                  className="w-full text-xs px-3 py-2 bg-neutral-50 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-900 focus:bg-white"
+                  className="input-base caption w-full px-3 py-2"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-neutral-700 block mb-1">
+                <label className="caption font-semibold block mb-1" style={{ color: 'var(--color-neutral-700)' }}>
                   {lang === 'ar' ? 'رابط الكورس' : 'Course URL'}
                 </label>
                 <input
@@ -1243,22 +1357,25 @@ export const CoursesView: React.FC<CoursesViewProps> = ({
                   value={newCourse.url}
                   onChange={(e) => setNewCourse({ ...newCourse, url: e.target.value })}
                   placeholder="https://..."
-                  className="w-full text-xs px-3 py-2 bg-neutral-50 border border-neutral-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-neutral-900 focus:bg-white font-mono"
+                  className="input-base caption w-full px-3 py-2 font-mono"
                 />
               </div>
             </div>
 
-            <div className="shrink-0 flex items-center justify-end gap-2 p-4 border-t border-neutral-100 bg-slate-50/70">
+            <div className="shrink-0 flex items-center justify-end gap-2 p-4 border-t" style={{ borderColor: 'var(--color-neutral-100)', backgroundColor: 'rgba(241, 245, 249, 0.7)' }}>
               <button
                 type="button"
                 onClick={() => setShowAddModal(false)}
-                className="px-3 py-1.5 text-xs text-neutral-600 hover:text-neutral-900 cursor-pointer"
+                className="px-3 py-1.5 caption cursor-pointer"
+                style={{ color: 'var(--color-neutral-600)' }}
+                onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-neutral-900)'}
+                onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-neutral-600)'}
               >
                 {lang === 'ar' ? 'إلغاء' : 'Cancel'}
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-semibold rounded-lg shadow-xs transition-colors cursor-pointer"
+                className="btn-primary px-4 py-2 caption font-semibold shadow-xs cursor-pointer"
               >
                 {lang === 'ar' ? 'حفظ الكورس' : 'Save Course'}
               </button>

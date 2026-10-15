@@ -107,15 +107,30 @@ export const MicroProjectsView: React.FC<MicroProjectsViewProps> = ({
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 bg-white border border-slate-200/80 rounded-2xl shadow-2xs">
+      <div
+        className="card-surface flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-2xl"
+        style={{
+          background: 'var(--surface)',
+          borderColor: 'var(--border)',
+        }}
+      >
         <div>
-          <div className="text-xs font-semibold text-blue-600 mb-1">
+          <div
+            className="text-label-caps mb-1"
+            style={{ color: 'var(--primary)' }}
+          >
             {isAr ? 'معمل المشاريع والأدلة العملية' : 'Practical Skill Evidence Lab'}
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+          <h1
+            className="text-headline-lg"
+            style={{ color: 'var(--on-surface)' }}
+          >
             {isAr ? 'المشاريع المصغرة وإثبات المهارات' : 'Micro-Projects & Skill Evidence'}
           </h1>
-          <p className="text-xs text-slate-500 mt-1">
+          <p
+            className="text-body-sm mt-1"
+            style={{ color: 'var(--on-surface-variant)' }}
+          >
             {isAr
               ? 'مشاريع عملية سريعة (ساعتان إلى 4 ساعات) لسد فجوات المهارات وإضافتها كأدلة مثبتة في سيرتك الذاتية'
               : 'Targeted practical challenges designed to prove competence and add verified credentials to your profile'}
@@ -123,8 +138,13 @@ export const MicroProjectsView: React.FC<MicroProjectsViewProps> = ({
         </div>
 
         <button
+          type="button"
           onClick={() => setShowGenerateModal(true)}
-          className="px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all shadow-sm inline-flex items-center gap-2 cursor-pointer"
+          className="btn-primary inline-flex items-center gap-2 cursor-pointer"
+          style={{
+            background: 'var(--primary)',
+            color: 'var(--on-primary)',
+          }}
         >
           <Sparkles className="w-3.5 h-3.5" />
           <span>{isAr ? 'توليد مشروع لمهارة جديدة' : 'Generate Project for Skill'}</span>
@@ -136,7 +156,10 @@ export const MicroProjectsView: React.FC<MicroProjectsViewProps> = ({
         {/* Left: Project Cards */}
         <div className="lg:col-span-5 space-y-3">
           <div className="flex items-center justify-between px-1">
-            <span className="text-xs font-bold text-slate-700">
+            <span
+              className="text-label-md"
+              style={{ color: 'var(--on-surface)' }}
+            >
               {isAr ? 'المشاريع المتاحة' : 'Available Challenges'} ({projects.length})
             </span>
           </div>
@@ -150,29 +173,45 @@ export const MicroProjectsView: React.FC<MicroProjectsViewProps> = ({
                   setActiveProject(proj);
                   onSelectProject(proj);
                 }}
-                className={`p-4 rounded-xl border cursor-pointer transition-all ${
-                  isSelected
-                    ? 'border-blue-600 bg-blue-50/40 shadow-xs'
-                    : 'border-slate-200 bg-white hover:border-slate-300'
-                }`}
+                className="card-surface p-4 rounded-xl cursor-pointer transition-all"
+                style={{
+                  background: isSelected ? 'var(--primary-container)' : 'var(--surface)',
+                  borderColor: isSelected ? 'var(--primary)' : 'var(--border)',
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                }}
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <span className="text-[10px] font-bold text-blue-600 uppercase tracking-wider block">
+                    <span
+                      className="text-label-caps block"
+                      style={{ color: 'var(--primary)' }}
+                    >
                       {proj.targetSkill} · {proj.difficulty}
                     </span>
-                    <h3 className="text-xs font-bold text-slate-900 mt-0.5 truncate">
+                    <h3
+                      className="text-body-md-bold mt-0.5 truncate"
+                      style={{ color: 'var(--on-surface)' }}
+                    >
                       {proj.title}
                     </h3>
                   </div>
                   <span
-                    className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold shrink-0 ${
-                      proj.status === 'evaluated'
-                        ? 'bg-emerald-100 text-emerald-800'
-                        : proj.status === 'in_progress'
-                        ? 'bg-amber-100 text-amber-800'
-                        : 'bg-slate-100 text-slate-700'
-                    }`}
+                    className="badge-pill shrink-0"
+                    style={{
+                      background:
+                        proj.status === 'evaluated'
+                          ? 'var(--success-container)'
+                          : proj.status === 'in_progress'
+                          ? 'var(--warning-container)'
+                          : 'var(--surface-variant)',
+                      color:
+                        proj.status === 'evaluated'
+                          ? 'var(--on-success-container)'
+                          : proj.status === 'in_progress'
+                          ? 'var(--on-warning-container)'
+                          : 'var(--on-surface-variant)',
+                    }}
                   >
                     {proj.status === 'evaluated'
                       ? `${proj.evaluation?.score}% ${isAr ? 'مثبت' : 'Verified'}`
@@ -182,16 +221,28 @@ export const MicroProjectsView: React.FC<MicroProjectsViewProps> = ({
                   </span>
                 </div>
 
-                <p className="text-[11px] text-slate-500 mt-2 line-clamp-2 leading-relaxed">
+                <p
+                  className="text-body-sm mt-2 line-clamp-2 leading-relaxed"
+                  style={{ color: 'var(--on-surface-variant)' }}
+                >
                   {proj.scenario}
                 </p>
 
-                <div className="mt-3 flex items-center justify-between pt-2 border-t border-slate-100 text-[11px] text-slate-400">
+                <div
+                  className="mt-3 flex items-center justify-between pt-2 text-body-sm border-hairline"
+                  style={{
+                    borderTopColor: 'var(--border)',
+                    color: 'var(--on-surface-variant)',
+                  }}
+                >
                   <span className="flex items-center gap-1">
                     <Clock className="w-3 h-3" />
                     <span>{proj.duration}</span>
                   </span>
-                  <span className="text-blue-600 font-bold flex items-center gap-1">
+                  <span
+                    className="text-label-md flex items-center gap-1"
+                    style={{ color: 'var(--primary)' }}
+                  >
                     <span>{isAr ? 'فتح المشروع' : 'Open Workspace'}</span>
                     <ChevronRight className="w-3 h-3 rtl:rotate-180" />
                   </span>
@@ -204,32 +255,79 @@ export const MicroProjectsView: React.FC<MicroProjectsViewProps> = ({
         {/* Right: Active Project Workspace */}
         <div className="lg:col-span-7 space-y-6">
           {activeProject ? (
-            <div className="p-6 bg-white border border-slate-200/80 rounded-2xl space-y-6 shadow-2xs">
+            <div
+              className="card-surface p-6 rounded-2xl space-y-6"
+              style={{
+                background: 'var(--surface)',
+                borderColor: 'var(--border)',
+              }}
+            >
               {/* Project Header */}
-              <div className="border-b border-slate-100 pb-4">
+              <div
+                className="border-hairline pb-4"
+                style={{ borderBottomColor: 'var(--border)' }}
+              >
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xs font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-800">
+                  <span
+                    className="badge-pill"
+                    style={{
+                      background: 'var(--primary-container)',
+                      color: 'var(--on-primary-container)',
+                    }}
+                  >
                     {activeProject.targetSkill}
                   </span>
-                  <span className="text-xs text-slate-400">· {activeProject.duration}</span>
+                  <span
+                    className="text-body-sm"
+                    style={{ color: 'var(--on-surface-variant)' }}
+                  >
+                    · {activeProject.duration}
+                  </span>
                 </div>
-                <h2 className="text-lg font-bold text-slate-900">{activeProject.title}</h2>
-                <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                <h2
+                  className="text-headline-md"
+                  style={{ color: 'var(--on-surface)' }}
+                >
+                  {activeProject.title}
+                </h2>
+                <p
+                  className="text-body-base mt-1 leading-relaxed"
+                  style={{ color: 'var(--on-surface-variant)' }}
+                >
                   {activeProject.objective}
                 </p>
               </div>
 
               {/* Scenario Context */}
-              <div className="p-4 bg-slate-50 border border-slate-200/70 rounded-xl space-y-1 text-xs">
-                <span className="font-bold text-slate-800 block">
+              <div
+                className="p-4 rounded-xl space-y-1 text-body-base"
+                style={{
+                  background: 'var(--surface-variant)',
+                  borderColor: 'var(--border)',
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                }}
+              >
+                <span
+                  className="text-label-md block"
+                  style={{ color: 'var(--on-surface)' }}
+                >
                   {isAr ? 'سيناريو العمل الواقعي:' : 'Real-World Workplace Scenario:'}
                 </span>
-                <p className="text-slate-600 leading-relaxed italic">{activeProject.scenario}</p>
+                <p
+                  className="leading-relaxed italic"
+                  style={{ color: 'var(--on-surface-variant)' }}
+                >
+                  {activeProject.scenario}
+                </p>
               </div>
 
               {/* Actionable Checklist Tasks */}
               <div className="space-y-3">
-                <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+                <h3
+                  className="text-label-caps"
+                  style={{ color: 'var(--on-surface)' }}
+                >
                   {isAr ? 'خطوات ومهام المشروع (Checklist):' : 'Project Tasks Checklist:'}
                 </h3>
                 <div className="space-y-2">
@@ -239,23 +337,35 @@ export const MicroProjectsView: React.FC<MicroProjectsViewProps> = ({
                       <div
                         key={task.id || idx}
                         onClick={() => toggleTask(task.id || `task-${idx}`)}
-                        className={`p-3.5 rounded-xl border text-xs cursor-pointer transition-all flex items-start gap-3 ${
-                          isDone
-                            ? 'bg-emerald-50/50 border-emerald-200 text-slate-500'
-                            : 'bg-white border-slate-200 hover:border-slate-300'
-                        }`}
+                        className="p-3.5 rounded-xl text-body-base cursor-pointer transition-all flex items-start gap-3"
+                        style={{
+                          background: isDone ? 'var(--success-container)' : 'var(--surface)',
+                          borderColor: isDone ? 'var(--success)' : 'var(--border)',
+                          borderWidth: '1px',
+                          borderStyle: 'solid',
+                          color: isDone ? 'var(--on-surface-variant)' : 'var(--on-surface)',
+                        }}
                       >
                         <div
-                          className={`w-4 h-4 rounded-md border flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
-                            isDone
-                              ? 'bg-emerald-600 border-emerald-600 text-white'
-                              : 'border-slate-300 bg-white'
-                          }`}
+                          className="w-4 h-4 rounded-md flex items-center justify-center shrink-0 mt-0.5 transition-colors"
+                          style={{
+                            background: isDone ? 'var(--success)' : 'var(--surface)',
+                            borderColor: isDone ? 'var(--success)' : 'var(--border)',
+                            borderWidth: '1px',
+                            borderStyle: 'solid',
+                            color: isDone ? 'var(--on-success)' : 'transparent',
+                          }}
                         >
                           {isDone && <Check className="w-3 h-3" />}
                         </div>
                         <div className="min-w-0">
-                          <h4 className={`font-bold ${isDone ? 'line-through text-slate-400' : 'text-slate-900'}`}>
+                          <h4
+                            className="text-label-md"
+                            style={{
+                              color: isDone ? 'var(--on-surface-variant)' : 'var(--on-surface)',
+                              textDecoration: isDone ? 'line-through' : 'none',
+                            }}
+                          >
                             {task.title}
                           </h4>
                         </div>
@@ -267,31 +377,76 @@ export const MicroProjectsView: React.FC<MicroProjectsViewProps> = ({
 
               {/* Evaluation Results if already evaluated */}
               {activeProject.evaluation ? (
-                <div className="p-5 bg-emerald-50/50 border border-emerald-200 rounded-xl space-y-3 text-xs">
+                <div
+                  className="p-5 rounded-xl space-y-3 text-body-base"
+                  style={{
+                    background: 'var(--success-container)',
+                    borderColor: 'var(--success)',
+                    borderWidth: '1px',
+                    borderStyle: 'solid',
+                  }}
+                >
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-emerald-900 text-sm">
+                    <span
+                      className="text-headline-sm"
+                      style={{ color: 'var(--on-success-container)' }}
+                    >
                       {isAr ? 'تم تقييم المشروع بنجاح' : 'Evaluation Complete'}
                     </span>
-                    <span className="font-mono font-bold text-sm bg-emerald-700 text-white px-3 py-0.5 rounded-full">
+                    <span
+                      className="badge-pill text-headline-sm"
+                      style={{
+                        background: 'var(--success)',
+                        color: 'var(--on-success)',
+                      }}
+                    >
                       {activeProject.evaluation.score}%
                     </span>
                   </div>
-                  <p className="text-slate-700 leading-relaxed italic">
+                  <p
+                    className="leading-relaxed italic"
+                    style={{ color: 'var(--on-success-container)' }}
+                  >
                     "{activeProject.evaluation.feedback}"
                   </p>
-                  <div className="pt-2 border-t border-emerald-200/60 text-emerald-800 font-semibold flex items-center gap-1.5">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <div
+                    className="pt-2 text-label-md flex items-center gap-1.5 border-hairline"
+                    style={{
+                      borderTopColor: 'var(--success)',
+                      color: 'var(--on-success-container)',
+                    }}
+                  >
+                    <CheckCircle2
+                      className="w-4 h-4"
+                      style={{ color: 'var(--success)' }}
+                    />
                     <span>{isAr ? 'تم حفظ النتيجة كدليل كفاءة في ملفك الشخصي' : 'Verified and added to Career DNA evidence!'}</span>
                   </div>
                 </div>
               ) : (
                 /* Submission Form */
-                <div className="p-5 bg-slate-50 border border-slate-200/80 rounded-xl space-y-3.5 text-xs">
+                <div
+                  className="p-5 rounded-xl space-y-3.5 text-body-base"
+                  style={{
+                    background: 'var(--surface-variant)',
+                    borderColor: 'var(--border)',
+                    borderWidth: '1px',
+                    borderStyle: 'solid',
+                  }}
+                >
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-slate-900">
+                    <span
+                      className="text-label-md"
+                      style={{ color: 'var(--on-surface)' }}
+                    >
                       {isAr ? 'تسليم المشروع للتقييم بالذكاء الاصطناعي:' : 'Submit Project for AI Evaluation:'}
                     </span>
-                    <span className="text-[11px] text-slate-400">STAR Evaluator</span>
+                    <span
+                      className="text-body-sm"
+                      style={{ color: 'var(--on-surface-variant)' }}
+                    >
+                      STAR Evaluator
+                    </span>
                   </div>
 
                   <textarea
@@ -303,7 +458,14 @@ export const MicroProjectsView: React.FC<MicroProjectsViewProps> = ({
                         ? 'اشرح باختصار كيف نفذت الخطوات والقرارات الهندسية التي اتخذتها...'
                         : 'Summarize your implementation, key technical tradeoffs, and results...'
                     }
-                    className="w-full text-xs p-3 border border-slate-300 rounded-xl bg-white outline-none focus:ring-2 focus:ring-blue-100"
+                    className="w-full text-body-base p-3 rounded-xl outline-none focus:ring-2"
+                    style={{
+                      background: 'var(--surface)',
+                      borderColor: 'var(--border)',
+                      borderWidth: '1px',
+                      borderStyle: 'solid',
+                      color: 'var(--on-surface)',
+                    }}
                   />
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -312,22 +474,41 @@ export const MicroProjectsView: React.FC<MicroProjectsViewProps> = ({
                       value={codeUrl}
                       onChange={(e) => setCodeUrl(e.target.value)}
                       placeholder={isAr ? 'رابط GitHub (اختياري)' : 'GitHub Repo URL (optional)'}
-                      className="text-xs p-2.5 border border-slate-300 rounded-xl bg-white outline-none"
+                      className="text-body-base p-2.5 rounded-xl outline-none"
+                      style={{
+                        background: 'var(--surface)',
+                        borderColor: 'var(--border)',
+                        borderWidth: '1px',
+                        borderStyle: 'solid',
+                        color: 'var(--on-surface)',
+                      }}
                     />
                     <input
                       type="url"
                       value={demoUrl}
                       onChange={(e) => setDemoUrl(e.target.value)}
                       placeholder={isAr ? 'رابط المعاينة المباشرة (اختياري)' : 'Live Demo URL (optional)'}
-                      className="text-xs p-2.5 border border-slate-300 rounded-xl bg-white outline-none"
+                      className="text-body-base p-2.5 rounded-xl outline-none"
+                      style={{
+                        background: 'var(--surface)',
+                        borderColor: 'var(--border)',
+                        borderWidth: '1px',
+                        borderStyle: 'solid',
+                        color: 'var(--on-surface)',
+                      }}
                     />
                   </div>
 
                   <div className="flex justify-end pt-2">
                     <button
+                      type="button"
                       onClick={handleSubmit}
                       disabled={isSubmitting || !submissionSummary.trim()}
-                      className="px-5 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all shadow-sm inline-flex items-center gap-2 cursor-pointer disabled:opacity-40"
+                      className="btn-primary inline-flex items-center gap-2 cursor-pointer disabled:opacity-40"
+                      style={{
+                        background: 'var(--primary)',
+                        color: 'var(--on-primary)',
+                      }}
                     >
                       <Send className="w-3.5 h-3.5" />
                       <span>{isSubmitting ? (isAr ? 'جاري التقييم...' : 'Evaluating...') : isAr ? 'تسليم وتقييم المشروع' : 'Submit & Evaluate'}</span>
@@ -337,7 +518,14 @@ export const MicroProjectsView: React.FC<MicroProjectsViewProps> = ({
               )}
             </div>
           ) : (
-            <div className="p-12 text-center text-xs text-slate-400 bg-white border border-slate-200 rounded-2xl">
+            <div
+              className="card-surface p-12 text-center text-body-base rounded-2xl"
+              style={{
+                background: 'var(--surface)',
+                borderColor: 'var(--border)',
+                color: 'var(--on-surface-variant)',
+              }}
+            >
               {isAr ? 'اختر مشروعاً من القائمة لبدء التطبيق' : 'Select a project from the left list.'}
             </div>
           )}
@@ -346,14 +534,37 @@ export const MicroProjectsView: React.FC<MicroProjectsViewProps> = ({
 
       {/* Generate Modal */}
       {showGenerateModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4" onClick={() => setShowGenerateModal(false)}>
-          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl flex flex-col max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2.5rem)] overflow-hidden" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4"
+          style={{
+            background: 'rgba(0, 0, 0, 0.5)',
+            backdropFilter: 'blur(8px)',
+          }}
+          onClick={() => setShowGenerateModal(false)}
+        >
+          <div
+            className="rounded-2xl max-w-md w-full flex flex-col max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2.5rem)] overflow-hidden"
+            style={{
+              background: 'var(--surface)',
+              boxShadow: 'var(--shadow-xl)',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
             {/* Header */}
-            <div className="p-5 border-b border-slate-100 shrink-0">
-              <h3 className="text-base font-bold text-slate-900">
+            <div
+              className="p-5 shrink-0 border-hairline"
+              style={{ borderBottomColor: 'var(--border)' }}
+            >
+              <h3
+                className="text-headline-md"
+                style={{ color: 'var(--on-surface)' }}
+              >
                 {isAr ? 'توليد مشروع عملي ذكي' : 'Generate Targeted Micro-Project'}
               </h3>
-              <p className="text-xs text-slate-500 mt-1">
+              <p
+                className="text-body-base mt-1"
+                style={{ color: 'var(--on-surface-variant)' }}
+              >
                 {isAr
                   ? 'اختر أو اكتب المهارة التي تريد إثباتها، وسيقوم الذكاء الاصطناعي ببناء سيناريو وتحدي عملي مخصص'
                   : 'Specify the skill you want to prove, and AI will architect a realistic project scenario.'}
@@ -363,19 +574,32 @@ export const MicroProjectsView: React.FC<MicroProjectsViewProps> = ({
             {/* Body */}
             <div className="flex-1 overflow-y-auto p-5 space-y-4">
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-700">
+                <label
+                  className="text-label-md"
+                  style={{ color: 'var(--on-surface)' }}
+                >
                   {isAr ? 'المهارة المستهدفة:' : 'Target Skill:'}
                 </label>
                 <input
                   type="text"
                   value={skillGapInput}
                   onChange={(e) => setSkillGapInput(e.target.value)}
-                  className="w-full text-xs p-3 border border-slate-300 rounded-xl outline-none"
+                  className="w-full text-body-base p-3 rounded-xl outline-none"
+                  style={{
+                    background: 'var(--surface)',
+                    borderColor: 'var(--border)',
+                    borderWidth: '1px',
+                    borderStyle: 'solid',
+                    color: 'var(--on-surface)',
+                  }}
                 />
               </div>
 
               <div className="space-y-1.5">
-                <span className="text-[11px] font-semibold text-slate-500">
+                <span
+                  className="text-label-sm"
+                  style={{ color: 'var(--on-surface-variant)' }}
+                >
                   {isAr ? 'اقتراحات سريعة بنقرة واحدة:' : 'Quick Suggestions:'}
                 </span>
                 <div className="flex flex-wrap gap-1.5">
@@ -384,7 +608,19 @@ export const MicroProjectsView: React.FC<MicroProjectsViewProps> = ({
                       key={i}
                       type="button"
                       onClick={() => setSkillGapInput(s)}
-                      className="text-[11px] px-2.5 py-1 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 rounded-lg text-slate-700 transition-colors cursor-pointer"
+                      className="text-body-sm px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                      style={{
+                        background: 'var(--surface-variant)',
+                        color: 'var(--on-surface-variant)',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'var(--primary-container)';
+                        e.currentTarget.style.color = 'var(--primary)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'var(--surface-variant)';
+                        e.currentTarget.style.color = 'var(--on-surface-variant)';
+                      }}
                     >
                       {s}
                     </button>
@@ -394,11 +630,20 @@ export const MicroProjectsView: React.FC<MicroProjectsViewProps> = ({
             </div>
 
             {/* Footer */}
-            <div className="shrink-0 p-4 border-t border-slate-100 bg-slate-50/70 flex items-center justify-end gap-2">
+            <div
+              className="shrink-0 p-4 flex items-center justify-end gap-2 border-hairline"
+              style={{
+                borderTopColor: 'var(--border)',
+                background: 'var(--surface-variant)',
+              }}
+            >
               <button
                 type="button"
                 onClick={() => setShowGenerateModal(false)}
-                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900 cursor-pointer"
+                className="btn-secondary cursor-pointer"
+                style={{
+                  color: 'var(--on-surface-variant)',
+                }}
               >
                 {isAr ? 'إلغاء' : 'Cancel'}
               </button>
@@ -406,7 +651,11 @@ export const MicroProjectsView: React.FC<MicroProjectsViewProps> = ({
                 type="button"
                 onClick={handleGenerate}
                 disabled={isGenerating || !skillGapInput.trim()}
-                className="px-5 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all shadow-sm inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                className="btn-primary inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                style={{
+                  background: 'var(--primary)',
+                  color: 'var(--on-primary)',
+                }}
               >
                 <Sparkles className={`w-3.5 h-3.5 ${isGenerating ? 'animate-spin' : ''}`} />
                 <span>{isGenerating ? (isAr ? 'جاري البناء...' : 'Architecting...') : isAr ? 'إنشاء المشروع' : 'Create Project'}</span>

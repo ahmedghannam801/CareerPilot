@@ -150,20 +150,20 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     <div className="space-y-6 max-w-5xl mx-auto pb-16">
       {/* New User — Onboarding Incomplete Banner */}
       {!profile.onboardingCompleted && (
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-6 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="rounded-2xl p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4" style={{ background: 'linear-gradient(135deg, var(--primary-container) 0%, var(--primary) 100%)', color: 'var(--on-primary-container)' }}>
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <Sparkles className="w-4 h-4" />
-              <span className="text-xs font-black uppercase tracking-wider opacity-80">
+              <span className="text-label-caps" style={{ opacity: 0.8 }}>
                 {isAr ? 'الإعداد الشخصي مطلوب' : 'Personal Setup Required'}
               </span>
             </div>
-            <h2 className="text-base font-bold">
+            <h2 className="text-headline-sm">
               {isAr
                 ? `مرحباً${firstName !== 'صديقي' ? ` ${firstName}` : ''}! أكمل إعدادك لتحصل على تجربة مخصصة.`
                 : `Welcome${firstName !== 'Friend' ? ` ${firstName}` : ''}! Complete your setup for a personalized workspace.`}
             </h2>
-            <p className="text-xs opacity-70">
+            <p className="text-body-sm" style={{ opacity: 0.7 }}>
               {isAr
                 ? 'يستغرق ذلك دقيقتين فقط. ستحصل على مسار مهني ومقترحات وظائف مخصصة لك.'
                 : 'Takes just 2 minutes. You\'ll get a personalized career path and job recommendations.'}
@@ -172,7 +172,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           <button
             type="button"
             onClick={() => onNavigate('career')}
-            className="shrink-0 px-5 py-2.5 bg-white text-blue-700 font-bold text-xs rounded-xl hover:bg-blue-50 transition-colors"
+            className="btn-secondary shrink-0"
           >
             {isAr ? 'ابدأ الإعداد' : 'Complete Setup'}
           </button>
@@ -181,42 +181,41 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       {/* A. Personal Greeting */}
       <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 pt-1">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-[#0B1F3A] tracking-tight">
+          <h1 className="text-display-hero-mobile sm:text-display-hero" style={{ color: 'var(--on-surface)' }}>
             {isAr
               ? `لنمضِ بمسارك المهني خطوة للأمام، يا ${firstName}.`
               : `Let's move your career forward, ${firstName}.`}
           </h1>
-          <p className="text-xs sm:text-sm text-[#64748B] mt-1">
+          <p className="text-body-base sm:text-title-base" style={{ color: 'var(--on-surface-variant)', marginTop: '0.25rem' }}>
             {isAr
               ? `أنت في مسار تحقيق هدفك: ${targetRole}. كل خطوة تخطوها اليوم تقربك من العرض الوظيفي.`
               : `Tracking your goal for ${targetRole}. Every focused action moves you closer to placement.`}
           </p>
         </div>
 
-        <div className="flex items-center gap-2 text-xs font-semibold text-[#64748B] shrink-0">
-          <Clock className="w-3.5 h-3.5 text-[#2563EB]" />
+        <div className="flex items-center gap-2 text-body-strong shrink-0" style={{ color: 'var(--on-surface-variant)' }}>
+          <Clock className="w-3.5 h-3.5" style={{ color: 'var(--primary)' }} />
           <span>{isAr ? 'اليوم: خطوة ذات أولوية' : 'Today: One High-Impact Move'}</span>
         </div>
       </div>
 
       {/* Three Authentic Scores & Profile Completion Indicator (Strictly Zero Hallucination) */}
-      <div className="bg-white border border-[#E4EAF2] rounded-2xl p-5 sm:p-6 shadow-xs space-y-5">
+      <div className="card-surface space-y-5">
         {/* Profile Completion Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#EDF2F7]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-hairline" style={{ borderColor: 'var(--outline-variant)' }}>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-[#0B1F3A]">
+              <span className="text-label-strong" style={{ color: 'var(--on-surface)' }}>
                 {isAr ? 'اكتمال الملف المهني' : 'Profile Completion'}
               </span>
-              <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
-                profileCompletion === 100
-                  ? 'bg-emerald-50 text-emerald-700'
-                  : 'bg-blue-50 text-blue-700'
-              }`}>
+              <span className="badge-pill" style={{
+                backgroundColor: profileCompletion === 100 ? 'var(--success-container)' : 'var(--primary-container)',
+                color: profileCompletion === 100 ? 'var(--on-success-container)' : 'var(--on-primary-container)'
+              }}>
                 {profileCompletion}%
               </span>
             </div>
-            <p className="text-[11.5px] text-[#64748B] mt-0.5">
+            <p className="text-body-xs" style={{ color: 'var(--on-surface-variant)', marginTop: '0.125rem' }}>
               {profileCompletion === 100
                 ? (isAr ? 'ملفك مكتمل ومستعد لمطابقة الوظائف بدقة.' : 'Your profile is complete for high-accuracy job matching.')
                 : (isAr ? 'أكمل معلوماتك المهنية لحساب نقاط الجاهزية بدقة متناهية.' : 'Complete your verified details to compute precision career readiness.')}
@@ -224,17 +223,18 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="w-32 sm:w-44 bg-slate-100 rounded-full h-2 overflow-hidden">
+            <div className="w-32 sm:w-44 rounded-full h-2 overflow-hidden" style={{ backgroundColor: 'var(--surface-container-highest)' }}>
               <div
-                className="bg-[#2563EB] h-2 rounded-full transition-all duration-500"
-                style={{ width: `${profileCompletion}%` }}
+                className="h-2 rounded-full transition-all duration-500"
+                style={{ width: `${profileCompletion}%`, backgroundColor: 'var(--primary)' }}
               />
             </div>
             {profileCompletion < 100 && (
               <button
                 type="button"
                 onClick={() => onNavigate('career')}
-                className="text-xs font-bold text-[#2563EB] hover:underline cursor-pointer shrink-0"
+                className="text-label-strong shrink-0 hover:underline cursor-pointer"
+                style={{ color: 'var(--primary)' }}
               >
                 {isAr ? 'إكمال الملف' : 'Update Profile'}
               </button>
@@ -245,27 +245,28 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         {/* 3 Distinct Assessment Types */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Pillar 1: CV Quality Score */}
-          <div className="p-4 rounded-xl border border-[#E4EAF2] bg-[#FAFBFC] flex flex-col justify-between">
+          <div className="surface-elevated p-4 flex flex-col justify-between">
             <div>
-              <div className="flex items-center justify-between text-xs font-bold text-[#64748B] mb-2">
+              <div className="flex items-center justify-between text-label-strong mb-2" style={{ color: 'var(--on-surface-variant)' }}>
                 <span className="flex items-center gap-1.5">
-                  <FileText className="w-3.5 h-3.5 text-[#2563EB]" />
+                  <FileText className="w-3.5 h-3.5" style={{ color: 'var(--primary)' }} />
                   {isAr ? 'جودة السيرة الذاتية (CV)' : 'CV Quality Score'}
                 </span>
-                <span className="text-[10px] text-[#94A3B8]">ATS Audit</span>
+                <span className="text-label-xs" style={{ color: 'var(--on-surface-variant)', opacity: 0.7 }}>ATS Audit</span>
               </div>
 
               {bestATS !== null ? (
                 <div>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-black text-[#0B1F3A]">{bestATS}%</span>
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                      bestATS >= 80 ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'
-                    }`}>
+                    <span className="text-display-lg" style={{ color: 'var(--on-surface)' }}>{bestATS}%</span>
+                    <span className="badge-pill" style={{
+                      backgroundColor: bestATS >= 80 ? 'var(--success-container)' : 'var(--warning-container)',
+                      color: bestATS >= 80 ? 'var(--on-success-container)' : 'var(--on-warning-container)'
+                    }}>
                       {bestATS >= 80 ? (isAr ? 'ممتاز' : 'Optimized') : (isAr ? 'بحاجة لتحسين' : 'Needs Review')}
                     </span>
                   </div>
-                  <p className="text-[11px] text-[#64748B] mt-1">
+                  <p className="text-body-xs" style={{ color: 'var(--on-surface-variant)', marginTop: '0.25rem' }}>
                     {isAr
                       ? 'مبني على تدقيق 5 محاور: البنية، التأثير، الكلمات المفتاحية، المهارات، والصياغة.'
                       : 'Audited across 5 pillars: Structure, Impact, Keywords, Skills, and Readability.'}
@@ -273,10 +274,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 </div>
               ) : (
                 <div>
-                  <div className="text-sm font-bold text-[#64748B]">
+                  <div className="text-title-sm" style={{ color: 'var(--on-surface-variant)' }}>
                     {resumes.length > 0 ? (isAr ? 'في انتظار التحليل' : 'Pending Analysis') : (isAr ? 'لم تُرفع سيرة بعد' : 'No CV Uploaded')}
                   </div>
-                  <p className="text-[11px] text-[#94A3B8] mt-1">
+                  <p className="text-body-xs" style={{ color: 'var(--on-surface-variant)', opacity: 0.7, marginTop: '0.25rem' }}>
                     {isAr
                       ? 'ارفع أو أنشئ سيرتك الذاتية لتحليلها وحساب تقييم الـ ATS الحقيقي.'
                       : 'Upload and analyze your CV to get your score.'}
@@ -285,12 +286,15 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               )}
             </div>
 
-            <div className="mt-4 pt-3 border-t border-[#EDF2F7]">
+            <div className="border-hairline" style={{ marginTop: '1rem', paddingTop: '0.75rem', borderColor: 'var(--outline-variant)' }}>
               {bestATS !== null ? (
                 <button
                   type="button"
                   onClick={() => onNavigate('cv')}
-                  className="w-full py-1.5 text-xs font-bold text-[#2563EB] hover:bg-[#EEF4FF] rounded-lg transition-colors cursor-pointer text-center"
+                  className="w-full py-1.5 text-label-strong rounded-lg transition-colors cursor-pointer text-center"
+                  style={{ color: 'var(--primary)', backgroundColor: 'transparent' }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--primary-container)'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                 >
                   {isAr ? 'مراجعة الملاحظات والتحسينات' : 'Review Suggestions & Studio'}
                 </button>
@@ -299,7 +303,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   <button
                     type="button"
                     onClick={() => onNavigate('cv')}
-                    className="flex-1 py-1.5 bg-[#2563EB] text-white text-xs font-bold rounded-lg hover:bg-[#1D4ED8] transition-colors cursor-pointer flex items-center justify-center gap-1 shadow-xs"
+                    className="btn-primary flex-1 flex items-center justify-center gap-1"
                   >
                     <Upload className="w-3 h-3" />
                     <span>{isAr ? 'رفع سيرة' : 'Upload CV'}</span>
@@ -307,7 +311,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   <button
                     type="button"
                     onClick={() => onNavigate('cv')}
-                    className="flex-1 py-1.5 bg-white border border-[#E4EAF2] text-[#0B1F3A] text-xs font-bold rounded-lg hover:bg-slate-50 transition-colors cursor-pointer flex items-center justify-center gap-1"
+                    className="btn-secondary flex-1 flex items-center justify-center gap-1"
                   >
                     <Plus className="w-3 h-3" />
                     <span>{isAr ? 'إنشاء سيرة' : 'Create CV'}</span>
@@ -318,25 +322,28 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
 
           {/* Pillar 2: Career Readiness Score */}
-          <div className="p-4 rounded-xl border border-[#E4EAF2] bg-[#FAFBFC] flex flex-col justify-between">
+          <div className="surface-elevated p-4 flex flex-col justify-between">
             <div>
-              <div className="flex items-center justify-between text-xs font-bold text-[#64748B] mb-2">
+              <div className="flex items-center justify-between text-label-strong mb-2" style={{ color: 'var(--on-surface-variant)' }}>
                 <span className="flex items-center gap-1.5">
-                  <TrendingUp className="w-3.5 h-3.5 text-[#1683F8]" />
+                  <TrendingUp className="w-3.5 h-3.5" style={{ color: 'var(--tertiary)' }} />
                   {isAr ? 'جاهزية المسار المهني' : 'Career Readiness'}
                 </span>
-                <span className="text-[10px] text-[#94A3B8]">Overall</span>
+                <span className="text-label-xs" style={{ color: 'var(--on-surface-variant)', opacity: 0.7 }}>Overall</span>
               </div>
 
               {readinessScore > 0 ? (
                 <div>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-black text-[#0B1F3A]">{readinessScore}%</span>
-                    <span className="text-[10px] font-bold bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">
+                    <span className="text-display-lg" style={{ color: 'var(--on-surface)' }}>{readinessScore}%</span>
+                    <span className="badge-pill" style={{
+                      backgroundColor: 'var(--tertiary-container)',
+                      color: 'var(--on-tertiary-container)'
+                    }}>
                       {targetRole}
                     </span>
                   </div>
-                  <p className="text-[11px] text-[#64748B] mt-1">
+                  <p className="text-body-xs" style={{ color: 'var(--on-surface-variant)', marginTop: '0.25rem' }}>
                     {isAr
                       ? 'تقييم شامل يجمع المهارات الموثقة، المشاريع المنجزة، والخبرات المؤكدة.'
                       : 'Comprehensive rating combining verified skills, projects, and interview readiness.'}
@@ -344,8 +351,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 </div>
               ) : (
                 <div>
-                  <div className="text-sm font-bold text-[#64748B]">0%</div>
-                  <p className="text-[11px] text-[#94A3B8] mt-1">
+                  <div className="text-title-sm" style={{ color: 'var(--on-surface-variant)' }}>0%</div>
+                  <p className="text-body-xs" style={{ color: 'var(--on-surface-variant)', opacity: 0.7, marginTop: '0.25rem' }}>
                     {isAr
                       ? 'أكمل إعداد ملفك وأنجز مشروعاً عملياً لتفعيل مؤشر الجاهزية المهنية.'
                       : 'Complete your profile and evidence to calculate readiness.'}
@@ -354,11 +361,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               )}
             </div>
 
-            <div className="mt-4 pt-3 border-t border-[#EDF2F7]">
+            <div className="border-hairline" style={{ marginTop: '1rem', paddingTop: '0.75rem', borderColor: 'var(--outline-variant)' }}>
               <button
                 type="button"
                 onClick={() => onNavigate('career')}
-                className="w-full py-1.5 text-xs font-bold text-[#2563EB] hover:bg-[#EEF4FF] rounded-lg transition-colors cursor-pointer text-center"
+                className="w-full py-1.5 text-label-strong rounded-lg transition-colors cursor-pointer text-center"
+                style={{ color: 'var(--primary)', backgroundColor: 'transparent' }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--primary-container)'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
               >
                 {isAr ? 'عرض تفاصيل الجاهزية' : 'View Readiness Breakdown'}
               </button>

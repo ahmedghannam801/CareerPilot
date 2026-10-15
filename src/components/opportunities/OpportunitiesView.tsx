@@ -249,194 +249,299 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 bg-white border border-neutral-200 rounded-xl">
-        <div>
-          <div className="text-xs text-neutral-500 mb-1">
-            {lang === 'ar' ? 'سوق الفرص والذكاء التنافسي' : 'Opportunity Discovery & Live Feeds'}
+      <div className="surface-elevated border-hairline rounded-xl" style={{ padding: 'var(--space-6)' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+          <div>
+            <div className="label-xs" style={{ marginBottom: 'var(--space-1)', color: 'var(--text-secondary)' }}>
+              {lang === 'ar' ? 'سوق الفرص والذكاء التنافسي' : 'Opportunity Discovery & Live Feeds'}
+            </div>
+            <h1 className="heading-2xl" style={{ color: 'var(--text-primary)' }}>
+              {lang === 'ar' ? 'الفرص والوظائف والتدريب' : 'Jobs & Internships Hub'}
+            </h1>
+            <p className="body-xs" style={{ marginTop: 'var(--space-1)', color: 'var(--text-secondary)' }}>
+              {lang === 'ar'
+                ? 'مزامنة حية مع LinkedIn وWuzzuf ومنصات التوظيف مع إمكانية التقديم الفوري وإنشاء سيرة ذاتية مخصصة لكل فرصة'
+                : 'Live sync with LinkedIn, Wuzzuf & hiring portals with direct apply & tailored CV generation for every role'}
+            </p>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-neutral-900">
-            {lang === 'ar' ? 'الفرص والوظائف والتدريب' : 'Jobs & Internships Hub'}
-          </h1>
-          <p className="text-xs text-neutral-600 mt-1">
-            {lang === 'ar'
-              ? 'مزامنة حية مع LinkedIn وWuzzuf ومنصات التوظيف مع إمكانية التقديم الفوري وإنشاء سيرة ذاتية مخصصة لكل فرصة'
-              : 'Live sync with LinkedIn, Wuzzuf & hiring portals with direct apply & tailored CV generation for every role'}
-          </p>
-        </div>
 
-        <div className="flex items-center gap-2.5 flex-wrap">
-          {/* Platform Status Button */}
-          <button
-            onClick={handleOpenPlatformsModal}
-            className="px-3 py-2 text-xs font-medium text-neutral-700 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors inline-flex items-center gap-1.5"
-          >
-            <Globe className="w-3.5 h-3.5 text-neutral-600" />
-            <span>{lang === 'ar' ? 'حالة المنصات' : 'Platforms Status'}</span>
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2-5)', flexWrap: 'wrap' }}>
+            {/* Platform Status Button */}
+            <button
+              onClick={handleOpenPlatformsModal}
+              className="btn-secondary"
+              style={{
+                padding: 'var(--space-2) var(--space-3)',
+                fontSize: 'var(--font-size-xs)',
+                fontWeight: 500,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 'var(--space-1-5)'
+              }}
+            >
+              <Globe style={{ width: '14px', height: '14px', color: 'var(--text-secondary)' }} />
+              <span>{lang === 'ar' ? 'حالة المنصات' : 'Platforms Status'}</span>
+            </button>
 
-          {/* Sync Feeds CTA Button */}
-          <button
-            onClick={handleSyncFeeds}
-            disabled={isSyncingFeeds}
-            className="px-3.5 py-2 text-xs font-medium text-white bg-neutral-900 hover:bg-neutral-800 rounded-lg transition-colors inline-flex items-center gap-1.5 disabled:opacity-50"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 ${isSyncingFeeds ? 'animate-spin' : ''}`} />
-            <span>
-              {isSyncingFeeds
-                ? lang === 'ar'
-                  ? 'جاري المزامنة مع المنصات...'
-                  : 'Syncing Live Feeds...'
-                : lang === 'ar'
-                ? 'مزامنة مع منصات التوظيف (JSearch & LinkedIn)'
-                : 'Sync Jobs & Internships'}
-            </span>
-          </button>
+            {/* Sync Feeds CTA Button */}
+            <button
+              onClick={handleSyncFeeds}
+              disabled={isSyncingFeeds}
+              className="btn-primary"
+              style={{
+                padding: 'var(--space-2) var(--space-3-5)',
+                fontSize: 'var(--font-size-xs)',
+                fontWeight: 500,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 'var(--space-1-5)'
+              }}
+            >
+              <RefreshCw style={{ width: '14px', height: '14px' }} className={isSyncingFeeds ? 'animate-spin' : ''} />
+              <span>
+                {isSyncingFeeds
+                  ? lang === 'ar'
+                    ? 'جاري المزامنة مع المنصات...'
+                    : 'Syncing Live Feeds...'
+                  : lang === 'ar'
+                  ? 'مزامنة مع منصات التوظيف (JSearch & LinkedIn)'
+                  : 'Sync Jobs & Internships'}
+              </span>
+            </button>
 
-          {/* Add Opportunity / Parse JD */}
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="px-3.5 py-2 text-xs font-medium text-neutral-900 bg-white border border-neutral-300 hover:bg-neutral-50 rounded-lg transition-colors inline-flex items-center gap-1.5"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            <span>{lang === 'ar' ? 'إضافة فرصة / لصق JD' : 'Add Opportunity / Paste JD'}</span>
-          </button>
+            {/* Add Opportunity / Parse JD */}
+            <button
+              onClick={() => setShowAddModal(true)}
+              className="btn-secondary"
+              style={{
+                padding: 'var(--space-2) var(--space-3-5)',
+                fontSize: 'var(--font-size-xs)',
+                fontWeight: 500,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 'var(--space-1-5)'
+              }}
+            >
+              <Plus style={{ width: '14px', height: '14px' }} />
+              <span>{lang === 'ar' ? 'إضافة فرصة / لصق JD' : 'Add Opportunity / Paste JD'}</span>
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Sync Status Toast/Banner */}
       {syncStatusMsg && (
-        <div className="p-3 bg-neutral-900 text-white rounded-lg text-xs flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+        <div className="surface-elevated" style={{
+          padding: 'var(--space-3)',
+          backgroundColor: 'var(--accent-primary)',
+          color: 'var(--text-inverse)',
+          borderRadius: 'var(--radius-lg)',
+          fontSize: 'var(--font-size-xs)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+            <CheckCircle2 style={{ width: '16px', height: '16px', color: '#10b981' }} />
             <span>{syncStatusMsg}</span>
           </div>
-          <button onClick={() => setSyncStatusMsg(null)} className="text-neutral-400 hover:text-white">
-            <X className="w-3.5 h-3.5" />
+          <button onClick={() => setSyncStatusMsg(null)} style={{ color: 'rgba(255, 255, 255, 0.7)' }} className="icon-button">
+            <X style={{ width: '14px', height: '14px' }} />
           </button>
         </div>
       )}
 
-      {/* ADVANCED MULTI-DIMENSIONAL FILTER TOOLBAR (الفلتر الشامل) */}
-      <div className="p-4 bg-white border border-neutral-200 rounded-xl space-y-3.5 text-xs">
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2 font-semibold text-neutral-900">
-            <SlidersHorizontal className="w-4 h-4 text-neutral-700" />
-            <span>{lang === 'ar' ? 'فلتر وتصفية الوظائف والتدريب' : 'Filter & Refine Opportunities'}</span>
-            <span className="text-neutral-400 font-mono tabular-nums text-[11px] font-normal">
-              ({filteredOpps.length} of {opportunities.length})
-            </span>
+      {/* ADVANCED MULTI-DIMENSIONAL FILTER TOOLBAR */}
+      <div className="surface-elevated border-hairline rounded-xl" style={{ padding: 'var(--space-4)' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3-5)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 'var(--space-4)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', fontWeight: 600, color: 'var(--text-primary)', fontSize: 'var(--font-size-xs)' }}>
+              <SlidersHorizontal style={{ width: '16px', height: '16px', color: 'var(--text-secondary)' }} />
+              <span>{lang === 'ar' ? 'فلتر وتصفية الوظائف والتدريب' : 'Filter & Refine Opportunities'}</span>
+              <span style={{
+                color: 'var(--text-tertiary)',
+                fontFamily: 'var(--font-mono)',
+                fontSize: '11px',
+                fontWeight: 'normal'
+              }}>
+                ({filteredOpps.length} of {opportunities.length})
+              </span>
+            </div>
+
+            {hasActiveFilters && (
+              <button
+                onClick={handleResetFilters}
+                className="link-button"
+                style={{
+                  fontSize: 'var(--font-size-xs)',
+                  fontWeight: 500,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 'var(--space-1)'
+                }}
+              >
+                <X style={{ width: '12px', height: '12px' }} />
+                <span>{lang === 'ar' ? 'إعادة ضبط الفلتر' : 'Reset Filters'}</span>
+              </button>
+            )}
           </div>
 
-          {hasActiveFilters && (
-            <button
-              onClick={handleResetFilters}
-              className="text-xs text-neutral-600 hover:text-neutral-900 font-medium underline flex items-center gap-1"
-            >
-              <X className="w-3 h-3" />
-              <span>{lang === 'ar' ? 'إعادة ضبط الفلتر' : 'Reset Filters'}</span>
-            </button>
-          )}
-        </div>
+          {/* Filter Inputs Grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 'var(--space-3)' }}>
+            {/* 1. Keyword Search */}
+            <div style={{ position: 'relative' }}>
+              <Search style={{
+                width: '14px',
+                height: '14px',
+                position: 'absolute',
+                left: 'var(--space-3)',
+                top: '10px',
+                color: 'var(--text-tertiary)'
+              }} />
+              <input
+                type="text"
+                placeholder={lang === 'ar' ? 'بحث بالمسمى أو الشركة أو المهارة...' : 'Search title, company, skill...'}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="input-field"
+                style={{
+                  width: '100%',
+                  fontSize: 'var(--font-size-xs)',
+                  paddingLeft: 'var(--space-8)',
+                  paddingRight: 'var(--space-3)',
+                  paddingTop: 'var(--space-2)',
+                  paddingBottom: 'var(--space-2)'
+                }}
+              />
+            </div>
 
-        {/* Filter Inputs Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
-          {/* 1. Keyword Search */}
-          <div className="relative">
-            <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-neutral-400" />
-            <input
-              type="text"
-              placeholder={lang === 'ar' ? 'بحث بالمسمى أو الشركة أو المهارة...' : 'Search title, company, skill...'}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full text-xs pl-8 pr-3 py-2 border border-neutral-200 rounded-lg bg-neutral-50/50 outline-none focus:ring-1 focus:ring-neutral-900"
-            />
-          </div>
+            {/* 2. Employment Type Filter */}
+            <div>
+              <select
+                value={filterEmploymentType}
+                onChange={(e) => setFilterEmploymentType(e.target.value)}
+                className="input-field"
+                style={{
+                  width: '100%',
+                  fontSize: 'var(--font-size-xs)',
+                  padding: 'var(--space-2)',
+                  fontWeight: 600,
+                  color: 'var(--text-primary)'
+                }}
+              >
+                <option value="ALL">{lang === 'ar' ? 'النوع: الكل (وظائف وتدريب)' : 'Type: All (Jobs & Internships)'}</option>
+                <option value="Full-time">{lang === 'ar' ? '💼 وظائف بدوام كامل' : '💼 Full-time Jobs'}</option>
+                <option value="Internship">{lang === 'ar' ? '🎓 فرص تدريب وتأهيل' : '🎓 Internships'}</option>
+                <option value="Contract">{lang === 'ar' ? '📄 تعاقد وعمل حر' : '📄 Contract'}</option>
+                <option value="Part-time">{lang === 'ar' ? '⏱️ دوام جزئي' : '⏱️ Part-time'}</option>
+              </select>
+            </div>
 
-          {/* 2. Employment Type Filter (وظيفة / تدريب) */}
-          <div>
-            <select
-              value={filterEmploymentType}
-              onChange={(e) => setFilterEmploymentType(e.target.value)}
-              className="w-full text-xs p-2 border border-neutral-200 rounded-lg bg-neutral-50/50 outline-none font-semibold text-neutral-800"
-            >
-              <option value="ALL">{lang === 'ar' ? 'النوع: الكل (وظائف وتدريب)' : 'Type: All (Jobs & Internships)'}</option>
-              <option value="Full-time">{lang === 'ar' ? '💼 وظائف بدوام كامل' : '💼 Full-time Jobs'}</option>
-              <option value="Internship">{lang === 'ar' ? '🎓 فرص تدريب وتأهيل' : '🎓 Internships'}</option>
-              <option value="Contract">{lang === 'ar' ? '📄 تعاقد وعمل حر' : '📄 Contract'}</option>
-              <option value="Part-time">{lang === 'ar' ? '⏱️ دوام جزئي' : '⏱️ Part-time'}</option>
-            </select>
-          </div>
+            {/* 3. Work Model Filter */}
+            <div>
+              <select
+                value={filterWorkModel}
+                onChange={(e) => setFilterWorkModel(e.target.value as any)}
+                className="input-field"
+                style={{
+                  width: '100%',
+                  fontSize: 'var(--font-size-xs)',
+                  padding: 'var(--space-2)'
+                }}
+              >
+                <option value="ALL">{lang === 'ar' ? 'طبيعة العمل: الكل' : 'Work Model: All'}</option>
+                <option value="Remote">{lang === 'ar' ? 'عن بُعد (Remote)' : 'Remote Only'}</option>
+                <option value="Hybrid">{lang === 'ar' ? 'هجين (Hybrid)' : 'Hybrid'}</option>
+                <option value="On-site">{lang === 'ar' ? 'مقر العمل (On-site)' : 'On-site'}</option>
+              </select>
+            </div>
 
-          {/* 3. Work Model Filter */}
-          <div>
-            <select
-              value={filterWorkModel}
-              onChange={(e) => setFilterWorkModel(e.target.value as any)}
-              className="w-full text-xs p-2 border border-neutral-200 rounded-lg bg-neutral-50/50 outline-none"
-            >
-              <option value="ALL">{lang === 'ar' ? 'طبيعة العمل: الكل' : 'Work Model: All'}</option>
-              <option value="Remote">{lang === 'ar' ? 'عن بُعد (Remote)' : 'Remote Only'}</option>
-              <option value="Hybrid">{lang === 'ar' ? 'هجين (Hybrid)' : 'Hybrid'}</option>
-              <option value="On-site">{lang === 'ar' ? 'مقر العمل (On-site)' : 'On-site'}</option>
-            </select>
-          </div>
+            {/* 4. Source Platform Filter */}
+            <div>
+              <select
+                value={filterPlatform}
+                onChange={(e) => setFilterPlatform(e.target.value)}
+                className="input-field"
+                style={{
+                  width: '100%',
+                  fontSize: 'var(--font-size-xs)',
+                  padding: 'var(--space-2)'
+                }}
+              >
+                <option value="ALL">{lang === 'ar' ? 'المنصة: الكل' : 'Source: All'}</option>
+                <option value="LinkedIn">LinkedIn</option>
+                <option value="Wuzzuf">Wuzzuf</option>
+                <option value="JSearch">JSearch Feed</option>
+                <option value="RemoteOK">RemoteOK</option>
+                <option value="Direct">Direct / Other</option>
+              </select>
+            </div>
 
-          {/* 4. Source Platform Filter */}
-          <div>
-            <select
-              value={filterPlatform}
-              onChange={(e) => setFilterPlatform(e.target.value)}
-              className="w-full text-xs p-2 border border-neutral-200 rounded-lg bg-neutral-50/50 outline-none"
-            >
-              <option value="ALL">{lang === 'ar' ? 'المنصة: الكل' : 'Source: All'}</option>
-              <option value="LinkedIn">LinkedIn</option>
-              <option value="Wuzzuf">Wuzzuf</option>
-              <option value="JSearch">JSearch Feed</option>
-              <option value="RemoteOK">RemoteOK</option>
-              <option value="Direct">Direct / Other</option>
-            </select>
-          </div>
+            {/* 5. Match Score Threshold */}
+            <div>
+              <select
+                value={filterMatchScore}
+                onChange={(e) => setFilterMatchScore(e.target.value as any)}
+                className="input-field"
+                style={{
+                  width: '100%',
+                  fontSize: 'var(--font-size-xs)',
+                  padding: 'var(--space-2)'
+                }}
+              >
+                <option value="ALL">{lang === 'ar' ? 'درجة التوافق: الكل' : 'Match Score: All'}</option>
+                <option value="80">{lang === 'ar' ? '80%+ توافق عالي' : '80%+ High Fit'}</option>
+                <option value="60">{lang === 'ar' ? '60%+ توافق جيد' : '60%+ Solid Fit'}</option>
+                <option value="40">{lang === 'ar' ? '40%+ توافق مقبول' : '40%+ Moderate Fit'}</option>
+              </select>
+            </div>
 
-          {/* 5. Match Score Threshold */}
-          <div>
-            <select
-              value={filterMatchScore}
-              onChange={(e) => setFilterMatchScore(e.target.value as any)}
-              className="w-full text-xs p-2 border border-neutral-200 rounded-lg bg-neutral-50/50 outline-none"
-            >
-              <option value="ALL">{lang === 'ar' ? 'درجة التوافق: الكل' : 'Match Score: All'}</option>
-              <option value="80">{lang === 'ar' ? '80%+ توافق عالي' : '80%+ High Fit'}</option>
-              <option value="60">{lang === 'ar' ? '60%+ توافق جيد' : '60%+ Solid Fit'}</option>
-              <option value="40">{lang === 'ar' ? '40%+ توافق مقبول' : '40%+ Moderate Fit'}</option>
-            </select>
-          </div>
-
-          {/* 6. Sort By */}
-          <div>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
-              className="w-full text-xs p-2 border border-neutral-200 rounded-lg bg-neutral-50/50 outline-none"
-            >
-              <option value="match">{lang === 'ar' ? 'ترتيب: أعلى توافق' : 'Sort: Highest Match'}</option>
-              <option value="newest">{lang === 'ar' ? 'ترتيب: الأحدث' : 'Sort: Newest'}</option>
-              <option value="company">{lang === 'ar' ? 'ترتيب: اسم الشركة' : 'Sort: Company'}</option>
-            </select>
+            {/* 6. Sort By */}
+            <div>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as any)}
+                className="input-field"
+                style={{
+                  width: '100%',
+                  fontSize: 'var(--font-size-xs)',
+                  padding: 'var(--space-2)'
+                }}
+              >
+                <option value="match">{lang === 'ar' ? 'ترتيب: أعلى توافق' : 'Sort: Highest Match'}</option>
+                <option value="newest">{lang === 'ar' ? 'ترتيب: الأحدث' : 'Sort: Newest'}</option>
+                <option value="company">{lang === 'ar' ? 'ترتيب: اسم الشركة' : 'Sort: Company'}</option>
+              </select>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Main Grid: Left List, Right Inspector */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 'var(--space-6)' }} className="lg:grid-cols-12">
         {/* Left: Opportunity Cards */}
-        <div className="lg:col-span-5 space-y-3">
-          <div className="flex items-center justify-between text-xs text-neutral-500 px-1 py-0.5">
+        <div className="lg:col-span-5" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            fontSize: 'var(--font-size-xs)',
+            color: 'var(--text-tertiary)',
+            padding: '0 var(--space-1)'
+          }}>
             <span data-testid="opportunities-count">
               {lang === 'ar'
                 ? `عرض ${filteredOpps.length} من أصل ${opportunities.length} فرصة`
                 : `Showing ${filteredOpps.length} of ${opportunities.length} opportunities`}
             </span>
-            <span className="font-medium text-neutral-700 bg-neutral-100 px-2 py-0.5 rounded text-[11px]" data-testid="sort-indicator">
+            <span className="label-xs" style={{
+              fontWeight: 500,
+              color: 'var(--text-secondary)',
+              backgroundColor: 'var(--surface-secondary)',
+              padding: '2px var(--space-2)',
+              borderRadius: 'var(--radius-sm)',
+              fontSize: '11px'
+            }} data-testid="sort-indicator">
               {lang === 'ar' ? 'الترتيب: ' : 'Sorted by: '}
               {sortBy === 'match'
                 ? (lang === 'ar' ? 'أعلى توافق' : 'Highest Match')
@@ -447,14 +552,26 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
           </div>
 
           {filteredOpps.length === 0 ? (
-            <div className="p-8 text-center text-xs text-neutral-500 bg-white border border-neutral-200 rounded-xl space-y-2">
-              <p>{lang === 'ar' ? 'لا توجد وظائف مطابقة للفلاتر المحددة.' : 'No opportunities match your active filters.'}</p>
-              <button
-                onClick={handleResetFilters}
-                className="text-neutral-900 font-semibold underline text-xs"
-              >
-                {lang === 'ar' ? 'إعادة ضبط الفلتر' : 'Clear all filters'}
-              </button>
+            <div className="surface-elevated border-hairline rounded-xl" style={{
+              padding: 'var(--space-8)',
+              textAlign: 'center',
+              fontSize: 'var(--font-size-xs)',
+              color: 'var(--text-tertiary)'
+            }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+                <p>{lang === 'ar' ? 'لا توجد وظائف مطابقة للفلاتر المحددة.' : 'No opportunities match your active filters.'}</p>
+                <button
+                  onClick={handleResetFilters}
+                  className="link-button"
+                  style={{
+                    color: 'var(--text-primary)',
+                    fontWeight: 600,
+                    fontSize: 'var(--font-size-xs)'
+                  }}
+                >
+                  {lang === 'ar' ? 'إعادة ضبط الفلتر' : 'Clear all filters'}
+                </button>
+              </div>
             </div>
           ) : (
             <>
@@ -470,21 +587,27 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
                 <div
                   key={opp.id}
                   onClick={() => handleSelectOpp(opp)}
-                  className={`p-4 border rounded-xl cursor-pointer transition-all ${
-                    isSelected
-                      ? 'border-neutral-900 bg-white shadow-xs'
-                      : 'border-neutral-200 bg-white hover:border-neutral-300'
+                  className={`surface-elevated border-hairline rounded-xl cursor-pointer transition-all ${
+                    isSelected ? 'shadow-xs' : ''
                   }`}
+                  style={{
+                    padding: 'var(--space-4)',
+                    borderColor: isSelected ? 'var(--accent-primary)' : undefined
+                  }}
                 >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-1.5 flex-wrap mb-1">
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 'var(--space-2)' }}>
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-1-5)', flexWrap: 'wrap', marginBottom: 'var(--space-1)' }}>
                         <span
-                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                            isIntern
-                              ? 'bg-amber-100 text-amber-800 border border-amber-200'
-                              : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                          }`}
+                          style={{
+                            fontSize: '10px',
+                            fontWeight: 700,
+                            padding: '2px var(--space-2)',
+                            borderRadius: '9999px',
+                            backgroundColor: isIntern ? '#fef3c7' : '#d1fae5',
+                            color: isIntern ? '#92400e' : '#065f46',
+                            border: isIntern ? '1px solid #fde68a' : '1px solid #a7f3d0'
+                          }}
                         >
                           {isIntern
                             ? lang === 'ar'
@@ -494,56 +617,109 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
                             ? '💼 وظيفة'
                             : '💼 Job'}
                         </span>
-                        <span className="font-mono text-[10px] bg-neutral-100 text-neutral-700 px-1.5 py-0.5 rounded">
+                        <span style={{
+                          fontFamily: 'var(--font-mono)',
+                          fontSize: '10px',
+                          backgroundColor: 'var(--surface-secondary)',
+                          color: 'var(--text-secondary)',
+                          padding: '2px var(--space-1-5)',
+                          borderRadius: 'var(--radius-sm)'
+                        }}>
                           {platform}
                         </span>
                       </div>
-                      <h3 className="text-xs font-bold text-neutral-900 truncate">{opp.title}</h3>
-                      <div className="text-xs text-neutral-500 mt-0.5 flex items-center gap-1.5 truncate">
+                      <h3 className="body-xs" style={{ fontWeight: 700, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{opp.title}</h3>
+                      <div className="body-xs" style={{ marginTop: '2px', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 'var(--space-1-5)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         <span>{opp.company}</span>
                       </div>
                     </div>
 
-                    <div className="text-right shrink-0">
+                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
                       {matchScore !== null ? (
-                        <span className="text-xs font-bold font-mono tabular-nums text-neutral-900 bg-neutral-100 px-2 py-0.5 rounded">
+                        <span style={{
+                          fontSize: 'var(--font-size-xs)',
+                          fontWeight: 700,
+                          fontFamily: 'var(--font-mono)',
+                          color: 'var(--text-primary)',
+                          backgroundColor: 'var(--surface-secondary)',
+                          padding: '2px var(--space-2)',
+                          borderRadius: 'var(--radius-sm)'
+                        }}>
                           {matchScore}% Match
                         </span>
                       ) : (
-                        <span className="text-xs text-neutral-400 bg-neutral-50 px-2 py-0.5 rounded">
+                        <span style={{
+                          fontSize: 'var(--font-size-xs)',
+                          color: 'var(--text-tertiary)',
+                          backgroundColor: 'var(--surface-secondary)',
+                          padding: '2px var(--space-2)',
+                          borderRadius: 'var(--radius-sm)'
+                        }}>
                           {lang === 'ar' ? 'غير محلل' : 'Not analyzed'}
                         </span>
                       )}
                     </div>
                   </div>
 
-                  <div className="mt-2 text-[11px] text-neutral-500 flex items-center gap-2 flex-wrap">
+                  <div style={{
+                    marginTop: 'var(--space-2)',
+                    fontSize: '11px',
+                    color: 'var(--text-tertiary)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 'var(--space-2)',
+                    flexWrap: 'wrap'
+                  }}>
                     <span>{opp.location}</span>
                     <span aria-hidden="true">·</span>
                     <span>{opp.workModel}</span>
                     {opp.salary && (
                       <>
                         <span aria-hidden="true">·</span>
-                        <span className="font-mono tabular-nums font-semibold text-neutral-700">
+                        <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, color: 'var(--text-secondary)' }}>
                           {opp.salary}
                         </span>
                       </>
                     )}
                   </div>
 
-                  {/* Actions on every opportunity card: Apply + Tailor CV */}
-                  <div className="mt-3 flex items-center justify-between pt-2.5 border-t border-neutral-100 gap-2 flex-wrap">
-                    <div className="flex items-center gap-1.5">
+                  {/* Actions on every opportunity card */}
+                  <div style={{
+                    marginTop: 'var(--space-3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    paddingTop: 'var(--space-2-5)',
+                    borderTop: '1px solid var(--border-subtle)',
+                    gap: 'var(--space-2)',
+                    flexWrap: 'wrap'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-1-5)' }}>
                       <button
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
                           onPrepareApplication(opp.id);
                         }}
-                        className="px-2.5 py-1 text-[11px] font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors inline-flex items-center gap-1 shadow-2xs cursor-pointer"
+                        style={{
+                          padding: 'var(--space-1) var(--space-2-5)',
+                          fontSize: '11px',
+                          fontWeight: 700,
+                          color: 'white',
+                          backgroundColor: '#2563eb',
+                          borderRadius: 'var(--radius-lg)',
+                          border: 'none',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 'var(--space-1)',
+                          cursor: 'pointer',
+                          transition: 'background-color 0.2s'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#1d4ed8'}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
                         title={lang === 'ar' ? 'التقديم المباشر على هذه الفرصة' : 'Direct Apply'}
                       >
-                        <CheckCircle2 className="w-3 h-3 text-white" />
+                        <CheckCircle2 style={{ width: '12px', height: '12px', color: 'white' }} />
                         <span>
                           {isIntern
                             ? (lang === 'ar' ? 'التقديم المباشر على التدريب' : 'Direct Apply')
@@ -557,10 +733,16 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
-                          className="p-1 text-neutral-500 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg transition-colors inline-flex items-center"
+                          className="icon-button"
+                          style={{
+                            padding: 'var(--space-1)',
+                            color: 'var(--text-tertiary)',
+                            display: 'inline-flex',
+                            alignItems: 'center'
+                          }}
                           title={lang === 'ar' ? 'رابط الإعلان الخارجي' : 'External link'}
                         >
-                          <ExternalLink className="w-3.5 h-3.5" />
+                          <ExternalLink style={{ width: '14px', height: '14px' }} />
                         </a>
                       )}
 
@@ -570,15 +752,30 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
                           e.stopPropagation();
                           handleOpenTailorModal(opp);
                         }}
-                        className="px-2.5 py-1 text-[11px] font-bold text-neutral-800 bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 rounded-lg transition-colors inline-flex items-center gap-1 cursor-pointer"
+                        className="btn-secondary"
+                        style={{
+                          padding: 'var(--space-1) var(--space-2-5)',
+                          fontSize: '11px',
+                          fontWeight: 700,
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 'var(--space-1)'
+                        }}
                         title={lang === 'ar' ? 'توليد سيرة ذاتية مخصصة لهذه الوظيفة بالذكاء الاصطناعي' : 'Generate Tailored CV'}
                       >
-                        <Sparkles className="w-3 h-3 text-amber-500" />
+                        <Sparkles style={{ width: '12px', height: '12px', color: '#f59e0b' }} />
                         <span>{lang === 'ar' ? 'إنشاء CV مخصص' : 'Tailor CV'}</span>
                       </button>
                     </div>
 
-                    <span className="text-neutral-500 text-[11px] font-medium inline-flex items-center gap-0.5">
+                    <span style={{
+                      color: 'var(--text-tertiary)',
+                      fontSize: '11px',
+                      fontWeight: 500,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '2px'
+                    }}>
                       {lang === 'ar' ? 'تحليل التوافق ←' : 'Analyze Fit →'}
                     </span>
                   </div>
@@ -588,13 +785,21 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
 
             {/* View More Button */}
             {visibleCount < filteredOpps.length && (
-              <div className="flex justify-center pt-4">
+              <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 'var(--space-4)' }}>
                 <button
                   type="button"
                   onClick={() => setVisibleCount(prev => prev + ITEMS_PER_PAGE)}
-                  className="px-6 py-2.5 text-xs font-bold text-neutral-700 bg-white hover:bg-neutral-50 border border-neutral-300 rounded-xl transition-all shadow-sm inline-flex items-center gap-2 cursor-pointer"
+                  className="btn-secondary"
+                  style={{
+                    padding: 'var(--space-2-5) var(--space-6)',
+                    fontSize: 'var(--font-size-xs)',
+                    fontWeight: 700,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 'var(--space-2)'
+                  }}
                 >
-                  <ChevronRight className="w-4 h-4" />
+                  <ChevronRight style={{ width: '16px', height: '16px' }} />
                   <span>
                     {lang === 'ar'
                       ? `عرض المزيد (${Math.min(ITEMS_PER_PAGE, filteredOpps.length - visibleCount)} من ${filteredOpps.length})`
@@ -609,266 +814,407 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
         </div>
 
         {/* Right: Detailed Match Inspector & Gap Analysis */}
-        <div className="lg:col-span-7 space-y-6">
+        <div className="lg:col-span-7" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
           {effectiveSelectedOpp ? (
-            <div className="p-6 bg-white border border-neutral-200 rounded-xl space-y-6">
-              {/* Header Info */}
-              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                <div>
-                  <div className="text-xs text-neutral-500 mb-1 flex items-center gap-2">
-                    <span>{effectiveSelectedOpp.company}</span>
-                    <span aria-hidden="true">·</span>
-                    <span className="font-mono text-[10px] bg-neutral-100 px-1.5 py-0.5 rounded text-neutral-700">
-                      {effectiveSelectedOpp.sourcePlatform || 'Direct Platform'}
-                    </span>
-                    <span
-                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                        effectiveSelectedOpp.employmentType === 'Internship'
-                          ? 'bg-amber-100 text-amber-800'
-                          : 'bg-emerald-50 text-emerald-700'
-                      }`}
-                    >
-                      {effectiveSelectedOpp.employmentType === 'Internship'
-                        ? lang === 'ar'
-                          ? 'تدريب'
-                          : 'Internship'
-                        : lang === 'ar'
-                        ? 'وظيفة'
-                        : 'Job'}
-                    </span>
-                  </div>
-                  <h2 className="text-lg font-bold text-neutral-900">{effectiveSelectedOpp.title}</h2>
-                  <div className="text-xs text-neutral-600 mt-1 flex items-center gap-2">
-                    <span>{effectiveSelectedOpp.location}</span>
-                    <span aria-hidden="true">·</span>
-                    <span>{effectiveSelectedOpp.workModel}</span>
-                    {effectiveSelectedOpp.salary && (
-                      <>
-                        <span aria-hidden="true">·</span>
-                        <span className="font-mono tabular-nums font-semibold">{effectiveSelectedOpp.salary}</span>
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2 flex-wrap">
-                  {/* Primary in-app direct apply & prep button */}
-                  <button
-                    type="button"
-                    onClick={() => onPrepareApplication(effectiveSelectedOpp.id)}
-                    className="px-3.5 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors inline-flex items-center gap-1.5 shadow-xs cursor-pointer"
-                  >
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>
-                      {effectiveSelectedOpp.employmentType === 'Internship'
-                        ? (lang === 'ar' ? 'التقديم المباشر على التدريب' : 'Direct Apply & Prep')
-                        : (lang === 'ar' ? 'التقديم المباشر على الوظيفة' : 'Direct Apply & Prep')}
-                    </span>
-                  </button>
-
-                  {/* Secondary external posting link */}
-                  {effectiveSelectedOpp.sourceUrl && (
-                    <a
-                      href={effectiveSelectedOpp.sourceUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-3 py-2 text-xs font-medium text-neutral-700 bg-white hover:bg-neutral-100 border border-neutral-300 rounded-lg transition-colors inline-flex items-center gap-1.5"
-                      title={lang === 'ar' ? 'رابط الإعلان الأصلي' : 'External Job Posting'}
-                    >
-                      <ExternalLink className="w-3.5 h-3.5 text-neutral-500" />
-                      <span>{lang === 'ar' ? 'رابط خارجي' : 'External Link'}</span>
-                    </a>
-                  )}
-
-                  <button
-                    type="button"
-                    onClick={() => handleOpenTailorModal(effectiveSelectedOpp!)}
-                    className="px-3.5 py-2 text-xs font-bold text-neutral-900 bg-amber-50 hover:bg-amber-100 border border-amber-300 rounded-lg transition-colors inline-flex items-center gap-1.5 shadow-xs cursor-pointer"
-                  >
-                    <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-                    <span>{lang === 'ar' ? 'إنشاء CV مخصص لهذه الوظيفة' : 'Generate Tailored CV'}</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => onPrepareApplication(effectiveSelectedOpp.id)}
-                    className="px-3 py-2 text-xs font-medium text-neutral-700 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors whitespace-nowrap cursor-pointer"
-                  >
-                    {lang === 'ar' ? 'سجل التقديم' : 'Track App'}
-                  </button>
-                </div>
-              </div>
-
-              {/* Match Engine Verdict */}
-              {matchAnalysis && (
-                <div className="p-4 bg-neutral-50 rounded-lg border border-neutral-200 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className="text-[11px] font-mono uppercase tracking-wider text-neutral-500">
-                        MATCH ENGINE VERDICT
+            <div className="surface-elevated border-hairline rounded-xl" style={{ padding: 'var(--space-6)' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
+                {/* Header Info */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }} className="sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <div className="label-xs" style={{ marginBottom: 'var(--space-1)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+                      <span>{effectiveSelectedOpp.company}</span>
+                      <span aria-hidden="true">·</span>
+                      <span style={{
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '10px',
+                        backgroundColor: 'var(--surface-secondary)',
+                        padding: '2px var(--space-1-5)',
+                        borderRadius: 'var(--radius-sm)',
+                        color: 'var(--text-secondary)'
+                      }}>
+                        {effectiveSelectedOpp.sourcePlatform || 'Direct Platform'}
                       </span>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span
-                          className={`text-xs font-semibold px-2 py-0.5 rounded font-mono ${
-                            matchAnalysis.recommendation === 'APPLY'
-                              ? 'bg-neutral-900 text-white'
-                              : 'bg-neutral-200 text-neutral-800'
-                          }`}
-                        >
-                          {matchAnalysis.recommendation === 'APPLY' ? 'APPLY NOW' : "DON'T APPLY YET"}
-                        </span>
-                        <span className="text-xs font-mono tabular-nums font-bold text-neutral-900">
-                          {matchAnalysis.overallMatch}% Overall Fit
-                        </span>
-                      </div>
+                      <span
+                        style={{
+                          fontSize: '10px',
+                          fontWeight: 700,
+                          padding: '2px var(--space-2)',
+                          borderRadius: '9999px',
+                          backgroundColor: effectiveSelectedOpp.employmentType === 'Internship' ? '#fef3c7' : '#d1fae5',
+                          color: effectiveSelectedOpp.employmentType === 'Internship' ? '#92400e' : '#065f46'
+                        }}
+                      >
+                        {effectiveSelectedOpp.employmentType === 'Internship'
+                          ? lang === 'ar'
+                            ? 'تدريب'
+                            : 'Internship'
+                          : lang === 'ar'
+                          ? 'وظيفة'
+                          : 'Job'}
+                      </span>
                     </div>
-
-                    <div className="flex items-center gap-3 text-right">
-                      <div>
-                        <span className="text-[10px] text-neutral-500 block">Skills</span>
-                        <span className="font-mono tabular-nums text-xs font-semibold text-neutral-900">
-                          {matchAnalysis.skillMatch}%
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-neutral-500 block">Experience</span>
-                        <span className="font-mono tabular-nums text-xs font-semibold text-neutral-900">
-                          {matchAnalysis.experienceMatch}%
-                        </span>
-                      </div>
+                    <h2 className="heading-lg" style={{ color: 'var(--text-primary)' }}>{effectiveSelectedOpp.title}</h2>
+                    <div className="body-xs" style={{ marginTop: 'var(--space-1)', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+                      <span>{effectiveSelectedOpp.location}</span>
+                      <span aria-hidden="true">·</span>
+                      <span>{effectiveSelectedOpp.workModel}</span>
+                      {effectiveSelectedOpp.salary && (
+                        <>
+                          <span aria-hidden="true">·</span>
+                          <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>{effectiveSelectedOpp.salary}</span>
+                        </>
+                      )}
                     </div>
                   </div>
 
-                  <p className="text-xs text-neutral-700 leading-relaxed">
-                    {matchAnalysis.recommendationReason}
-                  </p>
-                </div>
-              )}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
+                    {/* Primary in-app direct apply button */}
+                    <button
+                      type="button"
+                      onClick={() => onPrepareApplication(effectiveSelectedOpp.id)}
+                      style={{
+                        padding: 'var(--space-2) var(--space-3-5)',
+                        fontSize: 'var(--font-size-xs)',
+                        fontWeight: 700,
+                        color: 'white',
+                        backgroundColor: '#2563eb',
+                        borderRadius: 'var(--radius-lg)',
+                        border: 'none',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 'var(--space-1-5)',
+                        cursor: 'pointer',
+                        transition: 'background-color 0.2s'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#1d4ed8'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
+                    >
+                      <CheckCircle2 style={{ width: '14px', height: '14px' }} />
+                      <span>
+                        {effectiveSelectedOpp.employmentType === 'Internship'
+                          ? (lang === 'ar' ? 'التقديم المباشر على التدريب' : 'Direct Apply & Prep')
+                          : (lang === 'ar' ? 'التقديم المباشر على الوظيفة' : 'Direct Apply & Prep')}
+                      </span>
+                    </button>
 
-              {/* Skill Gap Matrix */}
-              {matchAnalysis && (
-                <div>
-                  <h3 className="text-xs font-semibold text-neutral-900 uppercase tracking-wider mb-3">
-                    Skill Gap Breakdown
-                  </h3>
-                  <div className="space-y-2">
-                    {matchAnalysis.skillGaps.map((gap, i) => (
-                      <div
-                        key={i}
-                        className="p-3 bg-white border border-neutral-100 rounded-lg flex items-center justify-between text-xs"
+                    {/* Secondary external posting link */}
+                    {effectiveSelectedOpp.sourceUrl && (
+                      <a
+                        href={effectiveSelectedOpp.sourceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-secondary"
+                        style={{
+                          padding: 'var(--space-2) var(--space-3)',
+                          fontSize: 'var(--font-size-xs)',
+                          fontWeight: 500,
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 'var(--space-1-5)',
+                          textDecoration: 'none'
+                        }}
+                        title={lang === 'ar' ? 'رابط الإعلان الأصلي' : 'External Job Posting'}
                       >
-                        <div className="flex items-center gap-2.5">
-                          <span
-                            className={`w-2 h-2 rounded-full ${
-                              gap.status === 'MATCHED'
-                                ? 'bg-neutral-900'
-                                : gap.status === 'PARTIAL'
-                                ? 'bg-neutral-400'
-                                : 'bg-neutral-300'
-                            }`}
-                          />
-                          <div>
-                            <span className="font-semibold text-neutral-900">{gap.skill}</span>
-                            <span className="text-neutral-500 text-[11px] ml-2">
-                              {gap.importance} · {gap.action}
+                        <ExternalLink style={{ width: '14px', height: '14px', color: 'var(--text-tertiary)' }} />
+                        <span>{lang === 'ar' ? 'رابط خارجي' : 'External Link'}</span>
+                      </a>
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={() => handleOpenTailorModal(effectiveSelectedOpp!)}
+                      style={{
+                        padding: 'var(--space-2) var(--space-3-5)',
+                        fontSize: 'var(--font-size-xs)',
+                        fontWeight: 700,
+                        color: 'var(--text-primary)',
+                        backgroundColor: '#fef3c7',
+                        border: '1px solid #fde68a',
+                        borderRadius: 'var(--radius-lg)',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 'var(--space-1-5)',
+                        cursor: 'pointer',
+                        transition: 'background-color 0.2s'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fde68a'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#fef3c7'}
+                    >
+                      <Sparkles style={{ width: '14px', height: '14px', color: '#d97706' }} />
+                      <span>{lang === 'ar' ? 'إنشاء CV مخصص لهذه الوظيفة' : 'Generate Tailored CV'}</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => onPrepareApplication(effectiveSelectedOpp.id)}
+                      className="btn-secondary"
+                      style={{
+                        padding: 'var(--space-2) var(--space-3)',
+                        fontSize: 'var(--font-size-xs)',
+                        fontWeight: 500,
+                        whiteSpace: 'nowrap'
+                      }}
+                    >
+                      {lang === 'ar' ? 'سجل التقديم' : 'Track App'}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Match Engine Verdict */}
+                {matchAnalysis && (
+                  <div style={{
+                    padding: 'var(--space-4)',
+                    backgroundColor: 'var(--surface-secondary)',
+                    borderRadius: 'var(--radius-lg)',
+                    border: '1px solid var(--border-default)'
+                  }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div>
+                          <span className="label-xs" style={{
+                            fontFamily: 'var(--font-mono)',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.05em',
+                            color: 'var(--text-tertiary)',
+                            fontSize: '11px'
+                          }}>
+                            MATCH ENGINE VERDICT
+                          </span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginTop: 'var(--space-1)' }}>
+                            <span
+                              style={{
+                                fontSize: 'var(--font-size-xs)',
+                                fontWeight: 600,
+                                padding: '2px var(--space-2)',
+                                borderRadius: 'var(--radius-sm)',
+                                fontFamily: 'var(--font-mono)',
+                                backgroundColor: matchAnalysis.recommendation === 'APPLY' ? 'var(--accent-primary)' : 'var(--surface-tertiary)',
+                                color: matchAnalysis.recommendation === 'APPLY' ? 'var(--text-inverse)' : 'var(--text-primary)'
+                              }}
+                            >
+                              {matchAnalysis.recommendation === 'APPLY' ? 'APPLY NOW' : "DON'T APPLY YET"}
+                            </span>
+                            <span className="body-xs" style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--text-primary)' }}>
+                              {matchAnalysis.overallMatch}% Overall Fit
                             </span>
                           </div>
                         </div>
-                        <span
-                          className={`text-[10px] font-mono px-2 py-0.5 rounded ${
-                            gap.status === 'MATCHED'
-                              ? 'bg-neutral-100 text-neutral-800'
-                              : 'bg-neutral-50 text-neutral-500'
-                          }`}
-                        >
-                          {gap.status}
-                        </span>
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', textAlign: 'right' }}>
+                          <div>
+                            <span style={{ fontSize: '10px', color: 'var(--text-tertiary)', display: 'block' }}>Skills</span>
+                            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--font-size-xs)', fontWeight: 600, color: 'var(--text-primary)' }}>
+                              {matchAnalysis.skillMatch}%
+                            </span>
+                          </div>
+                          <div>
+                            <span style={{ fontSize: '10px', color: 'var(--text-tertiary)', display: 'block' }}>Experience</span>
+                            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--font-size-xs)', fontWeight: 600, color: 'var(--text-primary)' }}>
+                              {matchAnalysis.experienceMatch}%
+                            </span>
+                          </div>
+                        </div>
                       </div>
-                    ))}
+
+                      <p className="body-xs" style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                        {matchAnalysis.recommendationReason}
+                      </p>
+                    </div>
                   </div>
+                )}
+
+                {/* Skill Gap Matrix */}
+                {matchAnalysis && (
+                  <div>
+                    <h3 className="label-xs" style={{ textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 'var(--space-3)' }}>
+                      Skill Gap Breakdown
+                    </h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+                      {matchAnalysis.skillGaps.map((gap, i) => (
+                        <div
+                          key={i}
+                          className="surface-elevated border-hairline rounded-lg"
+                          style={{
+                            padding: 'var(--space-3)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            fontSize: 'var(--font-size-xs)'
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2-5)' }}>
+                            <span
+                              style={{
+                                width: '8px',
+                                height: '8px',
+                                borderRadius: '50%',
+                                backgroundColor: gap.status === 'MATCHED'
+                                  ? 'var(--accent-primary)'
+                                  : gap.status === 'PARTIAL'
+                                  ? 'var(--text-tertiary)'
+                                  : 'var(--border-default)'
+                              }}
+                            />
+                            <div>
+                              <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{gap.skill}</span>
+                              <span style={{ color: 'var(--text-tertiary)', fontSize: '11px', marginLeft: 'var(--space-2)' }}>
+                                {gap.importance} · {gap.action}
+                              </span>
+                            </div>
+                          </div>
+                          <span
+                            style={{
+                              fontSize: '10px',
+                              fontFamily: 'var(--font-mono)',
+                              padding: '2px var(--space-2)',
+                              borderRadius: 'var(--radius-sm)',
+                              backgroundColor: gap.status === 'MATCHED' ? 'var(--surface-secondary)' : 'var(--surface-tertiary)',
+                              color: gap.status === 'MATCHED' ? 'var(--text-primary)' : 'var(--text-tertiary)'
+                            }}
+                          >
+                            {gap.status}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Job Description Overview */}
+                <div>
+                  <h3 className="label-xs" style={{ textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 'var(--space-2)' }}>
+                    {lang === 'ar' ? 'نبذة عن الدور الوظيفي (Role Overview)' : 'Role Overview'}
+                  </h3>
+                  <p className="body-xs" style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>{effectiveSelectedOpp.description}</p>
                 </div>
-              )}
 
-              {/* Job Description Overview */}
-              <div>
-                <h3 className="text-xs font-semibold text-neutral-900 uppercase tracking-wider mb-2">
-                  {lang === 'ar' ? 'نبذة عن الدور الوظيفي (Role Overview)' : 'Role Overview'}
-                </h3>
-                <p className="text-xs text-neutral-700 leading-relaxed">{effectiveSelectedOpp.description}</p>
-              </div>
+                {/* Requirements & Qualifications Section */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', paddingTop: 'var(--space-2)', borderTop: '1px solid var(--border-subtle)' }}>
+                  <h3 className="label-xs" style={{ fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', display: 'flex', alignItems: 'center', gap: 'var(--space-1-5)' }}>
+                    <CheckCircle2 style={{ width: '14px', height: '14px', color: '#2563eb' }} />
+                    <span>{lang === 'ar' ? 'المتطلبات والمؤهلات (Requirements & Qualifications)' : 'Requirements & Qualifications'}</span>
+                  </h3>
+                  {effectiveSelectedOpp.requirements && effectiveSelectedOpp.requirements.length > 0 ? (
+                    <ul style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 'var(--space-1-5)',
+                      listStyleType: 'disc',
+                      listStylePosition: 'inside',
+                      fontSize: 'var(--font-size-xs)',
+                      color: 'var(--text-secondary)',
+                      backgroundColor: 'var(--surface-secondary)',
+                      padding: 'var(--space-3)',
+                      borderRadius: 'var(--radius-lg)',
+                      border: '1px solid var(--border-subtle)'
+                    }}>
+                      {effectiveSelectedOpp.requirements.map((req, i) => (
+                        <li key={i} style={{ lineHeight: 1.6 }}>
+                          <span style={{ color: 'var(--text-primary)' }}>{req}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="body-xs" style={{
+                      fontStyle: 'italic',
+                      color: 'var(--text-tertiary)',
+                      backgroundColor: 'var(--surface-secondary)',
+                      padding: 'var(--space-2-5)',
+                      borderRadius: 'var(--radius-lg)',
+                      border: '1px solid var(--border-subtle)'
+                    }}>
+                      {lang === 'ar'
+                        ? 'مذكورة ومفصلة في الوصف الوظيفي أعلاه.'
+                        : 'Specified in the role overview and technical qualifications above.'}
+                    </p>
+                  )}
+                </div>
 
-              {/* Requirements & Qualifications Section */}
-              <div className="space-y-2 pt-2 border-t border-neutral-100">
-                <h3 className="text-xs font-bold text-neutral-900 uppercase tracking-wider flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
-                  <span>{lang === 'ar' ? 'المتطلبات والمؤهلات (Requirements & Qualifications)' : 'Requirements & Qualifications'}</span>
-                </h3>
-                {effectiveSelectedOpp.requirements && effectiveSelectedOpp.requirements.length > 0 ? (
-                  <ul className="space-y-1.5 list-disc list-inside text-xs text-neutral-700 bg-neutral-50/70 p-3 rounded-lg border border-neutral-200/70">
-                    {effectiveSelectedOpp.requirements.map((req, i) => (
-                      <li key={i} className="leading-relaxed">
-                        <span className="text-neutral-800">{req}</span>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-xs text-neutral-500 italic bg-neutral-50 p-2.5 rounded-lg border border-neutral-100">
-                    {lang === 'ar'
-                      ? 'مذكورة ومفصلة في الوصف الوظيفي أعلاه.'
-                      : 'Specified in the role overview and technical qualifications above.'}
-                  </p>
-                )}
-              </div>
+                {/* Responsibilities & Preferred Skills Section */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', paddingTop: 'var(--space-2)', borderTop: '1px solid var(--border-subtle)' }}>
+                  <h4 className="label-xs" style={{ fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    {lang === 'ar' ? 'المسؤوليات والمهارات الإضافية (Responsibilities & Preferred Qualifications)' : 'Responsibilities & Preferred Qualifications'}
+                  </h4>
+                  {effectiveSelectedOpp.preferredSkills && effectiveSelectedOpp.preferredSkills.length > 0 ? (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-1-5)' }}>
+                      {effectiveSelectedOpp.preferredSkills.map((skill, idx) => (
+                        <span
+                          key={idx}
+                          style={{
+                            padding: 'var(--space-1) var(--space-2-5)',
+                            fontSize: '11px',
+                            fontWeight: 500,
+                            backgroundColor: '#dbeafe',
+                            color: '#1e40af',
+                            border: '1px solid #bfdbfe',
+                            borderRadius: 'var(--radius-md)'
+                          }}
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="body-xs" style={{ fontStyle: 'italic', color: 'var(--text-tertiary)' }}>
+                      {lang === 'ar' ? 'المسؤوليات والمهارات محددة ضمن إطار الوظيفة.' : 'Responsibilities and skills detailed within role scope.'}
+                    </p>
+                  )}
+                </div>
 
-              {/* Responsibilities & Preferred Skills Section */}
-              <div className="space-y-2 pt-2 border-t border-neutral-100">
-                <h4 className="text-xs font-bold text-neutral-900 uppercase tracking-wider">
-                  {lang === 'ar' ? 'المسؤوليات والمهارات الإضافية (Responsibilities & Preferred Qualifications)' : 'Responsibilities & Preferred Qualifications'}
-                </h4>
-                {effectiveSelectedOpp.preferredSkills && effectiveSelectedOpp.preferredSkills.length > 0 ? (
-                  <div className="flex flex-wrap gap-1.5">
-                    {effectiveSelectedOpp.preferredSkills.map((skill, idx) => (
-                      <span
-                        key={idx}
-                        className="px-2.5 py-1 text-[11px] font-medium bg-blue-50 text-blue-700 border border-blue-200/70 rounded-md"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-xs text-neutral-500 italic">
-                    {lang === 'ar' ? 'المسؤوليات والمهارات محددة ضمن إطار الوظيفة.' : 'Responsibilities and skills detailed within role scope.'}
-                  </p>
-                )}
-              </div>
-
-              {/* Source & Actions */}
-              <div className="pt-4 border-t border-neutral-100 flex justify-between items-center text-xs">
-                {effectiveSelectedOpp.sourceUrl ? (
-                  <a
-                    href={effectiveSelectedOpp.sourceUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-neutral-600 hover:text-neutral-900 inline-flex items-center gap-1 font-medium"
+                {/* Source & Actions */}
+                <div style={{
+                  paddingTop: 'var(--space-4)',
+                  borderTop: '1px solid var(--border-subtle)',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  fontSize: 'var(--font-size-xs)'
+                }}>
+                  {effectiveSelectedOpp.sourceUrl ? (
+                    <a
+                      href={effectiveSelectedOpp.sourceUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="link-button"
+                      style={{
+                        color: 'var(--text-secondary)',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 'var(--space-1)',
+                        fontWeight: 500,
+                        textDecoration: 'none'
+                      }}
+                    >
+                      <span>View original posting on {effectiveSelectedOpp.sourcePlatform || 'platform'}</span>
+                      <ExternalLink style={{ width: '14px', height: '14px' }} />
+                    </a>
+                  ) : (
+                    <div />
+                  )}
+                  <button
+                    onClick={() => onDeleteOpportunity(effectiveSelectedOpp.id)}
+                    className="icon-button"
+                    style={{
+                      color: 'var(--text-tertiary)',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 'var(--space-1)',
+                      marginLeft: 'auto'
+                    }}
                   >
-                    <span>View original posting on {effectiveSelectedOpp.sourcePlatform || 'platform'}</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
-                ) : (
-                  <div />
-                )}
-                <button
-                  onClick={() => onDeleteOpportunity(effectiveSelectedOpp.id)}
-                  className="text-neutral-400 hover:text-neutral-900 inline-flex items-center gap-1 ml-auto"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                  <span>Remove</span>
-                </button>
+                    <Trash2 style={{ width: '14px', height: '14px' }} />
+                    <span>Remove</span>
+                  </button>
+                </div>
               </div>
             </div>
           ) : (
-            <div className="p-12 text-center text-xs text-neutral-500 bg-white border border-neutral-200 rounded-xl">
+            <div className="surface-elevated border-hairline rounded-xl" style={{
+              padding: 'var(--space-12)',
+              textAlign: 'center',
+              fontSize: 'var(--font-size-xs)',
+              color: 'var(--text-tertiary)'
+            }}>
               No opportunity selected.
             </div>
           )}
@@ -877,46 +1223,71 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
 
       {/* PLATFORMS STATUS & COMPLIANCE MODAL */}
       {showPlatformsModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4" onClick={() => setShowPlatformsModal(false)}>
-          <div className="bg-white rounded-xl max-w-2xl w-full shadow-2xl flex flex-col max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2.5rem)] overflow-hidden" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-center justify-between border-b border-neutral-100 p-5 shrink-0">
+        <div className="modal-overlay" onClick={() => setShowPlatformsModal(false)}>
+          <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
               <div>
-                <h3 className="text-sm font-bold text-neutral-900">
+                <h3 className="heading-sm" style={{ color: 'var(--text-primary)' }}>
                   Hiring Platform Integration Feeds &amp; Compliance
                 </h3>
-                <p className="text-xs text-neutral-500">
+                <p className="body-xs" style={{ color: 'var(--text-tertiary)' }}>
                   Status of live public feeds and partner API requirements
                 </p>
               </div>
-              <button type="button" onClick={() => setShowPlatformsModal(false)} className="p-1.5 text-neutral-400 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg cursor-pointer">
-                <X className="w-4 h-4" />
+              <button type="button" onClick={() => setShowPlatformsModal(false)} className="icon-button">
+                <X style={{ width: '16px', height: '16px' }} />
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-5 space-y-3 text-xs">
+            <div className="modal-body">
               {platformsStatusList.map((plat) => (
-                <div key={plat.id} className="p-3.5 border border-neutral-200 rounded-lg bg-neutral-50/50 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-neutral-900">{plat.name}</span>
-                    <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-medium ${ plat.status === 'active' ? 'bg-neutral-900 text-white' : 'bg-neutral-200 text-neutral-800' }`}>
-                      {plat.status === 'active' ? 'LIVE & ACTIVE' : 'REQUIRES API KEY'}
-                    </span>
-                  </div>
-                  <p className="text-neutral-600 text-[11px]">{plat.description}</p>
-                  {plat.missingRequirement && (
-                    <div className="p-2.5 bg-white border border-neutral-200 rounded font-mono text-[11px] text-neutral-600 space-y-1">
-                      <div className="text-neutral-900 font-bold">Rule 1 &amp; 6 Compliance Report:</div>
-                      <div>Service: {plat.missingRequirement.service}</div>
-                      <div>Required Key: {plat.missingRequirement.environmentVariable}</div>
-                      <div>Action: {plat.missingRequirement.developerAction}</div>
+                <div key={plat.id} style={{
+                  padding: 'var(--space-3-5)',
+                  border: '1px solid var(--border-default)',
+                  borderRadius: 'var(--radius-lg)',
+                  backgroundColor: 'var(--surface-secondary)'
+                }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <span className="body-sm" style={{ fontWeight: 700, color: 'var(--text-primary)' }}>{plat.name}</span>
+                      <span style={{
+                        fontSize: '10px',
+                        fontFamily: 'var(--font-mono)',
+                        padding: '2px var(--space-2)',
+                        borderRadius: 'var(--radius-sm)',
+                        fontWeight: 500,
+                        backgroundColor: plat.status === 'active' ? 'var(--accent-primary)' : 'var(--surface-tertiary)',
+                        color: plat.status === 'active' ? 'var(--text-inverse)' : 'var(--text-primary)'
+                      }}>
+                        {plat.status === 'active' ? 'LIVE & ACTIVE' : 'REQUIRES API KEY'}
+                      </span>
                     </div>
-                  )}
+                    <p className="body-xs" style={{ color: 'var(--text-secondary)' }}>{plat.description}</p>
+                    {plat.missingRequirement && (
+                      <div style={{
+                        padding: 'var(--space-2-5)',
+                        backgroundColor: 'var(--surface-primary)',
+                        border: '1px solid var(--border-default)',
+                        borderRadius: 'var(--radius-md)',
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '11px',
+                        color: 'var(--text-secondary)'
+                      }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-1)' }}>
+                          <div style={{ color: 'var(--text-primary)', fontWeight: 700 }}>Rule 1 &amp; 6 Compliance Report:</div>
+                          <div>Service: {plat.missingRequirement.service}</div>
+                          <div>Required Key: {plat.missingRequirement.environmentVariable}</div>
+                          <div>Action: {plat.missingRequirement.developerAction}</div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
 
-            <div className="shrink-0 p-4 border-t border-neutral-100 bg-slate-50/50 flex justify-end">
-              <button type="button" onClick={() => setShowPlatformsModal(false)} className="px-4 py-2 text-xs font-semibold text-white bg-neutral-900 hover:bg-neutral-800 rounded-lg cursor-pointer">
+            <div className="modal-footer">
+              <button type="button" onClick={() => setShowPlatformsModal(false)} className="btn-primary">
                 Close
               </button>
             </div>
@@ -926,19 +1297,21 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
 
       {/* Add Opportunity / Parse JD Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4" onClick={() => setShowAddModal(false)}>
-          <div className="bg-white rounded-xl max-w-xl w-full shadow-2xl flex flex-col max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-2.5rem)] overflow-hidden" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-overlay" onClick={() => setShowAddModal(false)}>
+          <div className="modal-container" onClick={(e) => e.stopPropagation()}>
             {/* Header */}
-            <div className="p-5 border-b border-neutral-100 shrink-0">
-              <h3 className="text-base font-bold text-neutral-900">Add Opportunity with AI Parser</h3>
-              <p className="text-xs text-neutral-500 mt-0.5">
-                Paste any job description. The Job Description Agent will automatically extract title, company, requirements, and work model.
-              </p>
+            <div className="modal-header">
+              <div>
+                <h3 className="heading-base" style={{ color: 'var(--text-primary)' }}>Add Opportunity with AI Parser</h3>
+                <p className="body-xs" style={{ color: 'var(--text-tertiary)', marginTop: '2px' }}>
+                  Paste any job description. The Job Description Agent will automatically extract title, company, requirements, and work model.
+                </p>
+              </div>
             </div>
 
             {/* Body */}
-            <div className="flex-1 overflow-y-auto p-5">
-              <label className="block text-xs font-medium text-neutral-700 mb-1">
+            <div className="modal-body">
+              <label className="label-xs" style={{ display: 'block', marginBottom: 'var(--space-1)' }}>
                 Paste Job Description Text
               </label>
               <textarea
@@ -946,22 +1319,29 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
                 value={rawJDText}
                 onChange={(e) => setRawJDText(e.target.value)}
                 placeholder="Paste the full job posting text here..."
-                className="w-full text-xs p-3 border border-neutral-200 rounded-lg outline-none focus:ring-1 focus:ring-neutral-900 font-mono"
+                className="input-field"
+                style={{
+                  width: '100%',
+                  fontSize: 'var(--font-size-xs)',
+                  padding: 'var(--space-3)',
+                  fontFamily: 'var(--font-mono)'
+                }}
               />
             </div>
 
             {/* Footer */}
-            <div className="shrink-0 p-4 border-t border-neutral-100 bg-slate-50/50 flex justify-end gap-3">
-              <button type="button" onClick={() => setShowAddModal(false)} className="px-3.5 py-1.5 text-xs text-neutral-600 hover:text-neutral-900 cursor-pointer">
+            <div className="modal-footer">
+              <button type="button" onClick={() => setShowAddModal(false)} className="btn-ghost">
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleParseAndAddJD}
                 disabled={isParsingJD || !rawJDText.trim()}
-                className="px-4 py-2 text-xs font-semibold text-white bg-neutral-900 hover:bg-neutral-800 rounded-lg inline-flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                className="btn-primary"
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-2)' }}
               >
-                <Sparkles className="w-3.5 h-3.5" />
+                <Sparkles style={{ width: '14px', height: '14px' }} />
                 <span>{isParsingJD ? 'Parsing with AI Agent...' : 'Extract & Save Opportunity'}</span>
               </button>
             </div>
@@ -969,7 +1349,7 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
         </div>
       )}
 
-      {/* TAILORED CV GENERATOR MODAL (تخصيص السيرة الذاتية للوظيفة) */}
+      {/* TAILORED CV GENERATOR MODAL */}
       <TailoredCVModal
         opportunity={tailoringOpp}
         isOpen={isTailoringModalOpen}

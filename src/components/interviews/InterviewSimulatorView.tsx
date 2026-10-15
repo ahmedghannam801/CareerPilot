@@ -466,31 +466,31 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
       {/* ── Header ─────────────────────────────────────────────────────── */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 bg-white border border-neutral-200 rounded-xl shadow-sm">
+      <div className="surface-elevated border-hairline flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 rounded-xl">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs text-neutral-500">
+            <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
               {isAr ? 'محاكي المقابلات الصوتي والذكي' : 'AI Voice & Track-Based Interview Simulator'}
             </span>
             {isSessionRunning && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-rose-100 text-rose-800 animate-pulse">
-                <Radio className="w-2.5 h-2.5 text-rose-600" />
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold animate-pulse" style={{ backgroundColor: 'var(--error-subtle)', color: 'var(--error-strong)' }}>
+                <Radio className="w-2.5 h-2.5" style={{ color: 'var(--error)' }} />
                 {isAr ? 'جاري التسجيل' : 'LIVE'} {formatTimer(sessionElapsed)}
               </span>
             )}
             {!isSessionRunning && activeSession && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-neutral-100 text-neutral-600">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold" style={{ backgroundColor: 'var(--surface-raised)', color: 'var(--text-secondary)' }}>
                 {isAr ? 'متوقفة' : 'Paused'}
               </span>
             )}
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-neutral-900 flex items-center gap-2">
+          <h1 className="heading-2xl flex items-center gap-2">
             <span>{isAr ? 'محاكي المقابلات التخصصي' : 'Specialized Track Interview Simulator'}</span>
-            <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">
+            <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full border-hairline" style={{ backgroundColor: 'var(--primary-subtle)', color: 'var(--primary-strong)' }}>
               {isInterviewAr ? currentTrackMeta.nameAr : currentTrackMeta.nameEn}
             </span>
           </h1>
-          <p className="text-xs text-neutral-500 mt-1">
+          <p className="body-sm mt-1" style={{ color: 'var(--text-tertiary)' }}>
             {isInterviewAr
               ? `أسئلة واقعية تتغير تلقائياً حسب تخصصك مع بنك ضخم من الأسئلة وتصحيح تفاعلي بالذكاء الاصطناعي`
               : `Realistic dynamic questions tailored to your track with a massive question bank and AI feedback`}
@@ -500,24 +500,20 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
         {/* Controls */}
         <div className="flex flex-wrap items-center gap-2">
           {/* ── Interview Language Toggle ── */}
-          <div className="flex items-center bg-neutral-100 p-1 rounded-xl border border-neutral-200 text-xs gap-0.5">
+          <div className="flex items-center p-1 rounded-xl border-hairline text-xs gap-0.5" style={{ backgroundColor: 'var(--surface-raised)' }}>
             <button
+              type="button"
               onClick={() => { setInterviewLang('ar'); setVoiceLanguage('ar-EG'); }}
-              className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
-                interviewLang === 'ar'
-                  ? 'bg-white text-neutral-900 shadow-sm'
-                  : 'text-neutral-500 hover:text-neutral-800'
-              }`}
+              className="px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer"
+              style={interviewLang === 'ar' ? { backgroundColor: 'var(--surface)', color: 'var(--text-primary)' } : { color: 'var(--text-secondary)' }}
             >
               🇸🇦 عربي
             </button>
             <button
+              type="button"
               onClick={() => { setInterviewLang('en'); setVoiceLanguage('en-US'); }}
-              className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
-                interviewLang === 'en'
-                  ? 'bg-white text-neutral-900 shadow-sm'
-                  : 'text-neutral-500 hover:text-neutral-800'
-              }`}
+              className="px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer"
+              style={interviewLang === 'en' ? { backgroundColor: 'var(--surface)', color: 'var(--text-primary)' } : { color: 'var(--text-secondary)' }}
             >
               🇺🇸 English
             </button>
@@ -525,24 +521,24 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
 
           {/* ── Voice Mode ── */}
           <button
+            type="button"
             onClick={() => { stopSpeaking(); stopListening(); setIsVoiceMode(!isVoiceMode); }}
-            className={`px-3 py-2 text-xs font-semibold rounded-lg border transition-all flex items-center gap-1.5 cursor-pointer ${
-              isVoiceMode
-                ? 'bg-indigo-50 border-indigo-300 text-indigo-700'
-                : 'bg-white border-neutral-300 text-neutral-600 hover:bg-neutral-50'
-            }`}
+            className="px-3 py-2 text-xs font-semibold rounded-lg border-hairline transition-all flex items-center gap-1.5 cursor-pointer"
+            style={isVoiceMode ? { backgroundColor: 'var(--primary-subtle)', color: 'var(--primary-strong)' } : { backgroundColor: 'var(--surface)', color: 'var(--text-secondary)' }}
           >
             <Headphones className="w-3.5 h-3.5" />
             <span>{isInterviewAr ? 'صوتي' : 'Voice'}</span>
-            <span className={`w-2 h-2 rounded-full ${isVoiceMode ? 'bg-indigo-600 animate-pulse' : 'bg-neutral-300'}`} />
+            <span className={`w-2 h-2 rounded-full ${isVoiceMode ? 'animate-pulse' : ''}`} style={{ backgroundColor: isVoiceMode ? 'var(--primary)' : 'var(--border-muted)' }} />
           </button>
 
           {/* ── START button (when not running) ── */}
           {!isSessionRunning && (
             <button
+              type="button"
               onClick={handleStartNew}
               disabled={isStarting}
-              className="px-4 py-2.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition-colors inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50 shadow-sm"
+              className="px-4 py-2.5 text-xs font-bold rounded-xl transition-colors inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              style={{ backgroundColor: 'var(--success)', color: 'var(--surface)' }}
             >
               <Play className="w-3.5 h-3.5" />
               <span>{isStarting ? (isInterviewAr ? 'جاري التحضير…' : 'Preparing…') : (isInterviewAr ? '▶ ابدأ المقابلة الآن' : '▶ Start Interview')}</span>
@@ -552,8 +548,10 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
           {/* ── STOP button (when running) ── */}
           {isSessionRunning && (
             <button
+              type="button"
               onClick={handleEndSession}
-              className="px-4 py-2.5 text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 rounded-xl transition-colors inline-flex items-center gap-1.5 cursor-pointer shadow-sm animate-pulse"
+              className="px-4 py-2.5 text-xs font-bold rounded-xl transition-colors inline-flex items-center gap-1.5 cursor-pointer animate-pulse"
+              style={{ backgroundColor: 'var(--error)', color: 'var(--surface)' }}
             >
               <Square className="w-3.5 h-3.5" />
               <span>{isInterviewAr ? '⏹ إيقاف وعرض التصحيحات' : '⏹ Stop & Review'}</span>
@@ -563,17 +561,17 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
       </div>
 
       {/* ── Career Track & Interview Configuration Bar ────────────────── */}
-      <div className="p-5 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl shadow-lg border border-indigo-900/40 space-y-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-indigo-800/40 pb-3">
+      <div className="p-5 rounded-2xl border-hairline space-y-4" style={{ background: 'var(--gradient-dark)', color: 'var(--surface)' }}>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3" style={{ borderBottom: '1px solid var(--border-muted)' }}>
           <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-lg bg-indigo-600/30 text-indigo-400 border border-indigo-500/30">
+            <span className="p-1.5 rounded-lg border-hairline" style={{ backgroundColor: 'var(--primary-muted)', color: 'var(--primary-subtle-text)' }}>
               <Compass className="w-4 h-4" />
             </span>
             <div>
-              <h2 className="text-sm font-bold text-white">
+              <h2 className="heading-sm" style={{ color: 'var(--surface)' }}>
                 {isInterviewAr ? 'اختر تخصصك البرمجي (Track Selector)' : 'Choose Your Career Track'}
               </h2>
-              <p className="text-[11px] text-indigo-200/70">
+              <p className="body-xs" style={{ color: 'var(--text-on-dark-secondary)' }}>
                 {isInterviewAr
                   ? 'اختر مجالك لتوليد أسئلة واقعية ومتخصصة من بنك الأسئلة أو الذكاء الاصطناعي'
                   : 'Select your track to dynamically calibrate question depth and domain requirements'}
@@ -583,8 +581,8 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
 
           <div className="flex flex-wrap items-center gap-2">
             {/* Question count selector */}
-            <div className="flex items-center bg-indigo-950/80 p-1 rounded-xl border border-indigo-800/50 text-xs">
-              <span className="text-[10px] text-indigo-300 px-2 font-medium">
+            <div className="flex items-center p-1 rounded-xl border-hairline text-xs" style={{ backgroundColor: 'var(--surface-sunken)' }}>
+              <span className="text-[10px] px-2 font-medium" style={{ color: 'var(--primary-subtle-text)' }}>
                 {isInterviewAr ? 'العدد:' : 'Count:'}
               </span>
               {[3, 4, 6].map((cnt) => (
@@ -593,11 +591,8 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
                   type="button"
                   onClick={() => setQuestionCount(cnt)}
                   disabled={isSessionRunning}
-                  className={`px-2.5 py-1 rounded-lg font-bold text-xs transition-all cursor-pointer ${
-                    questionCount === cnt
-                      ? 'bg-indigo-600 text-white shadow-xs'
-                      : 'text-indigo-300 hover:text-white'
-                  }`}
+                  className="px-2.5 py-1 rounded-lg font-bold text-xs transition-all cursor-pointer"
+                  style={questionCount === cnt ? { backgroundColor: 'var(--primary)', color: 'var(--surface)' } : { color: 'var(--primary-subtle-text)' }}
                 >
                   {cnt} {isInterviewAr ? 'أسئلة' : 'Q'}
                 </button>
@@ -605,7 +600,7 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
             </div>
 
             {/* Type selector */}
-            <div className="flex items-center bg-indigo-950/80 p-1 rounded-xl border border-indigo-800/50 text-xs gap-1">
+            <div className="flex items-center p-1 rounded-xl border-hairline text-xs gap-1" style={{ backgroundColor: 'var(--surface-sunken)' }}>
               {(['Technical', 'Behavioral', 'HR', 'Mixed'] as const).map((t) => {
                 const label =
                   t === 'Technical'
@@ -621,11 +616,8 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
                     type="button"
                     onClick={() => setInterviewType(t)}
                     disabled={isSessionRunning}
-                    className={`px-2.5 py-1 rounded-lg font-bold text-xs transition-all cursor-pointer ${
-                      interviewType === t
-                        ? 'bg-emerald-600 text-white shadow-xs'
-                        : 'text-indigo-300 hover:text-white'
-                    }`}
+                    className="px-2.5 py-1 rounded-lg font-bold text-xs transition-all cursor-pointer"
+                    style={interviewType === t ? { backgroundColor: 'var(--success)', color: 'var(--surface)' } : { color: 'var(--primary-subtle-text)' }}
                   >
                     {label}
                   </button>
@@ -636,7 +628,7 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
         </div>
 
         {/* Tracks horizontal chips */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-indigo-700/50">
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin">
           {TRACKS_CATALOG.map((track) => {
             const isSelected = selectedTrack === track.id;
             return (
@@ -647,13 +639,17 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
                   if (!isSessionRunning) setSelectedTrack(track.id);
                 }}
                 disabled={isSessionRunning}
-                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 border ${
-                  isSelected
-                    ? 'bg-gradient-to-r from-indigo-500 to-blue-600 text-white border-indigo-400 shadow-md shadow-indigo-500/20 ring-2 ring-indigo-400/40'
-                    : 'bg-indigo-950/40 text-indigo-200 border-indigo-800/40 hover:bg-indigo-900/60 hover:text-white'
-                }`}
+                className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer shrink-0 border-hairline"
+                style={isSelected ? {
+                  background: 'var(--gradient-primary)',
+                  color: 'var(--surface)',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+                } : {
+                  backgroundColor: 'var(--surface-sunken)',
+                  color: 'var(--primary-subtle-text)'
+                }}
               >
-                <span className={isSelected ? 'text-white' : 'text-indigo-400'}>
+                <span>
                   {renderTrackIcon(track.icon, 'w-3.5 h-3.5')}
                 </span>
                 <span>{isInterviewAr ? track.nameAr : track.nameEn}</span>
@@ -663,19 +659,19 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
         </div>
 
         {/* Selected Track Details Preview */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 text-xs border-t border-indigo-900/50">
-          <div className="flex items-center gap-2 text-indigo-200">
-            <span className="font-bold text-white">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 text-xs" style={{ borderTop: '1px solid var(--border-muted)' }}>
+          <div className="flex items-center gap-2" style={{ color: 'var(--text-on-dark-secondary)' }}>
+            <span className="font-bold" style={{ color: 'var(--surface)' }}>
               {isInterviewAr ? currentTrackMeta.nameAr : currentTrackMeta.nameEn}:
             </span>
-            <span className="text-indigo-300/90 text-[11px]">
+            <span className="text-[11px]">
               {isInterviewAr ? currentTrackMeta.descriptionAr : currentTrackMeta.descriptionEn}
             </span>
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-900/40 text-emerald-300 border border-emerald-700/40">
-              <Sparkles className="w-3 h-3 text-emerald-400" />
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold border-hairline" style={{ backgroundColor: 'var(--success-subtle)', color: 'var(--success-strong)' }}>
+              <Sparkles className="w-3 h-3" />
               <span>
                 {isInterviewAr
                   ? `${totalTrackQuestions}+ سؤال جاهز لهذا التراك`
@@ -1226,10 +1222,3 @@ export const InterviewSimulatorView: React.FC<InterviewSimulatorViewProps> = ({
                 <Mic className="w-3.5 h-3.5" />
                 <span>{isAr ? 'بدء محاكاة الآن' : 'Start Simulation Now'}</span>
               </button>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
