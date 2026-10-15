@@ -145,29 +145,27 @@ export const MobileNav: React.FC<MobileNavProps> = ({
               onClick={() => onNavigate(item.id)}
               whileTap={{ scale: 0.9 }}
               transition={{ type: 'spring', stiffness: 500, damping: 25 }}
-              className={`flex flex-col items-center gap-1 p-1.5 rounded-xl transition-colors relative cursor-pointer ${
-                isActive
-                  ? 'text-[#2563EB] dark:text-blue-400 font-bold'
-                  : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-slate-200'
-              }`}
+              className="flex flex-col items-center gap-1 p-1.5 rounded-xl transition-colors relative cursor-pointer"
+              style={{ color: isActive ? 'var(--primary)' : 'var(--on-surface-variant)' }}
             >
               {isActive && (
                 <motion.span
                   layoutId="mobileNavActivePill"
-                  className="absolute inset-0 bg-[#EEF4FF] dark:bg-blue-950/40 rounded-xl -z-10 border border-[#2563EB]/15 dark:border-blue-500/20"
+                  className="absolute inset-0 rounded-xl -z-10 border-hairline surface-elevated"
+                  style={{ backgroundColor: 'var(--surface-container-highest)', borderColor: 'var(--outline-variant)' }}
                   transition={{ type: 'spring', stiffness: 450, damping: 30 }}
                 />
               )}
               <div
-                className={`p-1 rounded-md transition-colors ${
-                  isActive
-                    ? 'bg-[#2563EB] text-white shadow-2xs'
-                    : 'text-neutral-500'
-                }`}
+                className="p-1 rounded-md transition-colors"
+                style={{
+                  backgroundColor: isActive ? 'var(--primary)' : 'transparent',
+                  color: isActive ? 'var(--on-primary)' : 'var(--on-surface-variant)',
+                }}
               >
                 <Icon className="w-4 h-4" />
               </div>
-              <span className="text-[10px] leading-none">{item.label}</span>
+              <span className="text-micro leading-none">{item.label}</span>
             </motion.button>
           );
         })}
@@ -177,31 +175,33 @@ export const MobileNav: React.FC<MobileNavProps> = ({
           type="button"
           onClick={() => setDrawerOpen(true)}
           whileTap={{ scale: 0.9 }}
-          className={`flex flex-col items-center gap-1 p-1.5 rounded-xl text-neutral-500 hover:text-neutral-900 dark:hover:text-slate-200 transition-colors cursor-pointer ${
-            drawerOpen ? 'text-neutral-900 dark:text-white font-bold' : ''
-          }`}
+          className="flex flex-col items-center gap-1 p-1.5 rounded-xl transition-colors cursor-pointer"
+          style={{ color: drawerOpen ? 'var(--on-surface)' : 'var(--on-surface-variant)' }}
         >
-          <div className="p-1 rounded-md text-neutral-500">
+          <div className="p-1 rounded-md" style={{ color: 'var(--on-surface-variant)' }}>
             <Menu className="w-4 h-4" />
           </div>
-          <span className="text-[10px] leading-none">{isAr ? 'المزيد' : 'More'}</span>
+          <span className="text-micro leading-none">{isAr ? 'المزيد' : 'More'}</span>
         </motion.button>
       </nav>
 
       {/* Slide-over Mobile Drawer */}
       {drawerOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex justify-end md:hidden" onClick={() => setDrawerOpen(false)}>
-          <div className="bg-white w-4/5 max-w-sm h-full shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-right duration-200" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex justify-end md:hidden" style={{ backgroundColor: 'rgba(0, 0, 0, 0.6)', backdropFilter: 'blur(4px)' }} onClick={() => setDrawerOpen(false)}>
+          <div className="w-4/5 max-w-sm h-full flex flex-col overflow-hidden animate-in slide-in-from-right duration-200" style={{ backgroundColor: 'var(--surface-container)', boxShadow: '-4px 0 24px rgba(0, 0, 0, 0.3)' }} onClick={(e) => e.stopPropagation()}>
             {/* Drawer Header */}
-            <div className="p-5 border-b border-neutral-100 flex items-center justify-between shrink-0 bg-white">
+            <div className="p-5 border-hairline flex items-center justify-between shrink-0" style={{ borderBlockEndColor: 'var(--outline-variant)', backgroundColor: 'var(--surface-container-low)' }}>
               <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 bg-neutral-900 rounded-sm" />
-                <span className="font-bold text-sm text-neutral-900">CareerPilot AI</span>
+                <span className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: 'var(--primary)' }} />
+                <span className="text-body-strong" style={{ color: 'var(--on-surface)' }}>CareerPilot AI</span>
               </div>
               <button
                 type="button"
                 onClick={() => setDrawerOpen(false)}
-                className="p-1.5 text-neutral-400 hover:text-neutral-900 rounded-lg cursor-pointer"
+                className="p-1.5 rounded-lg cursor-pointer transition-colors"
+                style={{ color: 'var(--on-surface-variant)' }}
+                onMouseEnter={(e) => e.currentTarget.style.color = 'var(--on-surface)'}
+                onMouseLeave={(e) => e.currentTarget.style.color = 'var(--on-surface-variant)'}
               >
                 <X className="w-5 h-5" />
               </button>
@@ -213,8 +213,9 @@ export const MobileNav: React.FC<MobileNavProps> = ({
               {/* Quick Actions in Mobile Drawer */}
               <div className="flex items-center gap-2">
                 <button
+                  type="button"
                   onClick={onToggleLang}
-                  className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 rounded-lg text-xs font-medium"
+                  className="btn-secondary flex-1 flex items-center justify-center gap-1.5 py-2 px-3 text-body-base"
                 >
                   <Globe className="w-3.5 h-3.5" />
                   <span>{isAr ? 'English' : 'العربية'}</span>
@@ -224,23 +225,25 @@ export const MobileNav: React.FC<MobileNavProps> = ({
                     type="button"
                     onClick={onToggleTheme}
                     title={theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-                    className="flex items-center justify-center p-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-800 rounded-lg text-xs font-medium cursor-pointer"
+                    className="flex items-center justify-center p-2 rounded-lg text-body-base cursor-pointer border-hairline"
+                    style={{ backgroundColor: 'var(--surface-container)', borderColor: 'var(--outline-variant)' }}
                   >
                     {theme === 'dark' ? (
-                      <Sun className="w-4 h-4 text-amber-500" />
+                      <Sun className="w-4 h-4" style={{ color: 'var(--secondary)' }} />
                     ) : (
-                      <Moon className="w-4 h-4 text-neutral-600" />
+                      <Moon className="w-4 h-4" style={{ color: 'var(--on-surface-variant)' }} />
                     )}
                   </button>
                 )}
                 <button
+                  type="button"
                   onClick={() => {
                     setDrawerOpen(false);
                     onStartOnboarding();
                   }}
-                  className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 bg-neutral-900 hover:bg-neutral-800 text-white rounded-lg text-xs font-medium"
+                  className="btn-primary flex-1 flex items-center justify-center gap-1.5 py-2 px-3 text-body-base"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                  <Sparkles className="w-3.5 h-3.5" />
                   <span>{isAr ? 'تهيئة' : 'Onboard'}</span>
                 </button>
               </div>
@@ -249,7 +252,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
               <div className="space-y-4">
                 {allSections.map((sec, idx) => (
                   <div key={idx} className="space-y-1">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 px-2 block">
+                    <span className="text-label-caps px-2 block" style={{ color: 'var(--on-surface-variant)' }}>
                       {sec.group}
                     </span>
                     {sec.items.map((item) => {
@@ -258,31 +261,41 @@ export const MobileNav: React.FC<MobileNavProps> = ({
                       return (
                         <button
                           key={item.id}
+                          type="button"
                           onClick={() => {
                             onNavigate(item.id);
                             setDrawerOpen(false);
                           }}
-                          className={`w-full flex items-center justify-between px-3 py-2 text-xs rounded-xl transition-colors ${
-                            isActive
-                              ? 'bg-neutral-900 text-white font-semibold'
-                              : 'text-neutral-700 hover:bg-neutral-100'
-                          }`}
+                          className="w-full flex items-center justify-between px-3 py-2 text-body-base rounded-xl transition-colors"
+                          style={{
+                            backgroundColor: isActive ? 'var(--primary-container)' : 'transparent',
+                            color: isActive ? 'var(--on-primary-container)' : 'var(--on-surface)',
+                          }}
+                          onMouseEnter={(e) => {
+                            if (!isActive) {
+                              e.currentTarget.style.backgroundColor = 'var(--surface-container-high)';
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (!isActive) {
+                              e.currentTarget.style.backgroundColor = 'transparent';
+                            }
+                          }}
                         >
                           <div className="flex items-center gap-2.5">
                             <Icon
-                              className={`w-4 h-4 ${
-                                isActive ? 'text-white' : 'text-neutral-500'
-                              }`}
+                              className="w-4 h-4"
+                              style={{ color: isActive ? 'var(--on-primary-container)' : 'var(--on-surface-variant)' }}
                             />
                             <span>{item.label}</span>
                           </div>
                           {item.badge && (
-                            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-neutral-200 text-neutral-800">
+                            <span className="badge-pill text-mono-metric" style={{ backgroundColor: 'var(--surface-container)', color: 'var(--on-surface-variant)', border: '1px solid var(--outline-variant)' }}>
                               {item.badge}
                             </span>
                           )}
                           {item.count !== undefined && item.count > 0 && (
-                            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-neutral-200 text-neutral-800">
+                            <span className="badge-pill text-mono-metric" style={{ backgroundColor: 'var(--surface-container)', color: 'var(--on-surface-variant)', border: '1px solid var(--outline-variant)' }}>
                               {item.count}
                             </span>
                           )}
@@ -295,7 +308,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
             </div>
 
             {/* Drawer Footer */}
-            <div className="p-4 border-t border-neutral-100 text-center text-[11px] text-neutral-400 shrink-0 bg-neutral-50/50">
+            <div className="p-4 border-hairline text-center text-micro shrink-0" style={{ borderBlockStartColor: 'var(--outline-variant)', backgroundColor: 'var(--surface-container-low)', color: 'var(--on-surface-variant)' }}>
               CareerPilot AI Operating System
             </div>
           </div>
