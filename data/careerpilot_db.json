@@ -3137,8 +3137,8 @@
       "snippet": "We would love to invite you for a 45-minute technical interview this Friday.",
       "date": "2026-10-14T11:28:03.706Z",
       "category": "interview_invitation",
-      "processed": false,
-      "read": false
+      "processed": true,
+      "read": true
     },
     {
       "id": "test-email-1791977255783",
