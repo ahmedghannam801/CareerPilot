@@ -5,6 +5,7 @@ import { AIAgents } from '../ai/agents.js';
 import { aiGateway } from '../ai/gateway.js';
 import { verifyResource, checkUrlHealth, validateProvider, normalizeUrl, deduplicateResources } from '../services/resourceVerification.js';
 import { lessonPacks, guides, getLessonPackById, getLessonPacksByDifficulty, getLessonPacksByCategory, getGuideById, getGuidesByCategory } from '../../data/lessonPacksData.js';
+import { projects, quizzes, interviewQuestions, skillAssessments, getProjectById, getProjectsByDifficulty, getProjectsByType, getQuizById, getInterviewQuestionById, getSkillAssessmentBySkill } from '../../data/projectsQuizzesData.js';
 import {
   calculateCareerReadiness,
   calculateOpportunityMatch,
@@ -2304,6 +2305,174 @@ apiRouter.get("/lesson-packs/:packId/progress", (req: Request, res: Response) =>
     };
 
     res.json({ success: true, progress });
+  } catch (err: unknown) {
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
+  }
+});
+
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Projects & Quizzes API — Phase 6: Project Library + Skill Assessment
+// ─────────────────────────────────────────────────────────────────────────────
+
+// GET /api/projects — List all projects
+apiRouter.get("/projects", (req: Request, res: Response) => {
+  try {
+    const { type, difficulty, limit, offset } = req.query;
+    let filteredProjects = [...projects];
+
+    if (type) {
+      filteredProjects = filteredProjects.filter(p => p.type === type);
+    }
+    if (difficulty) {
+      filteredProjects = filteredProjects.filter(p => p.difficulty === difficulty);
+    }
+
+    const total = filteredProjects.length;
+    const limitNum = limit ? parseInt(limit as string) : 50;
+    const offsetNum = offset ? parseInt(offset as string) : 0;
+    const paginatedProjects = filteredProjects.slice(offsetNum, offsetNum + limitNum);
+
+    res.json({
+      success: true,
+      projects: paginatedProjects,
+      total,
+      limit: limitNum,
+      offset: offsetNum
+    });
+  } catch (err: unknown) {
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
+  }
+});
+
+// GET /api/projects/:projectId — Get single project
+apiRouter.get("/projects/:projectId", (req: Request, res: Response) => {
+  try {
+    const project = getProjectById(req.params.projectId);
+    if (!project) {
+      return res.status(404).json({ success: false, error: "Project not found" });
+    }
+    res.json({ success: true, project });
+  } catch (err: unknown) {
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
+  }
+});
+
+// GET /api/quizzes — List all quizzes
+apiRouter.get("/quizzes", (req: Request, res: Response) => {
+  try {
+    const { type, difficulty, limit, offset } = req.query;
+    let filteredQuizzes = [...quizzes];
+
+    if (type) {
+      filteredQuizzes = filteredQuizzes.filter(q => q.type === type);
+    }
+    if (difficulty) {
+      filteredQuizzes = filteredQuizzes.filter(q => q.difficulty === difficulty);
+    }
+
+    const total = filteredQuizzes.length;
+    const limitNum = limit ? parseInt(limit as string) : 50;
+    const offsetNum = offset ? parseInt(offset as string) : 0;
+    const paginatedQuizzes = filteredQuizzes.slice(offsetNum, offsetNum + limitNum);
+
+    res.json({
+      success: true,
+      quizzes: paginatedQuizzes,
+      total,
+      limit: limitNum,
+      offset: offsetNum
+    });
+  } catch (err: unknown) {
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
+  }
+});
+
+// GET /api/quizzes/:quizId — Get single quiz
+apiRouter.get("/quizzes/:quizId", (req: Request, res: Response) => {
+  try {
+    const quiz = getQuizById(req.params.quizId);
+    if (!quiz) {
+      return res.status(404).json({ success: false, error: "Quiz not found" });
+    }
+    res.json({ success: true, quiz });
+  } catch (err: unknown) {
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
+  }
+});
+
+// GET /api/interview-questions — List interview questions
+apiRouter.get("/interview-questions", (req: Request, res: Response) => {
+  try {
+    const { type, difficulty, category, limit, offset } = req.query;
+    let filtered = [...interviewQuestions];
+
+    if (type) {
+      filtered = filtered.filter(q => q.type === type);
+    }
+    if (difficulty) {
+      filtered = filtered.filter(q => q.difficulty === difficulty);
+    }
+    if (category) {
+      filtered = filtered.filter(q => q.category === category);
+    }
+
+    const total = filtered.length;
+    const limitNum = limit ? parseInt(limit as string) : 50;
+    const offsetNum = offset ? parseInt(offset as string) : 0;
+    const paginated = filtered.slice(offsetNum, offsetNum + limitNum);
+
+    res.json({
+      success: true,
+      questions: paginated,
+      total,
+      limit: limitNum,
+      offset: offsetNum
+    });
+  } catch (err: unknown) {
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
+  }
+});
+
+// GET /api/skill-assessments — List skill assessments
+apiRouter.get("/skill-assessments", (req: Request, res: Response) => {
+  try {
+    const { skill, difficulty, limit, offset } = req.query;
+    let filtered = [...skillAssessments];
+
+    if (skill) {
+      filtered = filtered.filter(a => a.skill.toLowerCase() === (skill as string).toLowerCase());
+    }
+    if (difficulty) {
+      filtered = filtered.filter(a => a.difficulty === difficulty);
+    }
+
+    const total = filtered.length;
+    const limitNum = limit ? parseInt(limit as string) : 50;
+    const offsetNum = offset ? parseInt(offset as string) : 0;
+    const paginated = filtered.slice(offsetNum, offsetNum + limitNum);
+
+    res.json({
+      success: true,
+      assessments: paginated,
+      total,
+      limit: limitNum,
+      offset: offsetNum
+    });
+  } catch (err: unknown) {
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
+  }
+});
+
+// GET /api/skill-assessments/:skill — Get assessment by skill
+apiRouter.get("/skill-assessments/:skill", (req: Request, res: Response) => {
+  try {
+    const assessment = getSkillAssessmentBySkill(req.params.skill);
+    if (!assessment) {
+      return res.status(404).json({ success: false, error: "Assessment not found for this skill" });
+    }
+    res.json({ success: true, assessment });
   } catch (err: unknown) {
     sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
