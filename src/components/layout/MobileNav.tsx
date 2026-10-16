@@ -238,7 +238,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
                     setDrawerOpen(false);
                     onStartOnboarding();
                   }}
-                  className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 bg-neutral-900 hover:bg-neutral-800 text-white rounded-lg text-xs font-medium"
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 bg-violet-600 hover:bg-violet-700 dark:bg-violet-600 dark:hover:bg-violet-700 text-white rounded-lg text-xs font-medium shadow-sm"
                 >
                   <Sparkles className="w-3.5 h-3.5 text-amber-300" />
                   <span>{isAr ? 'تهيئة' : 'Onboard'}</span>

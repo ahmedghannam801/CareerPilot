@@ -278,7 +278,7 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
           <button
             onClick={handleSyncFeeds}
             disabled={isSyncingFeeds}
-            className="px-3.5 py-2 text-xs font-medium text-white bg-neutral-900 hover:bg-neutral-800 rounded-lg transition-colors inline-flex items-center gap-1.5 disabled:opacity-50"
+            className="px-3.5 py-2 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 rounded-lg transition-colors inline-flex items-center gap-1.5 disabled:opacity-50 shadow-sm"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isSyncingFeeds ? 'animate-spin' : ''}`} />
             <span>
@@ -342,13 +342,13 @@ export const OpportunitiesView: React.FC<OpportunitiesViewProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
           {/* 1. Keyword Search */}
           <div className="relative">
-            <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-neutral-400" />
+            <Search className="w-3.5 h-3.5 absolute left-3 top-2.5 text-blue-600 dark:text-blue-400" />
             <input
               type="text"
               placeholder={lang === 'ar' ? 'بحث بالمسمى أو الشركة أو المهارة...' : 'Search title, company, skill...'}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full text-xs pl-8 pr-3 py-2 border border-neutral-200 rounded-lg bg-neutral-50/50 outline-none focus:ring-1 focus:ring-neutral-900"
+              className="w-full text-xs pl-8 pr-3 py-2 border border-blue-300 dark:border-blue-700 rounded-lg bg-blue-50/50 dark:bg-blue-950/30 outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 text-neutral-900 dark:text-slate-100"
             />
           </div>
 

@@ -7,24 +7,24 @@ import {
   Maximize2,
 } from 'lucide-react';
 
-// AI Agent logo — matches the provided brand logo
-const AIAgentLogo: React.FC<{ size?: number; className?: string }> = ({ size = 28, className = '' }) => (
+// CareerPilot Logo Component — matches the brand logo
+const CareerPilotLogo: React.FC<{ size?: number; className?: string }> = ({ size = 28, className = '' }) => (
   <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
     {/* Circular arc background */}
-    <path d="M18 52 C18 30 36 14 58 14 C72 14 84 21 91 32" stroke="#2563eb" strokeWidth="6" strokeLinecap="round" fill="none" />
-    <path d="M10 62 C12 82 30 96 52 96 C70 96 85 86 92 70" stroke="#3b82f6" strokeWidth="5" strokeLinecap="round" fill="none" />
+    <path d="M18 52 C18 30 36 14 58 14 C72 14 84 21 91 32" stroke="#7c3aed" strokeWidth="6" strokeLinecap="round" fill="none" />
+    <path d="M10 62 C12 82 30 96 52 96 C70 96 85 86 92 70" stroke="#8b5cf6" strokeWidth="5" strokeLinecap="round" fill="none" />
     {/* Network nodes */}
-    <circle cx="22" cy="28" r="7" fill="#1e3a5f" />
-    <circle cx="22" cy="72" r="7" fill="#1e3a5f" />
-    <circle cx="60" cy="86" r="7" stroke="#3b82f6" strokeWidth="3" fill="white" />
+    <circle cx="22" cy="28" r="7" fill="#5b21b6" />
+    <circle cx="22" cy="72" r="7" fill="#5b21b6" />
+    <circle cx="60" cy="86" r="7" stroke="#8b5cf6" strokeWidth="3" fill="white" />
     {/* Connector lines */}
-    <line x1="22" y1="35" x2="42" y2="50" stroke="#1e3a5f" strokeWidth="3.5" strokeLinecap="round" />
-    <line x1="22" y1="65" x2="42" y2="50" stroke="#1e3a5f" strokeWidth="3.5" strokeLinecap="round" />
-    <line x1="48" y1="52" x2="58" y2="80" stroke="#3b82f6" strokeWidth="3" strokeLinecap="round" />
-    {/* Paper-plane arrow */}
-    <polygon points="44,22 90,44 58,56 44,22" fill="#0ea5e9" />
-    <polygon points="44,22 58,56 50,34 44,22" fill="#06b6d4" />
-    <polygon points="58,56 90,44 72,72 58,56" fill="#2563eb" />
+    <line x1="22" y1="35" x2="42" y2="50" stroke="#5b21b6" strokeWidth="3.5" strokeLinecap="round" />
+    <line x1="22" y1="65" x2="42" y2="50" stroke="#5b21b6" strokeWidth="3.5" strokeLinecap="round" />
+    <line x1="48" y1="52" x2="58" y2="80" stroke="#8b5cf6" strokeWidth="3" strokeLinecap="round" />
+    {/* Arrow symbol */}
+    <polygon points="44,22 90,44 58,56 44,22" fill="#a78bfa" />
+    <polygon points="44,22 58,56 50,34 44,22" fill="#c4b5fd" />
+    <polygon points="58,56 90,44 72,72 58,56" fill="#7c3aed" />
   </svg>
 );
 import { CareerProfile } from '../../types/index.js';
@@ -125,7 +125,7 @@ export const FloatingAICopilot: React.FC<FloatingAICopilotProps> = ({
           title={isAr ? 'المساعد المهني الذكي' : 'CareerPilot AI Copilot'}
         >
           <div className="relative">
-            <AIAgentLogo size={34} />
+            <CareerPilotLogo size={34} />
             <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-white" />
           </div>
           <span className="text-xs font-semibold text-slate-700 max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs group-hover:pr-1 transition-all duration-300">
@@ -147,7 +147,7 @@ export const FloatingAICopilot: React.FC<FloatingAICopilotProps> = ({
           <div className="p-3 bg-white border-b border-neutral-100 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2.5">
               <div className="relative">
-                <AIAgentLogo size={30} />
+                <CareerPilotLogo size={30} />
                 <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-emerald-400 rounded-full border border-white" />
               </div>
               <div>
@@ -191,7 +191,7 @@ export const FloatingAICopilot: React.FC<FloatingAICopilotProps> = ({
                   >
                     {msg.role === 'assistant' && (
                       <div className="shrink-0 mt-0.5">
-                        <AIAgentLogo size={22} />
+                        <CareerPilotLogo size={22} />
                       </div>
                     )}
                     <div
@@ -213,7 +213,7 @@ export const FloatingAICopilot: React.FC<FloatingAICopilotProps> = ({
 
                 {isSending && (
                   <div className="flex items-center gap-2 text-neutral-500 text-xs italic">
-                    <div className="animate-pulse"><AIAgentLogo size={18} /></div>
+                    <div className="animate-pulse"><CareerPilotLogo size={18} /></div>
                     <span>{isAr ? 'المساعد يفكر...' : 'CareerPilot is thinking...'}</span>
                   </div>
                 )}

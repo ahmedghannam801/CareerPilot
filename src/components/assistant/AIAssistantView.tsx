@@ -140,7 +140,7 @@ export const AIAssistantView: React.FC<AIAssistantViewProps> = ({
               }`}
             >
               {msg.role === 'assistant' && (
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-600 text-white flex items-center justify-center shrink-0 mt-0.5 shadow-md shadow-indigo-200/40">
+                <div className="w-8 h-8 rounded-xl bg-violet-600 dark:bg-violet-600 text-white flex items-center justify-center shrink-0 mt-0.5 shadow-md shadow-violet-200/40 dark:shadow-violet-900/40">
                   <Bot className="w-4 h-4" />
                 </div>
               )}
@@ -186,7 +186,7 @@ export const AIAssistantView: React.FC<AIAssistantViewProps> = ({
 
           {isSending && (
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-600 text-white flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 rounded-xl bg-violet-600 dark:bg-violet-600 text-white flex items-center justify-center shrink-0">
                 <Sparkles className="w-4 h-4 animate-spin" />
               </div>
               <div

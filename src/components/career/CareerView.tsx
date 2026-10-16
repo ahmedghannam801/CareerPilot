@@ -330,7 +330,7 @@ export const CareerView: React.FC<CareerViewProps> = ({
                     </span>
                   </div>
                   <div className="w-full bg-neutral-100 h-1.5 rounded-full overflow-hidden mb-2">
-                    <div className="bg-neutral-900 h-full rounded-full" style={{ width: `${item.val}%` }} />
+                    <div className="bg-violet-600 h-full rounded-full" style={{ width: `${item.val}%` }} />
                   </div>
                   <span className="text-[11px] text-neutral-500">{item.desc}</span>
                 </div>
