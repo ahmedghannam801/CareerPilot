@@ -29,8 +29,24 @@ import {
   evaluateJobMatch,
   generateTailoredCV as generateTailoredCVLogic,
 } from '../../lib/resumeIntelligence.js';
+import { authRouter } from './auth.js';
+import {
+  validateProfile,
+  validateResume,
+  validateOpportunity,
+  validateApplication,
+  validateProject,
+  validateAIPrompt,
+  validateJobDescription,
+  validateQueryParams,
+  validateInterview,
+} from '../middleware/validation.js';
+import { sendSafeError } from '../middleware/errorHandler.js';
 
 export const apiRouter = Router();
+
+// Mount auth router
+apiRouter.use('/auth', authRouter);
 
 export function getReqUserId(req: Request): string | undefined {
   const custom = req.headers['x-user-id'] as string;
@@ -86,23 +102,21 @@ apiRouter.get('/profile', (req: Request, res: Response) => {
     const profile = dbService.getProfile(userId);
     res.json({ success: true, profile });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { userId: getReqUserId(req), endpoint: '/profile', method: 'GET' });
   }
 });
 
-apiRouter.post('/profile', (req: Request, res: Response) => {
+apiRouter.post('/profile', validateProfile, (req: Request, res: Response) => {
   try {
     const userId = getReqUserId(req);
     const updated = dbService.updateProfile(req.body, userId);
     res.json({ success: true, profile: updated });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
-apiRouter.post('/profile/dna/regenerate', async (req: Request, res: Response) => {
+apiRouter.post('/profile/dna/regenerate', validateProfile, async (req: Request, res: Response) => {
   try {
     if (!featureFlags.isEnabled('aiGateway')) {
       return res.status(503).json({
@@ -123,12 +137,11 @@ apiRouter.post('/profile/dna/regenerate', async (req: Request, res: Response) =>
     });
     res.json({ success: true, dna, profile: updated });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
-apiRouter.post('/profile/nba/refresh', async (req: Request, res: Response) => {
+apiRouter.post('/profile/nba/refresh', validateProfile, async (req: Request, res: Response) => {
   try {
     if (!featureFlags.isEnabled('aiGateway')) {
       return res.status(503).json({
@@ -142,8 +155,7 @@ apiRouter.post('/profile/nba/refresh', async (req: Request, res: Response) => {
     const updated = dbService.updateProfile({ nextBestAction: nba });
     res.json({ success: true, nextBestAction: nba, profile: updated });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -154,8 +166,7 @@ apiRouter.post('/profile/discovery', async (req: Request, res: Response) => {
     const discovery = await AIAgents.runCareerDiscovery(profile, answers);
     res.json({ success: true, discovery });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -302,8 +313,7 @@ apiRouter.post('/resumes/upload', async (req: Request, res: Response) => {
       rawTextPreview: extractedText.slice(0, 1000),
     });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -383,8 +393,7 @@ apiRouter.post('/resumes/extract-confirm', async (req: Request, res: Response) =
       atsScore: masterResume?.atsScore,
     });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -394,8 +403,7 @@ apiRouter.get('/resumes', (req: Request, res: Response) => {
     const resumes = dbService.getResumes(userId);
     res.json({ success: true, resumes });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -418,19 +426,17 @@ apiRouter.get('/resumes/library', (req: Request, res: Response) => {
       totalCount: resumes.length,
     });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
-apiRouter.post('/resumes', (req: Request, res: Response) => {
+apiRouter.post('/resumes', validateResume, (req: Request, res: Response) => {
   try {
     const userId = getReqUserId(req);
     const saved = dbService.saveResume(req.body, userId);
     res.json({ success: true, resume: saved });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -440,8 +446,7 @@ apiRouter.delete('/resumes/:id', (req: Request, res: Response) => {
     const success = dbService.deleteResume(req.params.id, userId);
     res.json({ success });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -451,12 +456,11 @@ apiRouter.get('/resumes/:id/ats', (req: Request, res: Response) => {
     const ats = dbService.getATSAnalysis(req.params.id, userId);
     res.json({ success: true, ats });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
-apiRouter.post('/resumes/:id/analyze', async (req: Request, res: Response) => {
+apiRouter.post('/resumes/:id/analyze', validateJobDescription, async (req: Request, res: Response) => {
   try {
     const userId = getReqUserId(req);
     const resume = dbService.getResumes(userId).find((r) => r.id === req.params.id) || dbService.getMasterResume(userId);
@@ -472,12 +476,11 @@ apiRouter.post('/resumes/:id/analyze', async (req: Request, res: Response) => {
 
     res.json({ success: true, ats });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
-apiRouter.post('/resumes/match', async (req: Request, res: Response) => {
+apiRouter.post('/resumes/match', validateJobDescription, async (req: Request, res: Response) => {
   try {
     const userId = getReqUserId(req);
     const { resumeId, opportunityId, customJobDescription, customJobTitle, customCompany } = req.body;
@@ -516,12 +519,11 @@ apiRouter.post('/resumes/match', async (req: Request, res: Response) => {
     const matchAnalysis = evaluateJobMatch(resume, opp);
     res.json({ success: true, matchAnalysis, opportunity: opp });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
-apiRouter.post('/resumes/tailor', async (req: Request, res: Response) => {
+apiRouter.post('/resumes/tailor', validateJobDescription, async (req: Request, res: Response) => {
   try {
     const userId = getReqUserId(req);
     const { opportunityId, customJobDescription, customJobTitle, customCompany, resumeId } = req.body;
@@ -593,12 +595,11 @@ apiRouter.post('/resumes/tailor', async (req: Request, res: Response) => {
       masterResumeId: baseResume.id,
     });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
-apiRouter.post('/resumes/cover-letter', async (req: Request, res: Response) => {
+apiRouter.post('/resumes/cover-letter', validateJobDescription, async (req: Request, res: Response) => {
   try {
     const profile = dbService.getProfile();
     const { opportunityId } = req.body;
@@ -611,8 +612,7 @@ apiRouter.post('/resumes/cover-letter', async (req: Request, res: Response) => {
     const letter = await AIAgents.runCoverLetter(profile, opp);
     res.json({ success: true, letter });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -632,8 +632,7 @@ apiRouter.get('/opportunities', (req: Request, res: Response) => {
     });
     res.json({ success: true, opportunities });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -685,12 +684,11 @@ apiRouter.post('/opportunities/sync-feeds', async (req: Request, res: Response) 
       opportunities: updated,
     });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
-apiRouter.post('/opportunities', (req: Request, res: Response) => {
+apiRouter.post('/opportunities', validateOpportunity, (req: Request, res: Response) => {
   try {
     const opp = {
       ...req.body,
@@ -701,8 +699,7 @@ apiRouter.post('/opportunities', (req: Request, res: Response) => {
     const saved = dbService.addOpportunity(opp, userId);
     res.json({ success: true, opportunity: saved });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -712,12 +709,11 @@ apiRouter.delete('/opportunities/:id', (req: Request, res: Response) => {
     dbService.deleteOpportunity(req.params.id, userId);
     res.json({ success: true });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
-apiRouter.post('/opportunities/parse-jd', async (req: Request, res: Response) => {
+apiRouter.post('/opportunities/parse-jd', validateJobDescription, async (req: Request, res: Response) => {
   try {
     const rawText = req.body.rawText || '';
     if (!rawText.trim()) {
@@ -726,8 +722,7 @@ apiRouter.post('/opportunities/parse-jd', async (req: Request, res: Response) =>
     const parsed = await AIAgents.runJobDescriptionParser(rawText);
     res.json({ success: true, parsed });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -742,8 +737,7 @@ apiRouter.post('/opportunities/:id/match', (req: Request, res: Response) => {
     const matchAnalysis = calculateOpportunityMatch(profile, opp);
     res.json({ success: true, matchAnalysis });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -754,12 +748,11 @@ apiRouter.get('/applications', (req: Request, res: Response) => {
     const applications = dbService.getApplications(userId);
     res.json({ success: true, applications });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
-apiRouter.post('/applications', (req: Request, res: Response) => {
+apiRouter.post('/applications', validateApplication, (req: Request, res: Response) => {
   try {
     const userId = getReqUserId(req);
     const app = {
@@ -771,8 +764,7 @@ apiRouter.post('/applications', (req: Request, res: Response) => {
     const saved = dbService.saveApplication(app);
     res.json({ success: true, application: saved });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -793,8 +785,7 @@ apiRouter.post('/applications/:id/evaluate-quality', (req: Request, res: Respons
     dbService.saveApplication(app);
     res.json({ success: true, quality });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -804,12 +795,11 @@ apiRouter.get('/projects', (req: Request, res: Response) => {
     const microProjects = dbService.getMicroProjects();
     res.json({ success: true, projects: microProjects });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
-apiRouter.post('/projects/generate', async (req: Request, res: Response) => {
+apiRouter.post('/projects/generate', validateProject, async (req: Request, res: Response) => {
   try {
     const { skillGap, targetRole } = req.body;
     const profile = dbService.getProfile();
@@ -820,8 +810,7 @@ apiRouter.post('/projects/generate', async (req: Request, res: Response) => {
     const saved = dbService.saveMicroProject(proj);
     res.json({ success: true, project: saved });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -880,8 +869,7 @@ apiRouter.post('/projects/:id/submit', async (req: Request, res: Response) => {
 
     res.json({ success: true, project: proj, evaluation });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -891,8 +879,7 @@ apiRouter.get('/courses', (req: Request, res: Response) => {
     const courses = dbService.getCourses();
     res.json({ success: true, courses });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -905,8 +892,7 @@ apiRouter.post('/courses', (req: Request, res: Response) => {
     const saved = dbService.saveCourse(course);
     res.json({ success: true, course: saved });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -915,8 +901,7 @@ apiRouter.post('/courses/:id/enroll', (req: Request, res: Response) => {
     const enrolled = dbService.enrollCourse(req.params.id);
     res.json({ success: true, course: enrolled });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -930,8 +915,7 @@ apiRouter.post('/courses/:id/progress', (req: Request, res: Response) => {
     );
     res.json({ success: true, course: updated });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -941,8 +925,7 @@ apiRouter.post('/courses/:id/complete', (req: Request, res: Response) => {
     const result = dbService.completeCourse(req.params.id, notes, certificateUrl);
     res.json({ success: true, course: result.course, profile: result.profile });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -951,8 +934,7 @@ apiRouter.delete('/courses/:id', (req: Request, res: Response) => {
     const ok = dbService.deleteCourse(req.params.id);
     res.json({ success: true, deleted: ok });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -1078,8 +1060,7 @@ apiRouter.post('/courses/recommend', async (req: Request, res: Response) => {
       newCourses: generatedCourses,
     });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -1089,8 +1070,7 @@ apiRouter.get('/email/events', (req: Request, res: Response) => {
     const emailEvents = dbService.getEmailEvents();
     res.json({ success: true, events: emailEvents });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -1128,8 +1108,7 @@ apiRouter.post('/email/events/:id/read', (req: Request, res: Response) => {
     }
     res.json({ success: true, event: updated });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -1196,8 +1175,7 @@ apiRouter.post('/email/classify', async (req: Request, res: Response) => {
 
     res.json({ success: true, classification, event: newEvent });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -1207,12 +1185,11 @@ apiRouter.get('/interviews', (req: Request, res: Response) => {
     const interviews = dbService.getInterviews();
     res.json({ success: true, interviews });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
-apiRouter.post('/interviews/start', async (req: Request, res: Response) => {
+apiRouter.post('/interviews/start', validateInterview, async (req: Request, res: Response) => {
   try {
     const { jobRole, trackId, type, language, count } = req.body;
     const profile = dbService.getProfile();
@@ -1247,12 +1224,11 @@ apiRouter.post('/interviews/start', async (req: Request, res: Response) => {
     const saved = dbService.saveInterview(session);
     res.json({ success: true, session: saved });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
-apiRouter.post('/interviews/:id/answer', async (req: Request, res: Response) => {
+apiRouter.post('/interviews/:id/answer', validateInterview, async (req: Request, res: Response) => {
   try {
     const session = dbService.getInterviews().find((i) => i.id === req.params.id);
     if (!session) {
@@ -1296,8 +1272,7 @@ apiRouter.post('/interviews/:id/answer', async (req: Request, res: Response) => 
     dbService.saveInterview(session);
     res.json({ success: true, session, feedback });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -1330,15 +1305,14 @@ apiRouter.post('/notifications/:id/read', (req: Request, res: Response) => {
 });
 
 // --- AI Assistant Chat ---
-apiRouter.post('/assistant/chat', async (req: Request, res: Response) => {
+apiRouter.post('/assistant/chat', validateAIPrompt, async (req: Request, res: Response) => {
   try {
     const { message, history } = req.body;
     const profile = dbService.getProfile();
     const reply = await AIAgents.runAssistantChat(message, profile, history || []);
     res.json({ success: true, reply });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -1426,9 +1400,9 @@ apiRouter.get('/auth/linkedin/callback', async (req: Request, res: Response) => 
 
     res.redirect('/?linkedin_connected=true');
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    console.error('[LinkedIn OAuth] Callback exception:', msg);
-    res.redirect(`/?error=${encodeURIComponent(msg)}`);
+    const errorMsg = err instanceof Error ? err.message : 'Authentication failed';
+    console.error('[LinkedIn OAuth] Callback exception:', errorMsg);
+    res.redirect(`/?error=${encodeURIComponent('LinkedIn authentication failed')}`);
   }
 });
 
@@ -1461,8 +1435,7 @@ apiRouter.post('/linkedin/parse-profile', async (req: Request, res: Response) =>
     const extracted = await AIAgents.runLinkedInProfileParser(rawText);
     res.json({ success: true, extracted });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -1599,8 +1572,7 @@ apiRouter.post('/linkedin/sync-profile', async (req: Request, res: Response) => 
       resume: linkedInResume,
     });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -1614,8 +1586,7 @@ apiRouter.get('/supabase/status', async (req: Request, res: Response) => {
       ...status,
     });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -1634,8 +1605,7 @@ apiRouter.post('/supabase/sync', async (req: Request, res: Response) => {
     const result = await syncStateToSupabase(state);
     res.json(result);
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -1708,8 +1678,7 @@ apiRouter.get('/ineeded/jobs', async (req: Request, res: Response) => {
 
     res.json({ success: true, count: jobs.length, jobs, maxDaysOld: MAX_DAYS_OLD });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -1752,8 +1721,7 @@ apiRouter.get('/ineeded/training', async (req: Request, res: Response) => {
 
     res.json({ success: true, count: training.length, training, maxDaysOld: MAX_DAYS_OLD });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -1775,8 +1743,8 @@ apiRouter.get('/ineeded/status', async (req: Request, res: Response) => {
       maxDaysFilter: MAX_DAYS_OLD,
     });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.json({ success: false, error: msg, keyConfigured: Boolean(RAPID_KEY) });
+    console.error('[RapidAPI] Feed sync error:', err);
+    res.json({ success: false, error: 'Failed to sync job feeds', keyConfigured: Boolean(RAPID_KEY) });
   }
 });
 
@@ -1789,8 +1757,7 @@ apiRouter.get('/roadmaps', (req: Request, res: Response) => {
   try {
     res.json({ success: true, roadmaps: INITIAL_ROADMAPS });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -1803,13 +1770,12 @@ apiRouter.get('/roadmaps/:id', (req: Request, res: Response) => {
     }
     res.json({ success: true, roadmap });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
 // POST /api/roadmaps/generate
-apiRouter.post('/roadmaps/generate', async (req: Request, res: Response) => {
+apiRouter.post('/roadmaps/generate', validateAIPrompt, async (req: Request, res: Response) => {
   try {
     if (!featureFlags.isEnabled('aiGateway')) {
       return res.status(503).json({
@@ -1842,8 +1808,7 @@ apiRouter.post('/roadmaps/generate', async (req: Request, res: Response) => {
 
     res.json({ success: true, roadmap: fullRoadmap });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -1885,8 +1850,7 @@ apiRouter.get('/user/export', async (req: Request, res: Response) => {
       },
     });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -1919,8 +1883,7 @@ apiRouter.post('/user/delete', async (req: Request, res: Response) => {
       purgedAt: new Date().toISOString(),
     });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -1967,8 +1930,7 @@ apiRouter.get('/admin/ai-metrics', requireAdminRole, (req: Request, res: Respons
       metrics,
     });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -2026,19 +1988,17 @@ apiRouter.post('/items', (req: Request, res: Response) => {
     itemsStore.set(item_id, item);
     res.status(201).json({ success: true, item_id, item });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
 // GET /api/items — List all root items
-apiRouter.get('/items', (_req: Request, res: Response) => {
+apiRouter.get('/items', (req: Request, res: Response) => {
   try {
     const items = Array.from(itemsStore.values());
     res.json({ success: true, items, total: items.length });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -2051,8 +2011,7 @@ apiRouter.get('/items/:item_id', (req: Request, res: Response) => {
     }
     res.json({ success: true, item_id: item.item_id, item });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 
@@ -2065,8 +2024,7 @@ apiRouter.delete('/items/:item_id', (req: Request, res: Response) => {
     }
     res.json({ success: true, item_id: req.params.item_id, deleted: true });
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    res.status(500).json({ success: false, error: msg });
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
 });
 

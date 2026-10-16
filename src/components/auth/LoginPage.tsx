@@ -110,6 +110,31 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, lang, onToggleLan
 
     setIsLoading(true);
     try {
+      // Check rate limit for signin only (signup has built-in Supabase rate limiting)
+      if (mode === 'signin') {
+        try {
+          const rateLimitCheck = await fetch('/api/auth/check-rate-limit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email.toLowerCase().trim() }),
+          });
+          const rateLimitData = await rateLimitCheck.json();
+
+          if (!rateLimitData.allowed) {
+            const minutes = Math.ceil((rateLimitData.retryAfter || 0) / 60);
+            setError(
+              isAr
+                ? `تم تجاوز الحد المسموح. حاول مرة أخرى بعد ${minutes} دقيقة`
+                : `Too many attempts. Try again in ${minutes} minute${minutes !== 1 ? 's' : ''}`
+            );
+            return;
+          }
+        } catch (rateLimitError) {
+          // Rate limit check failed - continue with auth but log error
+          console.warn('[Auth] Rate limit check failed:', rateLimitError);
+        }
+      }
+
       if (mode === 'signup') {
         const { user, error: err } = await signUpWithEmail(email, password, name);
         if (err) {
@@ -126,10 +151,30 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, lang, onToggleLan
       } else {
         const { user, error: err } = await signInWithEmail(email, password);
         if (err) {
+          // Record failed attempt
+          try {
+            await fetch('/api/auth/login-failed', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email: email.toLowerCase().trim() }),
+            });
+          } catch (recordError) {
+            console.warn('[Auth] Failed to record attempt:', recordError);
+          }
           setError(err);
           return;
         }
         if (user) {
+          // Reset rate limit on successful login
+          try {
+            await fetch('/api/auth/login-success', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email: email.toLowerCase().trim() }),
+            });
+          } catch (resetError) {
+            console.warn('[Auth] Failed to reset attempts:', resetError);
+          }
           onLogin({
             email: user.email!,
             name: user.user_metadata?.full_name || email.split('@')[0],

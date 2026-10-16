@@ -51,14 +51,81 @@ async function startServer() {
     next();
   });
 
-  // CORS middleware for production cross-origin deployments (e.g. Cloudflare Pages)
+  // Security Headers Middleware
   app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', process.env.CORS_ORIGIN || '*');
+    const isProduction = process.env.NODE_ENV === 'production';
+
+    // Content Security Policy
+    const cspDirectives = [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://apis.google.com",
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+      "img-src 'self' data: https: blob:",
+      "font-src 'self' data: https://fonts.gstatic.com",
+      "connect-src 'self' https://generativelanguage.googleapis.com https://*.supabase.co" +
+        (isProduction ? "" : " ws://localhost:* http://localhost:*"),
+      "frame-src 'self' https://accounts.google.com",
+      "object-src 'none'",
+      "media-src 'self'",
+      "worker-src 'self' blob:",
+      "child-src 'self' blob:",
+      "form-action 'self'",
+    ];
+
+    if (isProduction) {
+      cspDirectives.push("upgrade-insecure-requests");
+    }
+
+    res.setHeader('Content-Security-Policy', cspDirectives.join('; '));
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+
+    // HSTS - Only in production with HTTPS
+    if (isProduction) {
+      res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+    }
+
+    next();
+  });
+
+  // CORS middleware with strict origin control
+  app.use((req, res, next) => {
+    const origin = req.headers.origin;
+    const isProduction = process.env.NODE_ENV === 'production';
+
+    // Define allowed origins
+    const allowedOrigins = isProduction
+      ? [
+          'https://careerpilot.ai',
+          'https://www.careerpilot.ai',
+          'https://careerpilot-dic.pages.dev',
+        ]
+      : [
+          'http://localhost:3000',
+          'http://localhost:5173',
+          'http://127.0.0.1:3000',
+          'http://127.0.0.1:5173',
+        ];
+
+    // Check if origin is allowed
+    if (origin && allowedOrigins.includes(origin)) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
+      res.setHeader('Access-Control-Allow-Credentials', 'true');
+    } else if (!origin) {
+      // Allow requests with no origin (mobile apps, Postman, server-to-server)
+      res.setHeader('Access-Control-Allow-Origin', '*');
+    }
+
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
     res.setHeader(
       'Access-Control-Allow-Headers',
-      'Content-Type, Authorization, X-Request-ID, X-Correlation-ID, X-Admin-Key'
+      'Content-Type, Authorization, X-Request-ID, X-Correlation-ID, X-User-ID, X-Goog-Api-Key'
     );
+    res.setHeader('Access-Control-Expose-Headers', 'X-Request-ID, X-Correlation-ID');
+    res.setHeader('Access-Control-Max-Age', '86400'); // 24 hours
+
     if (req.method === 'OPTIONS') {
       res.sendStatus(204);
       return;
