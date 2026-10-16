@@ -3,6 +3,7 @@ import mammoth from 'mammoth';
 import { dbService, UploadedDocument } from '../db/index.js';
 import { AIAgents } from '../ai/agents.js';
 import { aiGateway } from '../ai/gateway.js';
+import { verifyResource, checkUrlHealth, validateProvider, normalizeUrl, deduplicateResources } from '../services/resourceVerification.js';
 import {
   calculateCareerReadiness,
   calculateOpportunityMatch,
@@ -1831,7 +1832,7 @@ apiRouter.post('/roadmaps/generate', validateAIPrompt, async (req: Request, res:
   }
 });
 
-// POST /api/courses/recommend - AI-powered course recommendations
+// POST /api/courses/recommend - AI-powered course recommendations with verification
 apiRouter.post('/courses/recommend', async (req: Request, res: Response) => {
   try {
     if (!featureFlags.isEnabled('aiGateway')) {
@@ -1843,7 +1844,7 @@ apiRouter.post('/courses/recommend', async (req: Request, res: Response) => {
     }
 
     const profile = dbService.getProfile();
-    const { targetRole, maxCourses = 5 } = req.body;
+    const { targetRole, maxCourses = 5, verifyResources = false } = req.body;
 
     // Find relevant roadmaps for extracting verified resources
     const normalizedRole = targetRole || profile.targetRole || '';
@@ -1873,7 +1874,7 @@ apiRouter.post('/courses/recommend', async (req: Request, res: Response) => {
       roadmapResources.length > 0 ? roadmapResources : undefined
     );
 
-    // Transform to Course interface format with enrollment tracking
+    // Transform to Course interface format with enrollment tracking + verification metadata
     const coursesWithIds = result.courses.map((course: any) => ({
       courseId: `course-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`,
       title: course.title,
@@ -1898,7 +1899,16 @@ apiRouter.post('/courses/recommend', async (req: Request, res: Response) => {
       modules: [],
       lastAccessedDate: null,
       notes: null,
+      // Verification metadata (not verified by default since AI-generated)
+      verificationStatus: 'NEEDS_REVIEW' as const,
+      verificationSource: 'AI_SUGGESTED' as const,
+      lastVerifiedAt: null,
+      qualityScore: null,
     }));
+
+    // Note: Real-time verification is expensive and slow
+    // Mark all AI-generated courses as NEEDS_REVIEW
+    // Background verification job should verify them asynchronously
 
     res.json({
       success: true,
@@ -1908,6 +1918,7 @@ apiRouter.post('/courses/recommend', async (req: Request, res: Response) => {
         totalResourcesReferenced: roadmapResources.length,
         generatedAt: new Date().toISOString(),
         personalizedFor: profile.fullName || profile.email || 'User',
+        verificationNote: 'AI-generated courses require verification. URLs and metadata may need review.',
       },
     });
   } catch (err: unknown) {
@@ -2131,3 +2142,37 @@ apiRouter.delete('/items/:item_id', (req: Request, res: Response) => {
   }
 });
 
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Resource Verification API — Phase 4: Real Learning Resources
+// ─────────────────────────────────────────────────────────────────────────────
+
+// POST /api/resources/verify — Verify a single resource URL
+apiRouter.post('/resources/verify', async (req: Request, res: Response) => {
+  try {
+    const { url, provider, title, description, duration, level, lastVerifiedAt } = req.body;
+    if (!url || !provider) {
+      return res.status(400).json({ success: false, error: 'Missing required fields: url, provider' });
+    }
+    const result = await verifyResource(url, provider, title || 'Unknown', description || null, duration || null, level || 'Beginner', lastVerifiedAt || null);
+    res.json({ success: true, verification: result });
+  } catch (err: unknown) {
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
+  }
+});
+
+// POST /api/resources/check-health — Quick URL health check
+apiRouter.post('/resources/check-health', async (req: Request, res: Response) => {
+  try {
+    const { url } = req.body;
+    if (!url) {
+      return res.status(400).json({ success: false, error: 'Missing required field: url' });
+    }
+    const health = await checkUrlHealth(url);
+    res.json({ success: true, health });
+  } catch (err: unknown) {
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
+  }
+});
+
+export default apiRouter;
