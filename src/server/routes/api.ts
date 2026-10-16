@@ -6,6 +6,7 @@ import { aiGateway } from '../ai/gateway.js';
 import { verifyResource, checkUrlHealth, validateProvider, normalizeUrl, deduplicateResources } from '../services/resourceVerification.js';
 import { lessonPacks, guides, getLessonPackById, getLessonPacksByDifficulty, getLessonPacksByCategory, getGuideById, getGuidesByCategory } from '../../data/lessonPacksData.js';
 import { projects, quizzes, interviewQuestions, skillAssessments, getProjectById, getProjectsByDifficulty, getProjectsByType, getQuizById, getInterviewQuestionById, getSkillAssessmentBySkill } from '../../data/projectsQuizzesData.js';
+import { jobPostings, skillDemandData, roleMarketData, marketTrends, salaryData, getJobById, getJobsByLocation, getJobsByRemotePolicy, getJobsByExperienceLevel, getVerifiedJobs, getSkillDemandBySkill, getRoleMarketDataByRole, getTrendingSkills } from '../../data/jobIntelligenceData.js';
 import {
   calculateCareerReadiness,
   calculateOpportunityMatch,
@@ -2473,6 +2474,192 @@ apiRouter.get("/skill-assessments/:skill", (req: Request, res: Response) => {
       return res.status(404).json({ success: false, error: "Assessment not found for this skill" });
     }
     res.json({ success: true, assessment });
+  } catch (err: unknown) {
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
+  }
+});
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Job Intelligence API — Phase 7: Real Job Data + Market Intelligence
+// ─────────────────────────────────────────────────────────────────────────────
+
+// GET /api/jobs — List all job postings
+apiRouter.get("/jobs", (req: Request, res: Response) => {
+  try {
+    const { location, remotePolicy, experienceLevel, verifiedOnly, limit, offset } = req.query;
+    let filteredJobs = [...jobPostings];
+
+    if (location) {
+      filteredJobs = getJobsByLocation(location as string);
+    }
+    if (remotePolicy) {
+      filteredJobs = filteredJobs.filter(j => j.remotePolicy === remotePolicy);
+    }
+    if (experienceLevel) {
+      filteredJobs = filteredJobs.filter(j => j.experienceLevel === experienceLevel);
+    }
+    if (verifiedOnly === 'true') {
+      filteredJobs = filteredJobs.filter(j => j.verificationStatus === 'verified');
+    }
+
+    const total = filteredJobs.length;
+    const limitNum = limit ? parseInt(limit as string) : 50;
+    const offsetNum = offset ? parseInt(offset as string) : 0;
+    const paginatedJobs = filteredJobs.slice(offsetNum, offsetNum + limitNum);
+
+    res.json({
+      success: true,
+      jobs: paginatedJobs,
+      total,
+      limit: limitNum,
+      offset: offsetNum
+    });
+  } catch (err: unknown) {
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
+  }
+});
+
+// GET /api/jobs/:jobId — Get single job posting
+apiRouter.get("/jobs/:jobId", (req: Request, res: Response) => {
+  try {
+    const job = getJobById(req.params.jobId);
+    if (!job) {
+      return res.status(404).json({ success: false, error: "Job not found" });
+    }
+    res.json({ success: true, job });
+  } catch (err: unknown) {
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
+  }
+});
+
+// GET /api/jobs/search — Search jobs with filters
+apiRouter.get("/jobs/search", (req: Request, res: Response) => {
+  try {
+    const { keywords, skills, minSalary, maxSalary, limit, offset } = req.query;
+    let filteredJobs = [...jobPostings];
+
+    if (keywords) {
+      const keywordLower = (keywords as string).toLowerCase();
+      filteredJobs = filteredJobs.filter(j =>
+        j.title.toLowerCase().includes(keywordLower) ||
+        j.description.toLowerCase().includes(keywordLower)
+      );
+    }
+
+    if (skills) {
+      const skillsArray = (skills as string).split(',').map(s => s.trim().toLowerCase());
+      filteredJobs = filteredJobs.filter(j =>
+        skillsArray.some(skill =>
+          j.skills.required.some(s => s.toLowerCase().includes(skill)) ||
+          j.skills.preferred.some(s => s.toLowerCase().includes(skill))
+        )
+      );
+    }
+
+    if (minSalary) {
+      const minSal = parseInt(minSalary as string);
+      filteredJobs = filteredJobs.filter(j => j.salary && j.salary.min >= minSal);
+    }
+
+    if (maxSalary) {
+      const maxSal = parseInt(maxSalary as string);
+      filteredJobs = filteredJobs.filter(j => j.salary && j.salary.max <= maxSal);
+    }
+
+    const total = filteredJobs.length;
+    const limitNum = limit ? parseInt(limit as string) : 50;
+    const offsetNum = offset ? parseInt(offset as string) : 0;
+    const paginatedJobs = filteredJobs.slice(offsetNum, offsetNum + limitNum);
+
+    res.json({
+      success: true,
+      jobs: paginatedJobs,
+      total,
+      limit: limitNum,
+      offset: offsetNum
+    });
+  } catch (err: unknown) {
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
+  }
+});
+
+// GET /api/market/skills — Get skill demand data
+apiRouter.get("/market/skills", (req: Request, res: Response) => {
+  try {
+    const { skill, trending } = req.query;
+
+    if (skill) {
+      const skillData = getSkillDemandBySkill(skill as string);
+      if (!skillData) {
+        return res.status(404).json({ success: false, error: "Skill demand data not found" });
+      }
+      return res.json({ success: true, skillDemand: skillData });
+    }
+
+    if (trending === 'true') {
+      const trendingSkills = getTrendingSkills();
+      return res.json({ success: true, skills: trendingSkills });
+    }
+
+    res.json({ success: true, skills: skillDemandData });
+  } catch (err: unknown) {
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
+  }
+});
+
+// GET /api/market/roles — Get role market data
+apiRouter.get("/market/roles", (req: Request, res: Response) => {
+  try {
+    const { role } = req.query;
+
+    if (role) {
+      const roleData = getRoleMarketDataByRole(role as string);
+      if (!roleData) {
+        return res.status(404).json({ success: false, error: "Role market data not found" });
+      }
+      return res.json({ success: true, roleMarket: roleData });
+    }
+
+    res.json({ success: true, roles: roleMarketData });
+  } catch (err: unknown) {
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
+  }
+});
+
+// GET /api/market/trends — Get market trends
+apiRouter.get("/market/trends", (req: Request, res: Response) => {
+  try {
+    const { type } = req.query;
+
+    if (type) {
+      const filtered = marketTrends.filter(t => t.type === type);
+      return res.json({ success: true, trends: filtered });
+    }
+
+    res.json({ success: true, trends: marketTrends });
+  } catch (err: unknown) {
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
+  }
+});
+
+// GET /api/market/salary — Get salary data
+apiRouter.get("/market/salary", (req: Request, res: Response) => {
+  try {
+    const { role, location, experienceLevel } = req.query;
+    let filtered = [...salaryData];
+
+    if (role) {
+      filtered = filtered.filter(s => s.role.toLowerCase() === (role as string).toLowerCase());
+    }
+    if (location) {
+      filtered = filtered.filter(s => s.location.toLowerCase().includes((location as string).toLowerCase()));
+    }
+    if (experienceLevel) {
+      filtered = filtered.filter(s => s.experienceLevel === experienceLevel);
+    }
+
+    res.json({ success: true, salaryData: filtered, count: filtered.length });
   } catch (err: unknown) {
     sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
