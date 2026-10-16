@@ -847,4 +847,98 @@ TASK: Generate a comprehensive, production-grade learning roadmap that:
       schema: RoadmapGenerationSchema,
     });
   },
+
+  // ============================================================================
+  // Course Recommendation Agent
+  // ============================================================================
+  async runCourseRecommender(
+    profile: CareerProfile,
+    targetRole?: string,
+    maxCourses = 5,
+    roadmapResources?: any[] // Resources from roadmaps to use as reference
+  ) {
+    const existingSkills = profile.skills.map((s) => s.canonicalName).join(', ');
+    const weaknesses = profile.dna?.weaknesses?.join(', ') || 'No specific gaps identified';
+    const role = targetRole || profile.targetRole || 'Software Engineer';
+
+    // Build context from roadmap resources if provided
+    let resourceContext = '';
+    if (roadmapResources && roadmapResources.length > 0) {
+      const topResources = roadmapResources.slice(0, 10);
+      resourceContext = `\n\nVERIFIED COURSE REFERENCES (use as inspiration, recommend REAL courses):
+${topResources.map((r, idx) => `${idx + 1}. ${r.title} (${r.provider}) - ${r.url}`).join('\n')}`;
+    }
+
+    return aiGateway.generateStructured({
+      agentName: 'Course Recommendation Agent',
+      promptVersion: 'course_recommender_v1',
+      systemInstruction: `You are the Learning Resources Curator in CareerPilot AI.
+Your mission is to recommend the BEST, MOST RELEVANT online courses for the candidate to reach '${role}'.
+
+Context: You have access to verified course resources from curated career roadmaps. Use them as reference for quality standards.
+
+Strict Rules:
+1. Recommend ONLY REAL, EXISTING courses from verified platforms:
+   - YouTube (freeCodeCamp, Traversy Media, Programming with Mosh, Academind, etc.)
+   - Coursera (Google, IBM, Meta, DeepLearning.AI certificates)
+   - Microsoft Learn (Azure, .NET, Power Platform official paths)
+   - freeCodeCamp (Interactive curriculum)
+   - Udemy (highly-rated courses only, 4.5+ rating)
+   - Official documentation sites (React.dev, Python.org, MDN, etc.)
+
+2. Prioritize based on candidate's CURRENT state:
+   - Existing Skills: ${existingSkills}
+   - Skill Gaps: ${weaknesses}
+   - Target Role: ${role}
+
+3. SKIP courses covering skills they already have — focus on GAPS.
+
+4. Include mix of:
+   - FREE courses (priority)
+   - "Free with Paid Certificate" options
+   - High-value paid courses (only if exceptional)
+
+5. Provide REAL, WORKING URLs — no placeholder links.
+
+6. For each course, explain WHY it's relevant to THIS candidate specifically.
+
+7. Order by priority: most critical gaps first.
+
+8. Output bilingual titles and descriptions (English + Arabic).${resourceContext}`,
+      prompt: `Candidate Profile for Course Recommendations:
+- Target Role: ${role}
+- Current Level: ${profile.dna?.currentLevel || 'Intermediate'}
+- Existing Skills: ${existingSkills || 'Basic Programming'}
+- Skill Gaps to Fill: ${weaknesses}
+- Learning Goal: ${profile.targetRole || role}
+
+TASK: Recommend ${maxCourses} courses that:
+1. Fill the candidate's SPECIFIC skill gaps
+2. Are appropriate for their current level
+3. Progress them toward ${role}
+4. Use REAL course URLs from verified platforms
+5. Prioritize FREE or affordable options
+
+Focus on PRACTICAL courses with hands-on projects, not just theory.`,
+      schema: z.object({
+        courses: z.array(z.object({
+          title: z.string().describe('Course title'),
+          titleAr: z.string().describe('Arabic course title'),
+          provider: z.string().describe('Platform: YouTube, Coursera, Microsoft Learn, freeCodeCamp, Udemy, etc.'),
+          instructor: z.string().optional().describe('Instructor name if known'),
+          domain: z.string().describe('Domain: AI & ML, Full-Stack, Cloud, DevOps, Data, Security, Design, etc.'),
+          level: z.enum(['Beginner', 'Intermediate', 'Advanced', 'All Levels']),
+          duration: z.string().describe('Estimated duration: e.g. "6 hours", "4 weeks", "3 months"'),
+          rating: z.number().min(0).max(5).describe('Rating out of 5'),
+          url: z.string().url().describe('REAL working URL to the course'),
+          description: z.string().describe('What the course covers'),
+          descriptionAr: z.string().describe('Arabic description'),
+          skillsGained: z.array(z.string()).describe('Specific skills learned'),
+          relevanceReason: z.string().describe('WHY this course is relevant to THIS candidate specifically'),
+          cost: z.enum(['Free', 'Paid', 'Free with Paid Cert']),
+          certificateAvailable: z.boolean(),
+        })).min(1).max(10),
+      }),
+    });
+  },
 };

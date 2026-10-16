@@ -1831,6 +1831,90 @@ apiRouter.post('/roadmaps/generate', validateAIPrompt, async (req: Request, res:
   }
 });
 
+// POST /api/courses/recommend - AI-powered course recommendations
+apiRouter.post('/courses/recommend', async (req: Request, res: Response) => {
+  try {
+    if (!featureFlags.isEnabled('aiGateway')) {
+      return res.status(503).json({
+        success: false,
+        error: 'AI Course recommendations are currently disabled by administrator.',
+        code: 'FEATURE_DISABLED',
+      });
+    }
+
+    const profile = dbService.getProfile();
+    const { targetRole, maxCourses = 5 } = req.body;
+
+    // Find relevant roadmaps for extracting verified resources
+    const normalizedRole = targetRole || profile.targetRole || '';
+    const relevantRoadmaps = INITIAL_ROADMAPS.filter((rm) => {
+      const roleText = normalizedRole.toLowerCase();
+      const roadmapText = `${rm.title} ${rm.targetRole} ${rm.tags.join(' ')}`.toLowerCase();
+      return roadmapText.includes(roleText) || roleText.split(/[\s-]+/).some((kw: string) => roadmapText.includes(kw));
+    }).slice(0, 3);
+
+    // Extract resources from roadmaps as reference
+    const roadmapResources: any[] = [];
+    relevantRoadmaps.forEach((rm) => {
+      rm.stages.forEach((stage: any) => {
+        stage.nodes.forEach((node: any) => {
+          if (node.resources && Array.isArray(node.resources)) {
+            roadmapResources.push(...node.resources);
+          }
+        });
+      });
+    });
+
+    // Generate recommendations using AI
+    const result = await AIAgents.runCourseRecommender(
+      profile,
+      targetRole || profile.targetRole,
+      maxCourses,
+      roadmapResources.length > 0 ? roadmapResources : undefined
+    );
+
+    // Transform to Course interface format with enrollment tracking
+    const coursesWithIds = result.courses.map((course: any) => ({
+      courseId: `course-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`,
+      title: course.title,
+      titleAr: course.titleAr,
+      provider: course.provider,
+      instructor: course.instructor || 'N/A',
+      domain: course.domain,
+      level: course.level,
+      duration: course.duration,
+      rating: course.rating,
+      url: course.url,
+      description: course.description,
+      descriptionAr: course.descriptionAr,
+      skillsGained: course.skillsGained,
+      relevanceReason: course.relevanceReason,
+      cost: course.cost,
+      certificateAvailable: course.certificateAvailable,
+      enrollmentStatus: 'not_started' as const,
+      enrollmentDate: null,
+      completionDate: null,
+      progressPercentage: 0,
+      modules: [],
+      lastAccessedDate: null,
+      notes: null,
+    }));
+
+    res.json({
+      success: true,
+      courses: coursesWithIds,
+      metadata: {
+        referencedRoadmaps: relevantRoadmaps.map((rm) => ({ id: rm.id, title: rm.title })),
+        totalResourcesReferenced: roadmapResources.length,
+        generatedAt: new Date().toISOString(),
+        personalizedFor: profile.fullName || profile.email || 'User',
+      },
+    });
+  } catch (err: unknown) {
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
+  }
+});
+
 // GET /api/user/export - Authenticated full user data archive
 apiRouter.get('/user/export', async (req: Request, res: Response) => {
   try {
