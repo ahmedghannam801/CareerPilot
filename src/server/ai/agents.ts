@@ -784,33 +784,66 @@ Generate 3 to 4 tailored, top-tier professional courses with realistic modules a
   async runLearningRoadmapGenerator(
     profile: CareerProfile,
     targetRole: string,
-    weeklyHours = 5
+    weeklyHours = 5,
+    referenceRoadmaps?: any[] // Optional: static roadmaps to use as templates
   ) {
     const existingSkills = profile.skills.map((s) => s.canonicalName).join(', ');
     const weaknesses = profile.dna?.weaknesses?.join(', ') || 'No critical gaps identified';
 
+    // Build reference context from static roadmaps if provided
+    let referenceContext = '';
+    if (referenceRoadmaps && referenceRoadmaps.length > 0) {
+      const relevantRoadmaps = referenceRoadmaps.slice(0, 3); // Use top 3 most relevant
+      referenceContext = `\n\nREFERENCE TEMPLATES (use as structure/resource inspiration, but personalize for candidate):
+${relevantRoadmaps.map((rm, idx) => `
+${idx + 1}. ${rm.title} (${rm.estimatedTotalHours}h total)
+   Stages: ${rm.stages.map((s: any) => s.title).join(' → ')}
+   Key Resources: ${rm.stages.flatMap((s: any) =>
+     s.nodes.flatMap((n: any) =>
+       n.resources.filter((r: any) => r.isRecommended).slice(0, 2).map((r: any) => r.title)
+     )
+   ).slice(0, 5).join(', ')}
+`).join('\n')}`;
+    }
+
     return aiGateway.generateStructured({
       agentName: 'Learning Roadmap Agent',
-      promptVersion: 'learning_roadmap_v1',
+      promptVersion: 'learning_roadmap_v2',
       systemInstruction: `You are the Lead Curriculum Architect & Learning Roadmap Designer in CareerPilot AI.
-Your mission is to generate a structured, progressive learning roadmap tailored for the candidate to become a '${targetRole}'.
+Your mission is to generate a PERSONALIZED, structured learning roadmap tailored for the candidate to become a '${targetRole}'.
+
+Context: You have access to 20+ curated reference roadmaps covering major career tracks. Use them as inspiration for structure and resources, but CUSTOMIZE the roadmap based on:
+1. Candidate's existing skills (${existingSkills})
+2. Identified gaps (${weaknesses})
+3. Target role requirements
+4. Available weekly hours (${weeklyHours}h/week)
 
 Strict Rules:
-1. Divide the roadmap into 4 to 5 cohesive stages (Foundations -> Fundamental Skills -> Applied Skills -> Practical Projects -> Career Readiness).
+1. Divide the roadmap into 3-5 cohesive stages (e.g., Foundations → Core Skills → Advanced Topics → Production Projects → Career Readiness).
 2. Each stage must contain 2-4 concrete, highly actionable skill nodes with precise learning objectives and completion criteria.
 3. Every node MUST have realistic prerequisite dependencies (pointing to prior node IDs) without circular loops.
-4. Recommend reputable, real-world verified resources (official documentation, famous freeCodeCamp/YouTube masterclasses, Coursera programs).
-5. Output bilingual titles and descriptions (English + Arabic).
-6. Tailor the starting point: take into account candidate's existing skills (${existingSkills}) and bridge weaknesses (${weaknesses}).
-7. Plan the pacing for someone dedicating approximately ${weeklyHours} hours per week.`,
+4. Skip fundamentals the candidate already masters — start where THEY are, not from zero.
+5. Recommend REAL, VERIFIED resources:
+   - Official documentation (React.dev, Python.org, etc.)
+   - High-quality YouTube courses (freeCodeCamp, Traversy Media, etc.)
+   - Free platforms (Coursera audit, Microsoft Learn, Google Skillshop)
+   - Include actual URLs when possible
+6. Output bilingual titles and descriptions (English + Arabic).
+7. Calculate realistic effort estimates based on ${weeklyHours} hours per week.
+8. Focus on PRACTICAL skills with real-world projects, not just theory.${referenceContext}`,
       prompt: `Candidate Profile for Custom Learning Roadmap:
-- Candidate Target Role: ${targetRole}
+- Target Role: ${targetRole}
 - Current Level: ${profile.dna?.currentLevel || 'Intermediate'}
 - Existing Verified Skills: ${existingSkills || 'Basic Programming'}
 - Current Weaknesses / Gaps: ${weaknesses}
-- Committed Weekly Effort: ${weeklyHours} hours/week
+- Weekly Time Commitment: ${weeklyHours} hours/week
 
-Generate a comprehensive, production-grade learning roadmap matching the candidate's exact target trajectory.`,
+TASK: Generate a comprehensive, production-grade learning roadmap that:
+1. Bridges the gap from candidate's CURRENT skills to ${targetRole}
+2. Skips redundant fundamentals they already know
+3. Focuses on filling identified weaknesses
+4. Includes verified learning resources with real URLs
+5. Provides realistic time estimates based on ${weeklyHours}h/week commitment`,
       schema: RoadmapGenerationSchema,
     });
   },

@@ -1786,27 +1786,46 @@ apiRouter.post('/roadmaps/generate', validateAIPrompt, async (req: Request, res:
     }
     const profile = dbService.getProfile();
     const { targetRole, weeklyHours } = req.body;
+    const normalizedTargetRole = targetRole || profile.targetRole || 'Full-Stack Developer';
+
+    // Find relevant reference roadmaps based on target role
+    const relevantRoadmaps = INITIAL_ROADMAPS.filter((rm) => {
+      const roleKeywords = normalizedTargetRole.toLowerCase().split(/[\s-]+/);
+      const roadmapText = `${rm.title} ${rm.targetRole} ${rm.tags.join(' ')}`.toLowerCase();
+      return roleKeywords.some((keyword: string) => roadmapText.includes(keyword));
+    }).slice(0, 3); // Top 3 most relevant
+
+    // Generate personalized roadmap using reference templates
     const roadmapData = await AIAgents.runLearningRoadmapGenerator(
       profile,
-      targetRole || profile.targetRole || 'Full-Stack Developer',
-      weeklyHours || 5
+      normalizedTargetRole,
+      weeklyHours || 5,
+      relevantRoadmaps.length > 0 ? relevantRoadmaps : undefined
     );
 
     const fullRoadmap = {
-      id: `rdm-${Date.now()}`,
-      slug: (targetRole || 'custom').toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      id: `rdm-ai-${Date.now()}`,
+      slug: normalizedTargetRole.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
       ...roadmapData,
-      targetRole: targetRole || profile.targetRole || 'Full-Stack Developer',
+      targetRole: normalizedTargetRole,
       language: 'Both' as const,
       publicationStatus: 'draft' as const,
       version: '1.0',
-      tags: [targetRole || 'Engineering', 'AI Generated'],
+      tags: [normalizedTargetRole, 'AI Generated', 'Personalized'],
       source: 'AI_Draft' as const,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
 
-    res.json({ success: true, roadmap: fullRoadmap });
+    res.json({
+      success: true,
+      roadmap: fullRoadmap,
+      metadata: {
+        referencedRoadmaps: relevantRoadmaps.map(rm => ({ id: rm.id, title: rm.title })),
+        generatedAt: new Date().toISOString(),
+        personalizedFor: profile.fullName || profile.email || 'User'
+      }
+    });
   } catch (err: unknown) {
     sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }
