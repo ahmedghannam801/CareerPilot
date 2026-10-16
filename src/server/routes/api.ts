@@ -4,6 +4,7 @@ import { dbService, UploadedDocument } from '../db/index.js';
 import { AIAgents } from '../ai/agents.js';
 import { aiGateway } from '../ai/gateway.js';
 import { verifyResource, checkUrlHealth, validateProvider, normalizeUrl, deduplicateResources } from '../services/resourceVerification.js';
+import { lessonPacks, guides, getLessonPackById, getLessonPacksByDifficulty, getLessonPacksByCategory, getGuideById, getGuidesByCategory } from '../../data/lessonPacksData.js';
 import {
   calculateCareerReadiness,
   calculateOpportunityMatch,
@@ -2176,3 +2177,136 @@ apiRouter.post('/resources/check-health', async (req: Request, res: Response) =>
 });
 
 export default apiRouter;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Lesson Packs & Guides API — Phase 5: Structured Learning Paths
+// ─────────────────────────────────────────────────────────────────────────────
+
+// GET /api/lesson-packs — List all lesson packs
+apiRouter.get("/lesson-packs", (req: Request, res: Response) => {
+  try {
+    const { difficulty, category, limit, offset } = req.query;
+    let filteredPacks = [...lessonPacks];
+
+    if (difficulty) {
+      filteredPacks = filteredPacks.filter(p => p.difficulty === difficulty);
+    }
+    if (category) {
+      filteredPacks = filteredPacks.filter(p => p.category === category);
+    }
+
+    const total = filteredPacks.length;
+    const limitNum = limit ? parseInt(limit as string) : 50;
+    const offsetNum = offset ? parseInt(offset as string) : 0;
+    const paginatedPacks = filteredPacks.slice(offsetNum, offsetNum + limitNum);
+
+    res.json({
+      success: true,
+      packs: paginatedPacks,
+      total,
+      limit: limitNum,
+      offset: offsetNum
+    });
+  } catch (err: unknown) {
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
+  }
+});
+
+// GET /api/lesson-packs/:packId — Get single lesson pack
+apiRouter.get("/lesson-packs/:packId", (req: Request, res: Response) => {
+  try {
+    const pack = getLessonPackById(req.params.packId);
+    if (!pack) {
+      return res.status(404).json({ success: false, error: "Lesson pack not found" });
+    }
+    res.json({ success: true, pack });
+  } catch (err: unknown) {
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
+  }
+});
+
+// GET /api/guides — List all guides
+apiRouter.get("/guides", (req: Request, res: Response) => {
+  try {
+    const { category, difficulty, limit, offset } = req.query;
+    let filteredGuides = [...guides];
+
+    if (category) {
+      filteredGuides = filteredGuides.filter(g => g.category === category);
+    }
+    if (difficulty) {
+      filteredGuides = filteredGuides.filter(g => g.difficulty === difficulty);
+    }
+
+    const total = filteredGuides.length;
+    const limitNum = limit ? parseInt(limit as string) : 50;
+    const offsetNum = offset ? parseInt(offset as string) : 0;
+    const paginatedGuides = filteredGuides.slice(offsetNum, offsetNum + limitNum);
+
+    res.json({
+      success: true,
+      guides: paginatedGuides,
+      total,
+      limit: limitNum,
+      offset: offsetNum
+    });
+  } catch (err: unknown) {
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
+  }
+});
+
+// GET /api/guides/:guideId — Get single guide
+apiRouter.get("/guides/:guideId", (req: Request, res: Response) => {
+  try {
+    const guide = getGuideById(req.params.guideId);
+    if (!guide) {
+      return res.status(404).json({ success: false, error: "Guide not found" });
+    }
+    res.json({ success: true, guide });
+  } catch (err: unknown) {
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
+  }
+});
+
+// GET /api/lesson-packs/:packId/progress — Get pack progress for current user
+apiRouter.get("/lesson-packs/:packId/progress", (req: Request, res: Response) => {
+  try {
+    const pack = getLessonPackById(req.params.packId);
+    if (!pack) {
+      return res.status(404).json({ success: false, error: "Lesson pack not found" });
+    }
+    
+    const profile = dbService.getProfile();
+    const userId = profile?.email || "demo-user";
+    
+    // TODO: Implement actual progress tracking in database
+    // For now, return default progress structure
+    const progress = {
+      userId,
+      packId: req.params.packId,
+      status: "not-started",
+      progressPercentage: 0,
+      totalTimeSpent: 0,
+      enrolledAt: new Date().toISOString(),
+      startedAt: null,
+      completedAt: null,
+      lastAccessedAt: new Date().toISOString(),
+      lessonsCompleted: 0,
+      totalLessons: pack.totalLessons,
+      currentLessonId: null,
+      lessonProgress: {},
+      exercisesCompleted: 0,
+      totalExercises: 0,
+      projectsCompleted: 0,
+      totalProjects: 0,
+      certificateEarned: false,
+      updatedAt: new Date().toISOString()
+    };
+
+    res.json({ success: true, progress });
+  } catch (err: unknown) {
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
+  }
+});
+
+
