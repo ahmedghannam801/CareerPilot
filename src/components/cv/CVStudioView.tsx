@@ -28,6 +28,7 @@ import { ResumeVersion, ATSAnalysis, Opportunity, CareerProfile } from '../../ty
 import { formatDate } from '../../lib/utils.js';
 import { ATSResumeDocument, ATSTemplate } from './ATSResumeDocument.js';
 import { clientDb } from '../../lib/clientDb.js';
+import { getCurrentSession } from '../../lib/supabaseClient.js';
 import { validateCVFile, extractCandidateInfoFromText, exportResumeToWordDoc } from '../../lib/resumeIntelligence.js';
 
 interface CVStudioViewProps {
@@ -366,16 +367,42 @@ ${currentResume.skills.join(' • ')}
     }
     setUploadedFileName(file.name);
     setIsExtracting(true);
+
     try {
-      let text = '';
-      if (validation.fileType === 'txt') {
-        text = await file.text();
-      } else {
-        // For PDF/DOCX we read what we can as text — server-side parsing handles the full extraction
-        text = `[File: ${file.name}]`;
+      // Upload to server for proper parsing
+      const formData = new FormData();
+      formData.append('cv', file);
+
+      const response = await fetch('/api/resumes/upload', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Authorization': `Bearer ${await getCurrentSession().then(s => s?.access_token || '')}`,
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.userMessage || result.error || 'Upload failed');
       }
-      const info = extractCandidateInfoFromText(text);
-      setExtractedInfo(info);
+
+      // Show extracted candidate info
+      if (result.candidateInfo) {
+        setExtractedInfo(result.candidateInfo);
+      }
+
+      // Add uploaded resume to library
+      if (result.resume) {
+        onResumesChange([...resumes, result.resume]);
+      }
+
+      // Show success notification
+      console.log('[CV Upload] Success:', result.message);
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Upload failed';
+      setUploadError(errorMsg);
+      console.error('[CV Upload] Error:', errorMsg);
     } finally {
       setIsExtracting(false);
     }

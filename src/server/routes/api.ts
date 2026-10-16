@@ -122,6 +122,14 @@ apiRouter.post('/profile', validateProfile, (req: Request, res: Response) => {
 
 apiRouter.post('/profile/dna/regenerate', validateProfile, async (req: Request, res: Response) => {
   try {
+    const userId = getReqUserId(req);
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        error: 'User authentication required',
+      });
+    }
+
     if (!featureFlags.isEnabled('aiGateway')) {
       return res.status(503).json({
         success: false,
@@ -129,16 +137,17 @@ apiRouter.post('/profile/dna/regenerate', validateProfile, async (req: Request, 
         code: 'FEATURE_DISABLED',
       });
     }
-    const profile = dbService.getProfile();
+
+    const profile = dbService.getProfile(userId);
     const dna = await AIAgents.runCareerDNA(profile);
-    const updated = dbService.updateProfile({ dna });
+    const updated = dbService.updateProfile({ dna }, userId);
     dbService.addTimelineEvent({
       date: new Date().toISOString().split('T')[0],
       type: 'CAREER_DNA_UPDATED',
       title: 'Career DNA Regenerated',
       description: `Updated primary career direction to ${dna.primaryDirection}.`,
       source: 'AI',
-    });
+    }, userId);
     res.json({ success: true, dna, profile: updated });
   } catch (err: unknown) {
     sendSafeError(res, err, { endpoint: req.path, method: req.method });
@@ -147,6 +156,14 @@ apiRouter.post('/profile/dna/regenerate', validateProfile, async (req: Request, 
 
 apiRouter.post('/profile/nba/refresh', validateProfile, async (req: Request, res: Response) => {
   try {
+    const userId = getReqUserId(req);
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        error: 'User authentication required',
+      });
+    }
+
     if (!featureFlags.isEnabled('aiGateway')) {
       return res.status(503).json({
         success: false,
@@ -154,12 +171,70 @@ apiRouter.post('/profile/nba/refresh', validateProfile, async (req: Request, res
         code: 'FEATURE_DISABLED',
       });
     }
-    const profile = dbService.getProfile();
+
+    const profile = dbService.getProfile(userId);
     const nba = await AIAgents.runNextBestAction(profile);
-    const updated = dbService.updateProfile({ nextBestAction: nba });
+    const updated = dbService.updateProfile({ nextBestAction: nba }, userId);
     res.json({ success: true, nextBestAction: nba, profile: updated });
   } catch (err: unknown) {
     sendSafeError(res, err, { endpoint: req.path, method: req.method });
+  }
+});
+
+/**
+ * GET /api/account/export
+ * Export all user account data as sanitized JSON
+ */
+apiRouter.get('/account/export', (req: Request, res: Response) => {
+  try {
+    const userId = getReqUserId(req);
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        error: 'User authentication required',
+      });
+    }
+
+    // Gather all user data
+    const profile = dbService.getProfile(userId);
+    const resumes = dbService.getResumes(userId);
+    const opportunities = dbService.getOpportunities(userId);
+    const applications = dbService.getApplications(userId);
+    const roadmaps = dbService.getRoadmaps(userId);
+
+    // Sanitize sensitive data
+    const sanitizedProfile = profile ? {
+      ...profile,
+      // Keep all profile data - it's the user's own data
+    } : null;
+
+    const exportData = {
+      exportedAt: new Date().toISOString(),
+      exportVersion: '1.0',
+      userId,
+      profile: sanitizedProfile,
+      resumes,
+      opportunities,
+      applications,
+      roadmaps,
+      statistics: {
+        totalResumes: resumes.length,
+        totalOpportunities: opportunities.length,
+        totalApplications: applications.length,
+        totalRoadmaps: roadmaps.length,
+      },
+    };
+
+    // Set headers for file download
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="careerpilot_data_export_${new Date().toISOString().split('T')[0]}.json"`
+    );
+
+    res.json(exportData);
+  } catch (err: unknown) {
+    sendSafeError(res, err, { endpoint: '/account/export', method: 'GET' });
   }
 });
 
@@ -1773,6 +1848,74 @@ apiRouter.get('/roadmaps/:id', (req: Request, res: Response) => {
       return res.status(404).json({ success: false, error: 'Roadmap not found' });
     }
     res.json({ success: true, roadmap });
+  } catch (err: unknown) {
+    sendSafeError(res, err, { endpoint: req.path, method: req.method });
+  }
+});
+
+/**
+ * POST /api/roadmaps/progress
+ * Update node progress status for a roadmap enrollment
+ */
+apiRouter.post('/roadmaps/progress', async (req: Request, res: Response) => {
+  try {
+    const userId = getReqUserId(req);
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        error: 'User authentication required',
+      });
+    }
+
+    const { enrollmentId, nodeId, status, notes } = req.body;
+
+    if (!enrollmentId || !nodeId || !status) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields: enrollmentId, nodeId, status',
+      });
+    }
+
+    // Get user's enrollments
+    const enrollments = dbService.getUserEnrollments(userId);
+    const enrollment = enrollments.find(e => e.id === enrollmentId);
+
+    if (!enrollment) {
+      return res.status(404).json({
+        success: false,
+        error: 'Enrollment not found',
+      });
+    }
+
+    // Update node progress
+    if (!enrollment.nodeProgress) {
+      enrollment.nodeProgress = {};
+    }
+
+    enrollment.nodeProgress[nodeId] = {
+      status,
+      completedAt: status === 'completed' ? new Date().toISOString() : undefined,
+      notes,
+    };
+
+    // Recalculate overall progress
+    const totalNodes = Object.keys(enrollment.nodeProgress).length;
+    const completedNodes = Object.values(enrollment.nodeProgress).filter(
+      (p: any) => p.status === 'completed'
+    ).length;
+    enrollment.overallProgress = totalNodes > 0 ? Math.round((completedNodes / totalNodes) * 100) : 0;
+
+    // Update last activity
+    enrollment.lastActivityAt = new Date().toISOString();
+
+    // Save updated enrollment
+    dbService.saveUserEnrollment(enrollment, userId);
+
+    res.json({
+      success: true,
+      enrollment,
+      message: 'Progress updated successfully',
+    });
   } catch (err: unknown) {
     sendSafeError(res, err, { endpoint: req.path, method: req.method });
   }

@@ -10,6 +10,7 @@
  */
 
 import { Router, Request, Response } from 'express';
+import multer from 'multer';
 import { generateResumeDOCX, generateATSFriendlyDOCX } from '../services/docxGenerator.js';
 import { validateDOCX, validateResumeContent } from '../validation/documentValidator.js';
 import { getReqUserId } from './api.js';
@@ -22,10 +23,104 @@ import {
 } from '../validation/strictSchemas.js';
 import {
   generateTailoredCV,
+  extractCandidateInfoFromText,
 } from '../../lib/resumeIntelligence.js';
 import { ResumeVersion } from '../../types/index.js';
+import { parseCV } from '../services/cvParser.js';
+
+// Configure multer for file uploads (memory storage)
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB max
+  },
+  fileFilter: (_req, file, cb) => {
+    const allowedExtensions = ['.pdf', '.docx', '.doc', '.txt'];
+    const extension = file.originalname.toLowerCase().slice(file.originalname.lastIndexOf('.'));
+
+    if (allowedExtensions.includes(extension)) {
+      cb(null, true);
+    } else {
+      cb(new Error(`Invalid file type. Allowed: ${allowedExtensions.join(', ')}`));
+    }
+  },
+});
 
 export const cvRouter = Router();
+
+/**
+ * POST /api/resumes/upload
+ * Upload and parse CV file (PDF/DOCX/TXT)
+ */
+cvRouter.post('/resumes/upload', upload.single('cv'), async (req: Request, res: Response) => {
+  try {
+    const userId = getReqUserId(req);
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        error: 'User authentication required',
+      });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        error: 'No file uploaded. Please select a CV file.',
+      });
+    }
+
+    try {
+      // Parse the CV file
+      const parsedResult = await parseCV(req.file.buffer, req.file.originalname);
+
+      // Extract candidate information from parsed text
+      const candidateInfo = extractCandidateInfoFromText(parsedResult.text);
+
+      // Create resume version from parsed data
+      const newResume: ResumeVersion = {
+        id: `res-uploaded-${Date.now()}`,
+        title: req.file.originalname.replace(/\.[^/.]+$/, ''), // Remove extension
+        isMaster: false, // User can mark as master later
+        summary: candidateInfo.summary || '',
+        experience: candidateInfo.experience || [],
+        education: candidateInfo.education || [],
+        skills: candidateInfo.skills || [],
+        certifications: [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      // Save to database
+      const saved = dbService.saveResume(newResume, userId);
+
+      res.json({
+        success: true,
+        resume: saved,
+        parsedData: {
+          text: parsedResult.text.substring(0, 1000), // Return preview only
+          wordCount: parsedResult.wordCount,
+          pageCount: parsedResult.pageCount,
+        },
+        candidateInfo,
+        message: 'CV uploaded and parsed successfully',
+      });
+    } catch (parseError) {
+      const msg = parseError instanceof Error ? parseError.message : 'Unknown parsing error';
+      console.error('[CV Upload] Parsing failed:', msg);
+
+      return res.status(400).json({
+        success: false,
+        error: 'CV parsing failed',
+        details: msg,
+        userMessage: 'Unable to read your CV. Please ensure it is a valid PDF, DOCX, or TXT file.',
+      });
+    }
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('[CV Upload] Error:', msg);
+    res.status(500).json({ success: false, error: msg });
+  }
+});
 
 /**
  * POST /api/resumes

@@ -113,7 +113,28 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, lang, onToggleLan
       if (mode === 'signup') {
         const { user, error: err } = await signUpWithEmail(email, password, name);
         if (err) {
-          setError(err);
+          // Enhanced error handling for common Supabase issues
+          if (err.toLowerCase().includes('rate limit')) {
+            setError(
+              isAr
+                ? 'تم تجاوز حد محاولات التسجيل. يرجى الانتظار قليلاً والمحاولة مرة أخرى.'
+                : 'Sign up rate limit reached. Please wait a moment and try again.'
+            );
+          } else if (err.toLowerCase().includes('already registered') || err.toLowerCase().includes('user already exists')) {
+            setError(
+              isAr
+                ? 'هذا البريد الإلكتروني مسجل بالفعل. جرب تسجيل الدخول بدلاً من ذلك.'
+                : 'This email is already registered. Try signing in instead.'
+            );
+          } else if (err.toLowerCase().includes('invalid email')) {
+            setError(
+              isAr
+                ? 'البريد الإلكتروني غير صحيح. يرجى التحقق من العنوان والمحاولة مرة أخرى.'
+                : 'Invalid email address. Please check and try again.'
+            );
+          } else {
+            setError(err);
+          }
           return;
         }
         if (user && user.confirmed_at) {
@@ -126,7 +147,28 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, lang, onToggleLan
       } else {
         const { user, error: err } = await signInWithEmail(email, password);
         if (err) {
-          setError(err);
+          // Enhanced error handling for common sign-in issues
+          if (err.toLowerCase().includes('invalid login credentials') || err.toLowerCase().includes('invalid email or password')) {
+            setError(
+              isAr
+                ? 'البريد الإلكتروني أو كلمة المرور غير صحيحة. يرجى المحاولة مرة أخرى.'
+                : 'Invalid email or password. Please check your credentials and try again.'
+            );
+          } else if (err.toLowerCase().includes('email not confirmed')) {
+            setError(
+              isAr
+                ? 'يرجى تأكيد بريدك الإلكتروني قبل تسجيل الدخول. تحقق من صندوق الوارد الخاص بك.'
+                : 'Please verify your email before signing in. Check your inbox for the confirmation link.'
+            );
+          } else if (err.toLowerCase().includes('rate limit')) {
+            setError(
+              isAr
+                ? 'تم تجاوز حد محاولات تسجيل الدخول. يرجى الانتظار قليلاً والمحاولة مرة أخرى.'
+                : 'Sign in rate limit reached. Please wait a moment and try again.'
+            );
+          } else {
+            setError(err);
+          }
           return;
         }
         if (user) {

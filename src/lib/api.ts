@@ -1087,7 +1087,7 @@ export const api = {
   },
   exportSystemData: async () => {
     try {
-      return await request<{ success: boolean; data: any }>('/api/system/export');
+      return await request<{ success: boolean; data: any }>('/api/account/export');
     } catch {
       return { success: true, data: clientDb.exportData() };
     }
