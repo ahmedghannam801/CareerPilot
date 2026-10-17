@@ -21,6 +21,7 @@ import { FloatingAICopilot } from './components/common/FloatingAICopilot.js';
 import { MobileNav } from './components/layout/MobileNav.js';
 import { LoginPage } from './components/auth/LoginPage.js';
 import { LearningRoadmapsView } from './components/roadmaps/LearningRoadmapsView.js';
+import { PersonalProfileView } from './components/profile/PersonalProfileView.js';
 import { api } from './lib/api.js';
 import { clientDb } from './lib/clientDb.js';
 import { onAuthStateChange, signOut, loadProfileFromCloud, loadResumesFromCloud } from './lib/supabaseClient.js';
@@ -41,6 +42,7 @@ const VALID_TABS: Record<string, string> = {
   '': 'dashboard',
   'dashboard': 'dashboard',
   'home': 'dashboard',
+  'profile': 'profile',
   'career': 'career',
   'journey': 'career',
   'cv': 'cv',
@@ -909,6 +911,14 @@ export default function App() {
                 handleNavigate('projects');
               }}
               lang={lang}
+            />
+          )}
+
+          {currentTab === 'profile' && (
+            <PersonalProfileView
+              lang={lang}
+              profile={profile}
+              onUpdateProfile={handleUpdateProfile}
             />
           )}
 
