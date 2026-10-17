@@ -36,18 +36,6 @@
     --color-warning-bg: #FFFBEB;
     --color-error: #DC2626;
     --color-error-bg: #FEF2F2;
-
-    /* Legacy Brand Variables mapped to new tokens */
-    --brand-50: #EEF4FF;
-    --brand-100: #DBEAFE;
-    --brand-200: #BFDBFE;
-    --brand-500: #2563EB;
-    --brand-600: #1D4ED8;
-    --brand-700: #0B1F3A;
-
-    --surface-bg: var(--color-bg);
-    --surface-card: var(--color-surface-white);
-    --surface-border: var(--color-border);
   }
 
   .dark {
@@ -80,18 +68,6 @@
     --color-warning-bg: rgba(251, 191, 36, 0.12);
     --color-error: #F87171;
     --color-error-bg: rgba(248, 113, 113, 0.12);
-
-    /* Legacy Brand Variables mapped to new tokens */
-    --brand-50: #1E293B;
-    --brand-100: #1E3A8A;
-    --brand-200: #2563EB;
-    --brand-500: #3B82F6;
-    --brand-600: #60A5FA;
-    --brand-700: #93C5FD;
-
-    --surface-bg: var(--color-bg);
-    --surface-card: var(--color-surface-white);
-    --surface-border: var(--color-border);
   }
 
   html {
