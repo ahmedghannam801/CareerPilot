@@ -500,6 +500,21 @@ export default function App() {
     return res.ats;
   };
 
+  const handleConfirmExtraction = async (extractedProfile: any, createMasterCV: boolean) => {
+    const res = await api.confirmExtractedProfile(extractedProfile, createMasterCV);
+    if (res?.profile) setProfile(res.profile);
+    if (res?.masterResume) {
+      setResumes((prev) => {
+        const exists = prev.some((r) => r.id === res.masterResume!.id);
+        if (exists) {
+          return prev.map((r) => (r.id === res.masterResume!.id ? res.masterResume! : r));
+        }
+        return [res.masterResume!, ...prev];
+      });
+    }
+    return res;
+  };
+
   const handleTailorCV = async (payload: {
     opportunityId?: string;
     customJobDescription?: string;
@@ -950,6 +965,7 @@ export default function App() {
               onAnalyzeResume={handleAnalyzeResume}
               onTailorCV={handleTailorCV}
               onOpenLinkedInSync={() => setShowLinkedInSync(true)}
+              onConfirmExtraction={handleConfirmExtraction}
               lang={lang}
             />
           )}

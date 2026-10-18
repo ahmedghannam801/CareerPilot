@@ -28,7 +28,8 @@ import { ResumeVersion, ATSAnalysis, Opportunity, CareerProfile } from '../../ty
 import { formatDate } from '../../lib/utils.js';
 import { ATSResumeDocument, ATSTemplate } from './ATSResumeDocument.js';
 import { clientDb } from '../../lib/clientDb.js';
-import { validateCVFile, extractCandidateInfoFromText, exportResumeToWordDoc } from '../../lib/resumeIntelligence.js';
+import { validateCVFile, exportResumeToWordDoc } from '../../lib/resumeIntelligence.js';
+import { api } from '../../lib/api.js';
 
 interface CVStudioViewProps {
   resumes: ResumeVersion[];
@@ -45,6 +46,7 @@ interface CVStudioViewProps {
     targetRole?: string;
   }) => Promise<any>;
   onOpenLinkedInSync?: () => void;
+  onConfirmExtraction: (profile: any, createMasterCV: boolean) => Promise<any>;
   lang: 'en' | 'ar';
 }
 
@@ -56,6 +58,7 @@ export const CVStudioView: React.FC<CVStudioViewProps> = ({
   onAnalyzeResume,
   onTailorCV,
   onOpenLinkedInSync,
+  onConfirmExtraction,
   lang,
 }) => {
   const masterCV = resumes.find((r) => r.isMaster) || resumes[0];
@@ -85,6 +88,8 @@ export const CVStudioView: React.FC<CVStudioViewProps> = ({
     fullName?: string; email?: string; phone?: string; summary?: string; skills: string[];
   } | null>(null);
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
+  const [extractedFullProfile, setExtractedFullProfile] = useState<any | null>(null);
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
 
   // Multi-step generation workflow modal states
   const [showGenerateModal, setShowGenerateModal] = useState(false);
@@ -367,15 +372,36 @@ ${currentResume.skills.join(' • ')}
     setUploadedFileName(file.name);
     setIsExtracting(true);
     try {
-      let text = '';
-      if (validation.fileType === 'txt') {
-        text = await file.text();
-      } else {
-        // For PDF/DOCX we read what we can as text — server-side parsing handles the full extraction
-        text = `[File: ${file.name}]`;
-      }
-      const info = extractCandidateInfoFromText(text);
-      setExtractedInfo(info);
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result || ''));
+        reader.onerror = () => reject(new Error('Could not read file'));
+        reader.readAsDataURL(file);
+      });
+
+      const res = await api.uploadResume({
+        fileName: file.name,
+        fileData: base64,
+        fileType: validation.fileType,
+      });
+
+      const info = res?.extractedInfo || {};
+      setExtractedInfo({
+        fullName: info.fullName || '',
+        email: info.email || '',
+        phone: info.phone || '',
+        summary: info.summary || '',
+        skills: Array.isArray(info.skills) ? info.skills : [],
+      });
+      setExtractedFullProfile(info);
+    } catch (err: any) {
+      setUploadError(
+        err?.message
+          ? err.message
+          : isAr
+            ? 'تعذر تحليل الملف. حاول مرة أخرى.'
+            : 'Could not parse the file. Please try again.'
+      );
     } finally {
       setIsExtracting(false);
     }
@@ -463,6 +489,30 @@ ${currentResume.skills.join(' • ')}
           </p>
 
           <div className="flex gap-2">
+            <button
+              type="button"
+              disabled={isSavingProfile}
+              onClick={async () => {
+                if (!extractedFullProfile) return;
+                setIsSavingProfile(true);
+                try {
+                  await onConfirmExtraction(extractedFullProfile, true);
+                  setExtractedInfo(null);
+                  setExtractedFullProfile(null);
+                  setUploadedFileName(null);
+                } catch (err: any) {
+                  setUploadError(
+                    err?.message || (isAr ? 'تعذر حفظ البيانات في الملف الشخصي.' : 'Could not save to your profile.')
+                  );
+                } finally {
+                  setIsSavingProfile(false);
+                }
+              }}
+              className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 text-white text-xs font-bold rounded-xl hover:bg-emerald-700 transition-all disabled:opacity-50"
+            >
+              {isSavingProfile ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
+              {isAr ? 'حفظ في الملف الشخصي' : 'Save to My Profile'}
+            </button>
             <button
               type="button"
               onClick={() => setShowGenerateModal(true)}
