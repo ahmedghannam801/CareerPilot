@@ -81,7 +81,7 @@ export default function App() {
   const [theme, setTheme] = useState<'light' | 'dark' | 'system'>(() => {
     const saved = localStorage.getItem('careerpilot_theme');
     if (saved === 'dark' || saved === 'light' || saved === 'system') return saved as 'light' | 'dark' | 'system';
-    return 'system';
+    return 'light';
   });
 
   // Resolve actual theme when 'system' is selected
