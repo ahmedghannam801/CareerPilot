@@ -34,6 +34,7 @@ import {
   generateTailoredCV as generateTailoredCVLogic,
 } from '../../lib/resumeIntelligence.js';
 import { authRouter } from './auth.js';
+import { roadmapProgressRouter } from './roadmap-progress.js';
 import {
   validateProfile,
   validateResume,
@@ -51,6 +52,7 @@ export const apiRouter = Router();
 
 // Mount auth router
 apiRouter.use('/auth', authRouter);
+apiRouter.use('/roadmaps/progress', roadmapProgressRouter);
 
 export function getReqUserId(req: Request): string | undefined {
   const custom = req.headers['x-user-id'] as string;
